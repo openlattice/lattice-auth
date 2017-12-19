@@ -1,0 +1,95 @@
+{
+  "name": "lattice-auth",
+  "version": "0.0.0",
+  "homepage": "https://github.com/openlattice/lattice-auth",
+  "author": {
+    "name": "OpenLattice, Inc.",
+    "email": "support@openlattice.com",
+    "url": "https://openlattice.com"
+  },
+  "contributors": [
+    {
+      "name": "Hristo Oskov",
+      "email": "hristo@openlattice.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openlattice/lattice-auth.git"
+  },
+  "bugs": {
+    "url": "https://github.com/openlattice/lattice-auth/issues"
+  },
+  "license": "Apache-2.0",
+  "main": "build/lattice-auth.js",
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "loglevel": "^1.6.0",
+    "moment": "^2.20.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.0",
+    "babel-loader": "^7.1.0",
+    "babel-plugin-transform-class-properties": "^6.24.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-flow": "^6.23.0",
+    "better-npm-run": "0.1.0",
+    "eslint": "^4.13.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-import-resolver-webpack": "^0.8.3",
+    "eslint-loader": "^1.9.0",
+    "eslint-plugin-flowtype": "^2.39.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jest": "^21.5.0",
+    "flow-bin": "^0.61.0",
+    "jest": "^22.0.0",
+    "npm-run-all": "^4.0.0",
+    "rimraf": "^2.6.0",
+    "uglifyjs-webpack-plugin": "^1.1.4",
+    "webpack": "^3.8.0",
+    "webpack-dev-server": "^2.9.0"
+  },
+  "scripts": {
+    "build": "better-npm-run build",
+    "build:min": "better-npm-run build:min",
+    "clean": "rimraf build/*",
+    "flow": "flow check",
+    "lib": "better-npm-run webpack-dev-server",
+    "lint": "eslint --config .eslintrc src",
+    "release:major": "npm version major -m \"releasing v%s\" && npm publish",
+    "release:minor": "npm version minor -m \"releasing v%s\" && npm publish",
+    "release:patch": "npm version patch -m \"releasing v%s\" && npm publish",
+    "preversion": "npm-run-all lint test",
+    "version": "npm-run-all clean --parallel build build:min && git add -A package.json build/",
+    "postversion": "git push && git push --tags",
+    "test": "jest --config config/jest/jest.config.js",
+    "test:watch": "jest --config config/jest/jest.config.js --watch"
+  },
+  "betterScripts": {
+    "build": {
+      "command": "webpack --config config/webpack/webpack.config.babel.js",
+      "env": {
+        "BUILD": "production",
+        "MINIMIZE": "false",
+        "TARGET_ENV": "web"
+      }
+    },
+    "build:min": {
+      "command": "webpack --config config/webpack/webpack.config.babel.js",
+      "env": {
+        "BUILD": "production",
+        "MINIMIZE": "true",
+        "TARGET_ENV": "web"
+      }
+    },
+    "webpack-dev-server": {
+      "command": "webpack-dev-server --config config/webpack/webpack.config.babel.js --port 9000 --content-base build/",
+      "env": {
+        "BUILD": "development"
+      }
+    }
+  }
+}
