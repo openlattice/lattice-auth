@@ -1,17 +1,17 @@
 {
   "extends": [
-    "airbnb-base",
+    "airbnb",
     "plugin:flowtype/recommended"
   ],
   "parser": "babel-eslint",
   "env": {
     "browser": true,
-    "jest": true,
-    "node": true
+    "jest": true
   },
   "plugins": [
     "flowtype",
-    "jest"
+    "jest",
+    "react"
   ],
   "settings": {
     "flowtype": {
@@ -40,7 +40,8 @@
           "body": 1,
           "parameters": 1
         },
-        "SwitchCase": 1
+        "SwitchCase": 1,
+        "ignoredNodes": ["JSXAttribute"]
       }
     ],
     "max-len": [
@@ -86,6 +87,26 @@
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
     "jest/prefer-to-have-length": "warn",
-    "jest/valid-expect": "error"
+    "jest/valid-expect": "error",
+
+    "jsx-a11y/href-no-hash": "off",
+
+    "react/forbid-prop-types": "warn",
+    "react/jsx-closing-bracket-location": [
+      "error",
+      {
+        "selfClosing": "after-props",
+        "nonEmpty": "after-props"
+      }
+    ],
+    "react/jsx-filename-extension": [
+      "warn",
+      {
+        "extensions": [".js", ".jsx"]
+      }
+    ],
+    "react/jsx-indent-props": ["error", 4],
+    "react/prefer-stateless-function": "warn",
+    "react/sort-comp": "off"
   }
 }
