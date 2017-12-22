@@ -9,6 +9,7 @@ import * as AuthActionFactory from './auth/AuthActionFactory';
 import * as AuthConstants from './auth/AuthConstants';
 import * as AuthSagas from './auth/AuthSagas';
 import * as AuthUtils from './auth/AuthUtils';
+import { configureLatticeAuth as configure } from './config/Configuration';
 
 // injected by Webpack.DefinePlugin
 declare var __VERSION__ :string;
@@ -22,6 +23,7 @@ export {
   AuthRoute,
   AuthSagas,
   AuthUtils,
+  configure,
   version
 };
 
@@ -33,5 +35,6 @@ export default {
   AuthRoute,
   AuthSagas,
   AuthUtils,
+  configure,
   version
 };

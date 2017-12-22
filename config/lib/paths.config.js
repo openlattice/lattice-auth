@@ -12,9 +12,14 @@ const SOURCE = path.resolve(ROOT, 'src');
 
 const ENTRY = path.resolve(SOURCE, LIB_CONFIG.ENTRY_FILE_NAME);
 
+const STATIC = 'static';
+const STATIC_ASSETS = path.join(STATIC, 'assets');
+const STATIC_ASSETS_IMAGES = path.join(STATIC_ASSETS, 'images');
+
 export default {
   BUILD,
   ENTRY,
   NODE,
-  SOURCE
+  SOURCE,
+  STATIC_ASSETS_IMAGES
 };

@@ -4,13 +4,12 @@
 
 import Auth0Lock from 'auth0-lock';
 
-import OpenLatticeLogo from '../assets/images/logo.png';
+import Logger from '../utils/Logger';
 import * as AuthUtils from './AuthUtils';
+import { getConfig } from '../config/Configuration';
 import { LOGIN_PATH } from './AuthConstants';
 
-// injected by Webpack.DefinePlugin
-declare var __AUTH0_CLIENT_ID__;
-declare var __AUTH0_DOMAIN__;
+const LOG = new Logger('Auth0');
 
 let auth0HashPath :?string;
 
@@ -19,23 +18,28 @@ let auth0HashPath :?string;
  * https://auth0.com/docs/libraries/lock/v10/api
  * https://auth0.com/docs/libraries/lock/v10/customization
  */
-const auth0Lock :Auth0Lock = new Auth0Lock(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, {
-  auth: {
-    autoParseHash: false,
-    params: {
-      scope: 'openid email user_id user_metadata app_metadata nickname roles'
+const auth0Lock :Auth0Lock = new Auth0Lock(
+  getConfig().get('auth0ClientId'),
+  getConfig().get('auth0Domain'),
+  {
+    auth: {
+      autoParseHash: false,
+      params: {
+        scope: 'openid email user_id user_metadata app_metadata nickname roles'
+      },
+      responseType: 'token'
     },
-    responseType: 'token'
-  },
-  closable: false,
-  hashCleanup: false,
-  languageDictionary: {
-    title: 'OpenLattice'
-  },
-  theme: {
-    logo: OpenLatticeLogo
+    closable: false,
+    hashCleanup: false,
+    languageDictionary: {
+      title: getConfig().getIn(['auth0lock', 'title'], '')
+    },
+    redirectUrl: getConfig().getIn(['auth0lock', 'redirectUrl'], ''),
+    theme: {
+      logo: getConfig().getIn(['auth0lock', 'logo'], '')
+    }
   }
-});
+);
 
 export function getAuth0LockInstance() :Auth0Lock {
 
@@ -59,7 +63,7 @@ export function getAuth0LockInstance() :Auth0Lock {
  */
 export function parseHashPath() :?string {
 
-  const { href } = window.location.href;
+  const { href } = window.location;
   const hashIndex :number = href.indexOf('#');
   const hashPath :string = hashIndex === -1 ? '' : href.substring(hashIndex + 1);
 
@@ -92,6 +96,7 @@ export function authenticate() :Promise<*> {
   return new Promise((resolve :Function, reject :Function) => {
 
     auth0Lock.on('authorization_error', (error) => {
+      LOG.error('Auth0 authorization_error', error);
       reject(error);
     });
 
