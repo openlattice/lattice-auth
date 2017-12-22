@@ -7,9 +7,11 @@ import PACKAGE from '../../package.json';
 
 import LIB_CONFIG from '../lib/lib.config.js';
 import LIB_PATHS from '../lib/paths.config.js';
+import { AUTH0_CLIENT_ID, AUTH0_DOMAIN } from '../auth/auth0.config.js';
 
 import {
   TARGET_ENV,
+  ifDev,
   ifMin,
   isDev,
   isProd,
@@ -37,7 +39,7 @@ export default function webpackConfig() {
     use: [{
       loader: 'file-loader',
       options: {
-        name: `${LIB_PATHS.REL.STATIC_ASSETS_IMAGES}/[name].[hash:8].[ext]`
+        name: `${LIB_PATHS.STATIC_ASSETS_IMAGES}/[name].[hash:8].[ext]`
       }
     }]
   };
@@ -52,6 +54,8 @@ export default function webpackConfig() {
   });
 
   const DEFINE_PLUGIN = new Webpack.DefinePlugin({
+    __AUTH0_CLIENT_ID__: JSON.stringify(AUTH0_CLIENT_ID),
+    __AUTH0_DOMAIN__: JSON.stringify(AUTH0_DOMAIN),
     __DEV__: JSON.stringify(isDev),
     __PROD__: JSON.stringify(isProd),
     __TEST__: JSON.stringify(isTest),
@@ -59,6 +63,11 @@ export default function webpackConfig() {
   });
 
   const UGLIFY_PLUGIN = new UglifyJsPlugin();
+
+  // https://github.com/moment/moment/issues/2373
+  // https://stackoverflow.com/a/25426019/196921
+  // https://github.com/facebookincubator/create-react-app/pull/2187
+  const IGNORE_MOMENT_LOCALES = new Webpack.IgnorePlugin(/^\.\/locale$/, /moment$/);
 
   /*
    * base webpack config
@@ -69,6 +78,21 @@ export default function webpackConfig() {
     entry: [
       LIB_PATHS.ENTRY
     ],
+    externals: ifDev(
+      {},
+      {
+        lattice: 'lattice',
+        immutable: 'immutable',
+        // moment: 'moment',
+        react: 'react',
+        'react-dom': 'react-dom',
+        'react-redux': 'react-redux',
+        'react-router': 'react-router',
+        'react-router-redux': 'react-router-redux',
+        redux: 'redux',
+        'redux-saga/effects': 'redux-saga/effects'
+      }
+    ),
     module: {
       rules: [
         BABEL_LOADER,
@@ -85,14 +109,14 @@ export default function webpackConfig() {
         `${LIB_CONFIG.LIB_FILE_NAME}.js`
       )
     },
-
     performance: {
       hints: false // disable performance hints for now
     },
     plugins: [
       DEFINE_PLUGIN,
       BANNER_PLUGIN,
-      ...ifMin([UGLIFY_PLUGIN], [])
+      IGNORE_MOMENT_LOCALES,
+      ...ifMin([UGLIFY_PLUGIN], []),
     ],
     resolve: {
       extensions: ['.js'],

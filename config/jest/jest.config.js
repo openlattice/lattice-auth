@@ -13,8 +13,11 @@ module.exports = {
     '**/src/config/*.js'
   ],
   globals: {
-    __AUTH0_CLIENT_ID__: 'not_set',
-    __AUTH0_DOMAIN__: 'not_set',
+    __AUTH0_CLIENT_ID__: '__MISSING__',
+    __AUTH0_DOMAIN__: '__MISSING__',
+    __DEV__: false,
+    __PROD__: false,
+    __TEST__: true,
     __VERSION__: PACKAGE.version
   },
   moduleNameMapper: {

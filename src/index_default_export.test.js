@@ -41,6 +41,10 @@ describe('lattice-auth default export', () => {
     expect(Object.keys(LatticeAuth.AuthUtils)).toHaveLength(8);
   });
 
+  test('should export configure()', () => {
+    expect(LatticeAuth.configure).toBeInstanceOf(Function);
+  });
+
   test('should export the correct version', () => {
     expect(LatticeAuth.version).toEqual(PACKAGE.version);
   });

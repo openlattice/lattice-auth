@@ -24,12 +24,8 @@
   "main": "build/lattice-auth.js",
   "dependencies": {
     "auth0-lock": "^11.0.0",
-    "jsonwebtoken": "^8.1.0",
     "jwt-decode": "^2.2.0",
-    "lattice": "^0.31.0",
-    "lodash": "^4.17.4",
-    "loglevel": "^1.6.0",
-    "moment": "^2.20.0"
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -57,6 +53,10 @@
     "flow-bin": "^0.61.0",
     "immutable": "4.0.0-rc.9",
     "jest": "^22.0.0",
+    "jsonwebtoken": "^8.1.0",
+    "lattice": "^0.31.3",
+    "loglevel": "^1.6.0",
+    "moment": "^2.20.0",
     "npm-run-all": "^4.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -73,10 +73,12 @@
     "stylelint-processor-styled-components": "^1.0.0",
     "uglifyjs-webpack-plugin": "^1.1.4",
     "webpack": "^3.8.0",
+    "webpack-bundle-analyzer": "^2.9.1",
     "webpack-dev-server": "^2.9.0"
   },
   "peerDependencies": {
     "immutable": "4.0.0-rc.9",
+    "lattice": ">=0.31.0",
     "react": ">=16.2.0",
     "react-dom": ">=16.2.0",
     "react-redux": ">=5.0.6",
