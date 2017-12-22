@@ -25,7 +25,9 @@
   "dependencies": {
     "auth0-lock": "^11.0.0",
     "jwt-decode": "^2.2.0",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "loglevel": "^1.6.0",
+    "moment": "^2.20.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -55,8 +57,6 @@
     "jest": "^22.0.0",
     "jsonwebtoken": "^8.1.0",
     "lattice": "^0.31.3",
-    "loglevel": "^1.6.0",
-    "moment": "^2.20.0",
     "npm-run-all": "^4.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
