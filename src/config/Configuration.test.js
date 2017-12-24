@@ -20,12 +20,12 @@ import {
 declare var __AUTH0_CLIENT_ID__ :string;
 declare var __AUTH0_DOMAIN__ :string;
 
-const MOCK_AUTH_TOKEN :string = 'j.w.t';
 const MOCK_AUTH0_LOCK = Immutable.fromJS({
   logo: '/static/assets/images/logo.abc123.png',
   redirectUrl: 'https://openlattice.com',
   title: 'OpenLattice, Inc.'
 });
+const MOCK_AUTH_TOKEN :string = `${randomId()}.${randomId()}.${randomId()}`;
 
 jest.mock('../auth/Auth0');
 
@@ -84,6 +84,100 @@ describe('Configuration', () => {
         authToken: MOCK_AUTH_TOKEN,
         baseUrl: 'production'
       });
+    });
+
+    describe('auth0ClientId', () => {
+
+      test('should not throw if auth0ClientId is missing', () => {
+        expect(() => {
+          Config.configure({
+            auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+            authToken: MOCK_AUTH_TOKEN,
+            baseUrl: 'localhost'
+          });
+        }).not.toThrow();
+      });
+
+      test('should throw if auth0ClientId is invalid', () => {
+        INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
+          expect(() => {
+            Config.configure({
+              auth0ClientId: invalid,
+              auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+              authToken: MOCK_AUTH_TOKEN,
+              baseUrl: 'localhost'
+            });
+          }).toThrow();
+        });
+      });
+
+      test('should correctly set the default auth0ClientId if it is not specified', () => {
+        Config.configure({
+          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+          authToken: MOCK_AUTH_TOKEN,
+          baseUrl: 'localhost'
+        });
+        expect(Config.getConfig().get('auth0ClientId')).toEqual(__AUTH0_CLIENT_ID__);
+      });
+
+      test('should correctly set auth0ClientId', () => {
+        const mockValue = randomId();
+        Config.configure({
+          auth0ClientId: mockValue,
+          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+          authToken: MOCK_AUTH_TOKEN,
+          baseUrl: 'localhost'
+        });
+        expect(Config.getConfig().get('auth0ClientId')).toEqual(mockValue);
+      });
+
+    });
+
+    describe('auth0Domain', () => {
+
+      test('should not throw if auth0Domain is missing', () => {
+        expect(() => {
+          Config.configure({
+            auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+            authToken: MOCK_AUTH_TOKEN,
+            baseUrl: 'localhost'
+          });
+        }).not.toThrow();
+      });
+
+      test('should throw if auth0Domain is invalid', () => {
+        INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
+          expect(() => {
+            Config.configure({
+              auth0Domain: invalid,
+              auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+              authToken: MOCK_AUTH_TOKEN,
+              baseUrl: 'localhost'
+            });
+          }).toThrow();
+        });
+      });
+
+      test('should correctly set the default auth0Domain if it is not specified', () => {
+        Config.configure({
+          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+          authToken: MOCK_AUTH_TOKEN,
+          baseUrl: 'localhost'
+        });
+        expect(Config.getConfig().get('auth0Domain')).toEqual(__AUTH0_DOMAIN__);
+      });
+
+      test('should correctly set auth0Domain', () => {
+        const mockValue = randomId();
+        Config.configure({
+          auth0Domain: mockValue,
+          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+          authToken: MOCK_AUTH_TOKEN,
+          baseUrl: 'localhost'
+        });
+        expect(Config.getConfig().get('auth0Domain')).toEqual(mockValue);
+      });
+
     });
 
     describe('auth0Lock', () => {
