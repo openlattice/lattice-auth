@@ -5,7 +5,10 @@
 import Immutable from 'immutable';
 
 import * as AuthUtils from './AuthUtils';
-import { AUTH_TOKEN_EXPIRED } from './AuthConstants';
+import {
+  AUTH_TOKEN_EXPIRATION_NOT_SET,
+  AUTH_TOKEN_EXPIRED
+} from './AuthConstants';
 import {
   AUTH_EXPIRED,
   AUTH_FAILURE,
@@ -14,10 +17,10 @@ import {
 } from './AuthActionFactory';
 
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
-  authTokenExpiration: AUTH_TOKEN_EXPIRED
+  authTokenExpiration: AUTH_TOKEN_EXPIRATION_NOT_SET
 });
 
-function authReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
+export default function authReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
 
@@ -33,5 +36,3 @@ function authReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
       return state;
   }
 }
-
-export default authReducer;

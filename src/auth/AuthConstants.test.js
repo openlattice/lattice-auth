@@ -4,6 +4,7 @@
 
 import {
   ADMIN_ROLE,
+  AUTH_TOKEN_EXPIRATION_NOT_SET,
   AUTH_TOKEN_EXPIRED,
   AUTH0_ID_TOKEN,
   AUTH0_USER_INFO,
@@ -15,6 +16,10 @@ describe('AuthActionFactory', () => {
 
   test('ADMIN_ROLE', () => {
     expect(ADMIN_ROLE).toEqual('admin');
+  });
+
+  test('AUTH_TOKEN_EXPIRATION_NOT_SET', () => {
+    expect(AUTH_TOKEN_EXPIRATION_NOT_SET).toEqual(-2);
   });
 
   test('AUTH_TOKEN_EXPIRED', () => {

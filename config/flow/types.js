@@ -10,7 +10,7 @@ declare type LatticeAuthConfig = {
     redirectUrl ? :string;
     title :string;
   };
-  authToken :string;
+  authToken ? :string;
   baseUrl :string;
 };
 

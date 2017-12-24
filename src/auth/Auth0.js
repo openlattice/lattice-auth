@@ -11,39 +11,17 @@ import { LOGIN_PATH } from './AuthConstants';
 
 const LOG = new Logger('Auth0');
 
-let auth0HashPath :?string;
-
 /*
  * https://auth0.com/docs/libraries/lock/v10
  * https://auth0.com/docs/libraries/lock/v10/api
  * https://auth0.com/docs/libraries/lock/v10/customization
  */
-const auth0Lock :Auth0Lock = new Auth0Lock(
-  getConfig().get('auth0ClientId'),
-  getConfig().get('auth0Domain'),
-  {
-    auth: {
-      autoParseHash: false,
-      params: {
-        scope: 'openid email user_id user_metadata app_metadata nickname roles'
-      },
-      responseType: 'token'
-    },
-    closable: false,
-    hashCleanup: false,
-    languageDictionary: {
-      title: getConfig().getIn(['auth0lock', 'title'], '')
-    },
-    redirectUrl: getConfig().getIn(['auth0lock', 'redirectUrl'], ''),
-    theme: {
-      logo: getConfig().getIn(['auth0lock', 'logo'], '')
-    }
-  }
-);
+let auth0Lock :?Auth0Lock;
+let auth0HashPath :?string;
 
 export function getAuth0LockInstance() :Auth0Lock {
 
-  if (!auth0Lock) {
+  if (auth0Lock === null || auth0Lock === undefined) {
     throw new Error('Auth0Lock is not initialized!');
   }
 
@@ -71,7 +49,12 @@ export function parseHashPath() :?string {
   if (hashPath.indexOf('access_token') !== -1 && hashPath.indexOf('id_token') !== -1) {
 
     const urlBeforeHash :string = href.slice(0, hashIndex >= 0 ? hashIndex : 0);
-    window.location.replace(`${urlBeforeHash}#${LOGIN_PATH}`);
+    if (urlBeforeHash.endsWith('/')) {
+      window.location.replace(`${urlBeforeHash}#${LOGIN_PATH}`);
+    }
+    else {
+      window.location.replace(`${urlBeforeHash}/#${LOGIN_PATH}`);
+    }
     return hashPath;
   }
 
@@ -79,6 +62,29 @@ export function parseHashPath() :?string {
 }
 
 export function initialize() :void {
+
+  auth0Lock = new Auth0Lock(
+    getConfig().get('auth0ClientId'),
+    getConfig().get('auth0Domain'),
+    {
+      auth: {
+        autoParseHash: false,
+        params: {
+          scope: 'openid email user_id user_metadata app_metadata nickname roles'
+        },
+        responseType: 'token'
+      },
+      closable: false,
+      hashCleanup: false,
+      languageDictionary: {
+        title: getConfig().getIn(['auth0Lock', 'title'], '')
+      },
+      redirectUrl: getConfig().getIn(['auth0Lock', 'redirectUrl'], ''),
+      theme: {
+        logo: getConfig().getIn(['auth0Lock', 'logo'], '')
+      }
+    }
+  );
 
   auth0HashPath = parseHashPath();
 
@@ -95,21 +101,37 @@ export function authenticate() :Promise<*> {
 
   return new Promise((resolve :Function, reject :Function) => {
 
+    let errorMsg :string = '';
+
+    if (auth0Lock === null || auth0Lock === undefined) {
+      errorMsg = 'Auth0Lock is not initialized!';
+      LOG.error(errorMsg);
+      reject(new Error(errorMsg));
+      return;
+    }
+
     auth0Lock.on('authorization_error', (error) => {
-      LOG.error('Auth0 authorization_error', error);
+      errorMsg = 'Auth0Lock : on("authorization_error")';
+      LOG.error(errorMsg, error);
       reject(error);
     });
 
     auth0Lock.on('unrecoverable_error', (error) => {
+      errorMsg = 'Auth0Lock : on("unrecoverable_error")';
+      LOG.error(errorMsg, error);
       reject(error);
     });
 
     auth0Lock.on('authenticated', (authInfo :Object) => {
       if (!authInfo || !authInfo.accessToken || !authInfo.idToken) {
-        reject(new Error('Auth0Lock onAuthenticated() - missing auth info'));
+        errorMsg = 'Auth0Lock : on("authenticated") - missing auth info';
+        LOG.error(errorMsg);
+        reject(new Error(errorMsg));
       }
       else if (AuthUtils.hasAuthTokenExpired(authInfo.idToken)) {
-        reject(new Error('Auth0Lock onAuthenticated() - id token expired'));
+        errorMsg = 'Auth0Lock : on("authenticated") - auth token expired';
+        LOG.error(errorMsg);
+        reject(new Error(errorMsg));
       }
       else {
         auth0HashPath = null;
@@ -119,10 +141,14 @@ export function authenticate() :Promise<*> {
 
     auth0Lock.on('hash_parsed', (authInfo :Object) => {
       if (!authInfo || !authInfo.accessToken || !authInfo.idToken) {
-        reject(new Error('Auth0Lock onHashParsed() - missing auth info'));
+        errorMsg = 'Auth0Lock : on("hash_parsed") - missing auth info';
+        LOG.error(errorMsg);
+        reject(new Error(errorMsg));
       }
       else if (AuthUtils.hasAuthTokenExpired(authInfo.idToken)) {
-        reject(new Error('Auth0Lock onHashParsed() - id token expired'));
+        errorMsg = 'Auth0Lock : on("hash_parsed") - auth token expired';
+        LOG.error(errorMsg);
+        reject(new Error(errorMsg));
       }
     });
 

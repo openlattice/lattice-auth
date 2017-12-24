@@ -7,7 +7,11 @@ import Immutable from 'immutable';
 import authReducer from './AuthReducer';
 import * as AuthUtils from './AuthUtils';
 import { randomId } from '../utils/Utils';
-import { AUTH_TOKEN_EXPIRED } from './AuthConstants';
+
+import {
+  AUTH_TOKEN_EXPIRATION_NOT_SET,
+  AUTH_TOKEN_EXPIRED
+} from './AuthConstants';
 
 import {
   AUTH_ATTEMPT,
@@ -23,7 +27,7 @@ jest.mock('./AuthUtils', () => ({
 }));
 
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
-  authTokenExpiration: AUTH_TOKEN_EXPIRED
+  authTokenExpiration: AUTH_TOKEN_EXPIRATION_NOT_SET
 });
 
 describe('authReducer', () => {
@@ -33,16 +37,16 @@ describe('authReducer', () => {
   });
 
   test('should return the initial state', () => {
-    const state :Map<*, *> = authReducer(undefined, { type: '__TEST__' });
-    expect(state).toEqual(INITIAL_STATE);
+    const newState :Map<*, *> = authReducer(undefined, { type: '__TEST__' });
+    expect(INITIAL_STATE.equals(newState)).toEqual(true);
   });
 
   describe(`${AUTH_ATTEMPT}`, () => {
 
     test('should return the initial state', () => {
-      const state :Map<*, *> = authReducer(undefined, { type: AUTH_ATTEMPT });
-      expect(state.size).toBe(1);
-      expect(state).toEqual(INITIAL_STATE);
+      const newState :Map<*, *> = authReducer(undefined, { type: AUTH_ATTEMPT });
+      expect(newState.size).toBe(1);
+      expect(INITIAL_STATE.equals(newState)).toEqual(true);
     });
 
   });
@@ -50,9 +54,9 @@ describe('authReducer', () => {
   describe(`${AUTH_EXPIRED}`, () => {
 
     test('should correctly set authTokenExpiration to -1 when the auth token has expired', () => {
-      const state :Map<*, *> = authReducer(undefined, { type: AUTH_EXPIRED });
-      expect(state.size).toBe(1);
-      expect(state.get('authTokenExpiration')).toEqual(AUTH_TOKEN_EXPIRED);
+      const newState :Map<*, *> = authReducer(undefined, { type: AUTH_EXPIRED });
+      expect(newState.size).toBe(1);
+      expect(newState.get('authTokenExpiration')).toEqual(AUTH_TOKEN_EXPIRED);
     });
 
   });
@@ -60,9 +64,9 @@ describe('authReducer', () => {
   describe(`${AUTH_FAILURE}`, () => {
 
     test('should correctly set authTokenExpiration to -1 when authentication fails', () => {
-      const state :Map<*, *> = authReducer(undefined, { type: AUTH_EXPIRED });
-      expect(state.size).toBe(1);
-      expect(state.get('authTokenExpiration')).toEqual(AUTH_TOKEN_EXPIRED);
+      const newState :Map<*, *> = authReducer(undefined, { type: AUTH_EXPIRED });
+      expect(newState.size).toBe(1);
+      expect(newState.get('authTokenExpiration')).toEqual(AUTH_TOKEN_EXPIRED);
     });
 
   });
@@ -76,9 +80,9 @@ describe('authReducer', () => {
 
       AuthUtils.getAuthTokenExpiration.mockImplementationOnce(() => expiration);
 
-      const state :Map<*, *> = authReducer(undefined, { authToken, type: AUTH_SUCCESS });
+      const newState :Map<*, *> = authReducer(undefined, { authToken, type: AUTH_SUCCESS });
       expect(AuthUtils.getAuthTokenExpiration).toHaveBeenCalledWith(authToken);
-      expect(state.get('authTokenExpiration')).toEqual(expiration);
+      expect(newState.get('authTokenExpiration')).toEqual(expiration);
     });
 
   });
@@ -86,9 +90,8 @@ describe('authReducer', () => {
   describe(`${LOGIN}`, () => {
 
     test('should return the initial state', () => {
-      const state :Map<*, *> = authReducer(undefined, { type: LOGIN });
-      expect(state.size).toBe(1);
-      expect(state).toEqual(INITIAL_STATE);
+      const newState :Map<*, *> = authReducer(undefined, { type: LOGIN });
+      expect(INITIAL_STATE.equals(newState)).toEqual(true);
     });
 
   });
@@ -97,17 +100,12 @@ describe('authReducer', () => {
 
     test('should correctly set authTokenExpiration on logout', () => {
 
-      const initialState :Map<*, *> = Immutable.fromJS({
-        authTokenExpiration: 12345
-      });
-      const state :Map<*, *> = authReducer(initialState, { type: LOGOUT });
+      const initialState :Map<*, *> = Immutable.fromJS({ authTokenExpiration: 12345 });
+      const expectedState :Map<*, *> = Immutable.fromJS({ authTokenExpiration: AUTH_TOKEN_EXPIRED });
+      const newState :Map<*, *> = authReducer(initialState, { type: LOGOUT });
 
-      expect(state.size).toBe(1);
-      expect(state).toEqual(
-        Immutable.fromJS({
-          authTokenExpiration: AUTH_TOKEN_EXPIRED
-        })
-      );
+      expect(newState.size).toBe(1);
+      expect(expectedState.equals(newState)).toEqual(true);
     });
 
   });

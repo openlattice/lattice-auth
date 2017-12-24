@@ -6,12 +6,12 @@ import Immutable from 'immutable';
 import Lattice from 'lattice';
 
 import Logger from '../utils/Logger';
+import * as Auth0 from '../auth/Auth0';
 import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
 
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__ :string;
 declare var __AUTH0_DOMAIN__ :string;
-declare var __PROD__ :boolean;
 
 const LOG = new Logger('Configuration');
 
@@ -33,10 +33,36 @@ let configuration :Map<*, *> = Immutable.fromJS({
   baseUrl: ''
 });
 
+function setAuth0ClientId(config :LatticeAuthConfig) :void {
 
-function configureLatticeJs(authToken :string, baseUrl :string) {
+  // auth0ClientId is optional, so null and undefined are allowed
+  if (config.auth0ClientId === null || config.auth0ClientId === undefined) {
+    LOG.warn(`auth0ClientId has not been configured, defaulting to ${configuration.get('auth0ClientId')}`);
+  }
+  else if (isNonEmptyString(config.auth0ClientId)) {
+    configuration = configuration.set('auth0ClientId', config.auth0ClientId);
+  }
+  else {
+    const errorMsg = 'invalid parameter - auth0ClientId must be a non-empty string';
+    LOG.error(errorMsg, config.auth0ClientId);
+    throw new Error(errorMsg);
+  }
+}
 
-  Lattice.configure({ authToken, baseUrl });
+function setAuth0Domain(config :LatticeAuthConfig) :void {
+
+  // auth0Domain is optional, so null and undefined are allowed
+  if (config.auth0Domain === null || config.auth0Domain === undefined) {
+    LOG.warn(`auth0Domain has not been configured, defaulting to ${configuration.get('auth0Domain')}`);
+  }
+  else if (isNonEmptyString(config.auth0Domain)) {
+    configuration = configuration.set('auth0Domain', config.auth0Domain);
+  }
+  else {
+    const errorMsg = 'invalid parameter - auth0Domain must be a non-empty string';
+    LOG.error(errorMsg, config.auth0Domain);
+    throw new Error(errorMsg);
+  }
 }
 
 function setAuth0Lock(config :LatticeAuthConfig) :void {
@@ -75,8 +101,13 @@ function setAuth0Lock(config :LatticeAuthConfig) :void {
 
 function setAuthToken(config :LatticeAuthConfig) :void {
 
-  // TODO: add at least some minimal validation checks against the authToken string
-  if (isNonEmptyString(config.authToken)) {
+  // authToken is optional, so null and undefined are allowed
+  if (config.authToken === null || config.authToken === undefined) {
+    LOG.warn('authToken has not been configured, expect errors');
+    configuration = configuration.delete('authToken');
+  }
+  else if (isNonEmptyString(config.authToken)) {
+    // TODO: add at least some minimal validation checks against the authToken string
     configuration = configuration.set('authToken', `Bearer ${config.authToken}`);
   }
   else {
@@ -115,8 +146,8 @@ function setBaseUrl(config :LatticeAuthConfig) :void {
   }
 }
 
-// TODO: should we make __AUTH0_CLIENT_ID__ && __AUTH0_DOMAIN__ configurable?
-function configureLatticeAuth(config :LatticeAuthConfig) :void {
+// TODO: should __AUTH0_CLIENT_ID__ && __AUTH0_DOMAIN__ be configurable?
+function configure(config :LatticeAuthConfig) :void {
 
   if (!isNonEmptyObject(config)) {
     const errorMsg = 'invalid parameter - config must be a non-empty configuration object';
@@ -124,11 +155,17 @@ function configureLatticeAuth(config :LatticeAuthConfig) :void {
     throw new Error(errorMsg);
   }
 
+  setAuth0ClientId(config);
+  setAuth0Domain(config);
   setAuth0Lock(config);
   setAuthToken(config);
   setBaseUrl(config);
 
-  configureLatticeJs(config.authToken, config.baseUrl);
+  Auth0.initialize();
+  Lattice.configure({
+    authToken: config.authToken,
+    baseUrl: config.baseUrl
+  });
 }
 
 function getConfig() :Map<*, *> {
@@ -137,7 +174,6 @@ function getConfig() :Map<*, *> {
 }
 
 export {
-  configureLatticeAuth,
-  configureLatticeJs,
+  configure,
   getConfig
 };

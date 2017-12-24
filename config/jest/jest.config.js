@@ -15,9 +15,10 @@ module.exports = {
   globals: {
     __AUTH0_CLIENT_ID__: '__MISSING__',
     __AUTH0_DOMAIN__: '__MISSING__',
-    __DEV__: false,
-    __PROD__: false,
-    __TEST__: true,
+    __ENV_DEV__: false,
+    __ENV_PROD__: false,
+    __ENV_TEST__: true,
+    __PACKAGE__: PACKAGE.name,
     __VERSION__: PACKAGE.version
   },
   moduleNameMapper: {
