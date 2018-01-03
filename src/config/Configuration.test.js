@@ -16,7 +16,7 @@ import {
   INVALID_PARAMS_NOT_DEFINED_ALLOWED
 } from '../utils/testing/Invalid';
 
-// injected by Webpack.DefinePlugin
+// injected by Jest
 declare var __AUTH0_CLIENT_ID__ :string;
 declare var __AUTH0_DOMAIN__ :string;
 
