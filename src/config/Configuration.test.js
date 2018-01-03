@@ -2,8 +2,6 @@
  * @flow
  */
 
-/* eslint-disable global-require */
-
 import Immutable from 'immutable';
 import Lattice from 'lattice';
 
