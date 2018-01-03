@@ -18,6 +18,7 @@ import {
 } from './AuthActionFactory';
 
 import {
+  AUTH_TOKEN_EXPIRATION_NOT_SET,
   AUTH_TOKEN_EXPIRED,
   LOGIN_PATH,
   ROOT_PATH
@@ -103,7 +104,12 @@ class AuthRoute extends React.Component<Props> {
 
 function mapStateToProps(state :Map<*, *>) :Object {
 
-  let authTokenExpiration :number = state.getIn(['auth', 'authTokenExpiration'], AUTH_TOKEN_EXPIRED);
+  let authTokenExpiration :number = state.getIn(['auth', 'authTokenExpiration']);
+
+  if (authTokenExpiration === AUTH_TOKEN_EXPIRATION_NOT_SET) {
+    authTokenExpiration = AuthUtils.getAuthTokenExpiration();
+  }
+
   if (AuthUtils.hasAuthTokenExpired(authTokenExpiration)) {
     authTokenExpiration = AUTH_TOKEN_EXPIRED;
   }

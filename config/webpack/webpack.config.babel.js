@@ -56,9 +56,10 @@ export default function webpackConfig() {
   const DEFINE_PLUGIN = new Webpack.DefinePlugin({
     __AUTH0_CLIENT_ID__: JSON.stringify(AUTH0_CLIENT_ID),
     __AUTH0_DOMAIN__: JSON.stringify(AUTH0_DOMAIN),
-    __DEV__: JSON.stringify(isDev),
-    __PROD__: JSON.stringify(isProd),
-    __TEST__: JSON.stringify(isTest),
+    __ENV_DEV__: JSON.stringify(isDev),
+    __ENV_PROD__: JSON.stringify(isProd),
+    __ENV_TEST__: JSON.stringify(isTest),
+    __PACKAGE__: JSON.stringify(PACKAGE.name),
     __VERSION__: JSON.stringify(`v${PACKAGE.version}`)
   });
 

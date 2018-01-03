@@ -2,12 +2,13 @@
  * @flow
  */
 
+import Lattice from 'lattice';
 import { push } from 'react-router-redux';
 import { call, put, take } from 'redux-saga/effects';
 
 import * as Auth0 from './Auth0';
 import * as AuthUtils from './AuthUtils';
-import { configureLatticeJs } from '../config/Configuration';
+import { getConfig } from '../config/Configuration';
 import { LOGIN_PATH, ROOT_PATH } from './AuthConstants';
 
 import {
@@ -38,7 +39,7 @@ export function* watchAuthAttempt() :Generator<*, *, *> {
        * next pass through its lifecycle.
        */
       yield call(AuthUtils.storeAuthInfo, authInfo);
-      yield call(configureLatticeJs, authInfo.idToken);
+      yield call(Lattice.configure, { authToken: authInfo.idToken, baseUrl: getConfig().get('baseUrl') });
       yield put(authSuccess());
     }
     catch (error) {
@@ -58,15 +59,15 @@ export function* watchAuthSuccess() :Generator<*, *, *> {
      *
      *   1. the user is not authenticated, which means the Auth0 id token either is not stored locally or is expired.
      *      in this scenario, AUTH_ATTEMPT *will* be dispatched, which means AuthUtils.storeAuthInfo() and
-     *      configureLatticeJs() will have already been invoked, so we don't need to do anything else here.
+     *      Lattice.configure() will have already been invoked, so we don't need to do anything else here.
      *
      *   2. the user is already authenticated, which means the Auth0 id token is already stored locally, which means
      *      we don't need to dispatch AUTH_ATTEMPT, which means AuthRoute is able to pass along the Auth0 id token
      *      via componentWillMount(). in this scenario, AUTH_ATTEMPT *will not* be dispatched, but we still need
-     *      to invoke configureLatticeJs().
+     *      to invoke Lattice.configure().
      */
     if (authToken) {
-      yield call(configureLatticeJs, authToken);
+      yield call(Lattice.configure, { authToken, baseUrl: getConfig().get('baseUrl') });
     }
   }
 }

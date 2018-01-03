@@ -90,6 +90,7 @@
   },
   "scripts": {
     "build": "better-npm-run build",
+    "build:dev": "better-npm-run build:dev",
     "build:min": "better-npm-run build:min",
     "clean": "rimraf build/*",
     "flow": "flow check",
@@ -109,6 +110,14 @@
       "command": "webpack --config config/webpack/webpack.config.babel.js",
       "env": {
         "BUILD": "production",
+        "MINIMIZE": "false",
+        "TARGET_ENV": "web"
+      }
+    },
+    "build:dev": {
+      "command": "webpack --config config/webpack/webpack.config.babel.js",
+      "env": {
+        "BUILD": "development",
         "MINIMIZE": "false",
         "TARGET_ENV": "web"
       }

@@ -2,58 +2,57 @@
  * @flow
  */
 
-/* eslint-disable global-require */
-
 import Immutable from 'immutable';
-// import Lattice from 'lattice';
+import Lattice from 'lattice';
 
-import { INVALID_PARAMS, INVALID_PARAMS_NOT_DEFINED_ALLOWED } from '../utils/testing/Invalid';
+import * as Auth0 from '../auth/Auth0';
+import * as Config from './Configuration';
 import { randomId } from '../utils/Utils';
+import {
+  INVALID_PARAMS,
+  INVALID_PARAMS_EMPTY_STRING_ALLOWED,
+  INVALID_PARAMS_NOT_DEFINED_ALLOWED
+} from '../utils/testing/Invalid';
 
-// injected by Webpack.DefinePlugin
+// injected by Jest
 declare var __AUTH0_CLIENT_ID__ :string;
 declare var __AUTH0_DOMAIN__ :string;
 
-let Config = null;
-let Lattice = null;
-
-const MOCK_AUTH_TOKEN :string = 'j.w.t';
 const MOCK_AUTH0_LOCK = Immutable.fromJS({
   logo: '/static/assets/images/logo.abc123.png',
   redirectUrl: 'https://openlattice.com',
   title: 'OpenLattice, Inc.'
 });
+const MOCK_AUTH_TOKEN :string = `${randomId()}.${randomId()}.${randomId()}`;
 
-jest.mock('lattice', () => ({
-  configure: jest.fn()
-}));
+jest.mock('../auth/Auth0');
 
 describe('Configuration', () => {
 
   beforeEach(() => {
     jest.resetModules();
-    Lattice = require('lattice');
-    Config = require('./Configuration');
+    Auth0.initialize.mockClear();
+    Lattice.configure.mockClear();
   });
 
-  describe('configureLatticeAuth()', () => {
+  describe('configure()', () => {
 
     test('should throw if configuration object is missing', () => {
       expect(() => {
-        Config.configureLatticeAuth();
+        Config.configure();
       }).toThrow();
     });
 
     test('should throw if configuration object is invalid', () => {
       INVALID_PARAMS.forEach((invalid :any) => {
         expect(() => {
-          Config.configureLatticeAuth(invalid);
+          Config.configure(invalid);
         }).toThrow();
       });
     });
 
     test('should correctly set the configuration object', () => {
-      Config.configureLatticeAuth({
+      Config.configure({
         auth0Lock: MOCK_AUTH0_LOCK.toJS(),
         authToken: MOCK_AUTH_TOKEN,
         baseUrl: 'production'
@@ -66,16 +65,18 @@ describe('Configuration', () => {
         baseUrl: 'https://api.openlattice.com'
       });
       expect(Config.getConfig().equals(expectedConfig)).toEqual(true);
+      expect(Auth0.initialize).toHaveBeenCalledTimes(1);
     });
 
     test('should correctly configure lattice-js', () => {
 
-      Config.configureLatticeAuth({
+      Config.configure({
         auth0Lock: MOCK_AUTH0_LOCK.toJS(),
         authToken: MOCK_AUTH_TOKEN,
         baseUrl: 'production'
       });
 
+      expect(Auth0.initialize).toHaveBeenCalledTimes(1);
       expect(Lattice.configure).toHaveBeenCalledTimes(1);
       expect(Lattice.configure).toHaveBeenCalledWith({
         authToken: MOCK_AUTH_TOKEN,
@@ -83,11 +84,105 @@ describe('Configuration', () => {
       });
     });
 
+    describe('auth0ClientId', () => {
+
+      test('should not throw if auth0ClientId is missing', () => {
+        expect(() => {
+          Config.configure({
+            auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+            authToken: MOCK_AUTH_TOKEN,
+            baseUrl: 'localhost'
+          });
+        }).not.toThrow();
+      });
+
+      test('should throw if auth0ClientId is invalid', () => {
+        INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
+          expect(() => {
+            Config.configure({
+              auth0ClientId: invalid,
+              auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+              authToken: MOCK_AUTH_TOKEN,
+              baseUrl: 'localhost'
+            });
+          }).toThrow();
+        });
+      });
+
+      test('should correctly set the default auth0ClientId if it is not specified', () => {
+        Config.configure({
+          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+          authToken: MOCK_AUTH_TOKEN,
+          baseUrl: 'localhost'
+        });
+        expect(Config.getConfig().get('auth0ClientId')).toEqual(__AUTH0_CLIENT_ID__);
+      });
+
+      test('should correctly set auth0ClientId', () => {
+        const mockValue = randomId();
+        Config.configure({
+          auth0ClientId: mockValue,
+          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+          authToken: MOCK_AUTH_TOKEN,
+          baseUrl: 'localhost'
+        });
+        expect(Config.getConfig().get('auth0ClientId')).toEqual(mockValue);
+      });
+
+    });
+
+    describe('auth0Domain', () => {
+
+      test('should not throw if auth0Domain is missing', () => {
+        expect(() => {
+          Config.configure({
+            auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+            authToken: MOCK_AUTH_TOKEN,
+            baseUrl: 'localhost'
+          });
+        }).not.toThrow();
+      });
+
+      test('should throw if auth0Domain is invalid', () => {
+        INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
+          expect(() => {
+            Config.configure({
+              auth0Domain: invalid,
+              auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+              authToken: MOCK_AUTH_TOKEN,
+              baseUrl: 'localhost'
+            });
+          }).toThrow();
+        });
+      });
+
+      test('should correctly set the default auth0Domain if it is not specified', () => {
+        Config.configure({
+          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+          authToken: MOCK_AUTH_TOKEN,
+          baseUrl: 'localhost'
+        });
+        expect(Config.getConfig().get('auth0Domain')).toEqual(__AUTH0_DOMAIN__);
+      });
+
+      test('should correctly set auth0Domain', () => {
+        const mockValue = randomId();
+        Config.configure({
+          auth0Domain: mockValue,
+          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+          authToken: MOCK_AUTH_TOKEN,
+          baseUrl: 'localhost'
+        });
+        expect(Config.getConfig().get('auth0Domain')).toEqual(mockValue);
+      });
+
+    });
+
     describe('auth0Lock', () => {
 
       test('should throw if auth0Lock is missing', () => {
         expect(() => {
-          Config.configureLatticeAuth({
+          Config.configure({
             authToken: MOCK_AUTH_TOKEN,
             baseUrl: 'localhost'
           });
@@ -97,7 +192,7 @@ describe('Configuration', () => {
       test('should throw if auth0Lock is invalid', () => {
         INVALID_PARAMS.forEach((invalid :any) => {
           expect(() => {
-            Config.configureLatticeAuth({
+            Config.configure({
               auth0Lock: invalid,
               authToken: MOCK_AUTH_TOKEN,
               baseUrl: 'localhost'
@@ -110,7 +205,7 @@ describe('Configuration', () => {
 
         test('should throw if auth0Lock.logo is missing', () => {
           expect(() => {
-            Config.configureLatticeAuth({
+            Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.delete('logo').toJS(),
               authToken: MOCK_AUTH_TOKEN,
               baseUrl: 'localhost'
@@ -121,7 +216,7 @@ describe('Configuration', () => {
         test('should throw if auth0Lock.logo is invalid', () => {
           INVALID_PARAMS.forEach((invalid :any) => {
             expect(() => {
-              Config.configureLatticeAuth({
+              Config.configure({
                 auth0Lock: MOCK_AUTH0_LOCK.set('logo', invalid).toJS(),
                 authToken: MOCK_AUTH_TOKEN,
                 baseUrl: 'localhost'
@@ -132,7 +227,7 @@ describe('Configuration', () => {
 
         test('should correctly set auth0Lock.logo', () => {
           const mockValue :string = randomId();
-          Config.configureLatticeAuth({
+          Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.set('logo', mockValue).toJS(),
             authToken: MOCK_AUTH_TOKEN,
             baseUrl: 'localhost'
@@ -146,7 +241,7 @@ describe('Configuration', () => {
 
         test('should not throw if auth0Lock.redirectUrl is missing', () => {
           expect(() => {
-            Config.configureLatticeAuth({
+            Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.delete('redirectUrl').toJS(),
               authToken: MOCK_AUTH_TOKEN,
               baseUrl: 'localhost'
@@ -156,7 +251,7 @@ describe('Configuration', () => {
 
         test('should not throw if auth0Lock.redirectUrl is null', () => {
           expect(() => {
-            Config.configureLatticeAuth({
+            Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.set('redirectUrl', null).toJS(),
               authToken: MOCK_AUTH_TOKEN,
               baseUrl: 'localhost'
@@ -166,7 +261,7 @@ describe('Configuration', () => {
 
         test('should not throw if auth0Lock.redirectUrl is undefined', () => {
           expect(() => {
-            Config.configureLatticeAuth({
+            Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.set('redirectUrl', undefined).toJS(),
               authToken: MOCK_AUTH_TOKEN,
               baseUrl: 'localhost'
@@ -177,7 +272,7 @@ describe('Configuration', () => {
         test('should throw if auth0Lock.redirectUrl is invalid', () => {
           INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
             expect(() => {
-              Config.configureLatticeAuth({
+              Config.configure({
                 auth0Lock: MOCK_AUTH0_LOCK.set('redirectUrl', invalid).toJS(),
                 authToken: MOCK_AUTH_TOKEN,
                 baseUrl: 'localhost'
@@ -187,7 +282,7 @@ describe('Configuration', () => {
         });
 
         test('should correctly set auth0Lock.redirectUrl to the empty string', () => {
-          Config.configureLatticeAuth({
+          Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.delete('redirectUrl').toJS(),
             authToken: MOCK_AUTH_TOKEN,
             baseUrl: 'localhost'
@@ -197,7 +292,7 @@ describe('Configuration', () => {
 
         test('should correctly set auth0Lock.redirectUrl', () => {
           const mockValue :string = randomId();
-          Config.configureLatticeAuth({
+          Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.set('redirectUrl', mockValue).toJS(),
             authToken: MOCK_AUTH_TOKEN,
             baseUrl: 'localhost'
@@ -211,7 +306,7 @@ describe('Configuration', () => {
 
         test('should throw if auth0Lock.title is missing', () => {
           expect(() => {
-            Config.configureLatticeAuth({
+            Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.delete('title').toJS(),
               authToken: MOCK_AUTH_TOKEN,
               baseUrl: 'localhost'
@@ -222,7 +317,7 @@ describe('Configuration', () => {
         test('should throw if auth0Lock.title is invalid', () => {
           INVALID_PARAMS.forEach((invalid :any) => {
             expect(() => {
-              Config.configureLatticeAuth({
+              Config.configure({
                 auth0Lock: MOCK_AUTH0_LOCK.set('title', invalid).toJS(),
                 authToken: MOCK_AUTH_TOKEN,
                 baseUrl: 'localhost'
@@ -233,7 +328,7 @@ describe('Configuration', () => {
 
         test('should correctly set auth0Lock.title', () => {
           const mockValue :string = randomId();
-          Config.configureLatticeAuth({
+          Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.set('title', mockValue).toJS(),
             authToken: MOCK_AUTH_TOKEN,
             baseUrl: 'localhost'
@@ -247,19 +342,19 @@ describe('Configuration', () => {
 
     describe('authToken', () => {
 
-      test('should throw if authToken is missing', () => {
+      test('should not throw if authToken is missing', () => {
         expect(() => {
-          Config.configureLatticeAuth({
+          Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.toJS(),
             baseUrl: 'localhost'
           });
-        }).toThrow();
+        }).not.toThrow();
       });
 
       test('should throw if authToken is invalid', () => {
-        INVALID_PARAMS.forEach((invalid :any) => {
+        INVALID_PARAMS_EMPTY_STRING_ALLOWED.forEach((invalid :any) => {
           expect(() => {
-            Config.configureLatticeAuth({
+            Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.toJS(),
               authToken: invalid,
               baseUrl: 'localhost'
@@ -269,7 +364,7 @@ describe('Configuration', () => {
       });
 
       test('should correctly set authToken', () => {
-        Config.configureLatticeAuth({
+        Config.configure({
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
           authToken: MOCK_AUTH_TOKEN,
           baseUrl: 'localhost'
@@ -283,7 +378,7 @@ describe('Configuration', () => {
 
       test('should throw if baseUrl is missing', () => {
         expect(() => {
-          Config.configureLatticeAuth({
+          Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.toJS(),
             authToken: MOCK_AUTH_TOKEN
           });
@@ -293,7 +388,7 @@ describe('Configuration', () => {
       test('should throw if baseUrl is invalid', () => {
         INVALID_PARAMS.forEach((invalid :any) => {
           expect(() => {
-            Config.configureLatticeAuth({
+            Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.toJS(),
               authToken: MOCK_AUTH_TOKEN,
               baseUrl: invalid
@@ -304,7 +399,7 @@ describe('Configuration', () => {
 
       test('should throw if baseUrl is not https', () => {
         expect(() => {
-          Config.configureLatticeAuth({
+          Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.toJS(),
             authToken: MOCK_AUTH_TOKEN,
             baseUrl: 'http://api.openlattice.com'
@@ -315,7 +410,7 @@ describe('Configuration', () => {
       test('should throw if baseUrl does not match known URLs', () => {
 
         expect(() => {
-          Config.configureLatticeAuth({
+          Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.toJS(),
             authToken: MOCK_AUTH_TOKEN,
             baseUrl: 'justbeamit.com'
@@ -323,7 +418,7 @@ describe('Configuration', () => {
         }).toThrow();
 
         expect(() => {
-          Config.configureLatticeAuth({
+          Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.toJS(),
             authToken: MOCK_AUTH_TOKEN,
             baseUrl: 'https://justbeamit.com'
@@ -333,14 +428,14 @@ describe('Configuration', () => {
 
       test('should correctly set baseUrl when a valid URL is passed in', () => {
 
-        Config.configureLatticeAuth({
+        Config.configure({
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
           authToken: MOCK_AUTH_TOKEN,
           baseUrl: 'https://api.staging.openlattice.com'
         });
         expect(Config.getConfig().get('baseUrl')).toEqual('https://api.staging.openlattice.com');
 
-        Config.configureLatticeAuth({
+        Config.configure({
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
           authToken: MOCK_AUTH_TOKEN,
           baseUrl: 'https://api.openlattice.com'
@@ -349,7 +444,7 @@ describe('Configuration', () => {
       });
 
       test('should correctly set baseUrl to "http://localhost:8080"', () => {
-        Config.configureLatticeAuth({
+        Config.configure({
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
           authToken: MOCK_AUTH_TOKEN,
           baseUrl: 'localhost'
@@ -358,7 +453,7 @@ describe('Configuration', () => {
       });
 
       test('should correctly set baseUrl to "https://api.staging.openlattice.com"', () => {
-        Config.configureLatticeAuth({
+        Config.configure({
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
           authToken: MOCK_AUTH_TOKEN,
           baseUrl: 'staging'
@@ -367,7 +462,7 @@ describe('Configuration', () => {
       });
 
       test('should correctly set baseUrl to "https://api.openlattice.com"', () => {
-        Config.configureLatticeAuth({
+        Config.configure({
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
           authToken: MOCK_AUTH_TOKEN,
           baseUrl: 'production'
@@ -378,10 +473,6 @@ describe('Configuration', () => {
     });
 
   });
-
-  // describe('configureLatticeJs()', () => {
-  //
-  // });
 
   describe('getConfig()', () => {
 
