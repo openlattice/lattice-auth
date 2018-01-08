@@ -2,6 +2,7 @@
   "name": "lattice-auth",
   "version": "0.2.0",
   "homepage": "https://github.com/openlattice/lattice-auth",
+  "description": "JavaScript helpers for OpenLattice auth",
   "author": {
     "name": "OpenLattice, Inc.",
     "email": "support@openlattice.com",
