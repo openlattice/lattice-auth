@@ -1,18 +1,18 @@
 {
+  "parser": "babel-eslint",
   "extends": [
     "airbnb",
     "plugin:flowtype/recommended"
   ],
-  "parser": "babel-eslint",
-  "env": {
-    "browser": true,
-    "jest": true
-  },
   "plugins": [
     "flowtype",
     "jest",
     "react"
   ],
+  "env": {
+    "browser": true,
+    "jest": true
+  },
   "settings": {
     "flowtype": {
       "onlyFilesWithFlowAnnotation": true
