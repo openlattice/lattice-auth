@@ -80,7 +80,8 @@
       "error",
       {
         "devDependencies": [
-          "config/**"
+          "config/**",
+          "**/*.test.js"
         ]
       }
     ],
