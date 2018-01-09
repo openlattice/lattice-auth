@@ -4,6 +4,7 @@
 
 import AuthReducer from './auth/AuthReducer';
 import AuthRoute from './auth/AuthRoute';
+import LoginContainer from './auth/LoginContainer';
 import * as Auth0 from './auth/Auth0';
 import * as AuthActionFactory from './auth/AuthActionFactory';
 import * as AuthConstants from './auth/AuthConstants';
@@ -23,6 +24,7 @@ export {
   AuthRoute,
   AuthSagas,
   AuthUtils,
+  LoginContainer,
   configure,
   version
 };
@@ -35,6 +37,7 @@ export default {
   AuthRoute,
   AuthSagas,
   AuthUtils,
+  LoginContainer,
   configure,
   version
 };

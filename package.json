@@ -2,6 +2,7 @@
   "name": "lattice-auth",
   "version": "0.2.0",
   "homepage": "https://github.com/openlattice/lattice-auth",
+  "description": "JavaScript helpers for OpenLattice auth",
   "author": {
     "name": "OpenLattice, Inc.",
     "email": "support@openlattice.com",
@@ -23,6 +24,11 @@
   "license": "Apache-2.0",
   "main": "build/lattice-auth.js",
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.1",
+    "@fortawesome/fontawesome-pro-light": "^5.0.3",
+    "@fortawesome/fontawesome-pro-regular": "^5.0.3",
+    "@fortawesome/fontawesome-pro-solid": "^5.0.3",
+    "@fortawesome/react-fontawesome": "0.0.17",
     "auth0-lock": "^10.24.0",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.4",
@@ -42,7 +48,7 @@
     "better-npm-run": "0.1.0",
     "enzyme": "^3.2.0",
     "enzyme-adapter-react-16": "^1.1.0",
-    "eslint": "^4.13.0",
+    "eslint": "^4.15.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-import-resolver-webpack": "^0.8.3",
     "eslint-loader": "^1.9.0",
@@ -52,7 +58,7 @@
     "eslint-plugin-jsx-a11y": "^6.0.0",
     "eslint-plugin-react": "^7.4.0",
     "file-loader": "^1.1.5",
-    "flow-bin": "^0.62.0",
+    "flow-bin": "^0.63.0",
     "immutable": "4.0.0-rc.9",
     "jest": "^22.0.0",
     "jsonwebtoken": "^8.1.0",
@@ -67,6 +73,7 @@
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
     "rimraf": "^2.6.0",
+    "styled-components": "^2.4.0",
     "stylelint": "^8.2.0",
     "stylelint-config-standard": "^18.0.0",
     "stylelint-config-styled-components": "^0.1.1",
@@ -86,7 +93,8 @@
     "react-router-dom": ">=4.2.2",
     "react-router-redux": "5.0.0-alpha.9",
     "redux": ">=3.7.2",
-    "redux-saga": ">=0.16.0"
+    "redux-saga": ">=0.16.0",
+    "styled-components": ">=2.4.0"
   },
   "scripts": {
     "build": "better-npm-run build",
