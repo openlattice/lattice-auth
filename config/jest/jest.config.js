@@ -1,17 +1,20 @@
 const PACKAGE = require('../../package.json');
 
 module.exports = {
-  coveragePathIgnorePatterns: [
-    '<rootDir>/src/utils/testing/Invalid.js',
-    '<rootDir>/src/utils/testing/MockLocalStorage.js'
-  ],
-  coverageDirectory: '<rootDir>/coverage',
   collectCoverage: true,
   collectCoverageFrom: [
     '**/src/index.js',
     '**/src/auth/*.js',
     '**/src/config/*.js'
   ],
+  coveragePathIgnorePatterns: [
+    '<rootDir>/build/',
+    '<rootDir>/config/',
+    '<rootDir>/flow-typed/',
+    '<rootDir>/src/utils/testing/Invalid.js',
+    '<rootDir>/src/utils/testing/MockLocalStorage.js'
+  ],
+  coverageDirectory: '<rootDir>/coverage',
   globals: {
     __AUTH0_CLIENT_ID__: '__MISSING__',
     __AUTH0_DOMAIN__: '__MISSING__',

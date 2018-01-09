@@ -34,18 +34,27 @@ type Props = {
     authExpired :Function;
     authSuccess :Function;
   };
+  attemptAuth :boolean;
   authTokenExpiration :number;
   component :Function;
+  loginComponent :Function;
+  loginPath :string;
 };
 
 class AuthRoute extends React.Component<Props> {
+
+  static defaultProps = {
+    attemptAuth: true,
+    loginComponent: null,
+    loginPath: LOGIN_PATH
+  }
 
   componentWillMount() {
 
     if (!AuthUtils.hasAuthTokenExpired(this.props.authTokenExpiration)) {
       this.props.actions.authSuccess(AuthUtils.getAuthToken());
     }
-    else {
+    else if (this.props.attemptAuth) {
       this.props.actions.authAttempt();
     }
   }
@@ -65,7 +74,9 @@ class AuthRoute extends React.Component<Props> {
       if (nextProps.authTokenExpiration !== AUTH_TOKEN_EXPIRED) {
         this.props.actions.authExpired();
       }
-      Auth0.getAuth0LockInstance().show();
+      if (this.props.attemptAuth) {
+        Auth0.getAuth0LockInstance().show();
+      }
     }
     else {
       Auth0.getAuth0LockInstance().hide();
@@ -76,6 +87,8 @@ class AuthRoute extends React.Component<Props> {
 
     const {
       component: WrappedComponent,
+      loginComponent,
+      loginPath,
       ...wrappedComponentProps
     } = this.props;
 
@@ -92,11 +105,10 @@ class AuthRoute extends React.Component<Props> {
       );
     }
 
-    // TODO: perhpas render something at "/login" instead of an empty page
     return (
       <Switch>
-        <Route exact strict path={LOGIN_PATH} />
-        <Redirect to={LOGIN_PATH} />
+        <Route exact strict path={loginPath} component={loginComponent} />
+        <Redirect to={loginPath} />
       </Switch>
     );
   }
