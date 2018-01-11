@@ -11,3 +11,4 @@ export const AUTH_TOKEN_EXPIRED :number = -1;
 
 export const ROOT_PATH :'/' = '/';
 export const LOGIN_PATH :'/login' = '/login';
+export const LOGIN_URL :string = `${window.location.origin}${LOGIN_PATH}/`;

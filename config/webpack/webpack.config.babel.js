@@ -2,6 +2,7 @@
 
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import Webpack from 'webpack';
+// import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 import PACKAGE from '../../package.json';
 
@@ -117,7 +118,7 @@ export default function webpackConfig() {
       DEFINE_PLUGIN,
       BANNER_PLUGIN,
       IGNORE_MOMENT_LOCALES,
-      ...ifMin([UGLIFY_PLUGIN], []),
+      ...ifMin([UGLIFY_PLUGIN], [])
     ],
     resolve: {
       extensions: ['.js'],

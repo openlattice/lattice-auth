@@ -4,6 +4,7 @@
 
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
+import qs from 'qs';
 
 import MockLocalStorage from '../utils/testing/MockLocalStorage';
 import * as AuthUtils from './AuthUtils';
@@ -21,6 +22,9 @@ import {
   AUTH0_USER_INFO,
   AUTH_TOKEN_EXPIRED
 } from './AuthConstants';
+
+const MOCK_URL :string = 'https://openlattice.com';
+const MOCK_LOGIN_URL :string = `${MOCK_URL}/login/`;
 
 describe('AuthUtils', () => {
 
@@ -309,5 +313,8 @@ describe('AuthUtils', () => {
     });
 
   });
+
+  // TODO: blocked by JSDOM, can't figure out how to mock window.location properly, specifically "origin"
+  // describe('redirectToLogin()', () => {});
 
 });
