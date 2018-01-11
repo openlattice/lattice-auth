@@ -24,16 +24,12 @@
   "license": "Apache-2.0",
   "main": "build/lattice-auth.js",
   "dependencies": {
-    "@fortawesome/fontawesome": "^1.1.1",
-    "@fortawesome/fontawesome-pro-light": "^5.0.3",
-    "@fortawesome/fontawesome-pro-regular": "^5.0.3",
-    "@fortawesome/fontawesome-pro-solid": "^5.0.3",
-    "@fortawesome/react-fontawesome": "0.0.17",
     "auth0-lock": "^10.24.0",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.4",
     "loglevel": "^1.6.0",
-    "moment": "^2.20.0"
+    "moment": "^2.20.0",
+    "qs": "^6.5.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -80,7 +76,7 @@
     "stylelint-processor-styled-components": "^1.0.0",
     "uglifyjs-webpack-plugin": "^1.1.4",
     "webpack": "^3.8.0",
-    "webpack-bundle-analyzer": "^2.9.1",
+    "webpack-bundle-analyzer": "^2.9.2",
     "webpack-dev-server": "^2.9.0"
   },
   "peerDependencies": {

@@ -30,23 +30,20 @@ import {
 
 type Props = {
   actions :{
-    authAttempt :Function;
-    authExpired :Function;
-    authSuccess :Function;
+    authAttempt :() => void;
+    authExpired :() => void;
+    authSuccess :(authToken :?string) => void;
   };
-  attemptAuth :boolean;
   authTokenExpiration :number;
   component :Function;
-  loginComponent :Function;
-  loginPath :string;
+  isAuthenticating :boolean;
+  redirectToLogin :boolean;
 };
 
 class AuthRoute extends React.Component<Props> {
 
   static defaultProps = {
-    attemptAuth: true,
-    loginComponent: null,
-    loginPath: LOGIN_PATH
+    redirectToLogin: false
   }
 
   componentWillMount() {
@@ -54,7 +51,13 @@ class AuthRoute extends React.Component<Props> {
     if (!AuthUtils.hasAuthTokenExpired(this.props.authTokenExpiration)) {
       this.props.actions.authSuccess(AuthUtils.getAuthToken());
     }
-    else if (this.props.attemptAuth) {
+    /*
+     * 1. if we don't want to redirect, it's safe to attempt authentication
+     * 2. if we do want to redirect, we might actually want to attempt authentication anyway. it's possible that we've
+     *    just returned here from a previous redirect and the URL already contains authentication info, in which case
+     *    we might not need to redirect
+     */
+    else if (!this.props.redirectToLogin || Auth0.urlAuthInfoAvailable()) {
       this.props.actions.authAttempt();
     }
   }
@@ -69,16 +72,19 @@ class AuthRoute extends React.Component<Props> {
 
   componentWillReceiveProps(nextProps :Props) {
 
+    // TODO: need to spend more time thinking about how to handle this case
     if (AuthUtils.hasAuthTokenExpired(nextProps.authTokenExpiration)) {
-      // if nextProps.authTokenExpiration === -1, we've already dispatched AUTH_EXPIRED
+      // if nextProps.authTokenExpiration === -1, we've already dispatched AUTH_EXPIRED or LOGOUT
       if (nextProps.authTokenExpiration !== AUTH_TOKEN_EXPIRED) {
         this.props.actions.authExpired();
       }
-      if (this.props.attemptAuth) {
+      // do not show the lock if we're in redirect mode
+      if (!this.props.redirectToLogin) {
         Auth0.getAuth0LockInstance().show();
       }
     }
     else {
+      // TODO: need to spend more time thinking about how to handle this case
       Auth0.getAuth0LockInstance().hide();
     }
   }
@@ -87,8 +93,8 @@ class AuthRoute extends React.Component<Props> {
 
     const {
       component: WrappedComponent,
-      loginComponent,
-      loginPath,
+      isAuthenticating,
+      redirectToLogin,
       ...wrappedComponentProps
     } = this.props;
 
@@ -99,16 +105,23 @@ class AuthRoute extends React.Component<Props> {
           <WrappedComponent {...wrappedComponentProps} />
         );
       }
-      // TODO: is the right action to take?
+      // TODO: is this the right action to take?
       return (
         <Redirect to={ROOT_PATH} />
       );
     }
 
+    // TODO: is this the right action to take?
+    // TODO: this is an ugly check... how can we improve on this?
+    if (redirectToLogin && !isAuthenticating && !Auth0.urlAuthInfoAvailable()) {
+      AuthUtils.redirectToLogin(window.location.href);
+      return null;
+    }
+
     return (
       <Switch>
-        <Route exact strict path={loginPath} component={loginComponent} />
-        <Redirect to={loginPath} />
+        <Route exact strict path={LOGIN_PATH} />
+        <Redirect to={LOGIN_PATH} />
       </Switch>
     );
   }
@@ -127,7 +140,8 @@ function mapStateToProps(state :Map<*, *>) :Object {
   }
 
   return {
-    authTokenExpiration
+    authTokenExpiration,
+    isAuthenticating: state.getIn(['auth', 'isAuthenticating'])
   };
 }
 

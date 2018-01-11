@@ -4,12 +4,16 @@
 
 import decode from 'jwt-decode';
 import moment from 'moment';
+import qs from 'qs';
+
+import { isNonEmptyString } from '../utils/LangUtils';
 
 import {
   ADMIN_ROLE,
   AUTH0_ID_TOKEN,
   AUTH0_USER_INFO,
-  AUTH_TOKEN_EXPIRED
+  AUTH_TOKEN_EXPIRED,
+  LOGIN_URL
 } from './AuthConstants';
 
 /*
@@ -139,4 +143,26 @@ export function isAdmin() :boolean {
   }
 
   return hasAdminRole;
+}
+
+export function redirectToLogin(redirectUrl :?string) :void {
+
+  console.log(window.location);
+
+  let queryString :string = '';
+
+  if (isNonEmptyString(redirectUrl)) {
+    queryString = qs.stringify(
+      { redirectUrl },
+      { addQueryPrefix: true }
+    );
+  }
+  else {
+    queryString = qs.stringify(
+      { redirectUrl: `${window.location.origin}${window.location.pathname}` },
+      { addQueryPrefix: true }
+    );
+  }
+
+  window.location.replace(`${LOGIN_URL}${queryString}`);
 }

@@ -7,13 +7,13 @@
 import { randomId } from '../utils/Utils';
 
 import {
+  ERR_A0L_FRAGMENT_NOT_PARSED,
   ERR_A0L_ON_AUTHORIZATION_ERROR,
   ERR_A0L_ON_UNRECOVERABLE_ERROR,
   ERR_A0L_ON_AUTH__AUTH_INFO_MISSING,
   ERR_A0L_ON_AUTH__AUTH_TOKEN_EXPIRED,
   ERR_A0L_ON_HASH__AUTH_INFO_MISSING,
-  ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED,
-  ERR_URL_HASH_PATH_MISSING
+  ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED
 } from '../utils/Errors';
 
 import {
@@ -125,33 +125,44 @@ describe('Auth0', () => {
 
   });
 
-  describe('parseHashPath()', () => {
+  describe('parseUrl()', () => {
 
     test('should be a function', () => {
       const Auth0 = require('./Auth0');
-      expect(Auth0.parseHashPath).toBeInstanceOf(Function);
+      expect(Auth0.parseUrl).toBeInstanceOf(Function);
     });
 
-    test('should return null if the given href is missing', () => {
+    test('should return default object if the given location is missing properties', () => {
       const Auth0 = require('./Auth0');
-      expect(Auth0.parseHashPath()).toBeNull();
+      expect(Auth0.parseUrl({})).toEqual({
+        fragment: '',
+        redirectUrl: ''
+      });
     });
 
     test('should not replace url if "access_token" is missing', () => {
       const Auth0 = require('./Auth0');
       const replaceSpy = jest.spyOn(window.location, 'replace');
-      const url :string = `${MOCK_URL}/#/id_token=${randomId()}`;
+      const fragment :string = `/id_token=${randomId()}`;
+      const url :string = `${MOCK_URL}/#${fragment}`;
       global.jsdom.reconfigure({ url });
-      expect(Auth0.parseHashPath(url)).toBeNull();
+      expect(Auth0.parseUrl({ href: url })).toEqual({
+        fragment,
+        redirectUrl: ''
+      });
       expect(replaceSpy).not.toHaveBeenCalled();
     });
 
     test('should not replace url if "id_token" is missing', () => {
       const Auth0 = require('./Auth0');
       const replaceSpy = jest.spyOn(window.location, 'replace');
-      const url :string = `${MOCK_URL}/#/access_token=${randomId()}`;
+      const fragment :string = `/access_token=${randomId()}`;
+      const url :string = `${MOCK_URL}/#${fragment}`;
       global.jsdom.reconfigure({ url });
-      expect(Auth0.parseHashPath(url)).toBeNull();
+      expect(Auth0.parseUrl({ href: url })).toEqual({
+        fragment,
+        redirectUrl: ''
+      });
       expect(replaceSpy).not.toHaveBeenCalled();
     });
 
@@ -160,20 +171,29 @@ describe('Auth0', () => {
       const Auth0 = require('./Auth0');
       const replaceSpy = jest.spyOn(window.location, 'replace');
 
-      const hashPath = `access_token=${randomId()}&id_token=${randomId()}`;
-      let url :string = `${MOCK_URL}#${hashPath}`;
+      const fragment = `access_token=${randomId()}&id_token=${randomId()}`;
+      let url :string = `${MOCK_URL}#${fragment}`;
       global.jsdom.reconfigure({ url });
-      expect(Auth0.parseHashPath(url)).toEqual(hashPath);
+      expect(Auth0.parseUrl({ href: url })).toEqual({
+        fragment,
+        redirectUrl: ''
+      });
       expect(window.location.href).toEqual(MOCK_LOGIN_URL);
 
-      url = `${MOCK_URL}/#${hashPath}`;
+      url = `${MOCK_URL}/#${fragment}`;
       global.jsdom.reconfigure({ url });
-      expect(Auth0.parseHashPath(url)).toEqual(hashPath);
+      expect(Auth0.parseUrl({ href: url })).toEqual({
+        fragment,
+        redirectUrl: ''
+      });
       expect(window.location.href).toEqual(MOCK_LOGIN_URL);
 
-      url = `${MOCK_URL}/#/${hashPath}`;
+      url = `${MOCK_URL}/#/${fragment}`;
       global.jsdom.reconfigure({ url });
-      expect(Auth0.parseHashPath(url)).toEqual(`/${hashPath}`);
+      expect(Auth0.parseUrl({ href: url })).toEqual({
+        fragment: `/${fragment}`,
+        redirectUrl: ''
+      });
       expect(window.location.href).toEqual(MOCK_LOGIN_URL);
 
       expect(replaceSpy).toHaveBeenCalledTimes(3);
@@ -202,7 +222,7 @@ describe('Auth0', () => {
         .then(() => done.fail())
         .catch((e :Error) => {
           expect(e).toEqual(expect.any(Error));
-          expect(e.message).toEqual(ERR_URL_HASH_PATH_MISSING);
+          expect(e.message).toEqual(ERR_A0L_FRAGMENT_NOT_PARSED);
           done();
         });
     });

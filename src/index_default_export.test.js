@@ -10,7 +10,7 @@ describe('lattice-auth default export', () => {
 
   test('should export Auth0', () => {
     expect(Object.prototype.toString.call(LatticeAuth.Auth0)).toEqual(OBJECT_TAG);
-    expect(Object.keys(LatticeAuth.Auth0)).toHaveLength(4);
+    expect(Object.keys(LatticeAuth.Auth0)).toHaveLength(5);
   });
 
   test('should export AuthActionFactory', () => {
@@ -20,7 +20,7 @@ describe('lattice-auth default export', () => {
 
   test('should export AuthConstants', () => {
     expect(Object.prototype.toString.call(LatticeAuth.AuthConstants)).toEqual(OBJECT_TAG);
-    expect(Object.keys(LatticeAuth.AuthConstants)).toHaveLength(7);
+    expect(Object.keys(LatticeAuth.AuthConstants)).toHaveLength(8);
   });
 
   test('should export AuthReducer', () => {
@@ -38,11 +38,7 @@ describe('lattice-auth default export', () => {
 
   test('should export AuthUtils', () => {
     expect(Object.prototype.toString.call(LatticeAuth.AuthUtils)).toEqual(OBJECT_TAG);
-    expect(Object.keys(LatticeAuth.AuthUtils)).toHaveLength(8);
-  });
-
-  test('should export LoginContainer', () => {
-    expect(LatticeAuth.LoginContainer).toBeInstanceOf(Function);
+    expect(Object.keys(LatticeAuth.AuthUtils)).toHaveLength(9);
   });
 
   test('should export configure()', () => {
