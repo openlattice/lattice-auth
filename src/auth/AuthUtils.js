@@ -147,8 +147,6 @@ export function isAdmin() :boolean {
 
 export function redirectToLogin(redirectUrl :?string) :void {
 
-  console.log(window.location);
-
   let queryString :string = '';
 
   if (isNonEmptyString(redirectUrl)) {
