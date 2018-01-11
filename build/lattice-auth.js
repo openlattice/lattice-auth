@@ -1,6 +1,6 @@
 /*!
  * 
- * lattice-auth - v0.4.0
+ * lattice-auth - v0.4.1
  * JavaScript helpers for OpenLattice auth
  * https://github.com/openlattice/lattice-auth
  * 
@@ -16,7 +16,7 @@
 		exports["LatticeAuth"] = factory(require("react"), require("immutable"), require("react-dom"), require("react-router-redux"), require("lattice"), require("react-redux"), require("react-router"), require("redux"), require("redux-saga/effects"));
 	else
 		root["LatticeAuth"] = factory(root["react"], root["immutable"], root["react-dom"], root["react-router-redux"], root["lattice"], root["react-redux"], root["react-router"], root["redux"], root["redux-saga/effects"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_32__, __WEBPACK_EXTERNAL_MODULE_69__, __WEBPACK_EXTERNAL_MODULE_115__, __WEBPACK_EXTERNAL_MODULE_164__, __WEBPACK_EXTERNAL_MODULE_165__, __WEBPACK_EXTERNAL_MODULE_166__, __WEBPACK_EXTERNAL_MODULE_283__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_32__, __WEBPACK_EXTERNAL_MODULE_69__, __WEBPACK_EXTERNAL_MODULE_115__, __WEBPACK_EXTERNAL_MODULE_164__, __WEBPACK_EXTERNAL_MODULE_165__, __WEBPACK_EXTERNAL_MODULE_166__, __WEBPACK_EXTERNAL_MODULE_284__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -4478,7 +4478,7 @@ var _Configuration = __webpack_require__(68);
 
 var _LangUtils = __webpack_require__(47);
 
-var _Errors = __webpack_require__(281);
+var _Errors = __webpack_require__(282);
 
 var _AuthConstants = __webpack_require__(26);
 
@@ -4511,6 +4511,7 @@ function getAuth0LockInstance() {
 
 function urlAuthInfoAvailable() {
 
+  // TODO: just checking for the existence of "access_token" and "id_token" isn't strong enough validation
   return parsedUrl.fragment.indexOf('access_token') !== -1 && parsedUrl.fragment.indexOf('id_token') !== -1;
 }
 
@@ -4589,8 +4590,6 @@ function initialize() {
 }
 
 function authenticate() {
-
-  LOG.info('authenticate()', parsedUrl);
 
   // TODO: just checking for the existence of "access_token" and "id_token" isn't strong enough validation
   if (!urlAuthInfoAvailable()) {
@@ -8477,6 +8476,10 @@ var _lattice = __webpack_require__(115);
 
 var _lattice2 = _interopRequireDefault(_lattice);
 
+var _logo = __webpack_require__(281);
+
+var _logo2 = _interopRequireDefault(_logo);
+
 var _Logger = __webpack_require__(114);
 
 var _Logger2 = _interopRequireDefault(_Logger);
@@ -8504,7 +8507,7 @@ var configuration = _immutable2.default.fromJS({
   auth0ClientId: "o8Y2U2zb5Iwo01jdxMN1W2aiN8PxwVjh",
   auth0Domain: "openlattice.auth0.com",
   auth0Lock: {
-    logo: '',
+    logo: _logo2.default,
     title: 'OpenLattice'
   },
   authToken: '',
@@ -8541,20 +8544,36 @@ function setAuth0Domain(config) {
 
 function setAuth0Lock(config) {
 
-  if ((0, _LangUtils.isNonEmptyString)(config.auth0Lock.logo)) {
-    configuration = configuration.setIn(['auth0Lock', 'logo'], config.auth0Lock.logo);
-  } else {
-    var errorMsg = 'invalid parameter - auth0Lock.logo must be a non-empty string';
-    LOG.error(errorMsg, config.auth0Lock.logo);
+  // auth0Lock is optional, so null and undefined are allowed
+  if (config.auth0Lock === null || config.auth0Lock === undefined) {
+    LOG.warn('auth0Lock has not been configured, using default configuration');
+    return;
+  } else if (!(0, _LangUtils.isNonEmptyObject)(config.auth0Lock)) {
+    var errorMsg = 'invalid parameter - auth0Lock must be a non-empty object';
+    LOG.error(errorMsg, config.auth0Lock.title);
     throw new Error(errorMsg);
   }
 
-  if ((0, _LangUtils.isNonEmptyString)(config.auth0Lock.title)) {
+  // auth0Lock.logo is optional, so null and undefined are allowed
+  if (config.auth0Lock.logo === null || config.auth0Lock.logo === undefined) {
+    LOG.warn('auth0Lock.logo has not been configured, defaulting to ' + configuration.getIn(['auth0Lock', 'logo']));
+  } else if ((0, _LangUtils.isNonEmptyString)(config.auth0Lock.logo)) {
+    configuration = configuration.setIn(['auth0Lock', 'logo'], config.auth0Lock.logo);
+  } else {
+    var _errorMsg = 'invalid parameter - auth0Lock.logo must be a non-empty string';
+    LOG.error(_errorMsg, config.auth0Lock.logo);
+    throw new Error(_errorMsg);
+  }
+
+  // auth0Lock.title is optional, so null and undefined are allowed
+  if (config.auth0Lock.title === null || config.auth0Lock.title === undefined) {
+    LOG.warn('auth0Lock.title has not been configured, defaulting to ' + configuration.getIn(['auth0Lock', 'title']));
+  } else if ((0, _LangUtils.isNonEmptyString)(config.auth0Lock.title)) {
     configuration = configuration.setIn(['auth0Lock', 'title'], config.auth0Lock.title);
   } else {
-    var _errorMsg = 'invalid parameter - auth0Lock.title must be a non-empty string';
-    LOG.error(_errorMsg, config.auth0Lock.title);
-    throw new Error(_errorMsg);
+    var _errorMsg2 = 'invalid parameter - auth0Lock.title must be a non-empty string';
+    LOG.error(_errorMsg2, config.auth0Lock.title);
+    throw new Error(_errorMsg2);
   }
 }
 
@@ -8593,9 +8612,9 @@ function setBaseUrl(config) {
         throw new Error(errorMsg);
       }
   } else {
-    var _errorMsg2 = 'invalid parameter - baseUrl must be a non-empty string';
-    LOG.error(_errorMsg2, config.baseUrl);
-    throw new Error(_errorMsg2);
+    var _errorMsg3 = 'invalid parameter - baseUrl must be a non-empty string';
+    LOG.error(_errorMsg3, config.baseUrl);
+    throw new Error(_errorMsg3);
   }
 }
 
@@ -17601,7 +17620,7 @@ var _AuthConstants = __webpack_require__(26);
 
 var AuthConstants = _interopRequireWildcard(_AuthConstants);
 
-var _AuthSagas = __webpack_require__(282);
+var _AuthSagas = __webpack_require__(283);
 
 var AuthSagas = _interopRequireWildcard(_AuthSagas);
 
@@ -17616,7 +17635,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // injected by Webpack.DefinePlugin
-var version = "v0.4.0";
+var version = "v0.4.1";
 
 exports.Auth0 = Auth0;
 exports.AuthActionFactory = AuthActionFactory;
@@ -35212,6 +35231,12 @@ module.exports = isError;
 
 /***/ }),
 /* 281 */
+/***/ (function(module, exports) {
+
+module.exports = "data:image/png;base64,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"
+
+/***/ }),
+/* 282 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35230,7 +35255,7 @@ var ERR_A0L_ON_HASH__AUTH_INFO_MISSING = exports.ERR_A0L_ON_HASH__AUTH_INFO_MISS
 var ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED = exports.ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED = 'Auth0Lock : on("hash_parsed") - auth token expired';
 
 /***/ }),
-/* 282 */
+/* 283 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35252,7 +35277,7 @@ var _lattice2 = _interopRequireDefault(_lattice);
 
 var _reactRouterRedux = __webpack_require__(69);
 
-var _effects = __webpack_require__(283);
+var _effects = __webpack_require__(284);
 
 var _Auth = __webpack_require__(35);
 
@@ -35501,10 +35526,10 @@ function watchLogout() {
 }
 
 /***/ }),
-/* 283 */
+/* 284 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_283__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_284__;
 
 /***/ })
 /******/ ]);
