@@ -20,7 +20,6 @@ declare var __AUTH0_DOMAIN__ :string;
 
 const MOCK_AUTH0_LOCK = Immutable.fromJS({
   logo: '/static/assets/images/logo.abc123.png',
-  redirectUrl: 'https://openlattice.com',
   title: 'OpenLattice, Inc.'
 });
 const MOCK_AUTH_TOKEN :string = `${randomId()}.${randomId()}.${randomId()}`;
@@ -64,7 +63,7 @@ describe('Configuration', () => {
         authToken: `Bearer ${MOCK_AUTH_TOKEN}`,
         baseUrl: 'https://api.openlattice.com'
       });
-      expect(Config.getConfig().equals(expectedConfig)).toEqual(true);
+      expect(Config.getConfig().toJS()).toEqual(expectedConfig.toJS());
       expect(Auth0.initialize).toHaveBeenCalledTimes(1);
     });
 
