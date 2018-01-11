@@ -5,6 +5,7 @@
 import Immutable from 'immutable';
 import Lattice from 'lattice';
 
+import OpenLatticeLogo from '../assets/images/logo.png';
 import Logger from '../utils/Logger';
 import * as Auth0 from '../auth/Auth0';
 import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
@@ -25,7 +26,7 @@ let configuration :Map<*, *> = Immutable.fromJS({
   auth0ClientId: __AUTH0_CLIENT_ID__,
   auth0Domain: __AUTH0_DOMAIN__,
   auth0Lock: {
-    logo: '',
+    logo: OpenLatticeLogo,
     title: 'OpenLattice'
   },
   authToken: '',
@@ -66,7 +67,22 @@ function setAuth0Domain(config :LatticeAuthConfig) :void {
 
 function setAuth0Lock(config :LatticeAuthConfig) :void {
 
-  if (isNonEmptyString(config.auth0Lock.logo)) {
+  // auth0Lock is optional, so null and undefined are allowed
+  if (config.auth0Lock === null || config.auth0Lock === undefined) {
+    LOG.warn('auth0Lock has not been configured, using default configuration');
+    return;
+  }
+  else if (!isNonEmptyObject(config.auth0Lock)) {
+    const errorMsg = 'invalid parameter - auth0Lock must be a non-empty object';
+    LOG.error(errorMsg, config.auth0Lock.title);
+    throw new Error(errorMsg);
+  }
+
+  // auth0Lock.logo is optional, so null and undefined are allowed
+  if (config.auth0Lock.logo === null || config.auth0Lock.logo === undefined) {
+    LOG.warn(`auth0Lock.logo has not been configured, defaulting to ${configuration.getIn(['auth0Lock', 'logo'])}`);
+  }
+  else if (isNonEmptyString(config.auth0Lock.logo)) {
     configuration = configuration.setIn(['auth0Lock', 'logo'], config.auth0Lock.logo);
   }
   else {
@@ -75,7 +91,11 @@ function setAuth0Lock(config :LatticeAuthConfig) :void {
     throw new Error(errorMsg);
   }
 
-  if (isNonEmptyString(config.auth0Lock.title)) {
+  // auth0Lock.title is optional, so null and undefined are allowed
+  if (config.auth0Lock.title === null || config.auth0Lock.title === undefined) {
+    LOG.warn(`auth0Lock.title has not been configured, defaulting to ${configuration.getIn(['auth0Lock', 'title'])}`);
+  }
+  else if (isNonEmptyString(config.auth0Lock.title)) {
     configuration = configuration.setIn(['auth0Lock', 'title'], config.auth0Lock.title);
   }
   else {
