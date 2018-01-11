@@ -51,6 +51,7 @@ export function getAuth0LockInstance() :Auth0Lock {
 
 export function urlAuthInfoAvailable() :boolean {
 
+  // TODO: just checking for the existence of "access_token" and "id_token" isn't strong enough validation
   return parsedUrl.fragment.indexOf('access_token') !== -1 && parsedUrl.fragment.indexOf('id_token') !== -1;
 }
 
@@ -131,8 +132,6 @@ export function initialize() :void {
 }
 
 export function authenticate() :Promise<*> {
-
-  LOG.info('authenticate()', parsedUrl);
 
   // TODO: just checking for the existence of "access_token" and "id_token" isn't strong enough validation
   if (!urlAuthInfoAvailable()) {

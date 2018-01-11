@@ -3,6 +3,7 @@
  */
 
 import Immutable from 'immutable';
+import { LOCATION_CHANGE } from 'react-router-redux';
 
 import authReducer from './AuthReducer';
 import * as AuthUtils from './AuthUtils';
@@ -81,13 +82,13 @@ describe('authReducer', () => {
     test('should correctly set authTokenExpiration when authentication succeeds', () => {
 
       const authToken :string = randomId();
-      const expiration :string = randomId();
+      const expectedExpiration :string = randomId();
 
-      AuthUtils.getAuthTokenExpiration.mockImplementationOnce(() => expiration);
+      AuthUtils.getAuthTokenExpiration.mockImplementationOnce(() => expectedExpiration);
 
       const newState :Map<*, *> = authReducer(undefined, { authToken, type: AUTH_SUCCESS });
       const expectedState :Map<*, *> = INITIAL_STATE
-        .set('authTokenExpiration', expiration)
+        .set('authTokenExpiration', expectedExpiration)
         .set('isAuthenticating', false);
       expect(AuthUtils.getAuthTokenExpiration).toHaveBeenCalledWith(authToken);
       expect(newState.toJS()).toEqual(expectedState.toJS());
@@ -108,9 +109,25 @@ describe('authReducer', () => {
 
     test('should correctly set authTokenExpiration on logout', () => {
 
-      const initialState :Map<*, *> = INITIAL_STATE.set('authTokenExpiration', 12345);
+      const initialState :Map<*, *> = INITIAL_STATE.set('authTokenExpiration', randomId());
       const expectedState :Map<*, *> = INITIAL_STATE.set('authTokenExpiration', AUTH_TOKEN_EXPIRED);
       const newState :Map<*, *> = authReducer(initialState, { type: LOGOUT });
+
+      expect(newState.toJS()).toEqual(expectedState.toJS());
+    });
+
+  });
+
+  describe(`${LOCATION_CHANGE}`, () => {
+
+    test('should correctly set authTokenExpiration on route changes', () => {
+
+      const expectedExpiration :string = randomId();
+      AuthUtils.getAuthTokenExpiration.mockImplementationOnce(() => expectedExpiration);
+
+      const initialState :Map<*, *> = INITIAL_STATE.set('authTokenExpiration', randomId());
+      const expectedState :Map<*, *> = INITIAL_STATE.set('authTokenExpiration', expectedExpiration);
+      const newState :Map<*, *> = authReducer(initialState, { type: LOCATION_CHANGE });
 
       expect(newState.toJS()).toEqual(expectedState.toJS());
     });

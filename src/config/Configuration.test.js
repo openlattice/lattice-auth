@@ -29,6 +29,13 @@ jest.mock('../auth/Auth0');
 describe('Configuration', () => {
 
   beforeEach(() => {
+
+    /*
+     *
+     * TODO: Configuration.js is not being reloaded for every test, so calling configure() is affecting other tests
+     *
+     */
+
     jest.resetModules();
     Auth0.initialize.mockClear();
     Lattice.configure.mockClear();
@@ -179,17 +186,17 @@ describe('Configuration', () => {
 
     describe('auth0Lock', () => {
 
-      test('should throw if auth0Lock is missing', () => {
+      test('should not throw if auth0Lock is missing', () => {
         expect(() => {
           Config.configure({
             authToken: MOCK_AUTH_TOKEN,
             baseUrl: 'localhost'
           });
-        }).toThrow();
+        }).not.toThrow();
       });
 
       test('should throw if auth0Lock is invalid', () => {
-        INVALID_PARAMS.forEach((invalid :any) => {
+        INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
           expect(() => {
             Config.configure({
               auth0Lock: invalid,
@@ -202,18 +209,18 @@ describe('Configuration', () => {
 
       describe('logo', () => {
 
-        test('should throw if auth0Lock.logo is missing', () => {
+        test('should not throw if auth0Lock.logo is missing', () => {
           expect(() => {
             Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.delete('logo').toJS(),
               authToken: MOCK_AUTH_TOKEN,
               baseUrl: 'localhost'
             });
-          }).toThrow();
+          }).not.toThrow();
         });
 
         test('should throw if auth0Lock.logo is invalid', () => {
-          INVALID_PARAMS.forEach((invalid :any) => {
+          INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
             expect(() => {
               Config.configure({
                 auth0Lock: MOCK_AUTH0_LOCK.set('logo', invalid).toJS(),
@@ -223,6 +230,14 @@ describe('Configuration', () => {
             }).toThrow();
           });
         });
+
+        // test('should correctly set the default auth0Lock.logo if it is not specified', () => {
+        //   Config.configure({
+        //     authToken: MOCK_AUTH_TOKEN,
+        //     baseUrl: 'localhost'
+        //   });
+        //   expect(Config.getConfig().getIn(['auth0Lock', 'logo'])).toEqual('__FIGURE_THIS_OUT__');
+        // });
 
         test('should correctly set auth0Lock.logo', () => {
           const mockValue :string = randomId();
@@ -238,18 +253,18 @@ describe('Configuration', () => {
 
       describe('title', () => {
 
-        test('should throw if auth0Lock.title is missing', () => {
+        test('should not throw if auth0Lock.title is missing', () => {
           expect(() => {
             Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.delete('title').toJS(),
               authToken: MOCK_AUTH_TOKEN,
               baseUrl: 'localhost'
             });
-          }).toThrow();
+          }).not.toThrow();
         });
 
         test('should throw if auth0Lock.title is invalid', () => {
-          INVALID_PARAMS.forEach((invalid :any) => {
+          INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
             expect(() => {
               Config.configure({
                 auth0Lock: MOCK_AUTH0_LOCK.set('title', invalid).toJS(),
@@ -259,6 +274,14 @@ describe('Configuration', () => {
             }).toThrow();
           });
         });
+
+        // test('should correctly set the default auth0Lock.title if it is not specified', () => {
+        //   Config.configure({
+        //     authToken: MOCK_AUTH_TOKEN,
+        //     baseUrl: 'localhost'
+        //   });
+        //   expect(Config.getConfig().getIn(['auth0Lock', 'title'])).toEqual('__FIGURE_THIS_OUT__');
+        // });
 
         test('should correctly set auth0Lock.title', () => {
           const mockValue :string = randomId();
