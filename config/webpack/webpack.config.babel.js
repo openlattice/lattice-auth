@@ -34,13 +34,14 @@ export default function webpackConfig() {
     use: ['babel-loader']
   };
 
-  const FILE_LOADER_ASSETS_IMAGES = {
-    test: /\.(gif|ico|jpg|jpeg|png|svg|webp)(\?.*)?$/,
+  // https://github.com/webpack-contrib/url-loader
+  const URL_LOADER = {
+    test: /\.(jpeg|jpg|png)$/,
     exclude: /node_modules/,
     use: [{
-      loader: 'file-loader',
+      loader: 'url-loader',
       options: {
-        name: `${LIB_PATHS.STATIC_ASSETS_IMAGES}/[name].[hash:8].[ext]`
+        limit: 8 * 1024 // 8 KB
       }
     }]
   };
@@ -98,7 +99,7 @@ export default function webpackConfig() {
     module: {
       rules: [
         BABEL_LOADER,
-        FILE_LOADER_ASSETS_IMAGES
+        URL_LOADER
       ]
     },
     output: {

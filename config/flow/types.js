@@ -5,10 +5,10 @@
 declare type LatticeAuthConfig = {
   auth0ClientId ? :string;
   auth0Domain ? :string;
-  auth0Lock :{
-    logo :string;
+  auth0Lock ? :{
+    logo ? :string;
     redirectUrl ? :string;
-    title :string;
+    title ? :string;
   };
   authToken ? :string;
   baseUrl :string;
