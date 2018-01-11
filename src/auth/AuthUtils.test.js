@@ -310,4 +310,7 @@ describe('AuthUtils', () => {
 
   });
 
+  // TODO: blocked by JSDOM, can't figure out how to mock window.location properly, specifically "origin"
+  // describe('redirectToLogin()', () => {});
+
 });

@@ -26,7 +26,6 @@ let configuration :Map<*, *> = Immutable.fromJS({
   auth0Domain: __AUTH0_DOMAIN__,
   auth0Lock: {
     logo: '',
-    redirectUrl: '',
     title: 'OpenLattice'
   },
   authToken: '',
@@ -82,19 +81,6 @@ function setAuth0Lock(config :LatticeAuthConfig) :void {
   else {
     const errorMsg = 'invalid parameter - auth0Lock.title must be a non-empty string';
     LOG.error(errorMsg, config.auth0Lock.title);
-    throw new Error(errorMsg);
-  }
-
-  // redirectUrl is optional, so null and undefined are allowed
-  if (config.auth0Lock.redirectUrl === null || config.auth0Lock.redirectUrl === undefined) {
-    configuration = configuration.setIn(['auth0Lock', 'redirectUrl'], '');
-  }
-  else if (isNonEmptyString(config.auth0Lock.redirectUrl)) {
-    configuration = configuration.setIn(['auth0Lock', 'redirectUrl'], config.auth0Lock.redirectUrl);
-  }
-  else {
-    const errorMsg = 'invalid parameter - auth0Lock.redirectUrl must be a non-empty string';
-    LOG.error(errorMsg, config.authToken);
     throw new Error(errorMsg);
   }
 }

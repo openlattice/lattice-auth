@@ -20,7 +20,6 @@ declare var __AUTH0_DOMAIN__ :string;
 
 const MOCK_AUTH0_LOCK = Immutable.fromJS({
   logo: '/static/assets/images/logo.abc123.png',
-  redirectUrl: 'https://openlattice.com',
   title: 'OpenLattice, Inc.'
 });
 const MOCK_AUTH_TOKEN :string = `${randomId()}.${randomId()}.${randomId()}`;
@@ -64,7 +63,7 @@ describe('Configuration', () => {
         authToken: `Bearer ${MOCK_AUTH_TOKEN}`,
         baseUrl: 'https://api.openlattice.com'
       });
-      expect(Config.getConfig().equals(expectedConfig)).toEqual(true);
+      expect(Config.getConfig().toJS()).toEqual(expectedConfig.toJS());
       expect(Auth0.initialize).toHaveBeenCalledTimes(1);
     });
 
@@ -233,71 +232,6 @@ describe('Configuration', () => {
             baseUrl: 'localhost'
           });
           expect(Config.getConfig().getIn(['auth0Lock', 'logo'])).toEqual(mockValue);
-        });
-
-      });
-
-      describe('redirectUrl', () => {
-
-        test('should not throw if auth0Lock.redirectUrl is missing', () => {
-          expect(() => {
-            Config.configure({
-              auth0Lock: MOCK_AUTH0_LOCK.delete('redirectUrl').toJS(),
-              authToken: MOCK_AUTH_TOKEN,
-              baseUrl: 'localhost'
-            });
-          }).not.toThrow();
-        });
-
-        test('should not throw if auth0Lock.redirectUrl is null', () => {
-          expect(() => {
-            Config.configure({
-              auth0Lock: MOCK_AUTH0_LOCK.set('redirectUrl', null).toJS(),
-              authToken: MOCK_AUTH_TOKEN,
-              baseUrl: 'localhost'
-            });
-          }).not.toThrow();
-        });
-
-        test('should not throw if auth0Lock.redirectUrl is undefined', () => {
-          expect(() => {
-            Config.configure({
-              auth0Lock: MOCK_AUTH0_LOCK.set('redirectUrl', undefined).toJS(),
-              authToken: MOCK_AUTH_TOKEN,
-              baseUrl: 'localhost'
-            });
-          }).not.toThrow();
-        });
-
-        test('should throw if auth0Lock.redirectUrl is invalid', () => {
-          INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
-            expect(() => {
-              Config.configure({
-                auth0Lock: MOCK_AUTH0_LOCK.set('redirectUrl', invalid).toJS(),
-                authToken: MOCK_AUTH_TOKEN,
-                baseUrl: 'localhost'
-              });
-            }).toThrow();
-          });
-        });
-
-        test('should correctly set auth0Lock.redirectUrl to the empty string', () => {
-          Config.configure({
-            auth0Lock: MOCK_AUTH0_LOCK.delete('redirectUrl').toJS(),
-            authToken: MOCK_AUTH_TOKEN,
-            baseUrl: 'localhost'
-          });
-          expect(Config.getConfig().getIn(['auth0Lock', 'redirectUrl'])).toEqual('');
-        });
-
-        test('should correctly set auth0Lock.redirectUrl', () => {
-          const mockValue :string = randomId();
-          Config.configure({
-            auth0Lock: MOCK_AUTH0_LOCK.set('redirectUrl', mockValue).toJS(),
-            authToken: MOCK_AUTH_TOKEN,
-            baseUrl: 'localhost'
-          });
-          expect(Config.getConfig().getIn(['auth0Lock', 'redirectUrl'])).toEqual(mockValue);
         });
 
       });
