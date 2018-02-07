@@ -10,7 +10,6 @@ import * as Config from './Configuration';
 import { randomId } from '../utils/Utils';
 import {
   INVALID_PARAMS,
-  INVALID_PARAMS_EMPTY_STRING_ALLOWED,
   INVALID_PARAMS_NOT_DEFINED_ALLOWED
 } from '../utils/testing/Invalid';
 
@@ -63,14 +62,13 @@ describe('Configuration', () => {
         authToken: MOCK_AUTH_TOKEN,
         baseUrl: 'production'
       });
-      const expectedConfig :Map<*, *> = Immutable.fromJS({
+      expect(Config.getConfig().toJS()).toEqual({
         auth0ClientId: __AUTH0_CLIENT_ID__,
         auth0Domain: __AUTH0_DOMAIN__,
-        auth0Lock: MOCK_AUTH0_LOCK,
-        authToken: `Bearer ${MOCK_AUTH_TOKEN}`,
+        auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+        authToken: MOCK_AUTH_TOKEN,
         baseUrl: 'https://api.openlattice.com'
       });
-      expect(Config.getConfig().toJS()).toEqual(expectedConfig.toJS());
       expect(Auth0.initialize).toHaveBeenCalledTimes(1);
     });
 
@@ -309,7 +307,7 @@ describe('Configuration', () => {
       });
 
       test('should throw if authToken is invalid', () => {
-        INVALID_PARAMS_EMPTY_STRING_ALLOWED.forEach((invalid :any) => {
+        INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
           expect(() => {
             Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.toJS(),
@@ -326,7 +324,7 @@ describe('Configuration', () => {
           authToken: MOCK_AUTH_TOKEN,
           baseUrl: 'localhost'
         });
-        expect(Config.getConfig().get('authToken')).toEqual(`Bearer ${MOCK_AUTH_TOKEN}`);
+        expect(Config.getConfig().get('authToken')).toEqual(MOCK_AUTH_TOKEN);
       });
 
     });
@@ -388,41 +386,58 @@ describe('Configuration', () => {
         Config.configure({
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
           authToken: MOCK_AUTH_TOKEN,
-          baseUrl: 'https://api.staging.openlattice.com'
+          baseUrl: 'https://api.v2.openlattice.com'
         });
-        expect(Config.getConfig().get('baseUrl')).toEqual('https://api.staging.openlattice.com');
-
-        Config.configure({
-          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
-          authToken: MOCK_AUTH_TOKEN,
-          baseUrl: 'https://api.openlattice.com'
-        });
-        expect(Config.getConfig().get('baseUrl')).toEqual('https://api.openlattice.com');
+        expect(Config.getConfig().get('baseUrl')).toEqual('https://api.v2.openlattice.com');
       });
 
       test('should correctly set baseUrl to "http://localhost:8080"', () => {
+
         Config.configure({
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
           authToken: MOCK_AUTH_TOKEN,
           baseUrl: 'localhost'
         });
         expect(Config.getConfig().get('baseUrl')).toEqual('http://localhost:8080');
+
+        Config.configure({
+          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+          authToken: MOCK_AUTH_TOKEN,
+          baseUrl: 'http://localhost:8080'
+        });
+        expect(Config.getConfig().get('baseUrl')).toEqual('http://localhost:8080');
       });
 
       test('should correctly set baseUrl to "https://api.staging.openlattice.com"', () => {
+
         Config.configure({
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
           authToken: MOCK_AUTH_TOKEN,
           baseUrl: 'staging'
         });
         expect(Config.getConfig().get('baseUrl')).toEqual('https://api.staging.openlattice.com');
+
+        Config.configure({
+          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+          authToken: MOCK_AUTH_TOKEN,
+          baseUrl: 'https://api.staging.openlattice.com'
+        });
+        expect(Config.getConfig().get('baseUrl')).toEqual('https://api.staging.openlattice.com');
       });
 
       test('should correctly set baseUrl to "https://api.openlattice.com"', () => {
+
         Config.configure({
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
           authToken: MOCK_AUTH_TOKEN,
           baseUrl: 'production'
+        });
+        expect(Config.getConfig().get('baseUrl')).toEqual('https://api.openlattice.com');
+
+        Config.configure({
+          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
+          authToken: MOCK_AUTH_TOKEN,
+          baseUrl: 'https://api.openlattice.com'
         });
         expect(Config.getConfig().get('baseUrl')).toEqual('https://api.openlattice.com');
       });
@@ -438,13 +453,13 @@ describe('Configuration', () => {
       expect(Config.getConfig()['@@__IMMUTABLE_MAP__@@']).toEqual(true);
     });
 
-    test('should not be empty', () => {
-      expect(Config.getConfig().isEmpty()).toEqual(false);
-    });
-
-    it('should not be mutable', () => {
+    test('should not be mutable', () => {
       Config.getConfig().set('foo', 'bar');
       expect(Config.getConfig().get('foo')).toBeUndefined();
+    });
+
+    test('should not be empty', () => {
+      expect(Config.getConfig().isEmpty()).toEqual(false);
     });
 
   });
