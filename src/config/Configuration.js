@@ -114,7 +114,7 @@ function setAuthToken(config :LatticeAuthConfig) :void {
   }
   else if (isNonEmptyString(config.authToken)) {
     // TODO: add at least some minimal validation checks against the authToken string
-    configuration = configuration.set('authToken', `Bearer ${config.authToken}`);
+    configuration = configuration.set('authToken', config.authToken);
   }
   else {
     const errorMsg = 'invalid parameter - authToken must be a non-empty string';
@@ -126,13 +126,13 @@ function setAuthToken(config :LatticeAuthConfig) :void {
 function setBaseUrl(config :LatticeAuthConfig) :void {
 
   if (isNonEmptyString(config.baseUrl)) {
-    if (config.baseUrl === 'localhost') {
+    if (config.baseUrl === 'localhost' || config.baseUrl === ENV_URLS.get('LOCAL')) {
       configuration = configuration.set('baseUrl', ENV_URLS.get('LOCAL'));
     }
-    else if (config.baseUrl === 'staging') {
+    else if (config.baseUrl === 'staging' || config.baseUrl === ENV_URLS.get('STAGING')) {
       configuration = configuration.set('baseUrl', ENV_URLS.get('STAGING'));
     }
-    else if (config.baseUrl === 'production') {
+    else if (config.baseUrl === 'production' || config.baseUrl === ENV_URLS.get('PRODUCTION')) {
       configuration = configuration.set('baseUrl', ENV_URLS.get('PRODUCTION'));
     }
     // mild url validation to at least check the protocol and domain
