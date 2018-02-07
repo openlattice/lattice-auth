@@ -1,6 +1,6 @@
 /*!
  * 
- * lattice-auth - v0.4.1
+ * lattice-auth - v0.4.2
  * JavaScript helpers for OpenLattice auth
  * https://github.com/openlattice/lattice-auth
  * 
@@ -1928,7 +1928,7 @@ function assertLanguage(m, language, base) {
 function syncLang(m, language, _cb) {
   (0, _cdn_utils.load)({
     method: 'registerLanguageDictionary',
-    url: l.languageBaseUrl(m) + '/js/lock/' + '10.24.2' + '/' + language + '.js',
+    url: l.languageBaseUrl(m) + '/js/lock/' + '10.24.3' + '/' + language + '.js',
     check: function check(str) {
       return str && str === language;
     },
@@ -4840,7 +4840,7 @@ module.exports = RequestBuilder;
 /* 39 */
 /***/ (function(module, exports) {
 
-module.exports = { raw: '8.12.1' };
+module.exports = { raw: '8.12.2' };
 
 
 /***/ }),
@@ -8585,7 +8585,7 @@ function setAuthToken(config) {
     configuration = configuration.delete('authToken');
   } else if ((0, _LangUtils.isNonEmptyString)(config.authToken)) {
     // TODO: add at least some minimal validation checks against the authToken string
-    configuration = configuration.set('authToken', 'Bearer ' + config.authToken);
+    configuration = configuration.set('authToken', config.authToken);
   } else {
     var errorMsg = 'invalid parameter - authToken must be a non-empty string';
     LOG.error(errorMsg, config.authToken);
@@ -8596,11 +8596,11 @@ function setAuthToken(config) {
 function setBaseUrl(config) {
 
   if ((0, _LangUtils.isNonEmptyString)(config.baseUrl)) {
-    if (config.baseUrl === 'localhost') {
+    if (config.baseUrl === 'localhost' || config.baseUrl === ENV_URLS.get('LOCAL')) {
       configuration = configuration.set('baseUrl', ENV_URLS.get('LOCAL'));
-    } else if (config.baseUrl === 'staging') {
+    } else if (config.baseUrl === 'staging' || config.baseUrl === ENV_URLS.get('STAGING')) {
       configuration = configuration.set('baseUrl', ENV_URLS.get('STAGING'));
-    } else if (config.baseUrl === 'production') {
+    } else if (config.baseUrl === 'production' || config.baseUrl === ENV_URLS.get('PRODUCTION')) {
       configuration = configuration.set('baseUrl', ENV_URLS.get('PRODUCTION'));
     }
     // mild url validation to at least check the protocol and domain
@@ -13878,7 +13878,7 @@ var Auth0Lock = function (_Core) {
 
 
 exports.default = Auth0Lock;
-Auth0Lock.version = '10.24.2';
+Auth0Lock.version = '10.24.3';
 Auth0Lock.css = css;
 
 // TODO: should we have different telemetry for classic/passwordless?
@@ -17635,7 +17635,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // injected by Webpack.DefinePlugin
-var version = "v0.4.1";
+var version = "v0.4.2";
 
 exports.Auth0 = Auth0;
 exports.AuthActionFactory = AuthActionFactory;
@@ -28953,7 +28953,13 @@ function SilentAuthenticationHandler(options) {
   this.timeout = options.timeout || 60 * 1000;
   this.handler = null;
   this.postMessageDataType = options.postMessageDataType || false;
-  this.postMessageOrigin = options.postMessageOrigin || windowHelper.getWindow().origin;
+
+  // prefer origin from options, fallback to origin from browser, and some browsers (for example MS Edge) don't support origin; fallback to construct origin manually
+  this.postMessageOrigin =
+    options.postMessageOrigin ||
+    windowHelper.getWindow().location.origin ||
+    windowHelper.getWindow().location.protocol + '//' + windowHelper.getWindow().location.hostname
+      + (windowHelper.getWindow().location.port ? ':' + windowHelper.getWindow().location.port : '');
 }
 
 SilentAuthenticationHandler.create = function(options) {
@@ -29000,7 +29006,12 @@ SilentAuthenticationHandler.prototype.getEventValidator = function() {
             eventData.event.data.type && eventData.event.data.type === _this.postMessageDataType
           );
 
-        case 'load': // Fall through to default
+        case 'load':
+          if (eventData.sourceObject.contentWindow.location.protocol === 'about:') {
+            // Chrome is automatically loading the about:blank page, we ignore this.
+            return false;
+          }
+        // Fall through to default
         default:
           return true;
       }
@@ -30847,7 +30858,7 @@ var Auth0LegacyAPIClient = function () {
 
     var default_telemetry = {
       name: 'lock.js',
-      version: '10.24.2',
+      version: '10.24.3',
       lib_version: _auth0Js2.default.version
     };
 
@@ -31233,7 +31244,7 @@ var Auth0APIClient = function () {
 
     var default_telemetry = {
       name: 'lock.js',
-      version: '10.24.2',
+      version: '10.24.3',
       lib_version: _auth0Js2.default.version
     };
 
@@ -33269,11 +33280,7 @@ var CheckboxInput = function (_React$Component) {
           onChange: this.handleOnChange.bind(this),
           name: name
         }),
-        _react2.default.createElement(
-          'span',
-          null,
-          placeholder
-        )
+        _react2.default.createElement('span', { dangerouslySetInnerHTML: { __html: placeholder } })
       )
     );
   };
