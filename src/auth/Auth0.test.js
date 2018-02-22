@@ -4,6 +4,7 @@
 
 /* eslint-disable global-require */
 
+import { LOGIN_PATH } from './AuthConstants';
 import { randomId } from '../utils/Utils';
 
 import {
@@ -15,10 +16,6 @@ import {
   ERR_A0L_ON_HASH__AUTH_INFO_MISSING,
   ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED
 } from '../utils/Errors';
-
-import {
-  LOGIN_PATH
-} from './AuthConstants';
 
 // injected by Jest
 declare var __AUTH0_CLIENT_ID__ :string;
