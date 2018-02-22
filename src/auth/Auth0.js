@@ -8,6 +8,7 @@ import qs from 'qs';
 
 import Logger from '../utils/Logger';
 import * as AuthUtils from './AuthUtils';
+import { LOGIN_PATH } from './AuthConstants';
 import { getConfig } from '../config/Configuration';
 import { isNonEmptyString } from '../utils/LangUtils';
 
@@ -21,10 +22,6 @@ import {
   ERR_A0L_ON_HASH__AUTH_INFO_MISSING,
   ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED
 } from '../utils/Errors';
-
-import {
-  LOGIN_PATH
-} from './AuthConstants';
 
 const LOG = new Logger('Auth0');
 
