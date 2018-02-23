@@ -24,7 +24,7 @@
   "license": "Apache-2.0",
   "main": "build/lattice-auth.js",
   "dependencies": {
-    "auth0-lock": "^11.2.3",
+    "auth0-lock": "^11.3.0",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.4",
     "loglevel": "^1.6.0",
