@@ -1,6 +1,6 @@
 /*!
  * 
- * lattice-auth - v0.5.0
+ * lattice-auth - v0.6.0
  * JavaScript helpers for OpenLattice auth
  * https://github.com/openlattice/lattice-auth
  * 
@@ -16,7 +16,7 @@
 		exports["LatticeAuth"] = factory(require("react"), require("immutable"), require("react-dom"), require("react-router-redux"), require("lattice"), require("react-redux"), require("react-router"), require("redux"), require("redux-saga/effects"));
 	else
 		root["LatticeAuth"] = factory(root["react"], root["immutable"], root["react-dom"], root["react-router-redux"], root["lattice"], root["react-redux"], root["react-router"], root["redux"], root["redux-saga/effects"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_32__, __WEBPACK_EXTERNAL_MODULE_69__, __WEBPACK_EXTERNAL_MODULE_115__, __WEBPACK_EXTERNAL_MODULE_164__, __WEBPACK_EXTERNAL_MODULE_165__, __WEBPACK_EXTERNAL_MODULE_166__, __WEBPACK_EXTERNAL_MODULE_284__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_35__, __WEBPACK_EXTERNAL_MODULE_79__, __WEBPACK_EXTERNAL_MODULE_126__, __WEBPACK_EXTERNAL_MODULE_175__, __WEBPACK_EXTERNAL_MODULE_176__, __WEBPACK_EXTERNAL_MODULE_177__, __WEBPACK_EXTERNAL_MODULE_301__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -79,7 +79,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 116);
+/******/ 	return __webpack_require__(__webpack_require__.s = 127);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -107,7 +107,6 @@ exports.domain = domain;
 exports.clientBaseUrl = clientBaseUrl;
 exports.tenantBaseUrl = tenantBaseUrl;
 exports.useTenantInfo = useTenantInfo;
-exports.oidcConformant = oidcConformant;
 exports.connectionResolver = connectionResolver;
 exports.setResolvedConnection = setResolvedConnection;
 exports.resolvedConnection = resolvedConnection;
@@ -120,6 +119,9 @@ exports.clearGlobalError = clearGlobalError;
 exports.setGlobalSuccess = setGlobalSuccess;
 exports.globalSuccess = globalSuccess;
 exports.clearGlobalSuccess = clearGlobalSuccess;
+exports.setGlobalInfo = setGlobalInfo;
+exports.globalInfo = globalInfo;
+exports.clearGlobalInfo = clearGlobalInfo;
 exports.rendering = rendering;
 exports.stopRendering = stopRendering;
 exports.withAuthOptions = withAuthOptions;
@@ -154,7 +156,7 @@ exports.emitUnrecoverableErrorEvent = emitUnrecoverableErrorEvent;
 exports.showBadge = showBadge;
 exports.overrideOptions = overrideOptions;
 
-var _urlJoin = __webpack_require__(9);
+var _urlJoin = __webpack_require__(12);
 
 var _urlJoin2 = _interopRequireDefault(_urlJoin);
 
@@ -162,29 +164,29 @@ var _immutable = __webpack_require__(4);
 
 var _immutable2 = _interopRequireDefault(_immutable);
 
-var _media_utils = __webpack_require__(90);
+var _media_utils = __webpack_require__(39);
 
-var _string_utils = __webpack_require__(53);
+var _string_utils = __webpack_require__(60);
 
-var _url_utils = __webpack_require__(185);
+var _url_utils = __webpack_require__(196);
 
-var _i18n = __webpack_require__(8);
+var _i18n = __webpack_require__(6);
 
 var i18n = _interopRequireWildcard(_i18n);
 
-var _trim = __webpack_require__(22);
+var _trim = __webpack_require__(27);
 
 var _trim2 = _interopRequireDefault(_trim);
 
-var _gravatar_provider = __webpack_require__(223);
+var _gravatar_provider = __webpack_require__(231);
 
 var gp = _interopRequireWildcard(_gravatar_provider);
 
-var _data_utils = __webpack_require__(13);
+var _data_utils = __webpack_require__(14);
 
-var _index = __webpack_require__(28);
+var _index = __webpack_require__(19);
 
-var _index2 = __webpack_require__(106);
+var _index2 = __webpack_require__(115);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -214,7 +216,6 @@ function setup(id, clientID, domain, options, hookRunner, emitEventFn) {
     emitEventFn: emitEventFn,
     hookRunner: hookRunner,
     useTenantInfo: options.__useTenantInfo || false,
-    oidcConformant: options.oidcConformant || false,
     hashCleanup: options.hashCleanup === false ? false : true,
     allowedConnections: _immutable2.default.fromJS(options.allowedConnections || []),
     ui: extractUIOptions(id, options),
@@ -250,10 +251,6 @@ function tenantBaseUrl(m) {
 
 function useTenantInfo(m) {
   return get(m, 'useTenantInfo');
-}
-
-function oidcConformant(m) {
-  return get(m, 'oidcConformant');
 }
 
 function connectionResolver(m) {
@@ -320,6 +317,18 @@ function globalSuccess(m) {
 
 function clearGlobalSuccess(m) {
   return tremove(m, 'globalSuccess');
+}
+
+function setGlobalInfo(m, str) {
+  return tset(m, 'globalInfo', str);
+}
+
+function globalInfo(m) {
+  return tget(m, 'globalInfo', '');
+}
+
+function clearGlobalInfo(m) {
+  return tremove(m, 'globalInfo');
 }
 
 function rendering(m) {
@@ -488,9 +497,6 @@ function extractAuthOptions(options) {
       state = _ref.state,
       nonce = _ref.nonce;
 
-  var oidcConformant = options.oidcConformant;
-
-
   audience = typeof audience === 'string' ? audience : undefined;
   connectionScopes = (typeof connectionScopes === 'undefined' ? 'undefined' : _typeof(connectionScopes)) === 'object' ? connectionScopes : {};
   params = (typeof params === 'undefined' ? 'undefined' : _typeof(params)) === 'object' ? params : {};
@@ -508,21 +514,8 @@ function extractAuthOptions(options) {
 
   sso = typeof sso === 'boolean' ? sso : true;
 
-  if (!oidcConformant && (0, _trim2.default)(params.scope || '') === 'openid profile') {
-    warn(options, "Usage of scope 'openid profile' is not recommended. See https://auth0.com/docs/scopes for more details.");
-  }
-
-  if (oidcConformant && !redirect && responseType.indexOf('id_token') > -1) {
-    throw new Error("It is not possible to request an 'id_token' while using popup mode.");
-  }
-
-  if (!oidcConformant && audience) {
-    throw new Error('It is not possible to use the `auth.audience` option when the `oidcConformant` flag is set to false');
-  }
-
-  // for legacy flow, the scope should default to openid
-  if (!oidcConformant && !params.scope) {
-    params.scope = 'openid';
+  if (!params.scope) {
+    params.scope = 'openid profile email';
   }
 
   return _immutable2.default.fromJS({
@@ -859,8 +852,10 @@ function overrideOptions(m, opts) {
   }
 
   if (opts.flashMessage) {
-    var key = 'success' === opts.flashMessage.type ? 'globalSuccess' : 'globalError';
-    m = tset(m, key, opts.flashMessage.text);
+    var type = opts.flashMessage.type;
+
+    var typeCapitalized = type.charAt(0).toUpperCase() + type.slice(1);
+    m = tset(m, 'global' + typeCapitalized, opts.flashMessage.text);
   }
 
   if (opts.auth && opts.auth.params) {
@@ -929,14 +924,14 @@ if (process.env.NODE_ENV !== 'production') {
   // By explicitly using `prop-types` you are opting into new development behavior.
   // http://fb.me/prop-types-in-prod
   var throwOnDirectAccess = true;
-  module.exports = __webpack_require__(171)(isValidElement, throwOnDirectAccess);
+  module.exports = __webpack_require__(182)(isValidElement, throwOnDirectAccess);
 } else {
   // By explicitly using `prop-types` you are opting into new production behavior.
   // http://fb.me/prop-types-in-prod
-  module.exports = __webpack_require__(174)();
+  module.exports = __webpack_require__(185)();
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
 /* 3 */
@@ -977,11 +972,11 @@ var _react2 = _interopRequireDefault(_react);
 
 var _immutable = __webpack_require__(4);
 
-var _trim = __webpack_require__(22);
+var _trim = __webpack_require__(27);
 
 var _trim2 = _interopRequireDefault(_trim);
 
-var _option_selection_pane = __webpack_require__(230);
+var _option_selection_pane = __webpack_require__(238);
 
 var _option_selection_pane2 = _interopRequireDefault(_option_selection_pane);
 
@@ -1210,7 +1205,7 @@ exports.getCollection = getCollection;
 exports.updateCollection = updateCollection;
 exports.getState = getState;
 
-var _atom = __webpack_require__(169);
+var _atom = __webpack_require__(180);
 
 var _atom2 = _interopRequireDefault(_atom);
 
@@ -1305,6 +1300,153 @@ function getState() {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+exports.__esModule = true;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.str = str;
+exports.html = html;
+exports.group = group;
+exports.initI18n = initI18n;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _immutable = __webpack_require__(4);
+
+var _immutable2 = _interopRequireDefault(_immutable);
+
+var _util = __webpack_require__(61);
+
+var _sync = __webpack_require__(25);
+
+var _sync2 = _interopRequireDefault(_sync);
+
+var _index = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index);
+
+var _data_utils = __webpack_require__(14);
+
+var _en = __webpack_require__(199);
+
+var _en2 = _interopRequireDefault(_en);
+
+var _cdn_utils = __webpack_require__(62);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _dataFns = (0, _data_utils.dataFns)(['i18n']),
+    get = _dataFns.get,
+    set = _dataFns.set;
+
+function str(m, keyPath) {
+  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    args[_key - 2] = arguments[_key];
+  }
+
+  return _util.format.apply(undefined, [get(m, ['strings'].concat(keyPath), '')].concat(args));
+}
+
+function html(m, keyPath) {
+  for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+    args[_key2 - 2] = arguments[_key2];
+  }
+
+  var html = str.apply(undefined, [m, keyPath].concat(args));
+
+  return html ? _react2.default.createElement('span', { dangerouslySetInnerHTML: { __html: html } }) : null;
+}
+
+function group(m, keyPath) {
+  return get(m, ['strings'].concat(keyPath), (0, _immutable.Map)()).toJS();
+}
+
+function initI18n(m) {
+  var language = l.ui.language(m);
+  var overrides = l.ui.dict(m);
+  var defaultDictionary = _immutable2.default.fromJS(_en2.default);
+
+  var base = languageDictionaries[language] || (0, _immutable.Map)({});
+
+  if (base.isEmpty()) {
+    base = overrides;
+    m = (0, _sync2.default)(m, 'i18n', {
+      syncFn: function syncFn(_, cb) {
+        return syncLang(m, language, cb);
+      },
+      successFn: function successFn(m, result) {
+        registerLanguageDictionary(language, result);
+
+        var overrided = _immutable2.default.fromJS(result).mergeDeep(overrides);
+
+        assertLanguage(m, overrided.toJS(), _en2.default);
+
+        return set(m, 'strings', defaultDictionary.mergeDeep(overrided));
+      }
+    });
+  } else {
+    assertLanguage(m, base.toJS(), _en2.default);
+  }
+
+  base = defaultDictionary.mergeDeep(base).mergeDeep(overrides);
+
+  return set(m, 'strings', base);
+}
+
+function assertLanguage(m, language, base) {
+  var path = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+
+  Object.keys(base).forEach(function (key) {
+    if (!language.hasOwnProperty(key)) {
+      l.warn(m, 'language does not have property ' + path + key);
+    } else {
+      if (_typeof(base[key]) === 'object') {
+        assertLanguage(m, language[key], base[key], '' + path + key + '.');
+      }
+    }
+  });
+}
+
+// sync
+
+function syncLang(m, language, _cb) {
+  (0, _cdn_utils.load)({
+    method: 'registerLanguageDictionary',
+    url: l.languageBaseUrl(m) + '/js/lock/' + '11.3.0' + '/' + language + '.js',
+    check: function check(str) {
+      return str && str === language;
+    },
+    cb: function cb(err, _, dictionary) {
+      _cb(err, dictionary);
+    }
+  });
+}
+
+var languageDictionaries = [];
+
+function registerLanguageDictionary(language, dictionary) {
+  languageDictionaries[language] = _immutable2.default.fromJS(dictionary);
+}
+
+registerLanguageDictionary('en', _en2.default);
+
+(0, _cdn_utils.preload)({
+  method: 'registerLanguageDictionary',
+  cb: registerLanguageDictionary
+});
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
 exports.__esModule = true;
@@ -1345,19 +1487,19 @@ var l = _interopRequireWildcard(_index);
 
 var _index2 = __webpack_require__(3);
 
-var _data_utils = __webpack_require__(13);
+var _data_utils = __webpack_require__(14);
 
-var _sync = __webpack_require__(33);
+var _sync = __webpack_require__(25);
 
 var _sync2 = _interopRequireDefault(_sync);
 
-var _trim = __webpack_require__(22);
+var _trim = __webpack_require__(27);
 
 var _trim2 = _interopRequireDefault(_trim);
 
-var _tenant = __webpack_require__(59);
+var _tenant = __webpack_require__(69);
 
-var _enterprise = __webpack_require__(14);
+var _enterprise = __webpack_require__(16);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -1776,10 +1918,46 @@ function resolveAdditionalSignUpTextField(m, x) {
   return m;
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 7 */
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {var objectHelper = __webpack_require__(10);
+
+function redirect(url) {
+  global.window.location = url;
+}
+
+function getDocument() {
+  return global.window.document;
+}
+
+function getWindow() {
+  return global.window;
+}
+
+function getOrigin() {
+  var location = global.window.location;
+  var origin = location.origin;
+  if (!origin) {
+    origin = objectHelper.getOriginFromUrl(location.href);
+  }
+  return origin;
+}
+
+module.exports = {
+  redirect: redirect,
+  getDocument: getDocument,
+  getWindow: getWindow,
+  getOrigin: getOrigin
+};
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports) {
 
 var g;
@@ -1806,201 +1984,6 @@ module.exports = g;
 
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.str = str;
-exports.html = html;
-exports.group = group;
-exports.initI18n = initI18n;
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _immutable = __webpack_require__(4);
-
-var _immutable2 = _interopRequireDefault(_immutable);
-
-var _util = __webpack_require__(54);
-
-var _sync = __webpack_require__(33);
-
-var _sync2 = _interopRequireDefault(_sync);
-
-var _index = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index);
-
-var _data_utils = __webpack_require__(13);
-
-var _en = __webpack_require__(188);
-
-var _en2 = _interopRequireDefault(_en);
-
-var _cdn_utils = __webpack_require__(55);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _dataFns = (0, _data_utils.dataFns)(['i18n']),
-    get = _dataFns.get,
-    set = _dataFns.set;
-
-function str(m, keyPath) {
-  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-    args[_key - 2] = arguments[_key];
-  }
-
-  return _util.format.apply(undefined, [get(m, ['strings'].concat(keyPath), '')].concat(args));
-}
-
-function html(m, keyPath) {
-  for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-    args[_key2 - 2] = arguments[_key2];
-  }
-
-  var html = str.apply(undefined, [m, keyPath].concat(args));
-
-  return html ? _react2.default.createElement('span', { dangerouslySetInnerHTML: { __html: html } }) : null;
-}
-
-function group(m, keyPath) {
-  return get(m, ['strings'].concat(keyPath), (0, _immutable.Map)()).toJS();
-}
-
-function initI18n(m) {
-  var language = l.ui.language(m);
-  var overrides = l.ui.dict(m);
-  var defaultDictionary = _immutable2.default.fromJS(_en2.default);
-
-  var base = languageDictionaries[language] || (0, _immutable.Map)({});
-
-  if (base.isEmpty()) {
-    base = overrides;
-    m = (0, _sync2.default)(m, 'i18n', {
-      syncFn: function syncFn(_, cb) {
-        return syncLang(m, language, cb);
-      },
-      successFn: function successFn(m, result) {
-        registerLanguageDictionary(language, result);
-
-        var overrided = _immutable2.default.fromJS(result).mergeDeep(overrides);
-
-        assertLanguage(m, overrided.toJS(), _en2.default);
-
-        return set(m, 'strings', defaultDictionary.mergeDeep(overrided));
-      }
-    });
-  } else {
-    assertLanguage(m, base.toJS(), _en2.default);
-  }
-
-  base = defaultDictionary.mergeDeep(base).mergeDeep(overrides);
-
-  return set(m, 'strings', base);
-}
-
-function assertLanguage(m, language, base) {
-  var path = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-
-  Object.keys(base).forEach(function (key) {
-    if (!language.hasOwnProperty(key)) {
-      l.warn(m, 'language does not have property ' + path + key);
-    } else {
-      if (_typeof(base[key]) === 'object') {
-        assertLanguage(m, language[key], base[key], '' + path + key + '.');
-      }
-    }
-  });
-}
-
-// sync
-
-function syncLang(m, language, _cb) {
-  (0, _cdn_utils.load)({
-    method: 'registerLanguageDictionary',
-    url: l.languageBaseUrl(m) + '/js/lock/' + '10.24.3' + '/' + language + '.js',
-    check: function check(str) {
-      return str && str === language;
-    },
-    cb: function cb(err, _, dictionary) {
-      _cb(err, dictionary);
-    }
-  });
-}
-
-var languageDictionaries = [];
-
-function registerLanguageDictionary(language, dictionary) {
-  languageDictionaries[language] = _immutable2.default.fromJS(dictionary);
-}
-
-registerLanguageDictionary('en', _en2.default);
-
-(0, _cdn_utils.preload)({
-  method: 'registerLanguageDictionary',
-  cb: registerLanguageDictionary
-});
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (name, context, definition) {
-  if (typeof module !== 'undefined' && module.exports) module.exports = definition();
-  else if (true) !(__WEBPACK_AMD_DEFINE_FACTORY__ = (definition),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
-				__WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  else context[name] = definition();
-})('urljoin', this, function () {
-
-  function normalize (str, options) {
-
-    // make sure protocol is followed by two slashes
-    str = str.replace(/:\//g, '://');
-
-    // remove consecutive slashes
-    str = str.replace(/([^:\s])\/+/g, '$1/');
-
-    // remove trailing slash before parameters or hash
-    str = str.replace(/\/(\?|&|#[^!])/g, '$1');
-
-    // replace ? in parameters with &
-    str = str.replace(/(\?.+)\?/g, '$1&');
-
-    return str;
-  }
-
-  return function () {
-    var input = arguments;
-    var options = {};
-
-    if (typeof arguments[0] === 'object') {
-      // new syntax with array and options
-      input = arguments[0];
-      options = arguments[1] || {};
-    }
-
-    var joined = [].slice.call(input, 0).join('/');
-    return normalize(joined, options);
-  };
-
-});
-
-
-/***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2008,8 +1991,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (nam
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
 
-var assert = __webpack_require__(20);
-var objectAssign = __webpack_require__(194);
+var assert = __webpack_require__(22);
+var objectAssign = __webpack_require__(205);
 
 function pick(object, keys) {
   return keys.reduce(function(prev, key) {
@@ -2123,6 +2106,36 @@ function toCamelCase(object, exceptions) {
   }, {});
 }
 
+function getLocationFromUrl(href) {
+  var match = href.match(
+    /^(https?:)\/\/(([^:/?#]*)(?::([0-9]+))?)([/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/
+  );
+  return (
+    match && {
+      href: href,
+      protocol: match[1],
+      host: match[2],
+      hostname: match[3],
+      port: match[4],
+      pathname: match[5],
+      search: match[6],
+      hash: match[7]
+    }
+  );
+}
+
+function getOriginFromUrl(url) {
+  if (!url) {
+    return undefined;
+  }
+  var parsed = getLocationFromUrl(url);
+  var origin = parsed.protocol + '//' + parsed.hostname;
+  if (parsed.port) {
+    origin += ':' + parsed.port;
+  }
+  return origin;
+}
+
 module.exports = {
   toSnakeCase: toSnakeCase,
   toCamelCase: toCamelCase,
@@ -2130,7 +2143,9 @@ module.exports = {
   merge: merge,
   pick: pick,
   getKeysNotIn: getKeysNotIn,
-  extend: extend
+  extend: extend,
+  getOriginFromUrl: getOriginFromUrl,
+  getLocationFromUrl: getLocationFromUrl
 };
 
 
@@ -2138,28 +2153,148 @@ module.exports = {
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {function redirect(url) {
-  global.window.location = url;
-}
+"use strict";
 
-function getDocument() {
-  return global.window.document;
-}
 
-function getWindow() {
-  return global.window;
-}
+exports.__esModule = true;
 
-module.exports = {
-  redirect: redirect,
-  getDocument: getDocument,
-  getWindow: getWindow
-};
+var _index = __webpack_require__(1);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+var l = _interopRequireWildcard(_index);
+
+var _i18n = __webpack_require__(6);
+
+var i18n = _interopRequireWildcard(_i18n);
+
+var _index2 = __webpack_require__(7);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Screen = function () {
+  function Screen(name) {
+    _classCallCheck(this, Screen);
+
+    this.name = name;
+  }
+
+  Screen.prototype.backHandler = function backHandler() {
+    return null;
+  };
+
+  Screen.prototype.escHandler = function escHandler() {
+    return null;
+  };
+
+  Screen.prototype.submitButtonLabel = function submitButtonLabel(m) {
+    return i18n.str(m, ['submitLabel']);
+  };
+
+  Screen.prototype.isFirstScreen = function isFirstScreen(m) {
+    var firstScreenName = (0, _index2.getInitialScreen)(m);
+    var currentScreenNameParts = this.name.split('.');
+    var currentScreenName = currentScreenNameParts[1] || currentScreenNameParts[0];
+
+    // if signup and login is enabled, both are the first screen in this scenario and
+    // neither of them should show the title
+    if (currentScreenName === 'signUp' && (0, _index2.hasScreen)(m, 'login')) {
+      return true;
+    }
+
+    var initialScreens = [firstScreenName, 'loading', 'lastLogin'];
+
+    return initialScreens.indexOf(currentScreenName) !== -1;
+  };
+
+  Screen.prototype.getTitle = function getTitle(m) {
+    if (this.isFirstScreen(m)) {
+      return i18n.str(m, 'title');
+    }
+
+    return this.getScreenTitle(m);
+  };
+
+  Screen.prototype.getScreenTitle = function getScreenTitle(m) {
+    return i18n.str(m, 'title');
+  };
+
+  Screen.prototype.submitHandler = function submitHandler() {
+    return null;
+  };
+
+  Screen.prototype.isSubmitDisabled = function isSubmitDisabled(m) {
+    return false;
+  };
+
+  Screen.prototype.renderAuxiliaryPane = function renderAuxiliaryPane() {
+    return null;
+  };
+
+  Screen.prototype.renderTabs = function renderTabs() {
+    return false;
+  };
+
+  Screen.prototype.renderTerms = function renderTerms() {
+    return null;
+  };
+
+  return Screen;
+}();
+
+exports.default = Screen;
+
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (name, context, definition) {
+  if (typeof module !== 'undefined' && module.exports) module.exports = definition();
+  else if (true) !(__WEBPACK_AMD_DEFINE_FACTORY__ = (definition),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
+				__WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  else context[name] = definition();
+})('urljoin', this, function () {
+
+  function normalize (str, options) {
+
+    // make sure protocol is followed by two slashes
+    str = str.replace(/:\//g, '://');
+
+    // remove consecutive slashes
+    str = str.replace(/([^:\s])\/+/g, '$1/');
+
+    // remove trailing slash before parameters or hash
+    str = str.replace(/\/(\?|&|#[^!])/g, '$1');
+
+    // replace ? in parameters with &
+    str = str.replace(/(\?.+)\?/g, '$1&');
+
+    return str;
+  }
+
+  return function () {
+    var input = arguments;
+    var options = {};
+
+    if (typeof arguments[0] === 'object') {
+      // new syntax with array and options
+      input = arguments[0];
+      options = arguments[1] || {};
+    }
+
+    var joined = [].slice.call(input, 0).join('/');
+    return normalize(joined, options);
+  };
+
+});
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -2349,7 +2484,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2413,7 +2548,306 @@ function dataFns(baseNSKeyPath) {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.setupLock = setupLock;
+exports.handleAuthCallback = handleAuthCallback;
+exports.resumeAuth = resumeAuth;
+exports.openLock = openLock;
+exports.closeLock = closeLock;
+exports.removeLock = removeLock;
+exports.updateLock = updateLock;
+exports.pinLoadingPane = pinLoadingPane;
+exports.unpinLoadingPane = unpinLoadingPane;
+exports.validateAndSubmit = validateAndSubmit;
+exports.logIn = logIn;
+exports.checkSession = checkSession;
+exports.logInSuccess = logInSuccess;
+
+var _immutable = __webpack_require__(4);
+
+var _immutable2 = _interopRequireDefault(_immutable);
+
+var _web_api = __webpack_require__(31);
+
+var _web_api2 = _interopRequireDefault(_web_api);
+
+var _index = __webpack_require__(5);
+
+var _remote_data = __webpack_require__(246);
+
+var _index2 = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index2);
+
+var _preload_utils = __webpack_require__(116);
+
+var _container = __webpack_require__(97);
+
+var _index3 = __webpack_require__(3);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function setupLock(id, clientID, domain, options, hookRunner, emitEventFn) {
+  var m = l.setup(id, clientID, domain, options, hookRunner, emitEventFn);
+
+  m = (0, _remote_data.syncRemoteData)(m);
+
+  (0, _preload_utils.img)(l.ui.logo(m) || _container.defaultProps.logo);
+
+  _web_api2.default.setupClient(id, clientID, domain, l.withAuthOptions(m, _extends({}, options, {
+    popupOptions: l.ui.popupOptions(m)
+  })));
+
+  m = l.runHook(m, 'didInitialize', options);
+
+  (0, _index.swap)(_index.setEntity, 'lock', id, m);
+
+  return m;
+}
+
+function handleAuthCallback() {
+  var ms = (0, _index.read)(_index.getCollection, 'lock');
+  var keepHash = ms.filter(function (m) {
+    return !l.hashCleanup(m);
+  }).size > 0;
+  var urlWithoutHash = global.location.href.split('#')[0];
+  var callback = function callback(error, authResult) {
+    var parsed = !!(error || authResult);
+    if (parsed && !keepHash) {
+      global.history.replaceState(null, '', urlWithoutHash);
+    }
+  };
+  resumeAuth(global.location.hash, callback);
+}
+
+function resumeAuth(hash, callback) {
+  var ms = (0, _index.read)(_index.getCollection, 'lock');
+  ms.forEach(function (m) {
+    return l.auth.redirect(m) && parseHash(m, hash, callback);
+  });
+}
+
+function parseHash(m, hash, cb) {
+  _web_api2.default.parseHash(l.id(m), hash, function (error, authResult) {
+    if (error) {
+      l.emitHashParsedEvent(m, error);
+    } else {
+      l.emitHashParsedEvent(m, authResult);
+    }
+
+    if (error) {
+      l.emitAuthorizationErrorEvent(m, error);
+    } else if (authResult) {
+      l.emitAuthenticatedEvent(m, authResult);
+    }
+    cb(error, authResult);
+  });
+}
+
+function openLock(id, opts) {
+  var m = (0, _index.read)(_index.getEntity, 'lock', id);
+  if (!m) {
+    throw new Error("The Lock can't be opened again after it has been destroyed");
+  }
+
+  if (l.rendering(m)) {
+    return false;
+  }
+
+  if (opts.flashMessage) {
+    var supportedTypes = ['error', 'success', 'info'];
+    if (!opts.flashMessage.type || supportedTypes.indexOf(opts.flashMessage.type) === -1) {
+      return l.emitUnrecoverableErrorEvent(m, "'flashMessage' must provide a valid type ['error','success','info']");
+    }
+    if (!opts.flashMessage.text) {
+      return l.emitUnrecoverableErrorEvent(m, "'flashMessage' must provide a text");
+    }
+  }
+
+  l.emitEvent(m, 'show');
+
+  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+    m = l.overrideOptions(m, opts);
+    m = l.filterConnections(m);
+    m = l.runHook(m, 'willShow', opts);
+    return l.render(m);
+  });
+
+  return true;
+}
+
+function closeLock(id) {
+  var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
+  // Do nothing when the Lock can't be closed, unless closing is forced.
+  var m = (0, _index.read)(_index.getEntity, 'lock', id);
+  if (!l.ui.closable(m) && !force || !l.rendering(m)) {
+    return;
+  }
+
+  l.emitEvent(m, 'hide');
+
+  // If it is a modal, stop rendering an reset after a second,
+  // otherwise just reset.
+  if (l.ui.appendContainer(m)) {
+    (0, _index.swap)(_index.updateEntity, 'lock', id, l.stopRendering);
+
+    setTimeout(function () {
+      (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+        m = (0, _index3.hideInvalidFields)(m);
+        m = l.reset(m);
+        m = (0, _index3.clearFields)(m);
+        return m;
+      });
+      m = (0, _index.read)(_index.getEntity, 'lock', id);
+      callback(m);
+    }, 1000);
+  } else {
+    (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+      m = (0, _index3.hideInvalidFields)(m);
+      m = l.reset(m);
+      m = (0, _index3.clearFields)(m);
+      return m;
+    });
+    callback(m);
+  }
+}
+
+function removeLock(id) {
+  (0, _index.swap)(_index.updateEntity, 'lock', id, l.stopRendering);
+  (0, _index.swap)(_index.removeEntity, 'lock', id);
+}
+
+function updateLock(id, f) {
+  return (0, _index.swap)(_index.updateEntity, 'lock', id, f);
+}
+
+function pinLoadingPane(id) {
+  var lock = (0, _index.read)(_index.getEntity, 'lock', id);
+  if (!lock.get('isLoadingPanePinned')) {
+    (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+      return m.set('isLoadingPanePinned', true);
+    });
+  }
+}
+
+function unpinLoadingPane(id) {
+  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+    return m.set('isLoadingPanePinned', false);
+  });
+}
+
+function validateAndSubmit(id) {
+  var fields = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+  var f = arguments[2];
+
+  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+    var allFieldsValid = fields.reduce(function (r, x) {
+      return r && (0, _index3.isFieldValid)(m, x);
+    }, true);
+    return allFieldsValid ? l.setSubmitting(m, true) : fields.reduce(function (r, x) {
+      return (0, _index3.showInvalidField)(r, x);
+    }, m);
+  });
+
+  var m = (0, _index.read)(_index.getEntity, 'lock', id);
+  if (l.submitting(m)) {
+    f(m);
+  }
+}
+
+function logIn(id, fields) {
+  var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var logInErrorHandler = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function (_id, error, _fields, next) {
+    return next();
+  };
+
+  validateAndSubmit(id, fields, function (m) {
+    _web_api2.default.logIn(id, params, l.auth.params(m).toJS(), function (error, result) {
+      if (error) {
+        setTimeout(function () {
+          return logInError(id, fields, error, logInErrorHandler);
+        }, 250);
+      } else {
+        logInSuccess(id, result);
+      }
+    });
+  });
+}
+
+function checkSession(id) {
+  var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  _web_api2.default.checkSession(id, params, function (err, result) {
+    if (err) {
+      return logInError(id, [], err);
+    }
+    return logInSuccess(id, result);
+  });
+}
+
+function logInSuccess(id, result) {
+  var m = (0, _index.read)(_index.getEntity, 'lock', id);
+
+  if (!l.ui.autoclose(m)) {
+    (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+      m = l.setSubmitting(m, false);
+      return l.setLoggedIn(m, true);
+    });
+    l.emitAuthenticatedEvent(m, result);
+  } else {
+    closeLock(id, false, function (m1) {
+      return l.emitAuthenticatedEvent(m1, result);
+    });
+  }
+}
+
+function logInError(id, fields, error) {
+  var localHandler = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function (_id, _error, _fields, next) {
+    return next();
+  };
+
+  var errorCode = error.error || error.code;
+  localHandler(id, error, fields, function () {
+    return setTimeout(function () {
+      var m = (0, _index.read)(_index.getEntity, 'lock', id);
+      var errorMessage = l.loginErrorMessage(m, error, loginType(fields));
+      var errorCodesThatEmitAuthorizationErrorEvent = ['blocked_user', 'rule_error', 'lock.unauthorized', 'invalid_user_password'];
+
+      if (errorCodesThatEmitAuthorizationErrorEvent.indexOf(errorCode) > -1) {
+        l.emitAuthorizationErrorEvent(m, error);
+      }
+
+      (0, _index.swap)(_index.updateEntity, 'lock', id, l.setSubmitting, false, errorMessage);
+    }, 0);
+  });
+
+  (0, _index.swap)(_index.updateEntity, 'lock', id, l.setSubmitting, false);
+}
+
+function loginType(fields) {
+  if (!fields) return;
+  if (~fields.indexOf('vcode')) return 'code';
+  if (~fields.indexOf('username')) return 'username';
+  if (~fields.indexOf('email')) return 'email';
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2451,15 +2885,15 @@ var _index2 = __webpack_require__(3);
 
 var c = _interopRequireWildcard(_index2);
 
-var _data_utils = __webpack_require__(13);
+var _data_utils = __webpack_require__(14);
 
-var _email = __webpack_require__(23);
+var _email = __webpack_require__(28);
 
-var _username = __webpack_require__(58);
+var _username = __webpack_require__(68);
 
-var _classic = __webpack_require__(42);
+var _classic = __webpack_require__(43);
 
-var _index3 = __webpack_require__(6);
+var _index3 = __webpack_require__(7);
 
 var _index4 = __webpack_require__(5);
 
@@ -2629,391 +3063,13 @@ function isHRDActive(m) {
 }
 
 function isHRDEmailValid(m, str) {
-  if ((0, _email.isEmail)(str) && !l.hasSomeConnections(m, 'database') && !findADConnectionWithoutDomain(m) && !(0, _classic.matchesEnterpriseConnection)(m, str)) {
+  if ((0, _email.isEmail)(str) && !l.hasSomeConnections(m, 'database') && !l.hasSomeConnections(m, 'passwordless') && !findADConnectionWithoutDomain(m) && !(0, _classic.matchesEnterpriseConnection)(m, str)) {
     return false;
   }
 
   return true;
 }
 
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _index = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index);
-
-var _i18n = __webpack_require__(8);
-
-var i18n = _interopRequireWildcard(_i18n);
-
-var _index2 = __webpack_require__(6);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Screen = function () {
-  function Screen(name) {
-    _classCallCheck(this, Screen);
-
-    this.name = name;
-  }
-
-  Screen.prototype.backHandler = function backHandler() {
-    return null;
-  };
-
-  Screen.prototype.escHandler = function escHandler() {
-    return null;
-  };
-
-  Screen.prototype.submitButtonLabel = function submitButtonLabel(m) {
-    return i18n.str(m, ['submitLabel']);
-  };
-
-  Screen.prototype.isFirstScreen = function isFirstScreen(m) {
-    var firstScreenName = (0, _index2.getInitialScreen)(m);
-    var currentScreenNameParts = this.name.split('.');
-    var currentScreenName = currentScreenNameParts[1] || currentScreenNameParts[0];
-
-    // if signup and login is enabled, both are the first screen in this scenario and
-    // neither of them should show the title
-    if (currentScreenName === 'signUp' && (0, _index2.hasScreen)(m, 'login')) {
-      return true;
-    }
-
-    var initialScreens = [firstScreenName, 'loading', 'lastLogin'];
-
-    return initialScreens.indexOf(currentScreenName) !== -1;
-  };
-
-  Screen.prototype.getTitle = function getTitle(m) {
-    if (this.isFirstScreen(m)) {
-      return i18n.str(m, 'title');
-    }
-
-    return this.getScreenTitle(m);
-  };
-
-  Screen.prototype.getScreenTitle = function getScreenTitle(m) {
-    return i18n.str(m, 'title');
-  };
-
-  Screen.prototype.submitHandler = function submitHandler() {
-    return null;
-  };
-
-  Screen.prototype.isSubmitDisabled = function isSubmitDisabled(m) {
-    return false;
-  };
-
-  Screen.prototype.renderAuxiliaryPane = function renderAuxiliaryPane() {
-    return null;
-  };
-
-  Screen.prototype.renderTabs = function renderTabs() {
-    return false;
-  };
-
-  Screen.prototype.renderTerms = function renderTerms() {
-    return null;
-  };
-
-  return Screen;
-}();
-
-exports.default = Screen;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-exports.setupLock = setupLock;
-exports.handleAuthCallback = handleAuthCallback;
-exports.resumeAuth = resumeAuth;
-exports.openLock = openLock;
-exports.closeLock = closeLock;
-exports.removeLock = removeLock;
-exports.updateLock = updateLock;
-exports.pinLoadingPane = pinLoadingPane;
-exports.unpinLoadingPane = unpinLoadingPane;
-exports.validateAndSubmit = validateAndSubmit;
-exports.logIn = logIn;
-exports.logInSuccess = logInSuccess;
-
-var _immutable = __webpack_require__(4);
-
-var _immutable2 = _interopRequireDefault(_immutable);
-
-var _web_api = __webpack_require__(44);
-
-var _web_api2 = _interopRequireDefault(_web_api);
-
-var _index = __webpack_require__(5);
-
-var _remote_data = __webpack_require__(237);
-
-var _index2 = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index2);
-
-var _preload_utils = __webpack_require__(107);
-
-var _container = __webpack_require__(86);
-
-var _index3 = __webpack_require__(3);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function setupLock(id, clientID, domain, options, hookRunner, emitEventFn) {
-  var m = l.setup(id, clientID, domain, options, hookRunner, emitEventFn);
-
-  m = (0, _remote_data.syncRemoteData)(m);
-
-  (0, _preload_utils.img)(l.ui.logo(m) || _container.defaultProps.logo);
-
-  _web_api2.default.setupClient(id, clientID, domain, l.withAuthOptions(m, _extends({}, options, {
-    popupOptions: l.ui.popupOptions(m)
-  })));
-
-  m = l.runHook(m, 'didInitialize', options);
-
-  (0, _index.swap)(_index.setEntity, 'lock', id, m);
-
-  return m;
-}
-
-function handleAuthCallback() {
-  var ms = (0, _index.read)(_index.getCollection, 'lock');
-  var keepHash = ms.filter(function (m) {
-    return !l.hashCleanup(m);
-  }).size > 0;
-  var urlWithoutHash = global.location.href.split('#')[0];
-  var callback = function callback(error, authResult) {
-    var parsed = !!(error || authResult);
-    if (parsed && !keepHash) {
-      global.history.replaceState(null, '', urlWithoutHash);
-    }
-  };
-  resumeAuth(global.location.hash, callback);
-}
-
-function resumeAuth(hash, callback) {
-  var ms = (0, _index.read)(_index.getCollection, 'lock');
-  ms.forEach(function (m) {
-    return l.auth.redirect(m) && parseHash(m, hash, callback);
-  });
-}
-
-function parseHash(m, hash, cb) {
-  _web_api2.default.parseHash(l.id(m), hash, function (error, authResult) {
-    if (error) {
-      l.emitHashParsedEvent(m, error);
-    } else {
-      l.emitHashParsedEvent(m, authResult);
-    }
-
-    if (error) {
-      l.emitAuthorizationErrorEvent(m, error);
-    } else if (authResult) {
-      l.emitAuthenticatedEvent(m, authResult);
-    }
-    cb(error, authResult);
-  });
-}
-
-function openLock(id, opts) {
-  var m = (0, _index.read)(_index.getEntity, 'lock', id);
-  if (!m) {
-    throw new Error("The Lock can't be opened again after it has been destroyed");
-  }
-
-  if (l.rendering(m)) {
-    return false;
-  }
-
-  if (opts.flashMessage) {
-    if (!opts.flashMessage.type || ['error', 'success'].indexOf(opts.flashMessage.type) === -1) {
-      return l.emitUnrecoverableErrorEvent(m, "'flashMessage' must provide a valid type ['error','success']");
-    }
-    if (!opts.flashMessage.text) {
-      return l.emitUnrecoverableErrorEvent(m, "'flashMessage' must provide a text");
-    }
-  }
-
-  l.emitEvent(m, 'show');
-
-  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
-    m = l.overrideOptions(m, opts);
-    m = l.filterConnections(m);
-    m = l.runHook(m, 'willShow', opts);
-    return l.render(m);
-  });
-
-  return true;
-}
-
-function closeLock(id) {
-  var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
-
-  // Do nothing when the Lock can't be closed, unless closing is forced.
-  var m = (0, _index.read)(_index.getEntity, 'lock', id);
-  if (!l.ui.closable(m) && !force || !l.rendering(m)) {
-    return;
-  }
-
-  l.emitEvent(m, 'hide');
-
-  // If it is a modal, stop rendering an reset after a second,
-  // otherwise just reset.
-  if (l.ui.appendContainer(m)) {
-    (0, _index.swap)(_index.updateEntity, 'lock', id, l.stopRendering);
-
-    setTimeout(function () {
-      (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
-        m = (0, _index3.hideInvalidFields)(m);
-        m = l.reset(m);
-        m = (0, _index3.clearFields)(m);
-        return m;
-      });
-      m = (0, _index.read)(_index.getEntity, 'lock', id);
-      callback(m);
-    }, 1000);
-  } else {
-    (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
-      m = (0, _index3.hideInvalidFields)(m);
-      m = l.reset(m);
-      m = (0, _index3.clearFields)(m);
-      return m;
-    });
-    callback(m);
-  }
-}
-
-function removeLock(id) {
-  (0, _index.swap)(_index.updateEntity, 'lock', id, l.stopRendering);
-  (0, _index.swap)(_index.removeEntity, 'lock', id);
-}
-
-function updateLock(id, f) {
-  return (0, _index.swap)(_index.updateEntity, 'lock', id, f);
-}
-
-function pinLoadingPane(id) {
-  var lock = (0, _index.read)(_index.getEntity, 'lock', id);
-  if (!lock.get('isLoadingPanePinned')) {
-    (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
-      return m.set('isLoadingPanePinned', true);
-    });
-  }
-}
-
-function unpinLoadingPane(id) {
-  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
-    return m.set('isLoadingPanePinned', false);
-  });
-}
-
-function validateAndSubmit(id) {
-  var fields = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-  var f = arguments[2];
-
-  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
-    var allFieldsValid = fields.reduce(function (r, x) {
-      return r && (0, _index3.isFieldValid)(m, x);
-    }, true);
-    return allFieldsValid ? l.setSubmitting(m, true) : fields.reduce(function (r, x) {
-      return (0, _index3.showInvalidField)(r, x);
-    }, m);
-  });
-
-  var m = (0, _index.read)(_index.getEntity, 'lock', id);
-  if (l.submitting(m)) {
-    f(m);
-  }
-}
-
-function logIn(id, fields) {
-  var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var logInErrorHandler = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function (_id, error, _fields, next) {
-    return next();
-  };
-
-  validateAndSubmit(id, fields, function (m) {
-    _web_api2.default.logIn(id, params, l.auth.params(m).toJS(), function (error, result) {
-      if (error) {
-        setTimeout(function () {
-          return logInError(id, fields, error, logInErrorHandler);
-        }, 250);
-      } else {
-        logInSuccess(id, result);
-      }
-    });
-  });
-}
-
-function logInSuccess(id, result) {
-  var m = (0, _index.read)(_index.getEntity, 'lock', id);
-
-  if (!l.ui.autoclose(m)) {
-    (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
-      m = l.setSubmitting(m, false);
-      return l.setLoggedIn(m, true);
-    });
-    l.emitAuthenticatedEvent(m, result);
-  } else {
-    closeLock(id, false, function (m1) {
-      return l.emitAuthenticatedEvent(m1, result);
-    });
-  }
-}
-
-function logInError(id, fields, error, localHandler) {
-  var errorCode = error.error || error.code;
-  localHandler(id, error, fields, function () {
-    return setTimeout(function () {
-      var m = (0, _index.read)(_index.getEntity, 'lock', id);
-      var errorMessage = l.loginErrorMessage(m, error, loginType(fields));
-      var errorCodesThatEmitAuthorizationErrorEvent = ['blocked_user', 'rule_error', 'lock.unauthorized', 'invalid_user_password'];
-
-      if (errorCodesThatEmitAuthorizationErrorEvent.indexOf(errorCode) > -1) {
-        l.emitAuthorizationErrorEvent(m, error);
-      }
-
-      (0, _index.swap)(_index.updateEntity, 'lock', id, l.setSubmitting, false, errorMessage);
-    }, 0);
-  });
-
-  (0, _index.swap)(_index.updateEntity, 'lock', id, l.setSubmitting, false);
-}
-
-function loginType(fields) {
-  if (!fields) return;
-  if (~fields.indexOf('vcode')) return 'code';
-  if (~fields.indexOf('username')) return 'username';
-  if (~fields.indexOf('email')) return 'email';
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
 /* 17 */
@@ -3022,221 +3078,28 @@ function loginType(fields) {
 "use strict";
 
 
-var stringify = __webpack_require__(122);
-var parse = __webpack_require__(123);
-var formats = __webpack_require__(72);
-
-module.exports = {
-    formats: formats,
-    parse: parse,
-    stringify: stringify
-};
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Symbol = __webpack_require__(49),
-    getRawTag = __webpack_require__(129),
-    objectToString = __webpack_require__(130);
-
-/** `Object#toString` result references. */
-var nullTag = '[object Null]',
-    undefinedTag = '[object Undefined]';
-
-/** Built-in value references. */
-var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-
-/**
- * The base implementation of `getTag` without fallbacks for buggy environments.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {string} Returns the `toStringTag`.
- */
-function baseGetTag(value) {
-  if (value == null) {
-    return value === undefined ? undefinedTag : nullTag;
-  }
-  return (symToStringTag && symToStringTag in Object(value))
-    ? getRawTag(value)
-    : objectToString(value);
-}
-
-module.exports = baseGetTag;
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var freeGlobal = __webpack_require__(76);
-
-/** Detect free variable `self`. */
-var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-
-/** Used as a reference to the global object. */
-var root = freeGlobal || freeSelf || Function('return this')();
-
-module.exports = root;
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
-var toString = Object.prototype.toString;
-
-function attribute(o, attr, type, text) {
-  type = type === 'array' ? 'object' : type;
-  if (o && typeof o[attr] !== type) {
-    throw new Error(text);
-  }
-}
-
-function variable(o, type, text) {
-  if (typeof o !== type) {
-    throw new Error(text);
-  }
-}
-
-function value(o, values, text) {
-  if (values.indexOf(o) === -1) {
-    throw new Error(text);
-  }
-}
-
-function check(o, config, attributes) {
-  if (!config.optional || o) {
-    variable(o, config.type, config.message);
-  }
-  if (config.type === 'object' && attributes) {
-    var keys = Object.keys(attributes);
-
-    for (var index = 0; index < keys.length; index++) {
-      var a = keys[index];
-      if (!attributes[a].optional || o[a]) {
-        if (!attributes[a].condition || attributes[a].condition(o)) {
-          attribute(o, a, attributes[a].type, attributes[a].message);
-          if (attributes[a].values) {
-            value(o[a], attributes[a].values, attributes[a].value_message);
-          }
-        }
-      }
-    }
-  }
-}
-
-/**
- * Wrap `Array.isArray` Polyfill for IE9
- * source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray
- *
- * @param {Array} array
- * @private
- */
-function isArray(array) {
-  if (this.supportsIsArray()) {
-    return Array.isArray(array);
-  }
-
-  return toString.call(array) === '[object Array]';
-}
-
-function supportsIsArray() {
-  return Array.isArray != null;
-}
-
-module.exports = {
-  check: check,
-  attribute: attribute,
-  variable: variable,
-  value: value,
-  isArray: isArray,
-  supportsIsArray: supportsIsArray
-};
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is object-like. A value is object-like if it's not `null`
- * and has a `typeof` result of "object".
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- * @example
- *
- * _.isObjectLike({});
- * // => true
- *
- * _.isObjectLike([1, 2, 3]);
- * // => true
- *
- * _.isObjectLike(_.noop);
- * // => false
- *
- * _.isObjectLike(null);
- * // => false
- */
-function isObjectLike(value) {
-  return value != null && typeof value == 'object';
-}
-
-module.exports = isObjectLike;
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-
-exports = module.exports = trim;
-
-function trim(str){
-  return str.replace(/^\s*|\s*$/g, '');
-}
-
-exports.left = function(str){
-  return str.replace(/^\s*/, '');
-};
-
-exports.right = function(str){
-  return str.replace(/\s*$/, '');
-};
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 exports.__esModule = true;
-exports.validateEmail = validateEmail;
-exports.isEmail = isEmail;
-exports.setEmail = setEmail;
-exports.emailDomain = emailDomain;
-exports.emailLocalPart = emailLocalPart;
+exports.renderSignedInConfirmation = renderSignedInConfirmation;
 
-var _trim = __webpack_require__(22);
+var _propTypes = __webpack_require__(2);
 
-var _trim2 = _interopRequireDefault(_trim);
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _index = __webpack_require__(3);
+var _react = __webpack_require__(0);
 
-var _string_utils = __webpack_require__(53);
+var _react2 = _interopRequireDefault(_react);
 
-var _enterprise = __webpack_require__(14);
+var _success_pane = __webpack_require__(49);
 
-var _i18n = __webpack_require__(8);
+var _success_pane2 = _interopRequireDefault(_success_pane);
+
+var _actions = __webpack_require__(15);
+
+var _index = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index);
+
+var _i18n = __webpack_require__(6);
 
 var i18n = _interopRequireWildcard(_i18n);
 
@@ -3244,41 +3107,71 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var regExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function validateEmail(str) {
-  return isEmail(str);
-}
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function isEmail(str) {
-  var result = regExp.exec((0, _trim2.default)(str.toLowerCase()));
-  return !!result && result[0] !== null;
-}
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-function setEmail(m, str) {
-  return (0, _index.setField)(m, 'email', str, function (str) {
-    var validHRDEMail = (0, _enterprise.isHRDEmailValid)(m, str);
+// TODO: can't we get this from pops?
 
-    return {
-      valid: validateEmail(str) && validHRDEMail,
-      hint: !validHRDEMail ? i18n.html(m, ['error', 'login', 'hrd.not_matching_email']) : undefined
-    };
-  });
-}
+var SignedInConfirmation = function (_React$Component) {
+  _inherits(SignedInConfirmation, _React$Component);
 
-function emailDomain(str) {
-  var result = regExp.exec((0, _trim2.default)(str.toLowerCase()));
-  return result ? result.slice(-2)[0] : '';
-}
+  function SignedInConfirmation() {
+    _classCallCheck(this, SignedInConfirmation);
 
-function emailLocalPart(str) {
-  var domain = emailDomain(str);
-  return domain ? str.slice(0, -1 - domain.length) : str;
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  SignedInConfirmation.prototype.handleClose = function handleClose() {
+    var _props = this.props,
+        closeHandler = _props.closeHandler,
+        lock = _props.lock;
+
+    closeHandler(l.id(lock));
+  };
+
+  SignedInConfirmation.prototype.render = function render() {
+    var lock = this.props.lock;
+
+    var closeHandler = l.ui.closable(lock) ? this.handleClose.bind(this) : undefined;
+
+    return _react2.default.createElement(
+      _success_pane2.default,
+      { closeHandler: closeHandler },
+      _react2.default.createElement(
+        'p',
+        null,
+        i18n.html(lock, ['success', 'logIn'])
+      )
+    );
+  };
+
+  return SignedInConfirmation;
+}(_react2.default.Component);
+
+exports.default = SignedInConfirmation;
+
+
+SignedInConfirmation.propTypes = {
+  closeHandler: _propTypes2.default.func.isRequired,
+  lock: _propTypes2.default.object.isRequired
+};
+
+function renderSignedInConfirmation(lock) {
+  var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  props.closeHandler = _actions.closeLock;
+  props.key = 'auxiliarypane';
+  props.lock = lock;
+
+  return l.loggedIn(lock) ? _react2.default.createElement(SignedInConfirmation, props) : null;
 }
 
 
 /***/ }),
-/* 24 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3386,212 +3279,7 @@ InputWrap.propTypes = {
 
 
 /***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-exports.renderSignedInConfirmation = renderSignedInConfirmation;
-
-var _propTypes = __webpack_require__(2);
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _success_pane = __webpack_require__(65);
-
-var _success_pane2 = _interopRequireDefault(_success_pane);
-
-var _actions = __webpack_require__(16);
-
-var _index = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index);
-
-var _i18n = __webpack_require__(8);
-
-var i18n = _interopRequireWildcard(_i18n);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-// TODO: can't we get this from pops?
-
-var SignedInConfirmation = function (_React$Component) {
-  _inherits(SignedInConfirmation, _React$Component);
-
-  function SignedInConfirmation() {
-    _classCallCheck(this, SignedInConfirmation);
-
-    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
-  }
-
-  SignedInConfirmation.prototype.handleClose = function handleClose() {
-    var _props = this.props,
-        closeHandler = _props.closeHandler,
-        lock = _props.lock;
-
-    closeHandler(l.id(lock));
-  };
-
-  SignedInConfirmation.prototype.render = function render() {
-    var lock = this.props.lock;
-
-    var closeHandler = l.ui.closable(lock) ? this.handleClose.bind(this) : undefined;
-
-    return _react2.default.createElement(
-      _success_pane2.default,
-      { closeHandler: closeHandler },
-      _react2.default.createElement(
-        'p',
-        null,
-        i18n.html(lock, ['success', 'logIn'])
-      )
-    );
-  };
-
-  return SignedInConfirmation;
-}(_react2.default.Component);
-
-exports.default = SignedInConfirmation;
-
-
-SignedInConfirmation.propTypes = {
-  closeHandler: _propTypes2.default.func.isRequired,
-  lock: _propTypes2.default.object.isRequired
-};
-
-function renderSignedInConfirmation(lock) {
-  var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-  props.closeHandler = _actions.closeLock;
-  props.key = 'auxiliarypane';
-  props.lock = lock;
-
-  return l.loggedIn(lock) ? _react2.default.createElement(SignedInConfirmation, props) : null;
-}
-
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var ADMIN_ROLE = exports.ADMIN_ROLE = 'admin';
-var AUTH0_ID_TOKEN = exports.AUTH0_ID_TOKEN = 'auth0_id_token';
-var AUTH0_USER_INFO = exports.AUTH0_USER_INFO = 'auth0_user_info';
-
-var AUTH_TOKEN_EXPIRATION_NOT_SET = exports.AUTH_TOKEN_EXPIRATION_NOT_SET = -2;
-var AUTH_TOKEN_EXPIRED = exports.AUTH_TOKEN_EXPIRED = -1;
-
-var ROOT_PATH = exports.ROOT_PATH = '/';
-var LOGIN_PATH = exports.LOGIN_PATH = '/login';
-var LOGIN_URL = exports.LOGIN_URL = '' + window.location.origin + LOGIN_PATH + '/';
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var error = __webpack_require__(95);
-var objectHelper = __webpack_require__(10);
-
-function wrapCallback(cb, options) {
-  options = options || {};
-  options.ignoreCasing = options.ignoreCasing ? options.ignoreCasing : false;
-
-  return function(err, data) {
-    var errObj;
-
-    if (!err && !data) {
-      return cb(error.buildResponse('generic_error', 'Something went wrong'));
-    }
-
-    if (!err && data.err) {
-      err = data.err;
-      data = null;
-    }
-
-    if (!err && data.error) {
-      err = data;
-      data = null;
-    }
-
-    if (err) {
-      errObj = {
-        original: err
-      };
-
-      if (err.response && err.response.statusCode) {
-        errObj.statusCode = err.response.statusCode;
-      }
-
-      if (err.response && err.response.statusText) {
-        errObj.statusText = err.response.statusText;
-      }
-
-      if (err.response && err.response.body) {
-        err = err.response.body;
-      }
-
-      if (err.err) {
-        err = err.err;
-      }
-
-      errObj.code = err.error || err.code || err.error_code || err.status || null;
-      errObj.description =
-        err.errorDescription ||
-        err.error_description ||
-        err.description ||
-        err.error ||
-        err.details ||
-        err.err ||
-        null;
-
-      if (err.name) {
-        errObj.name = err.name;
-      }
-
-      if (err.policy) {
-        errObj.policy = err.policy;
-      }
-
-      return cb(errObj);
-    }
-
-    if (data.type && (data.type === 'text/html' || data.type === 'text/plain')) {
-      return cb(null, data.text);
-    }
-
-    if (options.ignoreCasing) {
-      return cb(null, data.body || data);
-    }
-
-    return cb(null, objectHelper.toCamelCase(data.body || data));
-  };
-}
-
-module.exports = wrapCallback;
-
-
-/***/ }),
-/* 28 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3614,7 +3302,7 @@ var _index = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index);
 
-var _data_utils = __webpack_require__(13);
+var _data_utils = __webpack_require__(14);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -3710,7 +3398,670 @@ function useBigButtons(m, notFoundLimit) {
 
 
 /***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Symbol = __webpack_require__(56),
+    getRawTag = __webpack_require__(140),
+    objectToString = __webpack_require__(141);
+
+/** `Object#toString` result references. */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  if (value == null) {
+    return value === undefined ? undefinedTag : nullTag;
+  }
+  return (symToStringTag && symToStringTag in Object(value))
+    ? getRawTag(value)
+    : objectToString(value);
+}
+
+module.exports = baseGetTag;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var freeGlobal = __webpack_require__(86);
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports) {
+
+var toString = Object.prototype.toString;
+
+function attribute(o, attr, type, text) {
+  type = type === 'array' ? 'object' : type;
+  if (o && typeof o[attr] !== type) {
+    throw new Error(text);
+  }
+}
+
+function variable(o, type, text) {
+  if (typeof o !== type) {
+    throw new Error(text);
+  }
+}
+
+function value(o, values, text) {
+  if (values.indexOf(o) === -1) {
+    throw new Error(text);
+  }
+}
+
+function check(o, config, attributes) {
+  if (!config.optional || o) {
+    variable(o, config.type, config.message);
+  }
+  if (config.type === 'object' && attributes) {
+    var keys = Object.keys(attributes);
+
+    for (var index = 0; index < keys.length; index++) {
+      var a = keys[index];
+      if (!attributes[a].optional || o[a]) {
+        if (!attributes[a].condition || attributes[a].condition(o)) {
+          attribute(o, a, attributes[a].type, attributes[a].message);
+          if (attributes[a].values) {
+            value(o[a], attributes[a].values, attributes[a].value_message);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Wrap `Array.isArray` Polyfill for IE9
+ * source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray
+ *
+ * @param {Array} array
+ * @private
+ */
+function isArray(array) {
+  if (this.supportsIsArray()) {
+    return Array.isArray(array);
+  }
+
+  return toString.call(array) === '[object Array]';
+}
+
+function supportsIsArray() {
+  return Array.isArray != null;
+}
+
+module.exports = {
+  check: check,
+  attribute: attribute,
+  variable: variable,
+  value: value,
+  isArray: isArray,
+  supportsIsArray: supportsIsArray
+};
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var stringify = __webpack_require__(133);
+var parse = __webpack_require__(134);
+var formats = __webpack_require__(82);
+
+module.exports = {
+    formats: formats,
+    parse: parse,
+    stringify: stringify
+};
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+exports.__esModule = true;
+exports.go = undefined;
+exports.isSuccess = isSuccess;
+exports.isDone = isDone;
+exports.hasError = hasError;
+
+var _immutable = __webpack_require__(4);
+
+var _data_utils = __webpack_require__(14);
+
+var _index = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index);
+
+var _index2 = __webpack_require__(5);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var _dataFns = (0, _data_utils.dataFns)(['sync']),
+    get = _dataFns.get,
+    set = _dataFns.set;
+
+exports.default = function (m, key, opts) {
+  if (get(m, key) !== undefined) return m;
+
+  var status = opts.waitFn ? 'waiting' : !opts.conditionFn || opts.conditionFn(m) ? 'pending' : 'no';
+
+  return set(m, key, (0, _immutable.Map)({
+    conditionFn: opts.conditionFn,
+    errorFn: opts.errorFn,
+    recoverResult: opts.recoverResult,
+    syncStatus: status,
+    successFn: opts.successFn,
+    syncFn: opts.syncFn,
+    timeout: opts.timeout || 6000,
+    waitFn: opts.waitFn
+  }));
+};
+
+var syncStatusKey = function syncStatusKey(key) {
+  return (global.Array.isArray(key) ? key : [key]).concat(['syncStatus']);
+};
+var getStatus = function getStatus(m, key) {
+  return get(m, syncStatusKey(key));
+};
+var setStatus = function setStatus(m, key, str) {
+  return set(m, syncStatusKey(key), str);
+};
+var getProp = function getProp(m, key, name) {
+  return get(m, key).get(name);
+};
+
+var findKeys = function findKeys(m) {
+  return m.reduce(function (r, v, k) {
+    var current = _immutable.Map.isMap(v) && v.has('syncStatus') ? [k] : [];
+    var nested = _immutable.Map.isMap(v) ? findKeys(v).map(function (x) {
+      return [k].concat(x);
+    }) : [];
+    return r.concat.apply(r, [current].concat([nested]));
+  }, []);
+};
+
+function removeKeys(m, keys) {
+  return keys.reduce(function (r, k) {
+    return r.deleteIn(syncStatusKey(k));
+  }, m);
+}
+
+var process = function process(m, id) {
+  var keys = findKeys(get(m, [], (0, _immutable.Map)()));
+  // TODO timeout
+  return keys.reduce(function (r, k) {
+    if (typeof getProp(r, k, 'syncFn') != 'function') return r;
+    if (getStatus(r, k) === 'pending') {
+      r = setStatus(r, k, 'loading');
+      var called = false;
+      getProp(r, k, 'syncFn')(r, function (error, result) {
+        if (called) return;
+        called = true;
+        setTimeout(function () {
+          (0, _index2.swap)(_index2.updateEntity, 'lock', id, function (m) {
+            var errorFn = getProp(r, k, 'errorFn');
+
+            if (error && typeof errorFn === 'function') {
+              setTimeout(function () {
+                return errorFn(m, error);
+              }, 0);
+            }
+
+            var recoverResult = getProp(m, k, 'recoverResult');
+
+            if (error && recoverResult === undefined) {
+              return handleError(m, k, error);
+            } else {
+              m = setStatus(m, k, 'ok');
+              return getProp(m, k, 'successFn')(m, error ? recoverResult : result);
+            }
+          });
+        }, 0);
+      });
+    } else if (getStatus(r, k) === 'waiting') {
+      if (getProp(r, k, 'waitFn')(r)) {
+        var conditionFn = getProp(r, k, 'conditionFn');
+        r = setStatus(r, k, !conditionFn || conditionFn(r) ? 'pending' : 'no');
+      }
+    }
+
+    return r;
+  }, m);
+};
+
+var go = exports.go = function go(id) {
+  (0, _index2.observe)('sync', id, function (m) {
+    setTimeout(function () {
+      return (0, _index2.swap)(_index2.updateEntity, 'lock', id, process, id);
+    }, 0);
+  });
+};
+
+function isSuccess(m, key) {
+  return getStatus(m, key) === 'ok';
+}
+
+function isDone(m) {
+  var keys = findKeys(get(m, [], (0, _immutable.Map)()));
+  return keys.length > 0 && keys.reduce(function (r, k) {
+    return r && !isLoading(m, k);
+  }, true);
+}
+
+function hasError(m) {
+  var excludeKeys = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+  var keys = findKeys(removeKeys(get(m, [], (0, _immutable.Map)()), excludeKeys));
+  return keys.length > 0 && keys.reduce(function (r, k) {
+    return r || getStatus(m, k) === 'error';
+  }, false);
+}
+
+function isLoading(m, key) {
+  return ['loading', 'pending', 'waiting'].indexOf(getStatus(m, key)) > -1;
+}
+
+function handleError(m, key, error) {
+  var result = setStatus(m, key, 'error');
+
+  // TODO: this should be configurable for each sync
+  if (key !== 'sso') {
+    var stopError = new Error('An error occurred when fetching ' + key + ' data for Lock: ' + error.message);
+    stopError.code = 'sync';
+    stopError.origin = error;
+    result = l.stop(result, stopError);
+  }
+
+  return result;
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var error = __webpack_require__(107);
+var objectHelper = __webpack_require__(10);
+
+function wrapCallback(cb, options) {
+  options = options || {};
+  options.ignoreCasing = options.ignoreCasing ? options.ignoreCasing : false;
+
+  return function(err, data) {
+    var errObj;
+
+    if (!err && !data) {
+      return cb(error.buildResponse('generic_error', 'Something went wrong'));
+    }
+
+    if (!err && data.err) {
+      err = data.err;
+      data = null;
+    }
+
+    if (!err && data.error) {
+      err = data;
+      data = null;
+    }
+
+    if (err) {
+      errObj = {
+        original: err
+      };
+
+      if (err.response && err.response.statusCode) {
+        errObj.statusCode = err.response.statusCode;
+      }
+
+      if (err.response && err.response.statusText) {
+        errObj.statusText = err.response.statusText;
+      }
+
+      if (err.response && err.response.body) {
+        err = err.response.body;
+      }
+
+      if (err.err) {
+        err = err.err;
+      }
+
+      errObj.code = err.error || err.code || err.error_code || err.status || null;
+      errObj.description =
+        err.errorDescription ||
+        err.error_description ||
+        err.description ||
+        err.error ||
+        err.details ||
+        err.err ||
+        null;
+
+      if (err.name) {
+        errObj.name = err.name;
+      }
+
+      if (err.policy) {
+        errObj.policy = err.policy;
+      }
+
+      return cb(errObj);
+    }
+
+    if (data.type && (data.type === 'text/html' || data.type === 'text/plain')) {
+      return cb(null, data.text);
+    }
+
+    if (options.ignoreCasing) {
+      return cb(null, data.body || data);
+    }
+
+    return cb(null, objectHelper.toCamelCase(data.body || data));
+  };
+}
+
+module.exports = wrapCallback;
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports) {
+
+
+exports = module.exports = trim;
+
+function trim(str){
+  return str.replace(/^\s*|\s*$/g, '');
+}
+
+exports.left = function(str){
+  return str.replace(/^\s*/, '');
+};
+
+exports.right = function(str){
+  return str.replace(/\s*$/, '');
+};
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.validateEmail = validateEmail;
+exports.isEmail = isEmail;
+exports.setEmail = setEmail;
+exports.emailDomain = emailDomain;
+exports.emailLocalPart = emailLocalPart;
+
+var _trim = __webpack_require__(27);
+
+var _trim2 = _interopRequireDefault(_trim);
+
+var _index = __webpack_require__(3);
+
+var _string_utils = __webpack_require__(60);
+
+var _enterprise = __webpack_require__(16);
+
+var _i18n = __webpack_require__(6);
+
+var i18n = _interopRequireWildcard(_i18n);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var regExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+function validateEmail(str) {
+  return isEmail(str);
+}
+
+function isEmail(str) {
+  var result = regExp.exec((0, _trim2.default)(str.toLowerCase()));
+  return !!result && result[0] !== null;
+}
+
+function setEmail(m, str) {
+  return (0, _index.setField)(m, 'email', str, function (str) {
+    var validHRDEMail = (0, _enterprise.isHRDEmailValid)(m, str);
+
+    return {
+      valid: validateEmail(str) && validHRDEMail,
+      hint: !validHRDEMail ? i18n.html(m, ['error', 'login', 'hrd.not_matching_email']) : undefined
+    };
+  });
+}
+
+function emailDomain(str) {
+  var result = regExp.exec((0, _trim2.default)(str.toLowerCase()));
+  return result ? result.slice(-2)[0] : '';
+}
+
+function emailLocalPart(str) {
+  var domain = emailDomain(str);
+  return domain ? str.slice(0, -1 - domain.length) : str;
+}
+
+
+/***/ }),
 /* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var ADMIN_ROLE = exports.ADMIN_ROLE = 'admin';
+var AUTH0_ID_TOKEN = exports.AUTH0_ID_TOKEN = 'auth0_id_token';
+var AUTH0_USER_INFO = exports.AUTH0_USER_INFO = 'auth0_user_info';
+
+var AUTH_TOKEN_EXPIRATION_NOT_SET = exports.AUTH_TOKEN_EXPIRATION_NOT_SET = -2;
+var AUTH_TOKEN_EXPIRED = exports.AUTH_TOKEN_EXPIRED = -1;
+
+var ROOT_PATH = exports.ROOT_PATH = '/';
+var LOGIN_PATH = exports.LOGIN_PATH = '/login';
+var LOGIN_URL = exports.LOGIN_URL = '' + window.location.origin + LOGIN_PATH + '/';
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports) {
+
+/* eslint-disable no-console */
+
+function Warn(options) {
+  this.disableWarnings = options.disableWarnings;
+}
+
+Warn.prototype.warning = function(message) {
+  if (this.disableWarnings) {
+    return;
+  }
+
+  console.warn(message);
+};
+
+module.exports = Warn;
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _auth0Js = __webpack_require__(63);
+
+var _auth0Js2 = _interopRequireDefault(_auth0Js);
+
+var _p2_api = __webpack_require__(241);
+
+var _p2_api2 = _interopRequireDefault(_p2_api);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Auth0WebAPI = function () {
+  function Auth0WebAPI() {
+    _classCallCheck(this, Auth0WebAPI);
+
+    this.clients = {};
+  }
+
+  Auth0WebAPI.prototype.setupClient = function setupClient(lockID, clientID, domain, opts) {
+    var hostedLoginPage = window.location.host === domain;
+    // when it is used on on the hosted login page, it shouldn't use popup mode
+    opts.redirect = hostedLoginPage ? true : opts.redirect;
+
+    // for cordova and electron we should force popup without SSO so it uses
+    // /ro or /oauth/token for DB connections
+    if (window && (!!window.cordova || !!window.electron)) {
+      opts.redirect = false;
+      opts.sso = false;
+    }
+
+    this.clients[lockID] = new _p2_api2.default(lockID, clientID, domain, opts);
+  };
+
+  Auth0WebAPI.prototype.logIn = function logIn(lockID, options, authParams, cb) {
+    this.clients[lockID].logIn(options, authParams, cb);
+  };
+
+  Auth0WebAPI.prototype.logout = function logout(lockID, query) {
+    this.clients[lockID].logout(query);
+  };
+
+  Auth0WebAPI.prototype.signUp = function signUp(lockID, options, cb) {
+    this.clients[lockID].signUp(options, cb);
+  };
+
+  Auth0WebAPI.prototype.resetPassword = function resetPassword(lockID, options, cb) {
+    this.clients[lockID].resetPassword(options, cb);
+  };
+
+  Auth0WebAPI.prototype.startPasswordless = function startPasswordless(lockID, options, cb) {
+    this.clients[lockID].passwordlessStart(options, cb);
+  };
+
+  Auth0WebAPI.prototype.passwordlessVerify = function passwordlessVerify(lockID, options, cb) {
+    this.clients[lockID].passwordlessVerify(options, cb);
+  };
+
+  Auth0WebAPI.prototype.parseHash = function parseHash(lockID) {
+    var hash = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    var cb = arguments[2];
+
+    return this.clients[lockID].parseHash(hash, cb);
+  };
+
+  Auth0WebAPI.prototype.getUserInfo = function getUserInfo(lockID, token, callback) {
+    return this.clients[lockID].getUserInfo(token, callback);
+  };
+
+  Auth0WebAPI.prototype.getProfile = function getProfile(lockID, token, callback) {
+    return this.clients[lockID].getProfile(token, callback);
+  };
+
+  Auth0WebAPI.prototype.getSSOData = function getSSOData(lockID) {
+    var _clients$lockID;
+
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    return (_clients$lockID = this.clients[lockID]).getSSOData.apply(_clients$lockID, args);
+  };
+
+  Auth0WebAPI.prototype.getUserCountry = function getUserCountry(lockID, cb) {
+    return this.clients[lockID].getUserCountry(function (err, data) {
+      return cb(err, data && data.countryCode);
+    });
+  };
+
+  Auth0WebAPI.prototype.checkSession = function checkSession(lockID, options, cb) {
+    return this.clients[lockID].checkSession(options, cb);
+  };
+
+  return Auth0WebAPI;
+}();
+
+exports.default = new Auth0WebAPI();
+
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3734,11 +4085,11 @@ var _immutable2 = _interopRequireDefault(_immutable);
 
 var _index = __webpack_require__(5);
 
-var _web_api = __webpack_require__(44);
+var _web_api = __webpack_require__(31);
 
 var _web_api2 = _interopRequireDefault(_web_api);
 
-var _actions = __webpack_require__(16);
+var _actions = __webpack_require__(15);
 
 var _index2 = __webpack_require__(1);
 
@@ -3748,9 +4099,9 @@ var _index3 = __webpack_require__(3);
 
 var c = _interopRequireWildcard(_index3);
 
-var _index4 = __webpack_require__(6);
+var _index4 = __webpack_require__(7);
 
-var _i18n = __webpack_require__(8);
+var _i18n = __webpack_require__(6);
 
 var i18n = _interopRequireWildcard(_i18n);
 
@@ -3994,7 +4345,7 @@ function showLoginMFAActivity(id) {
 
 
 /***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4013,21 +4364,21 @@ exports.isAuthenticated = isAuthenticated;
 exports.isAdmin = isAdmin;
 exports.redirectToLogin = redirectToLogin;
 
-var _jwtDecode = __webpack_require__(119);
+var _jwtDecode = __webpack_require__(130);
 
 var _jwtDecode2 = _interopRequireDefault(_jwtDecode);
 
-var _moment = __webpack_require__(70);
+var _moment = __webpack_require__(80);
 
 var _moment2 = _interopRequireDefault(_moment);
 
-var _qs = __webpack_require__(17);
+var _qs = __webpack_require__(23);
 
 var _qs2 = _interopRequireDefault(_qs);
 
-var _LangUtils = __webpack_require__(47);
+var _LangUtils = __webpack_require__(54);
 
-var _AuthConstants = __webpack_require__(26);
+var _AuthConstants = __webpack_require__(29);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4169,11 +4520,11 @@ function redirectToLogin(redirectUrl) {
 }
 
 /***/ }),
-/* 31 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIsNative = __webpack_require__(128),
-    getValue = __webpack_require__(133);
+var baseIsNative = __webpack_require__(139),
+    getValue = __webpack_require__(144);
 
 /**
  * Gets the native function at `key` of `object`.
@@ -4192,179 +4543,13 @@ module.exports = getNative;
 
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_32__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_35__;
 
 /***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-exports.__esModule = true;
-exports.go = undefined;
-exports.isSuccess = isSuccess;
-exports.isDone = isDone;
-exports.hasError = hasError;
-
-var _immutable = __webpack_require__(4);
-
-var _data_utils = __webpack_require__(13);
-
-var _index = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index);
-
-var _index2 = __webpack_require__(5);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-var _dataFns = (0, _data_utils.dataFns)(['sync']),
-    get = _dataFns.get,
-    set = _dataFns.set;
-
-exports.default = function (m, key, opts) {
-  if (get(m, key) !== undefined) return m;
-
-  var status = opts.waitFn ? 'waiting' : !opts.conditionFn || opts.conditionFn(m) ? 'pending' : 'no';
-
-  return set(m, key, (0, _immutable.Map)({
-    conditionFn: opts.conditionFn,
-    errorFn: opts.errorFn,
-    recoverResult: opts.recoverResult,
-    syncStatus: status,
-    successFn: opts.successFn,
-    syncFn: opts.syncFn,
-    timeout: opts.timeout || 6000,
-    waitFn: opts.waitFn
-  }));
-};
-
-var syncStatusKey = function syncStatusKey(key) {
-  return (global.Array.isArray(key) ? key : [key]).concat(['syncStatus']);
-};
-var getStatus = function getStatus(m, key) {
-  return get(m, syncStatusKey(key));
-};
-var setStatus = function setStatus(m, key, str) {
-  return set(m, syncStatusKey(key), str);
-};
-var getProp = function getProp(m, key, name) {
-  return get(m, key).get(name);
-};
-
-var findKeys = function findKeys(m) {
-  return m.reduce(function (r, v, k) {
-    var current = _immutable.Map.isMap(v) && v.has('syncStatus') ? [k] : [];
-    var nested = _immutable.Map.isMap(v) ? findKeys(v).map(function (x) {
-      return [k].concat(x);
-    }) : [];
-    return r.concat.apply(r, [current].concat([nested]));
-  }, []);
-};
-
-function removeKeys(m, keys) {
-  return keys.reduce(function (r, k) {
-    return r.deleteIn(syncStatusKey(k));
-  }, m);
-}
-
-var process = function process(m, id) {
-  var keys = findKeys(get(m, [], (0, _immutable.Map)()));
-  // TODO timeout
-  return keys.reduce(function (r, k) {
-    if (typeof getProp(r, k, 'syncFn') != 'function') return r;
-    if (getStatus(r, k) === 'pending') {
-      r = setStatus(r, k, 'loading');
-      var called = false;
-      getProp(r, k, 'syncFn')(r, function (error, result) {
-        if (called) return;
-        called = true;
-        setTimeout(function () {
-          (0, _index2.swap)(_index2.updateEntity, 'lock', id, function (m) {
-            var errorFn = getProp(r, k, 'errorFn');
-
-            if (error && typeof errorFn === 'function') {
-              setTimeout(function () {
-                return errorFn(m, error);
-              }, 0);
-            }
-
-            var recoverResult = getProp(m, k, 'recoverResult');
-
-            if (error && recoverResult === undefined) {
-              return handleError(m, k, error);
-            } else {
-              m = setStatus(m, k, 'ok');
-              return getProp(m, k, 'successFn')(m, error ? recoverResult : result);
-            }
-          });
-        }, 0);
-      });
-    } else if (getStatus(r, k) === 'waiting') {
-      if (getProp(r, k, 'waitFn')(r)) {
-        var conditionFn = getProp(r, k, 'conditionFn');
-        r = setStatus(r, k, !conditionFn || conditionFn(r) ? 'pending' : 'no');
-      }
-    }
-
-    return r;
-  }, m);
-};
-
-var go = exports.go = function go(id) {
-  (0, _index2.observe)('sync', id, function (m) {
-    setTimeout(function () {
-      return (0, _index2.swap)(_index2.updateEntity, 'lock', id, process, id);
-    }, 0);
-  });
-};
-
-function isSuccess(m, key) {
-  return getStatus(m, key) === 'ok';
-}
-
-function isDone(m) {
-  var keys = findKeys(get(m, [], (0, _immutable.Map)()));
-  return keys.length > 0 && keys.reduce(function (r, k) {
-    return r && !isLoading(m, k);
-  }, true);
-}
-
-function hasError(m) {
-  var excludeKeys = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-
-  var keys = findKeys(removeKeys(get(m, [], (0, _immutable.Map)()), excludeKeys));
-  return keys.length > 0 && keys.reduce(function (r, k) {
-    return r || getStatus(m, k) === 'error';
-  }, false);
-}
-
-function isLoading(m, key) {
-  return ['loading', 'pending', 'waiting'].indexOf(getStatus(m, key)) > -1;
-}
-
-function handleError(m, key, error) {
-  var result = setStatus(m, key, 'error');
-
-  // TODO: this should be configurable for each sync
-  if (key !== 'sso') {
-    var stopError = new Error('An error occurred when fetching ' + key + ' data for Lock: ' + error.message);
-    stopError.code = 'sync';
-    stopError.origin = error;
-    result = l.stop(result, stopError);
-  }
-
-  return result;
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
-
-/***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4439,7 +4624,7 @@ exports.login = login;
 exports.logout = logout;
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4454,33 +4639,33 @@ exports.parseUrl = parseUrl;
 exports.initialize = initialize;
 exports.authenticate = authenticate;
 
-var _auth0Lock = __webpack_require__(84);
+var _auth0Lock = __webpack_require__(94);
 
 var _auth0Lock2 = _interopRequireDefault(_auth0Lock);
 
-var _isEmpty = __webpack_require__(48);
+var _isEmpty = __webpack_require__(55);
 
 var _isEmpty2 = _interopRequireDefault(_isEmpty);
 
-var _qs = __webpack_require__(17);
+var _qs = __webpack_require__(23);
 
 var _qs2 = _interopRequireDefault(_qs);
 
-var _Logger = __webpack_require__(114);
+var _Logger = __webpack_require__(125);
 
 var _Logger2 = _interopRequireDefault(_Logger);
 
-var _AuthUtils = __webpack_require__(30);
+var _AuthUtils = __webpack_require__(33);
 
 var AuthUtils = _interopRequireWildcard(_AuthUtils);
 
-var _AuthConstants = __webpack_require__(26);
+var _AuthConstants = __webpack_require__(29);
 
-var _Configuration = __webpack_require__(68);
+var _Configuration = __webpack_require__(78);
 
-var _LangUtils = __webpack_require__(47);
+var _LangUtils = __webpack_require__(54);
 
-var _Errors = __webpack_require__(282);
+var _Errors = __webpack_require__(299);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -4645,7 +4830,7 @@ function authenticate() {
 }
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4698,33 +4883,30 @@ var invariant = function (condition, format, a, b, c, d, e, f) {
 };
 
 module.exports = invariant;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Authentication = __webpack_require__(91);
-var Management = __webpack_require__(198);
-var WebAuth = __webpack_require__(199);
-var version = __webpack_require__(39);
+"use strict";
 
-module.exports = {
-  Authentication: Authentication,
-  Management: Management,
-  WebAuth: WebAuth,
-  version: version.raw
-};
+
+exports.__esModule = true;
+exports.isSmallScreen = isSmallScreen;
+function isSmallScreen() {
+  return window.matchMedia && !window.matchMedia('(min-width: 380px)').matches;
+}
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint-disable no-param-reassign */
-var request = __webpack_require__(56);
-var base64Url = __webpack_require__(93);
-var version = __webpack_require__(39);
+var request = __webpack_require__(64);
+var base64Url = __webpack_require__(103);
+var version = __webpack_require__(41);
 
 // ------------------------------------------------ RequestWrapper
 
@@ -4794,6 +4976,10 @@ function RequestBuilder(options) {
 RequestBuilder.prototype.setCommonConfiguration = function(ongoingRequest, options) {
   options = options || {};
 
+  if (this._timesToRetryFailedRequests > 0) {
+    ongoingRequest = ongoingRequest.retry(this._timesToRetryFailedRequests);
+  }
+
   if (options.noHeaders) {
     return ongoingRequest;
   }
@@ -4810,9 +4996,7 @@ RequestBuilder.prototype.setCommonConfiguration = function(ongoingRequest, optio
   if (this._sendTelemetry) {
     ongoingRequest = ongoingRequest.set('Auth0-Client', this.getTelemetryData());
   }
-  if (this._timesToRetryFailedRequests > 0) {
-    ongoingRequest = ongoingRequest.retry(this._timesToRetryFailedRequests);
-  }
+
   return ongoingRequest;
 };
 
@@ -4838,35 +5022,14 @@ module.exports = RequestBuilder;
 
 
 /***/ }),
-/* 39 */
-/***/ (function(module, exports) {
-
-module.exports = { raw: '8.12.2' };
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports) {
-
-/* eslint-disable no-console */
-
-function Warn(options) {
-  this.disableWarnings = options.disableWarnings;
-}
-
-Warn.prototype.warning = function(message) {
-  if (this.disableWarnings) {
-    return;
-  }
-
-  console.warn(message);
-};
-
-module.exports = Warn;
-
-
-/***/ }),
 /* 41 */
+/***/ (function(module, exports) {
+
+module.exports = { raw: '9.3.0' };
+
+
+/***/ }),
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4943,7 +5106,7 @@ BackButton.propTypes = {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4956,71 +5119,73 @@ exports.usernameStyle = usernameStyle;
 exports.hasOnlyClassicConnections = hasOnlyClassicConnections;
 exports.useBigSocialButtons = useBigSocialButtons;
 
-var _index = __webpack_require__(84);
+var _index = __webpack_require__(94);
 
 var _index2 = _interopRequireDefault(_index);
 
-var _login = __webpack_require__(232);
+var _login = __webpack_require__(240);
 
 var _login2 = _interopRequireDefault(_login);
 
-var _sign_up_screen = __webpack_require__(255);
+var _sign_up_screen = __webpack_require__(264);
 
 var _sign_up_screen2 = _interopRequireDefault(_sign_up_screen);
 
-var _mfa_login_screen = __webpack_require__(262);
+var _mfa_login_screen = __webpack_require__(270);
 
 var _mfa_login_screen2 = _interopRequireDefault(_mfa_login_screen);
 
-var _reset_password = __webpack_require__(267);
+var _reset_password = __webpack_require__(275);
 
 var _reset_password2 = _interopRequireDefault(_reset_password);
 
-var _index3 = __webpack_require__(113);
+var _index3 = __webpack_require__(76);
 
-var _index4 = __webpack_require__(6);
+var sso = _interopRequireWildcard(_index3);
 
-var _enterprise = __webpack_require__(14);
+var _index4 = __webpack_require__(7);
 
-var _tenant = __webpack_require__(59);
+var _enterprise = __webpack_require__(16);
 
-var _index5 = __webpack_require__(28);
+var _tenant = __webpack_require__(69);
 
-var _email = __webpack_require__(23);
+var _index5 = __webpack_require__(19);
 
-var _username = __webpack_require__(58);
+var _email = __webpack_require__(28);
+
+var _username = __webpack_require__(68);
 
 var _index6 = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index6);
 
-var _kerberos_screen = __webpack_require__(270);
+var _kerberos_screen = __webpack_require__(278);
 
 var _kerberos_screen2 = _interopRequireDefault(_kerberos_screen);
 
-var _hrd_screen = __webpack_require__(271);
+var _hrd_screen = __webpack_require__(279);
 
 var _hrd_screen2 = _interopRequireDefault(_hrd_screen);
 
-var _quick_auth_screen = __webpack_require__(273);
+var _quick_auth_screen = __webpack_require__(281);
 
 var _quick_auth_screen2 = _interopRequireDefault(_quick_auth_screen);
 
-var _quick_auth = __webpack_require__(103);
+var _quick_auth = __webpack_require__(70);
 
-var _loading_screen = __webpack_require__(274);
+var _loading_screen = __webpack_require__(122);
 
 var _loading_screen2 = _interopRequireDefault(_loading_screen);
 
-var _error_screen = __webpack_require__(275);
+var _error_screen = __webpack_require__(123);
 
 var _error_screen2 = _interopRequireDefault(_error_screen);
 
-var _last_login_screen = __webpack_require__(276);
+var _last_login_screen = __webpack_require__(124);
 
 var _last_login_screen2 = _interopRequireDefault(_last_login_screen);
 
-var _sync = __webpack_require__(33);
+var _sync = __webpack_require__(25);
 
 var _index7 = __webpack_require__(3);
 
@@ -5156,11 +5321,10 @@ var Classic = function () {
         }
 
         if (l.ui.rememberLastLogin(m)) {
-          var conn = (0, _index3.lastUsedConnection)(m);
-          if (conn && (0, _sync.isSuccess)(m, 'sso')) {
-            if (l.hasConnection(m, conn.get('name'))) {
-              return new _last_login_screen2.default();
-            }
+          var lastUsedConnection = sso.lastUsedConnection(m);
+          var lastUsedUsername = sso.lastUsedUsername(m);
+          if (lastUsedConnection && (0, _sync.isSuccess)(m, 'sso') && l.hasConnection(m, lastUsedConnection.get('name')) && l.findConnection(m, lastUsedConnection.get('name')).get('type') !== 'passwordless') {
+            return new _last_login_screen2.default();
           }
         }
       }
@@ -5205,21 +5369,167 @@ exports.default = new Classic();
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 exports.__esModule = true;
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _auth_button = __webpack_require__(114);
+
+var _auth_button2 = _interopRequireDefault(_auth_button);
+
+var _index = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index);
+
+var _actions = __webpack_require__(45);
+
+var _index2 = __webpack_require__(19);
+
+var _event = __webpack_require__(251);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var SocialButtonsPane = function (_React$Component) {
+  _inherits(SocialButtonsPane, _React$Component);
+
+  function SocialButtonsPane() {
+    _classCallCheck(this, SocialButtonsPane);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  SocialButtonsPane.prototype.handleSubmit = function handleSubmit(provider, isSignUp) {
+    (0, _event.emitFederatedLoginEvent)(this.props.lock, provider, isSignUp);
+    return (0, _actions.logIn)(l.id(this.props.lock), provider);
+  };
+
+  SocialButtonsPane.prototype.render = function render() {
+    var _this2 = this;
+
+    // TODO: i don't like that it receives the instructions tanslated
+    // but it also takes the t fn
+    var _props = this.props,
+        bigButtons = _props.bigButtons,
+        instructions = _props.instructions,
+        labelFn = _props.labelFn,
+        lock = _props.lock,
+        showLoading = _props.showLoading,
+        signUp = _props.signUp,
+        disabled = _props.disabled;
+
+
+    var headerText = instructions || null;
+    var header = headerText && _react2.default.createElement(
+      'p',
+      null,
+      headerText
+    );
+
+    var themes = (0, _index2.authButtonsTheme)(lock);
+
+    var buttons = (0, _index2.socialConnections)(lock).map(function (x) {
+      var buttonTheme = themes.get(x.get('name'));
+      var connectionName = buttonTheme && buttonTheme.get('displayName');
+      var primaryColor = buttonTheme && buttonTheme.get('primaryColor');
+      var foregroundColor = buttonTheme && buttonTheme.get('foregroundColor');
+      var icon = buttonTheme && buttonTheme.get('icon');
+
+      return _react2.default.createElement(_auth_button2.default, {
+        isBig: bigButtons,
+        key: x.get('name'),
+        label: labelFn(signUp ? 'signUpWithLabel' : 'loginWithLabel', connectionName || (0, _index2.displayName)(x)),
+        onClick: function onClick() {
+          return _this2.handleSubmit(x, signUp);
+        },
+        strategy: x.get('strategy'),
+        primaryColor: primaryColor,
+        foregroundColor: foregroundColor,
+        icon: icon,
+        disabled: disabled
+      });
+    });
+
+    var loading = showLoading && _react2.default.createElement(
+      'div',
+      { className: 'auth0-loading-container' },
+      _react2.default.createElement('div', { className: 'auth0-loading' })
+    );
+
+    return _react2.default.createElement(
+      'div',
+      { className: 'auth-lock-social-buttons-pane' },
+      header,
+      _react2.default.createElement(
+        'div',
+        { className: 'auth0-lock-social-buttons-container' },
+        buttons
+      ),
+      loading
+    );
+  };
+
+  return SocialButtonsPane;
+}(_react2.default.Component);
+
+exports.default = SocialButtonsPane;
+
+
+SocialButtonsPane.propTypes = {
+  bigButtons: _propTypes2.default.bool.isRequired,
+  instructions: _propTypes2.default.any,
+  labelFn: _propTypes2.default.func.isRequired,
+  lock: _propTypes2.default.object.isRequired,
+  showLoading: _propTypes2.default.bool.isRequired,
+  signUp: _propTypes2.default.bool.isRequired,
+  disabled: _propTypes2.default.bool
+};
+
+SocialButtonsPane.defaultProps = {
+  showLoading: false,
+  disabled: false
+};
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 exports.skipQuickAuth = skipQuickAuth;
 exports.logIn = logIn;
+exports.checkSession = checkSession;
 
-var _quick_auth = __webpack_require__(103);
+var _quick_auth = __webpack_require__(70);
 
 var _index = __webpack_require__(5);
 
-var _actions = __webpack_require__(16);
+var _actions = __webpack_require__(15);
 
 var _index2 = __webpack_require__(1);
 
@@ -5231,7 +5541,7 @@ function skipQuickAuth(id) {
   (0, _index.swap)(_index.updateEntity, 'lock', id, _quick_auth.skipQuickAuth, true);
 }
 
-function logIn(id, connection, loginHint) {
+function logIn(id, connection, loginHint, prompt) {
   var m = (0, _index.read)(_index.getEntity, 'lock', id);
   var connectionScopes = l.auth.connectionScopes(m);
   var scopes = connectionScopes.get(connection.get('name'));
@@ -5239,19 +5549,38 @@ function logIn(id, connection, loginHint) {
     connection: connection.get('name'),
     connection_scope: scopes ? scopes.toJS() : undefined
   };
-
   if (!l.auth.redirect(m) && connection.get('strategy') === 'facebook') {
     params.display = 'popup';
   }
   if (loginHint) {
     params.login_hint = loginHint;
   }
+  if (prompt) {
+    params.prompt = prompt;
+  }
   (0, _actions.logIn)(id, [], params);
+}
+
+function checkSession(id, connection, loginHint) {
+  var m = (0, _index.read)(_index.getEntity, 'lock', id);
+  if (l.auth.responseType(m).includes('code')) {
+    // we need to force a redirect in this case
+    // so we use login with prompt=none
+    return logIn(id, connection, loginHint, 'none');
+  } else {
+    var connectionScopes = l.auth.connectionScopes(m);
+    var scopes = connectionScopes.get(connection.get('name'));
+    var params = _extends({}, l.auth.params(m).toJS(), {
+      connection: connection.get('name')
+    });
+
+    (0, _actions.checkSession)(id, params);
+  }
 }
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5259,111 +5588,111 @@ function logIn(id, connection, loginHint) {
 
 exports.__esModule = true;
 
-var _auth0Js = __webpack_require__(37);
+var _propTypes = __webpack_require__(2);
 
-var _auth0Js2 = _interopRequireDefault(_auth0Js);
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _legacy_api = __webpack_require__(233);
+var _react = __webpack_require__(0);
 
-var _legacy_api2 = _interopRequireDefault(_legacy_api);
+var _react2 = _interopRequireDefault(_react);
 
-var _p2_api = __webpack_require__(236);
+var _email_input = __webpack_require__(253);
 
-var _p2_api2 = _interopRequireDefault(_p2_api);
+var _email_input2 = _interopRequireDefault(_email_input);
+
+var _index = __webpack_require__(3);
+
+var c = _interopRequireWildcard(_index);
+
+var _index2 = __webpack_require__(5);
+
+var _index3 = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index3);
+
+var _email = __webpack_require__(28);
+
+var _avatar = __webpack_require__(117);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Auth0WebAPI = function () {
-  function Auth0WebAPI() {
-    _classCallCheck(this, Auth0WebAPI);
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-    this.clients = {};
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EmailPane = function (_React$Component) {
+  _inherits(EmailPane, _React$Component);
+
+  function EmailPane() {
+    _classCallCheck(this, EmailPane);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
   }
 
-  Auth0WebAPI.prototype.setupClient = function setupClient(lockID, clientID, domain, opts) {
-    var hostedLoginPage = window.location.host === domain;
-    // when it is used on on the hosted login page, it shouldn't use popup mode
-    opts.redirect = hostedLoginPage ? true : opts.redirect;
+  EmailPane.prototype.componentDidMount = function componentDidMount() {
+    var lock = this.props.lock;
 
-    opts.oidcConformant = opts.oidcConformant || false;
-
-    // for cordova and electron we should force popup without SSO so it uses
-    // /ro or /oauth/token for DB connections
-    if (window && (!!window.cordova || !!window.electron)) {
-      opts.redirect = false;
-      opts.sso = false;
-    }
-
-    // when it is used on on the hosted login page, it should use the legacy mode
-    // (usernamepassword/login) in order to continue the transaction after authentication
-    if (hostedLoginPage || !opts.oidcConformant) {
-      this.clients[lockID] = new _legacy_api2.default(clientID, domain, opts);
-    } else {
-      this.clients[lockID] = new _p2_api2.default(lockID, clientID, domain, opts);
+    if (l.ui.avatar(lock) && c.email(lock)) {
+      (0, _avatar.requestAvatar)(l.id(lock), c.email(lock));
     }
   };
 
-  Auth0WebAPI.prototype.logIn = function logIn(lockID, options, authParams, cb) {
-    this.clients[lockID].logIn(options, authParams, cb);
-  };
+  EmailPane.prototype.handleChange = function handleChange(e) {
+    var lock = this.props.lock;
 
-  Auth0WebAPI.prototype.logout = function logout(lockID, query) {
-    this.clients[lockID].logout(query);
-  };
-
-  Auth0WebAPI.prototype.signUp = function signUp(lockID, options, cb) {
-    this.clients[lockID].signUp(options, cb);
-  };
-
-  Auth0WebAPI.prototype.resetPassword = function resetPassword(lockID, options, cb) {
-    this.clients[lockID].resetPassword(options, cb);
-  };
-
-  Auth0WebAPI.prototype.startPasswordless = function startPasswordless(lockID, options, cb) {
-    this.clients[lockID].startPasswordless(options, cb);
-  };
-
-  Auth0WebAPI.prototype.parseHash = function parseHash(lockID) {
-    var hash = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-    var cb = arguments[2];
-
-    return this.clients[lockID].parseHash(hash, cb);
-  };
-
-  Auth0WebAPI.prototype.getUserInfo = function getUserInfo(lockID, token, callback) {
-    return this.clients[lockID].getUserInfo(token, callback);
-  };
-
-  Auth0WebAPI.prototype.getProfile = function getProfile(lockID, token, callback) {
-    return this.clients[lockID].getProfile(token, callback);
-  };
-
-  Auth0WebAPI.prototype.getSSOData = function getSSOData(lockID) {
-    var _clients$lockID;
-
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
+    if (l.ui.avatar(lock)) {
+      (0, _avatar.debouncedRequestAvatar)(l.id(lock), e.target.value);
     }
 
-    return (_clients$lockID = this.clients[lockID]).getSSOData.apply(_clients$lockID, args);
+    (0, _index2.swap)(_index2.updateEntity, 'lock', l.id(lock), _email.setEmail, e.target.value);
   };
 
-  Auth0WebAPI.prototype.getUserCountry = function getUserCountry(lockID, cb) {
-    return this.clients[lockID].getUserCountry(function (err, data) {
-      return cb(err, data && data.countryCode);
+  EmailPane.prototype.render = function render() {
+    var _props = this.props,
+        i18n = _props.i18n,
+        lock = _props.lock,
+        placeholder = _props.placeholder,
+        _props$forceInvalidVi = _props.forceInvalidVisibility,
+        forceInvalidVisibility = _props$forceInvalidVi === undefined ? false : _props$forceInvalidVi;
+
+    var allowAutocomplete = l.ui.allowAutocomplete(lock);
+
+    var field = c.getField(lock, 'email');
+    var value = field.get('value', '');
+    var valid = field.get('valid', true);
+    var invalidHint = field.get('invalidHint') || i18n.str(value ? 'invalidErrorHint' : 'blankErrorHint');
+
+    var isValid = (!forceInvalidVisibility || valid) && !c.isFieldVisiblyInvalid(lock, 'email');
+
+    return _react2.default.createElement(_email_input2.default, {
+      value: value,
+      invalidHint: invalidHint,
+      isValid: isValid,
+      onChange: this.handleChange.bind(this),
+      placeholder: placeholder,
+      autoComplete: allowAutocomplete
     });
   };
 
-  return Auth0WebAPI;
-}();
+  return EmailPane;
+}(_react2.default.Component);
 
-exports.default = new Auth0WebAPI();
+exports.default = EmailPane;
+
+
+EmailPane.propTypes = {
+  i18n: _propTypes2.default.object.isRequired,
+  lock: _propTypes2.default.object.isRequired,
+  placeholder: _propTypes2.default.string.isRequired
+};
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var _ = {};
@@ -5439,10 +5768,473 @@ _.isNaN = function(obj) {
 };
 
 module.exports = _;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 46 */
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var PaneSeparator = function PaneSeparator() {
+  return _react2.default.createElement("div", { className: "auth0-lock-pane-separator" });
+};
+
+exports.default = PaneSeparator;
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _confirmation_pane = __webpack_require__(263);
+
+var _confirmation_pane2 = _interopRequireDefault(_confirmation_pane);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var svg = '<svg focusable="false" width="56px" height="56px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="checkmark"> <circle cx="26" cy="26" r="25" fill="none" class="checkmark__circle"></circle> <path fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" class="checkmark__check"></path> </svg>';
+
+var SuccessPane = function SuccessPane(props) {
+  return _react2.default.createElement(_confirmation_pane2.default, _extends({ svg: svg }, props));
+};
+
+exports.default = SuccessPane;
+
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.requestPasswordlessEmail = requestPasswordlessEmail;
+exports.requestPasswordlessEmailSuccess = requestPasswordlessEmailSuccess;
+exports.requestPasswordlessEmailError = requestPasswordlessEmailError;
+exports.resendEmail = resendEmail;
+exports.sendSMS = sendSMS;
+exports.logIn = logIn;
+exports.restart = restart;
+
+var _immutable = __webpack_require__(4);
+
+var _index = __webpack_require__(5);
+
+var _actions = __webpack_require__(15);
+
+var _web_api = __webpack_require__(31);
+
+var _web_api2 = _interopRequireDefault(_web_api);
+
+var _index2 = __webpack_require__(3);
+
+var c = _interopRequireWildcard(_index2);
+
+var _index3 = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index3);
+
+var _index4 = __webpack_require__(51);
+
+var _phone_number = __webpack_require__(52);
+
+var _i18n = __webpack_require__(6);
+
+var i18n = _interopRequireWildcard(_i18n);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function getErrorMessage(m, error) {
+  var key = error.error;
+
+  if (error.error === 'sms_provider_error' && (error.description || '').indexOf('(Code: 21211)') > -1) {
+    key = 'bad.phone_number';
+  }
+
+  return i18n.html(m, ['error', 'passwordless', key]) || i18n.html(m, ['error', 'passwordless', 'lock.fallback']);
+}
+
+function requestPasswordlessEmail(id) {
+  (0, _actions.validateAndSubmit)(id, ['email'], function (m) {
+    sendEmail(m, requestPasswordlessEmailSuccess, requestPasswordlessEmailError);
+  });
+}
+
+function requestPasswordlessEmailSuccess(id) {
+  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+    m = l.setSubmitting(m, false);
+    return (0, _index4.setPasswordlessStarted)(m, true);
+  });
+}
+
+function requestPasswordlessEmailError(id, error) {
+  var m = (0, _index.read)(_index.getEntity, 'lock', id);
+  var errorMessage = getErrorMessage(m, error);
+  return (0, _index.swap)(_index.updateEntity, 'lock', id, l.setSubmitting, false, errorMessage);
+}
+
+function resendEmail(id) {
+  (0, _index.swap)(_index.updateEntity, 'lock', id, _index4.resend);
+  var m = (0, _index.read)(_index.getEntity, 'lock', id);
+  sendEmail(m, resendEmailSuccess, resendEmailError);
+}
+
+function resendEmailSuccess(id) {
+  (0, _index.swap)(_index.updateEntity, 'lock', id, _index4.setResendSuccess);
+}
+
+function resendEmailError(id, error) {
+  (0, _index.swap)(_index.updateEntity, 'lock', id, _index4.setResendFailed);
+}
+
+function sendEmail(m, successFn, errorFn) {
+  var params = {
+    connection: 'email',
+    email: c.getFieldValue(m, 'email'),
+    send: (0, _index4.send)(m)
+  };
+
+  if ((0, _index4.isSendLink)(m) && !l.auth.params(m).isEmpty()) {
+    params.authParams = l.auth.params(m).toJS();
+  }
+
+  _web_api2.default.startPasswordless(l.id(m), params, function (error) {
+    if (error) {
+      setTimeout(function () {
+        return errorFn(l.id(m), error);
+      }, 250);
+    } else {
+      successFn(l.id(m));
+    }
+  });
+}
+
+function sendSMS(id) {
+  (0, _actions.validateAndSubmit)(id, ['phoneNumber'], function (m) {
+    var params = {
+      connection: 'sms',
+      phoneNumber: (0, _phone_number.phoneNumberWithDiallingCode)(m),
+      send: (0, _index4.send)(m)
+    };
+    _web_api2.default.startPasswordless(id, params, function (error) {
+      if (error) {
+        setTimeout(function () {
+          return sendSMSError(id, error);
+        }, 250);
+      } else {
+        sendSMSSuccess(id);
+      }
+    });
+  });
+}
+
+function sendSMSSuccess(id) {
+  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+    m = l.setSubmitting(m, false);
+    m = (0, _index4.setPasswordlessStarted)(m, true);
+    return m;
+  });
+}
+
+function sendSMSError(id, error) {
+  var m = (0, _index.read)(_index.getEntity, 'lock', id);
+  var errorMessage = getErrorMessage(m, error);
+  return (0, _index.swap)(_index.updateEntity, 'lock', id, l.setSubmitting, false, errorMessage);
+}
+
+function logIn(id) {
+  var m = (0, _index.read)(_index.getEntity, 'lock', id);
+  var authParams = l.auth.params(m).toJS();
+  var params = _extends({
+    verificationCode: c.getFieldValue(m, 'vcode')
+  }, authParams);
+  if ((0, _index4.isEmail)(m)) {
+    params.connection = 'email';
+    params.email = c.getFieldValue(m, 'email');
+  } else {
+    params.connection = 'sms';
+    params.phoneNumber = (0, _phone_number.phoneNumberWithDiallingCode)(m);
+  }
+  (0, _index.swap)(_index.updateEntity, 'lock', id, l.setSubmitting, true);
+  _web_api2.default.passwordlessVerify(id, params, function (error, result) {
+    var errorMessage = void 0;
+    if (error) {
+      var _m = (0, _index.read)(_index.getEntity, 'lock', id);
+      errorMessage = getErrorMessage(_m, error);
+      if (error.logToConsole) {
+        console.error(error.description);
+      }
+      return (0, _index.swap)(_index.updateEntity, 'lock', id, l.setSubmitting, false, errorMessage);
+    } else {
+      return (0, _actions.logInSuccess)(id, result);
+    }
+  });
+}
+
+function restart(id) {
+  (0, _index.swap)(_index.updateEntity, 'lock', id, _index4.restartPasswordless);
+}
+
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.initPasswordless = initPasswordless;
+exports.setResendSuccess = setResendSuccess;
+exports.resendSuccess = resendSuccess;
+exports.setResendFailed = setResendFailed;
+exports.resendFailed = resendFailed;
+exports.resendOngoing = resendOngoing;
+exports.resend = resend;
+exports.resendAvailable = resendAvailable;
+exports.restartPasswordless = restartPasswordless;
+exports.send = send;
+exports.isSendLink = isSendLink;
+exports.setPasswordlessStarted = setPasswordlessStarted;
+exports.passwordlessStarted = passwordlessStarted;
+exports.passwordlessConnection = passwordlessConnection;
+exports.isEmail = isEmail;
+
+var _immutable = __webpack_require__(4);
+
+var _immutable2 = _interopRequireDefault(_immutable);
+
+var _index = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index);
+
+var _index2 = __webpack_require__(3);
+
+var _phone_number = __webpack_require__(52);
+
+var _data_utils = __webpack_require__(14);
+
+var _web_api = __webpack_require__(31);
+
+var _web_api2 = _interopRequireDefault(_web_api);
+
+var _sync = __webpack_require__(25);
+
+var _sync2 = _interopRequireDefault(_sync);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _dataFns = (0, _data_utils.dataFns)(['passwordless']),
+    get = _dataFns.get,
+    initNS = _dataFns.initNS,
+    tget = _dataFns.tget,
+    tremove = _dataFns.tremove,
+    tset = _dataFns.tset;
+
+function initPasswordless(m, opts) {
+  // TODO: validate opts
+
+  var send = opts.passwordlessMethod === 'link' ? 'link' : 'code';
+
+  m = initNS(m, (0, _immutable.Map)({ send: send }));
+  if (opts.defaultLocation && typeof opts.defaultLocation === 'string') {
+    m = (0, _phone_number.initLocation)(m, opts.defaultLocation.toUpperCase());
+  } else {
+    m = (0, _sync2.default)(m, 'location', {
+      recoverResult: 'US',
+      syncFn: function syncFn(m, cb) {
+        return _web_api2.default.getUserCountry(l.id(m), cb);
+      },
+      successFn: function successFn(m, result) {
+        return (0, _phone_number.initLocation)(m, result);
+      }
+    });
+  }
+
+  return m;
+}
+
+function setResendStatus(m, value) {
+  // TODO: check value
+  return tset(m, 'resendStatus', value);
+}
+
+function setResendSuccess(m) {
+  return setResendStatus(m, 'success');
+}
+
+function resendSuccess(m) {
+  return resendStatus(m) == 'success';
+}
+
+function setResendFailed(m) {
+  return setResendStatus(m, 'failed');
+}
+
+function resendFailed(m) {
+  return resendStatus(m) == 'failed';
+}
+
+function resendOngoing(m) {
+  return resendStatus(m) == 'ongoing';
+}
+
+function resend(m) {
+  if (resendAvailable(m)) {
+    return setResendStatus(m, 'ongoing');
+  } else {
+    return m;
+  }
+}
+
+function resendStatus(m) {
+  return tget(m, 'resendStatus', 'waiting');
+}
+
+function resendAvailable(m) {
+  return resendStatus(m) == 'waiting' || resendStatus(m) == 'failed';
+}
+
+function restartPasswordless(m) {
+  // TODO: maybe we can take advantage of the transient fields
+  m = tremove(m, 'passwordlessStarted');
+  m = tremove(m, 'resendStatus'); // only for link
+  m = (0, _index2.clearFields)(m, ['vcode']); // only for code
+
+  return l.clearGlobalError(m);
+}
+
+function send(m) {
+  return get(m, 'send', isEmail(m) ? 'link' : 'code');
+}
+
+function isSendLink(m) {
+  return send(m) === 'link';
+}
+
+function setPasswordlessStarted(m, value) {
+  return tset(m, 'passwordlessStarted', value);
+}
+
+function passwordlessStarted(m) {
+  return tget(m, 'passwordlessStarted', false);
+}
+
+function passwordlessConnection(m) {
+  return l.connections(m, 'passwordless', 'email').get(0) || l.connections(m, 'passwordless', 'sms').get(0) || new _immutable.Map();
+}
+
+function isEmail(m) {
+  var c = passwordlessConnection(m);
+  return c.isEmpty() ? undefined : c.get('strategy') === 'email';
+}
+
+
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.initLocation = initLocation;
+exports.validatePhoneNumber = validatePhoneNumber;
+exports.setPhoneNumber = setPhoneNumber;
+exports.phoneNumberWithDiallingCode = phoneNumberWithDiallingCode;
+exports.humanPhoneNumberWithDiallingCode = humanPhoneNumberWithDiallingCode;
+exports.humanLocation = humanLocation;
+
+var _immutable = __webpack_require__(4);
+
+var _immutable2 = _interopRequireDefault(_immutable);
+
+var _index = __webpack_require__(3);
+
+var _locations = __webpack_require__(287);
+
+var _locations2 = _interopRequireDefault(_locations);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var locationOptions = _immutable2.default.fromJS(_locations2.default.map(function (x) {
+  return {
+    country: x[0],
+    diallingCode: x[2],
+    isoCode: x[1],
+    label: x[2] + ' ' + x[1] + ' ' + x[0],
+    value: x[2] + ' ' + x[1]
+  };
+}));
+
+function findLocation(isoCode) {
+  return locationOptions.find(function (x) {
+    return x.get('isoCode') === isoCode;
+  });
+}
+
+function initLocation(m, isoCode) {
+  var location = findLocation(isoCode) || findLocation('US');
+  return (0, _index.registerOptionField)(m, 'location', locationOptions, location.get('value'));
+}
+
+function validatePhoneNumber(str) {
+  var regExp = /^[0-9]([0-9 -])*[0-9]$/;
+  return regExp.test(str);
+}
+
+function setPhoneNumber(m, str) {
+  return (0, _index.setField)(m, 'phoneNumber', str, validatePhoneNumber);
+}
+
+function phoneNumberWithDiallingCode(m) {
+  return humanPhoneNumberWithDiallingCode(m).replace(/[\s-]+/g, '');
+}
+
+function humanPhoneNumberWithDiallingCode(m) {
+  var location = (0, _index.getField)(m, 'location');
+  var code = location.get('diallingCode', '');
+  var number = (0, _index.getFieldValue)(m, 'phoneNumber', '');
+  return code ? code + ' ' + number : number;
+}
+
+function humanLocation(m) {
+  var location = (0, _index.getField)(m, 'location');
+  return location.get('diallingCode') + ' ' + location.get('country');
+}
+
+
+/***/ }),
+/* 53 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -5470,7 +6262,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 47 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5482,19 +6274,19 @@ Object.defineProperty(exports, "__esModule", {
 exports.isNonEmptyObject = isNonEmptyObject;
 exports.isNonEmptyString = isNonEmptyString;
 
-var _isEmpty = __webpack_require__(48);
+var _isEmpty = __webpack_require__(55);
 
 var _isEmpty2 = _interopRequireDefault(_isEmpty);
 
-var _isPlainObject = __webpack_require__(80);
+var _isPlainObject = __webpack_require__(90);
 
 var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-var _isString = __webpack_require__(81);
+var _isString = __webpack_require__(91);
 
 var _isString2 = _interopRequireDefault(_isString);
 
-var _trim = __webpack_require__(148);
+var _trim = __webpack_require__(159);
 
 var _trim2 = _interopRequireDefault(_trim);
 
@@ -5511,17 +6303,17 @@ function isNonEmptyString(value) {
 }
 
 /***/ }),
-/* 48 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseKeys = __webpack_require__(124),
-    getTag = __webpack_require__(126),
-    isArguments = __webpack_require__(138),
-    isArray = __webpack_require__(50),
-    isArrayLike = __webpack_require__(140),
-    isBuffer = __webpack_require__(141),
-    isPrototype = __webpack_require__(73),
-    isTypedArray = __webpack_require__(143);
+var baseKeys = __webpack_require__(135),
+    getTag = __webpack_require__(137),
+    isArguments = __webpack_require__(149),
+    isArray = __webpack_require__(57),
+    isArrayLike = __webpack_require__(151),
+    isBuffer = __webpack_require__(152),
+    isPrototype = __webpack_require__(83),
+    isTypedArray = __webpack_require__(154);
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]',
@@ -5594,10 +6386,10 @@ module.exports = isEmpty;
 
 
 /***/ }),
-/* 49 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(19);
+var root = __webpack_require__(21);
 
 /** Built-in value references. */
 var Symbol = root.Symbol;
@@ -5606,7 +6398,7 @@ module.exports = Symbol;
 
 
 /***/ }),
-/* 50 */
+/* 57 */
 /***/ (function(module, exports) {
 
 /**
@@ -5638,7 +6430,7 @@ module.exports = isArray;
 
 
 /***/ }),
-/* 51 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5682,7 +6474,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 module.exports = emptyFunction;
 
 /***/ }),
-/* 52 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5701,7 +6493,7 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 53 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5725,7 +6517,7 @@ function endsWith(str, search) {
 
 
 /***/ }),
-/* 54 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -6253,7 +7045,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(186);
+exports.isBuffer = __webpack_require__(197);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -6297,7 +7089,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(187);
+exports.inherits = __webpack_require__(198);
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -6315,10 +7107,10 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(13)))
 
 /***/ }),
-/* 55 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6328,7 +7120,7 @@ exports.__esModule = true;
 exports.load = load;
 exports.preload = preload;
 
-var _auth0Js = __webpack_require__(37);
+var _auth0Js = __webpack_require__(63);
 
 var _auth0Js2 = _interopRequireDefault(_auth0Js);
 
@@ -6413,10 +7205,27 @@ function preload(_ref) {
   global.Auth0[method] = cb;
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 56 */
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Authentication = __webpack_require__(101);
+var Management = __webpack_require__(230);
+var WebAuth = __webpack_require__(108);
+var version = __webpack_require__(41);
+
+module.exports = {
+  Authentication: Authentication,
+  Management: Management,
+  WebAuth: WebAuth,
+  version: version.raw
+};
+
+
+/***/ }),
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -6433,11 +7242,11 @@ if (typeof window !== 'undefined') { // Browser window
   root = this;
 }
 
-var Emitter = __webpack_require__(189);
-var RequestBase = __webpack_require__(190);
-var isObject = __webpack_require__(92);
-var ResponseBase = __webpack_require__(191);
-var Agent = __webpack_require__(193);
+var Emitter = __webpack_require__(200);
+var RequestBase = __webpack_require__(201);
+var isObject = __webpack_require__(102);
+var ResponseBase = __webpack_require__(202);
+var Agent = __webpack_require__(204);
 
 /**
  * Noop.
@@ -7342,11 +8151,11 @@ request.put = function(url, data, fn) {
 
 
 /***/ }),
-/* 57 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var random = __webpack_require__(208);
-var storage = __webpack_require__(209);
+var random = __webpack_require__(222);
+var storage = __webpack_require__(106);
 
 var DEFAULT_NAMESPACE = 'com.auth0.auth.';
 
@@ -7360,12 +8169,14 @@ TransactionManager.prototype.process = function(options) {
   if (!options.responseType) {
     throw new Error('responseType is required');
   }
+  var lastUsedConnection = options.realm || options.connection;
   var responseTypeIncludesIdToken = options.responseType.indexOf('id_token') !== -1;
 
   var transaction = this.generateTransaction(
     options.appState,
     options.state,
     options.nonce,
+    lastUsedConnection,
     responseTypeIncludesIdToken
   );
   if (!options.state) {
@@ -7379,16 +8190,22 @@ TransactionManager.prototype.process = function(options) {
   return options;
 };
 
-TransactionManager.prototype.generateTransaction = function(appState, state, nonce, generateNonce) {
+TransactionManager.prototype.generateTransaction = function(
+  appState,
+  state,
+  nonce,
+  lastUsedConnection,
+  generateNonce
+) {
   state = state || random.randomString(this.keyLength);
   nonce = nonce || (generateNonce ? random.randomString(this.keyLength) : null);
 
   storage.setItem(this.namespace + state, {
     nonce: nonce,
     appState: appState,
-    state: state
+    state: state,
+    lastUsedConnection: lastUsedConnection
   });
-
   return {
     state: state,
     nonce: nonce
@@ -7407,7 +8224,191 @@ module.exports = TransactionManager;
 
 
 /***/ }),
-/* 58 */
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var urljoin = __webpack_require__(12);
+
+var windowHelper = __webpack_require__(8);
+var objectHelper = __webpack_require__(10);
+var RequestBuilder = __webpack_require__(40);
+var WebMessageHandler = __webpack_require__(110);
+var responseHandler = __webpack_require__(26);
+
+function CrossOriginAuthentication(webAuth, options) {
+  this.webAuth = webAuth;
+  this.baseOptions = options;
+  this.request = new RequestBuilder(options);
+  this.webMessageHandler = new WebMessageHandler(webAuth);
+}
+
+function getFragment(name) {
+  var theWindow = windowHelper.getWindow();
+  var value = '&' + theWindow.location.hash.substring(1);
+  var parts = value.split('&' + name + '=');
+  if (parts.length === 2) {
+    return parts.pop().split('&').shift();
+  }
+}
+
+function createKey(origin, coId) {
+  return ['co/verifier', encodeURIComponent(origin), encodeURIComponent(coId)].join('/');
+}
+
+/**
+ * Logs in the user with username and password using the cross origin authentication (/co/authenticate) flow. You can use either `username` or `email` to identify the user, but `username` will take precedence over `email`.
+ * Some browsers might not be able to successfully authenticate if 3rd party cookies are disabled in your browser. [See here for more information.]{@link https://auth0.com/docs/cross-origin-authentication}.
+ * After the /co/authenticate call, you'll have to use the {@link parseHash} function at the `redirectUri` specified in the constructor.
+ *
+ * @method login
+ * @param {Object} options options used in the {@link authorize} call after the login_ticket is acquired
+ * @param {String} [options.username] Username (mutually exclusive with email)
+ * @param {String} [options.email] Email  (mutually exclusive with username)
+ * @param {String} options.password Password
+ * @param {String} [options.realm] Realm used to authenticate the user, it can be a realm name or a database connection name
+ * @param {crossOriginLoginCallback} cb Callback function called only when an authentication error, like invalid username or password, occurs. For other types of errors, there will be a redirect to the `redirectUri`.
+ */
+CrossOriginAuthentication.prototype.login = function(options, cb) {
+  var _this = this;
+  var theWindow = windowHelper.getWindow();
+  var url = urljoin(this.baseOptions.rootUrl, '/co/authenticate');
+  var authenticateBody = {
+    client_id: options.clientID || this.baseOptions.clientID,
+    username: options.username || options.email
+  };
+  if (options.password) {
+    authenticateBody.password = options.password;
+  }
+  if (options.otp) {
+    authenticateBody.otp = options.otp;
+  }
+  var realm = options.realm || this.baseOptions.realm;
+
+  if (realm) {
+    var credentialType =
+      options.credentialType ||
+      this.baseOptions.credentialType ||
+      'http://auth0.com/oauth/grant-type/password-realm';
+    authenticateBody.realm = realm;
+    authenticateBody.credential_type = credentialType;
+  } else {
+    authenticateBody.credential_type = 'password';
+  }
+  this.request.post(url).withCredentials().send(authenticateBody).end(function(err, data) {
+    if (err) {
+      var errorObject = (err.response && err.response.body) || {
+        error: 'request_error',
+        error_description: JSON.stringify(err)
+      };
+      return responseHandler(cb)(errorObject);
+    }
+    var popupMode = options.popup === true;
+    options = objectHelper.blacklist(options, ['password', 'credentialType', 'otp', 'popup']);
+    var authorizeOptions = objectHelper
+      .merge(options)
+      .with({ loginTicket: data.body.login_ticket });
+    var key = createKey(_this.baseOptions.rootUrl, data.body.co_id);
+    theWindow.sessionStorage[key] = data.body.co_verifier;
+    if (popupMode) {
+      _this.webMessageHandler.run(authorizeOptions, responseHandler(cb));
+    } else {
+      _this.webAuth.authorize(authorizeOptions);
+    }
+  });
+};
+
+function tryGetVerifier(theWindow, key) {
+  try {
+    var verifier = theWindow.sessionStorage[key];
+    theWindow.sessionStorage.removeItem(key);
+    return verifier;
+  } catch (e) {
+    return '';
+  }
+}
+
+/**
+ * Runs the callback code for the cross origin authentication call. This method is meant to be called by the cross origin authentication callback url.
+ *
+ * @method callback
+ */
+CrossOriginAuthentication.prototype.callback = function() {
+  var targetOrigin = decodeURIComponent(getFragment('origin'));
+  var theWindow = windowHelper.getWindow();
+
+  theWindow.addEventListener('message', function(evt) {
+    if (evt.data.type !== 'co_verifier_request') {
+      return;
+    }
+    var key = createKey(evt.origin, evt.data.request.id);
+    var verifier = tryGetVerifier(theWindow, key);
+
+    evt.source.postMessage(
+      {
+        type: 'co_verifier_response',
+        response: {
+          verifier: verifier
+        }
+      },
+      evt.origin
+    );
+  });
+
+  theWindow.parent.postMessage({ type: 'ready' }, targetOrigin);
+};
+
+module.exports = CrossOriginAuthentication;
+
+
+/***/ }),
+/* 67 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.changeField = changeField;
+exports.startOptionSelection = startOptionSelection;
+exports.selectOption = selectOption;
+exports.cancelOptionSelection = cancelOptionSelection;
+
+var _immutable = __webpack_require__(4);
+
+var _index = __webpack_require__(5);
+
+var _index2 = __webpack_require__(3);
+
+function changeField(id, name, value, validationFn) {
+  for (var _len = arguments.length, validationExtraArgs = Array(_len > 4 ? _len - 4 : 0), _key = 4; _key < _len; _key++) {
+    validationExtraArgs[_key - 4] = arguments[_key];
+  }
+
+  _index.swap.apply(undefined, [_index.updateEntity, 'lock', id, _index2.setField, name, value, validationFn].concat(validationExtraArgs));
+}
+
+function startOptionSelection(id, name, iconUrl, icon) {
+  // TODO: should be transient
+  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+    return m.setIn(['field', 'selecting', 'name'], name).setIn(['field', 'selecting', 'iconUrl'], iconUrl).setIn(['field', 'selecting', 'icon'], icon);
+  });
+}
+
+function selectOption(id, name, option) {
+  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+    return (0, _index2.setOptionField)(m.deleteIn(['field', 'selecting']), name, option);
+  });
+}
+
+function cancelOptionSelection(id) {
+  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
+    return m.deleteIn(['field', 'selecting']);
+  });
+}
+
+
+/***/ }),
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7420,11 +8421,11 @@ exports.usernameLooksLikeEmail = usernameLooksLikeEmail;
 
 var _index = __webpack_require__(3);
 
-var _email = __webpack_require__(23);
+var _email = __webpack_require__(28);
 
-var _database = __webpack_require__(6);
+var _database = __webpack_require__(7);
 
-var _trim = __webpack_require__(22);
+var _trim = __webpack_require__(27);
 
 var _trim2 = _interopRequireDefault(_trim);
 
@@ -7490,7 +8491,7 @@ function usernameLooksLikeEmail(str) {
 
 
 /***/ }),
-/* 59 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7509,7 +8510,7 @@ var _immutable = __webpack_require__(4);
 
 var _immutable2 = _interopRequireDefault(_immutable);
 
-var _data_utils = __webpack_require__(13);
+var _data_utils = __webpack_require__(14);
 
 var _index = __webpack_require__(1);
 
@@ -7636,119 +8637,33 @@ function defaultDirectoryName(m) {
 
 
 /***/ }),
-/* 60 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 exports.__esModule = true;
+exports.skipQuickAuth = skipQuickAuth;
+exports.hasSkippedQuickAuth = hasSkippedQuickAuth;
 
-var _propTypes = __webpack_require__(2);
+var _data_utils = __webpack_require__(14);
 
-var _propTypes2 = _interopRequireDefault(_propTypes);
+var _dataFns = (0, _data_utils.dataFns)(['quickAuth']),
+    tget = _dataFns.tget,
+    tset = _dataFns.tset;
 
-var _react = __webpack_require__(0);
+function skipQuickAuth(m, b) {
+  return tset(m, 'skipped', b);
+}
 
-var _react2 = _interopRequireDefault(_react);
-
-var _email_input = __webpack_require__(244);
-
-var _email_input2 = _interopRequireDefault(_email_input);
-
-var _index = __webpack_require__(3);
-
-var c = _interopRequireWildcard(_index);
-
-var _index2 = __webpack_require__(5);
-
-var _index3 = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index3);
-
-var _email = __webpack_require__(23);
-
-var _avatar = __webpack_require__(108);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var EmailPane = function (_React$Component) {
-  _inherits(EmailPane, _React$Component);
-
-  function EmailPane() {
-    _classCallCheck(this, EmailPane);
-
-    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
-  }
-
-  EmailPane.prototype.componentDidMount = function componentDidMount() {
-    var lock = this.props.lock;
-
-    if (l.ui.avatar(lock) && c.email(lock)) {
-      (0, _avatar.requestAvatar)(l.id(lock), c.email(lock));
-    }
-  };
-
-  EmailPane.prototype.handleChange = function handleChange(e) {
-    var lock = this.props.lock;
-
-    if (l.ui.avatar(lock)) {
-      (0, _avatar.debouncedRequestAvatar)(l.id(lock), e.target.value);
-    }
-
-    (0, _index2.swap)(_index2.updateEntity, 'lock', l.id(lock), _email.setEmail, e.target.value);
-  };
-
-  EmailPane.prototype.render = function render() {
-    var _props = this.props,
-        i18n = _props.i18n,
-        lock = _props.lock,
-        placeholder = _props.placeholder,
-        _props$forceInvalidVi = _props.forceInvalidVisibility,
-        forceInvalidVisibility = _props$forceInvalidVi === undefined ? false : _props$forceInvalidVi;
-
-    var allowAutocomplete = l.ui.allowAutocomplete(lock);
-
-    var field = c.getField(lock, 'email');
-    var value = field.get('value', '');
-    var valid = field.get('valid', true);
-    var invalidHint = field.get('invalidHint') || i18n.str(value ? 'invalidErrorHint' : 'blankErrorHint');
-
-    var isValid = (!forceInvalidVisibility || valid) && !c.isFieldVisiblyInvalid(lock, 'email');
-
-    return _react2.default.createElement(_email_input2.default, {
-      value: value,
-      invalidHint: invalidHint,
-      isValid: isValid,
-      onChange: this.handleChange.bind(this),
-      placeholder: placeholder,
-      autoComplete: allowAutocomplete
-    });
-  };
-
-  return EmailPane;
-}(_react2.default.Component);
-
-exports.default = EmailPane;
-
-
-EmailPane.propTypes = {
-  i18n: _propTypes2.default.object.isRequired,
-  lock: _propTypes2.default.object.isRequired,
-  placeholder: _propTypes2.default.string.isRequired
-};
+function hasSkippedQuickAuth(m) {
+  return tget(m, 'skipped', false);
+}
 
 
 /***/ }),
-/* 61 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7764,7 +8679,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _username_input = __webpack_require__(246);
+var _username_input = __webpack_require__(255);
 
 var _username_input2 = _interopRequireDefault(_username_input);
 
@@ -7778,9 +8693,9 @@ var _index3 = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index3);
 
-var _username = __webpack_require__(58);
+var _username = __webpack_require__(68);
 
-var _avatar = __webpack_require__(108);
+var _avatar = __webpack_require__(117);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -7882,7 +8797,7 @@ UsernamePane.defaultProps = {
 
 
 /***/ }),
-/* 62 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7898,7 +8813,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _password_input = __webpack_require__(63);
+var _password_input = __webpack_require__(73);
 
 var _password_input2 = _interopRequireDefault(_password_input);
 
@@ -7912,7 +8827,7 @@ var _index3 = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index3);
 
-var _password = __webpack_require__(253);
+var _password = __webpack_require__(262);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -7997,7 +8912,7 @@ PasswordPane.propTypes = {
 
 
 /***/ }),
-/* 63 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8016,11 +8931,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _input_wrap = __webpack_require__(24);
+var _input_wrap = __webpack_require__(18);
 
 var _input_wrap2 = _interopRequireDefault(_input_wrap);
 
-var _password_strength = __webpack_require__(247);
+var _password_strength = __webpack_require__(256);
 
 var _password_strength2 = _interopRequireDefault(_password_strength);
 
@@ -8133,10 +9048,10 @@ exports.default = PasswordInput;
 
 
 /***/ }),
-/* 64 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _ = __webpack_require__(45);
+var _ = __webpack_require__(47);
 
 /* OWASP Special Characters: https://www.owasp.org/index.php/Password_special_characters */
 var specialCharacters = [' ', '!', '"', '#', '\\$', '%', '&', '\'', '\\(', '\\)', '\\*', '\\+', ',', '-', '\\.', '/', ':', ';', '<', '=', '>', '\\?', '@', '\\[', '\\\\', '\\]', '\\^', '_','`','{','\\|', '}','~'].join('|');
@@ -8233,37 +9148,7 @@ module.exports = {
 
 
 /***/ }),
-/* 65 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _confirmation_pane = __webpack_require__(254);
-
-var _confirmation_pane2 = _interopRequireDefault(_confirmation_pane);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var svg = '<svg focusable="false" width="56px" height="56px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="checkmark"> <circle cx="26" cy="26" r="25" fill="none" class="checkmark__circle"></circle> <path fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" class="checkmark__check"></path> </svg>';
-
-var SuccessPane = function SuccessPane(props) {
-  return _react2.default.createElement(_confirmation_pane2.default, _extends({ svg: svg }, props));
-};
-
-exports.default = SuccessPane;
-
-
-/***/ }),
-/* 66 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8276,19 +9161,19 @@ exports.logIn = logIn;
 
 var _index = __webpack_require__(5);
 
-var _enterprise = __webpack_require__(14);
+var _enterprise = __webpack_require__(16);
 
 var _index2 = __webpack_require__(3);
 
-var _email = __webpack_require__(23);
+var _email = __webpack_require__(28);
 
-var _actions = __webpack_require__(16);
+var _actions = __webpack_require__(15);
 
 var _index3 = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index3);
 
-var _index4 = __webpack_require__(6);
+var _index4 = __webpack_require__(7);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -8309,14 +9194,6 @@ function cancelHRD(id) {
     return m;
   });
 }
-
-var throwIfOidcIsEnabledAndConnectionIsADAndHasUsername = function throwIfOidcIsEnabledAndConnectionIsADAndHasUsername(m, connection, hasUsername) {
-  var isOIDC = l.oidcConformant(m);
-  var isAD = ['ad', 'adfs', 'office365', 'waad'].indexOf(connection.get('strategy')) >= 0;
-  if (isOIDC && isAD && hasUsername) {
-    throw new Error('This connection does not support cross origin authentication. Please disable OIDC.');
-  }
-};
 
 function logIn(id) {
   var m = (0, _index.read)(_index.getEntity, 'lock', id);
@@ -8339,8 +9216,6 @@ function logInActiveFlow(id) {
 
   var username = l.defaultADUsernameFromEmailPrefix(m) ? (0, _email.emailLocalPart)(originalUsername) : originalUsername;
 
-  throwIfOidcIsEnabledAndConnectionIsADAndHasUsername(m, connection, !!username);
-
   (0, _actions.logIn)(id, ['password', usernameField], {
     connection: connection ? connection.get('name') : null,
     username: username,
@@ -8360,7 +9235,29 @@ function logInSSO(id, connection) {
 
 
 /***/ }),
-/* 67 */
+/* 76 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.lastUsedConnection = lastUsedConnection;
+exports.lastUsedUsername = lastUsedUsername;
+
+var _immutable = __webpack_require__(4);
+
+function lastUsedConnection(m) {
+  return m.getIn(['sso', 'lastUsedConnection']);
+}
+
+function lastUsedUsername(m) {
+  return m.getIn(['sso', 'lastUsedUsername'], '');
+}
+
+
+/***/ }),
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8376,7 +9273,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _auth_button = __webpack_require__(102);
+var _auth_button = __webpack_require__(114);
 
 var _auth_button2 = _interopRequireDefault(_auth_button);
 
@@ -8458,7 +9355,7 @@ exports.default = QuickAuthPane;
 
 
 /***/ }),
-/* 68 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8473,23 +9370,23 @@ var _immutable = __webpack_require__(4);
 
 var _immutable2 = _interopRequireDefault(_immutable);
 
-var _lattice = __webpack_require__(115);
+var _lattice = __webpack_require__(126);
 
 var _lattice2 = _interopRequireDefault(_lattice);
 
-var _logo = __webpack_require__(281);
+var _logo = __webpack_require__(298);
 
 var _logo2 = _interopRequireDefault(_logo);
 
-var _Logger = __webpack_require__(114);
+var _Logger = __webpack_require__(125);
 
 var _Logger2 = _interopRequireDefault(_Logger);
 
-var _Auth = __webpack_require__(35);
+var _Auth = __webpack_require__(37);
 
 var Auth0 = _interopRequireWildcard(_Auth);
 
-var _LangUtils = __webpack_require__(47);
+var _LangUtils = __webpack_require__(54);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -8650,13 +9547,13 @@ exports.configure = configure;
 exports.getConfig = getConfig;
 
 /***/ }),
-/* 69 */
+/* 79 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_69__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_79__;
 
 /***/ }),
-/* 70 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {var require;//! moment.js
@@ -13195,10 +14092,10 @@ return hooks;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(53)(module)))
 
 /***/ }),
-/* 71 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13407,7 +14304,7 @@ exports.isBuffer = function isBuffer(obj) {
 
 
 /***/ }),
-/* 72 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13432,7 +14329,7 @@ module.exports = {
 
 
 /***/ }),
-/* 73 */
+/* 83 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -13456,7 +14353,7 @@ module.exports = isPrototype;
 
 
 /***/ }),
-/* 74 */
+/* 84 */
 /***/ (function(module, exports) {
 
 /**
@@ -13477,11 +14374,11 @@ module.exports = overArg;
 
 
 /***/ }),
-/* 75 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(18),
-    isObject = __webpack_require__(77);
+var baseGetTag = __webpack_require__(20),
+    isObject = __webpack_require__(87);
 
 /** `Object#toString` result references. */
 var asyncTag = '[object AsyncFunction]',
@@ -13520,7 +14417,7 @@ module.exports = isFunction;
 
 
 /***/ }),
-/* 76 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -13528,10 +14425,10 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 
 module.exports = freeGlobal;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 77 */
+/* 87 */
 /***/ (function(module, exports) {
 
 /**
@@ -13568,7 +14465,7 @@ module.exports = isObject;
 
 
 /***/ }),
-/* 78 */
+/* 88 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -13600,7 +14497,7 @@ module.exports = toSource;
 
 
 /***/ }),
-/* 79 */
+/* 89 */
 /***/ (function(module, exports) {
 
 /** Used as references for various `Number` constants. */
@@ -13641,12 +14538,12 @@ module.exports = isLength;
 
 
 /***/ }),
-/* 80 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(18),
-    getPrototype = __webpack_require__(147),
-    isObjectLike = __webpack_require__(21);
+var baseGetTag = __webpack_require__(20),
+    getPrototype = __webpack_require__(158),
+    isObjectLike = __webpack_require__(24);
 
 /** `Object#toString` result references. */
 var objectTag = '[object Object]';
@@ -13709,12 +14606,12 @@ module.exports = isPlainObject;
 
 
 /***/ }),
-/* 81 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(18),
-    isArray = __webpack_require__(50),
-    isObjectLike = __webpack_require__(21);
+var baseGetTag = __webpack_require__(20),
+    isArray = __webpack_require__(57),
+    isObjectLike = __webpack_require__(24);
 
 /** `Object#toString` result references. */
 var stringTag = '[object String]';
@@ -13745,13 +14642,13 @@ module.exports = isString;
 
 
 /***/ }),
-/* 82 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(49),
-    arrayMap = __webpack_require__(149),
-    isArray = __webpack_require__(50),
-    isSymbol = __webpack_require__(150);
+var Symbol = __webpack_require__(56),
+    arrayMap = __webpack_require__(160),
+    isArray = __webpack_require__(57),
+    isSymbol = __webpack_require__(161);
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0;
@@ -13788,12 +14685,12 @@ module.exports = baseToString;
 
 
 /***/ }),
-/* 83 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseFindIndex = __webpack_require__(154),
-    baseIsNaN = __webpack_require__(155),
-    strictIndexOf = __webpack_require__(156);
+var baseFindIndex = __webpack_require__(165),
+    baseIsNaN = __webpack_require__(166),
+    strictIndexOf = __webpack_require__(167);
 
 /**
  * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
@@ -13814,7 +14711,32 @@ module.exports = baseIndexOf;
 
 
 /***/ }),
-/* 84 */
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.Auth0Lock = exports.Auth0LockPasswordless = undefined;
+
+var _lock = __webpack_require__(178);
+
+var _lock2 = _interopRequireDefault(_lock);
+
+var _passwordless = __webpack_require__(284);
+
+var _passwordless2 = _interopRequireDefault(_passwordless);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Auth0LockPasswordless = exports.Auth0LockPasswordless = _passwordless2.default;
+var Auth0Lock = exports.Auth0Lock = _lock2.default;
+exports.default = _lock2.default;
+
+
+/***/ }),
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13822,13 +14744,41 @@ module.exports = baseIndexOf;
 
 exports.__esModule = true;
 
-var _core = __webpack_require__(167);
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _core2 = _interopRequireDefault(_core);
+exports.injectStyles = injectStyles;
 
-var _classic = __webpack_require__(42);
+var _events = __webpack_require__(179);
 
-var _classic2 = _interopRequireDefault(_classic);
+var _index = __webpack_require__(5);
+
+var _box = __webpack_require__(181);
+
+var _web_api = __webpack_require__(31);
+
+var _web_api2 = _interopRequireDefault(_web_api);
+
+var _actions = __webpack_require__(15);
+
+var _index2 = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index2);
+
+var _index3 = __webpack_require__(3);
+
+var c = _interopRequireWildcard(_index3);
+
+var _id_utils = __webpack_require__(283);
+
+var idu = _interopRequireWildcard(_id_utils);
+
+var _i18n = __webpack_require__(6);
+
+var i18n = _interopRequireWildcard(_i18n);
+
+var _sync = __webpack_require__(25);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -13838,9 +14788,217 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var css = '/* normalize.css v3.0.2 | MIT License | git.io/normalize */ .auth0-lock html {   font-family: sans-serif; /* 1 */   -ms-text-size-adjust: 100%; /* 2 */   -webkit-text-size-adjust: 100%; /* 2 */ } .auth0-lock body {   margin: 0; } .auth0-lock article, .auth0-lock aside, .auth0-lock details, .auth0-lock figcaption, .auth0-lock figure, .auth0-lock footer, .auth0-lock header, .auth0-lock hgroup, .auth0-lock main, .auth0-lock menu, .auth0-lock nav, .auth0-lock section, .auth0-lock summary {   display: block; } .auth0-lock audio, .auth0-lock canvas, .auth0-lock progress, .auth0-lock video {   display: inline-block; /* 1 */   vertical-align: baseline; /* 2 */ } .auth0-lock audio:not([controls]) {   display: none;   height: 0; } .auth0-lock [hidden], .auth0-lock template {   display: none; } .auth0-lock a {   background-color: transparent; } .auth0-lock a:active, .auth0-lock a:hover {   outline: 0; } .auth0-lock abbr[title] {   border-bottom: 1px dotted; } .auth0-lock b, .auth0-lock strong {   font-weight: bold; } .auth0-lock dfn {   font-style: italic; } .auth0-lock h1 {   font-size: 2em;   margin: 0.67em 0; } .auth0-lock mark {   background: #ff0;   color: #000; } .auth0-lock small {   font-size: 80%; } .auth0-lock sub, .auth0-lock sup {   font-size: 75%;   line-height: 0;   position: relative;   vertical-align: baseline; } .auth0-lock sup {   top: -0.5em; } .auth0-lock sub {   bottom: -0.25em; } .auth0-lock img {   border: 0; } .auth0-lock svg:not(:root) {   overflow: hidden; } .auth0-lock figure {   margin: 1em 40px; } .auth0-lock hr {   box-sizing: content-box;   height: 0; } .auth0-lock pre {   overflow: auto; } .auth0-lock code, .auth0-lock kbd, .auth0-lock pre, .auth0-lock samp {   font-family: monospace, monospace;   font-size: 1em; } .auth0-lock button, .auth0-lock input, .auth0-lock optgroup, .auth0-lock select, .auth0-lock textarea {   color: inherit; /* 1 */   font: inherit; /* 2 */   margin: 0; /* 3 */ } .auth0-lock button {   overflow: visible; } .auth0-lock button, .auth0-lock select {   text-transform: none; } .auth0-lock button, .auth0-lock html input[type="button"], .auth0-lock input[type="reset"], .auth0-lock input[type="submit"] {   -webkit-appearance: button; /* 2 */   cursor: pointer; /* 3 */ } .auth0-lock button[disabled], .auth0-lock html input[disabled] {   cursor: default; } .auth0-lock button::-moz-focus-inner, .auth0-lock input::-moz-focus-inner {   border: 0;   padding: 0; } .auth0-lock input {   line-height: normal; } .auth0-lock input[type="checkbox"], .auth0-lock input[type="radio"] {   box-sizing: border-box; /* 1 */   padding: 0; /* 2 */ } .auth0-lock input[type="number"]::-webkit-inner-spin-button, .auth0-lock input[type="number"]::-webkit-outer-spin-button {   height: auto; } .auth0-lock input[type="search"] {   -webkit-appearance: textfield; /* 1 */ /* 2 */   box-sizing: content-box; } .auth0-lock input[type="search"]::-webkit-search-cancel-button, .auth0-lock input[type="search"]::-webkit-search-decoration {   -webkit-appearance: none; } .auth0-lock fieldset {   border: 1px solid #c0c0c0;   margin: 0 2px;   padding: 0.35em 0.625em 0.75em; } .auth0-lock legend {   border: 0; /* 1 */   padding: 0; /* 2 */ } .auth0-lock textarea {   overflow: auto; } .auth0-lock optgroup {   font-weight: bold; } .auth0-lock table {   border-collapse: collapse;   border-spacing: 0; } .auth0-lock td, .auth0-lock th {   padding: 0; } .auth0-lock-social-button-icon {   background-repeat: no-repeat;   background-size: 50%;   background-position: center center; } .auth0-lock-social-button[data-provider="amazon"] {   background-color: #f90; } .auth0-lock-social-button[data-provider="aol"] {   background-color: #ff0b00; } .auth0-lock-social-button[data-provider="baidu"] {   background-color: #2529d8; } .auth0-lock-social-button[data-provider="bitbucket"] {   background-color: #205081; } .auth0-lock-social-button[data-provider="dropbox"] {   background-color: #007ee5; } .auth0-lock-social-button[data-provider="ebay"] {   background-color: #0064d2; } .auth0-lock-social-button[data-provider="facebook"] {   background-color: #3b5998; } .auth0-lock-social-button[data-provider^="google"] {   background-color: #4285f4; } .auth0-lock-social-button[data-provider="instagram"] {   background-color: #3f729b; } .auth0-lock-social-button[data-provider="linkedin"] {   background-color: #0077b5; } .auth0-lock-social-button[data-provider="github"] {   background-color: #333; } .auth0-lock-social-button[data-provider="oauth2"] {   background-color: #eb5424; } .auth0-lock-social-button[data-provider="paypal"] {   background-color: #009cde; } .auth0-lock-social-button[data-provider="paypal-sandbox"] {   background-color: #009cde; } .auth0-lock-social-button[data-provider^="salesforce"] {   background-color: #1798c1; } .auth0-lock-social-button[data-provider="shopify"] {   background-color: #96bf48; } .auth0-lock-social-button[data-provider="soundcloud"] {   background-color: #f80; } .auth0-lock-social-button[data-provider="renren"] {   background-color: #0056b5; } .auth0-lock-social-button[data-provider="exact"] {   background-color: #ed1c24; } .auth0-lock-social-button[data-provider="twitter"] {   background-color: #55acee; } .auth0-lock-social-button[data-provider=""] {   background-color: #c7eaff; } .auth0-lock-social-button[data-provider="yandex"] {   background-color: #fc0; } .auth0-lock-social-button[data-provider^="thecity"] {   background-color: #767571; } .auth0-lock-social-button[data-provider="planningcenter"] {   background-color: #4e4e4e; } .auth0-lock-social-button[data-provider="thirtysevensignals"] {   background-color: #6ac071; } .auth0-lock-social-button[data-provider="fitbit"] {   background-color: #4cc2c4; } .auth0-lock-social-button[data-provider="wordpress"] {   background-color: #21759b; } .auth0-lock-social-button[data-provider="yahoo"] {   background-color: #410093; } .auth0-lock-social-button[data-provider="box"] {   background-color: #267bb6; } .auth0-lock-social-button[data-provider="vkontakte"] {   background-color: #45668e; } .auth0-lock-social-button[data-provider="dwolla"] {   background-color: #f5891f; } .auth0-lock-social-button[data-provider="miicard"] {   background-color: #3fb7ff; } .auth0-lock-social-button[data-provider="yammer"] {   background-color: #0072c6; } .auth0-lock-social-button[data-provider="weibo"] {   background-color: #dd4b39; } .auth0-lock-social-button[data-provider^="evernote"] {   background-color: #2dbe60; } .auth0-lock-social-button[data-provider^="windows"], .auth0-lock-social-button[data-provider^="microsoft"] {   background-color: #00a1f1; } .auth0-lock-social-button[data-provider^=amazon] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjcycHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDcyIDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+YW1hem9uPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImFtYXpvbiIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0xLjA2Myw1MC4zMTMgQzEsNTAuNDM4IDAuOTM4LDUwLjU2MyAwLjkzOCw1MC42ODggQzAuOTM4LDUwLjg3NiAxLjA2Myw1MS4xMjYgMS4zMTMsNTEuMzEzIEM2LjAwMSw1NS41NjMgMTEuMzEzLDU4LjgxMyAxNy4yNTEsNjEuMTI2IEMyMy4xODksNjMuNDM5IDI5LjUwMSw2NC42MjYgMzYuMTI2LDY0LjYyNiBDNDAuNDM5LDY0LjYyNiA0NC44NzYsNjQuMDAxIDQ5LjM3Niw2Mi44MTMgQzUzLjkzOSw2MS42MjUgNTguMDAxLDU5LjkzOCA2MS42ODksNTcuNzUgQzYyLjg3Nyw1Ny4wNjIgNjMuODc3LDU2LjQzNyA2NC42MjcsNTUuODc1IEM2NS4xOSw1NS40MzcgNjUuMzE1LDU0LjkzNyA2NC45NCw1NC40MzcgQzY0LjYyNyw1My45MzcgNjQuMTI3LDUzLjgxMiA2My40NCw1NC4wNjIgQzYzLjMxNSw1NC4xMjUgNjMuMDAyLDU0LjI1IDYyLjYyNyw1NC40MzcgQzYyLjE4OSw1NC42MjUgNjEuODc3LDU0Ljc1IDYxLjY4OSw1NC44MTIgQzUzLjUwMSw1Ny45MzcgNDUuMjUxLDU5LjUgMzYuODc2LDU5LjUgQzI0LjM3Niw1OS41IDEyLjc1MSw1Ni40MzcgMi4wNjMsNTAuMjUgQzEuNjI1LDQ5LjkzNyAxLjI1LDQ5LjkzNyAxLjA2Myw1MC4zMTMgTDEuMDYzLDUwLjMxMyBaIE0yMC4zMTMsMzIuMDYzIEMyMC4zMTMsMzUuNzUxIDIxLjM3NiwzOC42MjYgMjMuNTAxLDQwLjYyNiBDMjUuNjI2LDQyLjY4OSAyOC4zMTQsNDMuNjg5IDMxLjU2NCw0My42ODkgQzMzLjc1Miw0My42ODkgMzUuNTAyLDQzLjUwMSAzNi45MzksNDMuMDY0IEMzOS4yNTIsNDIuNDM5IDQxLjYyNyw0MC44MTQgNDQuMDAyLDM4LjE4OSBDNDQuMTksMzguMzc3IDQ0LjUwMiwzOC44MTQgNDQuODc3LDM5LjQzOSBDNDUuMzE1LDQwLjA2NCA0NS42MjcsNDAuNTAyIDQ1LjgxNSw0MC42ODkgTDQ2LjgxNSw0MS42ODkgQzQ3LjI1Myw0Mi4xODkgNDcuNzUzLDQyLjY4OSA0OC4zNzgsNDMuMTg5IEM0OS4wNjYsNDMuNTAyIDQ5LjY5MSw0My40MzkgNTAuMTkxLDQzLjA2NCBDNTAuNTA0LDQyLjgxNCA1Mi40NDEsNDEuMTI2IDU2LjAwNCwzOC4wNjQgQzU2LjMxNywzNy44MTQgNTYuNTA0LDM3LjUwMSA1Ni41MDQsMzcuMTg5IEM1Ni41MDQsMzYuODc3IDU2LjM3OSwzNi41MDEgNTYuMTI5LDM2LjEyNiBDNTUuNDQxLDM1LjI1MSA1NC45NDEsMzQuNjI2IDU0LjYyOSwzNC4xODggQzU0LjMxNiwzMy44MTMgNTQuMDA0LDMzLjEyNSA1My42OTEsMzIuMTg4IEM1My4zNzgsMzEuMzEzIDUzLjI1MywzMC4yNSA1My4yNTMsMjkuMTg4IEw1My4yNTMsMTMuNjg4IEM1My4yNTMsMTMuNSA1My4xOSwxMi45MzggNTMuMTksMTIuMDYzIEM1My4xMjcsMTEuMTI1IDUzLjA2NSwxMC41IDUyLjk0LDEwLjI1IEw1Mi41NjUsOC43NSBDNTIuNDQsOCA1Mi4yNTIsNy40MzcgNTIuMDAyLDcuMDYyIEM1MS44MTQsNi42ODcgNTEuNTAyLDYuMjQ5IDUxLjEyNyw1Ljc0OSBDNTAuODE0LDUuMzExIDUwLjM3Nyw0LjgxMSA0OS45MzksNC4zNzQgQzQ3LjI1MSwxLjg3NCA0My40MzksMC42MjQgMzguNTY0LDAuNjI0IEwzNi45MzksMC42MjQgQzMzLjE4OSwwLjgxMiAyOS44NzYsMS44NzQgMjcuMDAxLDMuNjg3IEMyNC4xODgsNS41IDIyLjM3Niw4LjMxMiAyMS42ODgsMTIuMTI1IEMyMS42MjUsMTIuMzEzIDIxLjYyNSwxMi40MzggMjEuNjI1LDEyLjU2MyBDMjEuNjI1LDEzLjE4OCAyMiwxMy41NjMgMjIuNjg4LDEzLjc1MSBMMzAuMDYzLDE0LjYyNiBDMzAuNzUxLDE0LjUwMSAzMS4xODgsMTQuMDAxIDMxLjMxMywxMy4xODggQzMxLjYyNiwxMS44MTMgMzIuMzEzLDEwLjc1IDMzLjMxMyw5LjkzOCBDMzQuMzc2LDkuMTg4IDM1LjU2Myw4Ljc1IDM2LjkzOCw4LjYyNSBMMzcuNTAxLDguNjI1IEMzOS4zNzYsOC42MjUgNDAuODE0LDkuMjUgNDEuNjg5LDEwLjU2MyBDNDIuMzE0LDExLjUwMSA0Mi42MjcsMTMuMzEzIDQyLjYyNywxNi4wNjMgTDQyLjYyNywxNy4xMjYgQzQwLjAwMiwxNy4zNzYgMzguMTI3LDE3LjUwMSAzNi45MzksMTcuNjI2IEMzMy42MjYsMTguMDY0IDMwLjc1MSwxOC43NTEgMjguNDM5LDE5Ljc1MSBDMjUuOTM5LDIwLjgxNCAyMy45MzksMjIuMzc2IDIyLjUwMSwyNC41MDEgQzIxLjA2MywyNi41NjQgMjAuMzEzLDI5LjEyNiAyMC4zMTMsMzIuMDY0IEwyMC4zMTMsMzIuMDYzIFogTTMxLjMxMywzMC43NSBDMzEuMzEzLDI3LjEyNSAzMy4xODgsMjQuNzUgMzYuOTM4LDIzLjY4NyBDMzguMjUxLDIzLjMxMiA0MC4xMjYsMjMuMTI0IDQyLjYyNiwyMy4xMjQgTDQyLjYyNiwyNC43NDkgQzQyLjYyNiwyNi4xMjQgNDIuNTYzLDI3LjEyNCA0Mi41NjMsMjcuNjg3IEM0Mi41NjMsMjguMzEyIDQyLjQzOCwyOS4wNjIgNDIuMTg4LDMwIEM0MS45MzgsMzEgNDEuNjI1LDMxLjg3NSA0MS4xMjUsMzIuNjg4IEM0MC4xMjUsMzQuNTAxIDM4Ljc1LDM1LjY4OCAzNi45MzcsMzYuMTI2IEMzNi44NzQsMzYuMTI2IDM2Ljc0OSwzNi4xODkgMzYuNDk5LDM2LjE4OSBDMzYuMjQ5LDM2LjI1MiAzNi4wNjEsMzYuMjUyIDM1LjkzNiwzNi4yNTIgQzM0LjU2MSwzNi4yNTIgMzMuNDM2LDM1Ljc1MiAzMi41NjEsMzQuNzUyIEMzMS43NDgsMzMuNzUyIDMxLjMxMSwzMi40MzkgMzEuMzExLDMwLjc1MiBMMzEuMzEzLDMwLjc1IFogTTU4LjE4OCw1MS4zNzUgQzU4LjE4OCw1MS40MzggNTguMTI1LDUxLjUgNTguMTI1LDUxLjU2MyBDNTguMTI1LDUxLjYyNiA1OC4xMjUsNTEuNzUxIDU4LjE4OCw1MS44MTMgQzU4LjMxMyw1MS44NzYgNTguNTAxLDUxLjkzOCA1OC43NTEsNTEuOTM4IEM1OS42MjYsNTEuODEzIDYwLjYyNiw1MS42ODggNjEuNjg5LDUxLjU2MyBDNjIuNjI3LDUxLjUgNjMuNTAyLDUxLjQzOCA2NC4yNTIsNTEuNDM4IEM2Ni4xOSw1MS40MzggNjcuMzc3LDUxLjY4OCA2Ny44MTUsNTIuMTg4IEM2OC4wMDMsNTIuNDM4IDY4LjA2NSw1Mi43NTEgNjguMDY1LDUzLjI1MSBDNjguMDY1LDU0LjY4OSA2Ny4zMTUsNTcuMjUxIDY1LjY5LDYxLjAwMSBDNjUuNTY1LDYxLjMxNCA2NS42MjcsNjEuNTY0IDY1Ljg3OCw2MS42ODkgQzY2LjAwMyw2MS43NTIgNjYuMDY2LDYxLjc1MiA2Ni4xMjgsNjEuNzUyIEM2Ni4zMTYsNjEuNzUyIDY2LjUwMyw2MS42MjcgNjYuNzUzLDYxLjUwMiBDNjguMTkxLDYwLjI1MiA2OS4zMTYsNTguNjI3IDcwLjEyOCw1Ni41NjQgQzcwLjk0MSw1NC41NjQgNzEuMzE2LDUyLjgxNCA3MS4zMTYsNTEuMzE0IEw3MS4zMTYsNTAuODc2IEM3MS4zMTYsNTAuMzc2IDcxLjI1Myw0OS45MzggNzEuMDY2LDQ5LjY4OCBDNzAuNjkxLDQ5LjI1IDY5LjU2Niw0OC45MzggNjcuNjI4LDQ4Ljc1IEM2Ny4yNTMsNDguNjg3IDY2LjgxNSw0OC42MjUgNjYuNDQsNDguNjg3IEM2NC44NzcsNDguNzUgNjMuMzE1LDQ4LjkzNyA2MS42OSw0OS4zNzUgQzYwLjY5LDQ5LjYyNSA1OS42OSw1MC4xMjUgNTguNjI3LDUwLjg3NSBDNTguNDM5LDUxIDU4LjMxNCw1MS4xODggNTguMTg5LDUxLjM3NSBMNTguMTg4LDUxLjM3NSBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=aol] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjkxcHgiIGhlaWdodD0iMzZweCIgdmlld0JveD0iMCAwIDkxIDM2IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+YW9sPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImFvbCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik00OS45MzgsNy43NSBDNTguMDAxLDcuNzUgNjQuMDYzLDE0IDY0LjA2MywyMS43NSBDNjQuMDYzLDI5Ljg3NSA1Ny43NSwzNS42ODggNDkuOTM4LDM1LjY4OCBDNDIuMTg4LDM1LjY4OCAzNS44NzUsMjkuODc1IDM1Ljg3NSwyMS43NSBDMzUuODc1LDE0IDQxLjkzOCw3Ljc1IDQ5LjkzOCw3Ljc1IEw0OS45MzgsNy43NSBaIE00OS45MzgsMTUuMTg4IEM0Ni41LDE1LjE4OCA0My42MjUsMTguMDYzIDQzLjYyNSwyMS43NTEgQzQzLjYyNSwyNS4zNzYgNDYuNSwyOC4zMTQgNDkuOTM4LDI4LjMxNCBDNTMuNDM4LDI4LjMxNCA1Ni4yNTEsMjUuMzc2IDU2LjI1MSwyMS43NTEgQzU2LjI1MSwxOC4wNjMgNTMuNDM4LDE1LjEyNiA0OS45MzgsMTUuMTg4IEw0OS45MzgsMTUuMTg4IFogTTkwLjEyNSwzMC44MTMgQzkwLjEyNSwyOC4xMjUgODcuOTM3LDI1LjkzOCA4NS4yNSwyNS45MzggQzgyLjU2MywyNS45MzggODAuMzc1LDI4LjEyNiA4MC4zNzUsMzAuODEzIEM4MC4zNzUsMzMuNSA4Mi41NjMsMzUuNjg4IDg1LjI1LDM1LjY4OCBDODcuOTM3LDM1LjY4OCA5MC4xMjUsMzMuNSA5MC4xMjUsMzAuODEzIEw5MC4xMjUsMzAuODEzIFogTTc1LjkzOCwzNC44MTMgTDc1LjkzOCwwLjEyNSBMNjguMjUsMC4xMjUgTDY4LjI1LDM0LjgxMyBMNzUuOTM4LDM0LjgxMyBMNzUuOTM4LDM0LjgxMyBaIE0wLjY4OCwzNC44MTMgTDEwLjUwMSwzNC44MTMgTDEyLjEyNiwyOS44NzUgTDI0LjI1MSwyOS44NzUgTDI1Ljg3NiwzNC44MTMgTDM1LjYyNiwzNC44MTMgTDIxLjg3NiwwLjEyNSBMMTQuNjg4LDAuMTI1IEwwLjY4OCwzNC44MTMgWiBNMjEuODc1LDIyLjY4OCBMMTguMzEyLDExLjA2MyBMMTQuNjg3LDIyLjY4OCBMMjEuODc1LDIyLjY4OCBMMjEuODc1LDIyLjY4OCBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=baidu] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjU5cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDU5IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+YmFpZHU8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0iYmFpZHUiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMC4xMjUsMjQgQzAuMDYyLDI0LjQzOCAwLDI0Ljg3NSAwLDI1LjMxMyBDMCwyNS45MzggMC4wNjMsMjYuNjI2IDAuMjUsMjcuMzc2IEMwLjUsMjguNjI2IDAuOTM4LDI5Ljg3NiAxLjYyNSwzMS4wNjQgQzIuMjUsMzIuMjUyIDMuMTg4LDMzLjE4OSA0LjUsMzMuODE0IEM1LjMxMywzNC4yNTIgNi4yNSwzNC41MDIgNy4yNSwzNC41MDIgQzcuODEzLDM0LjUwMiA4LjMxMywzNC40MzkgOC44NzUsMzQuMzE0IEMxMC41LDMzLjkzOSAxMS43NSwzMy4yNTEgMTIuNjg4LDMyLjE4OSBDMTMuNjg4LDMxLjE4OSAxNC4yNTEsMjkuOTM5IDE0LjUwMSwyOC41MDEgQzE0Ljc1MSwyNy4xMjYgMTQuODc2LDI2LjAwMSAxNC44NzYsMjUuMTI2IEwxNC44NzYsMjQuNzUxIEMxNC44NzYsMjQuMDAxIDE0LjgxMywyMy4zMTMgMTQuNjI2LDIyLjYyNiBDMTQuNTAxLDIxLjAwMSAxMy42MjYsMTkuMzc2IDEyLjA2MywxNy42MjYgQzEwLjU2MywxNi4xMjYgOC45MzgsMTUuMzEzIDcuMTI1LDE1LjMxMyBMNi41NjIsMTUuMzEzIEw1Ljk5OSwxNS40MzggQzUuNjI0LDE1LjUwMSA1LjEyNCwxNS42ODggNC41NjEsMTYuMDYzIEMzLjkzNiwxNi4zNzYgMy4zNzMsMTYuODEzIDIuNzQ4LDE3LjM3NiBDMi4xMjMsMTcuOTM5IDEuNjIzLDE4LjgxNCAxLjEyMywxOS45MzkgQzAuNjIzLDIxLjEyNyAwLjMxLDIyLjQzOSAwLjEyMywyNC4wMDIgTDAuMTI1LDI0IFogTTQuMjUsNTUuMTI1IEw0LjkzOCw1Ny4zMTMgQzUuMzc2LDU4Ljc1MSA2LjM3Niw2MC4yNTEgNy44NzYsNjEuNjg4IEM5LjMxNCw2My4wNjMgMTEuMDAxLDYzLjgxMyAxMy4wMDEsNjMuODEzIEwxMy4xODksNjMuODEzIEMxMy44NzcsNjMuOTM4IDE0LjYyNyw2NC4wMDEgMTUuNTAyLDYzLjkzOCBDMTYuMzE1LDYzLjkzOCAxNy4yNTIsNjMuODc1IDE4LjMxNSw2My44MTMgQzIwLjM3OCw2My41NjMgMjEuNzUzLDYzLjM3NSAyMi41MDMsNjMuMjUgQzIzLjI1Myw2My4xMjUgMjMuODE2LDYzLjA2MiAyNC4yNTMsNjIuOTM3IEwyNS44NzgsNjIuNjg3IEMyNi44MTYsNjIuNDk5IDI3Ljk0MSw2Mi40MzcgMjkuMzc4LDYyLjQzNyBMMzAuMjUzLDYyLjQzNyBDMzIuMTI4LDYyLjUgMzMuODE2LDYyLjc1IDM1LjMxNiw2My4yNSBDMzcuOTQxLDY0LjEyNSA0MC4zMTYsNjQuNTYzIDQyLjUwNCw2NC41NjMgQzQ0LjY5Miw2NC41NjMgNDYuMzc5LDY0LjMxMyA0Ny41NjcsNjMuODEzIEM0OC43NTUsNjMuMzEzIDQ5LjgxNyw2Mi42ODggNTAuNzU1LDYxLjgxMyBDNTEuNjkzLDYwLjkzOCA1Mi4yNTUsNjAuMzEzIDUyLjUwNSw1OS45MzggQzUyLjc1NSw1OS41NjMgNTIuOTQzLDU5LjI1IDUzLjAwNSw1OSBMNTMuMzgsNTggQzUzLjU2OCw1Ny4zNzUgNTMuODE4LDU2LjU2MiA1My45NDMsNTUuNSBDNTQuMTMxLDU0LjQzNyA1NC4xOTMsNTMuMzc1IDU0LjE5Myw1Mi4xODcgQzU0LjE5Myw1MC45OTkgNTMuOTQzLDQ5LjgxMiA1My4zOCw0OC40OTkgQzUyLjc1NSw0Ny4yNDkgNTEuOTQyLDQ2LjE4NiA1MC44MTcsNDUuMzc0IEM0OC41MDQsNDMuNDk5IDQ2LjE5Miw0MS40OTkgNDQuMDY3LDM5LjI0OSBDNDEuODc5LDM2Ljk5OSA0MC40NDIsMzUuNDM2IDM5Ljc1NCwzNC42MjQgQzM5LjEyOSwzMy44MTEgMzguNjI5LDMzLjEyNCAzOC4yNTQsMzIuNjI0IEMzNi43NTQsMzAuMzExIDM1LjA2NiwyOC42ODYgMzMuMTkxLDI3LjY4NiBDMzEuNzUzLDI2LjkzNiAzMC4zMTYsMjYuNTYxIDI5LjAwMywyNi41NjEgQzI4LjYyOCwyNi41NjEgMjguMzE1LDI2LjU2MSAyNy44NzgsMjYuNjI0IEMyNi4yNTMsMjYuODc0IDI0LjY5LDI3LjQzNyAyMy4zMTUsMjguMzc0IEMyMS45NCwyOS4zMTEgMjAuODc3LDMwLjQzNyAyMC4xMjcsMzEuODEyIEMxOS4yNTIsMzMuMzEyIDE4LjE4OSwzNC42ODcgMTYuOTM5LDM2IEMxNS43NTEsMzcuMzEzIDE0LjU2NCwzOC40MzggMTMuNTY0LDM5LjMxMyBDMTIuNTAxLDQwLjE4OCAxMS45MzksNDAuNjg4IDExLjgxNCw0MC43NTEgTDEwLjE4OSw0Mi4wNjQgQzkuMDY0LDQzLjAwMiA4LjA2NCw0My45MzkgNy4wNjQsNDUuMDAyIEM2LjEyNiw0Ni4wMDIgNS4zMTQsNDcuNDQgNC42MjYsNDkuMzE1IEM0LjE4OCw1MC41MDMgMy45MzgsNTEuNjI4IDMuOTM4LDUyLjg3OCBDMy45MzgsNTMuNjI4IDQuMDYzLDU0LjM3OCA0LjI1MSw1NS4xMjggTDQuMjUsNTUuMTI1IFogTTEzLjMxMyw0OC41IEwxMy44MTMsNDcuMTg3IEMxNC4xMjYsNDYuMzEyIDE0Ljc1MSw0NS40MzcgMTUuNzUxLDQ0LjU2MiBDMTYuNzUxLDQzLjY4NyAxNy44NzYsNDMuMjQ5IDE5LjEyNiw0My4yNDkgTDIzLjUwMSw0My4yNDkgTDIzLjUwMSwzNy45MzYgTDI3LjEyNiwzNy45OTkgTDI3LjEyNiw1Ny42MjQgTDE5LjAwMSw1Ny42MjQgQzE2LjU2Myw1Ny4xMjQgMTQuODc2LDU1LjkzNiAxMy45MzgsNTQuMTI0IEMxMy40MzgsNTIuODc0IDEzLjE4OCw1MS41NjEgMTMuMTg4LDUwLjI0OSBDMTMuMTg4LDQ5LjY4NiAxMy4yNTEsNDkuMDYxIDEzLjMxMyw0OC40OTkgTDEzLjMxMyw0OC41IFogTTE0Ljg3NSwxMC41IEMxNC44NzUsMTMuMTg4IDE1LjUsMTUuNTYzIDE2Ljg3NSwxNy40MzggQzE4LjE4OCwxOS4zNzYgMTkuODEzLDIwLjMxMyAyMS43NSwyMC4zMTMgQzIzLjY4NywyMC4zMTMgMjUuMzEzLDE5LjM3NSAyNi42MjUsMTcuNDM4IEMyOCwxNS41NjMgMjguNjg4LDEzLjE4OCAyOC42ODgsMTAuNSBDMjguNjg4LDcuNzUgMjgsNS40MzcgMjYuNjI1LDMuNSBDMjUuMzEyLDEuNTYyIDIzLjY4NywwLjYyNSAyMS43NSwwLjYyNSBDMTkuODEzLDAuNjI1IDE4LjE4NywxLjU2MyAxNi44NzUsMy41IEMxNS41LDUuNDM4IDE0Ljg3NSw3Ljc1IDE0Ljg3NSwxMC41IEwxNC44NzUsMTAuNSBaIE0xNy4xMjUsNTEuNjI1IEwxNy40MzgsNTIuMzEzIEMxNy41NjMsNTIuODEzIDE3LjkzOCw1My4yNTEgMTguMzc2LDUzLjY4OCBDMTguODc2LDU0LjE4OCAxOS41MDEsNTQuMzc2IDIwLjE4OSw1NC4zNzYgTDIzLjQzOSw1NC4zNzYgTDIzLjQzOSw0Ni4zNzYgTDE5Ljg3Niw0Ni4zNzYgQzE4LjY4OCw0Ni43NTEgMTcuODEzLDQ3LjUwMSAxNy40MzgsNDguNjI2IEMxNy4xMjUsNDkuMzc2IDE3LDUwLjAwMSAxNyw1MC42MjYgQzE3LDUwLjkzOSAxNy4wNjMsNTEuMzE0IDE3LjEyNSw1MS42MjYgTDE3LjEyNSw1MS42MjUgWiBNMjkuMTI1LDU0LjA2MyBMMjkuMTI1LDQzLjY4OCBMMzIuOTM4LDQzLjYyNSBMMzIuOTM4LDUyLjkzOCBMMzMuMDAxLDUzLjE4OCBDMzMuMTI2LDUzLjMxMyAzMy4yNTEsNTMuNTAxIDMzLjUwMSw1My43NTEgQzMzLjc1MSw1My45MzkgMzQuMDY0LDU0LjA2NCAzNC40MzksNTQuMTI2IEwzOC4yNTIsNTQuMTI2IEwzOC4yNTIsNDMuNjg4IEw0Mi4zMTUsNDMuNjg4IEw0Mi4zMTUsNTcuNTYzIEwzMi45NCw1Ny41NjMgTDMyLjAwMiw1Ny4yNSBDMzEuMzc3LDU3LjA2MiAzMC43NTIsNTYuNjI1IDMwLjA2NCw1Ni4wNjIgQzI5LjQzOSw1NS40OTkgMjkuMTI2LDU0LjgxMiAyOS4xMjYsNTQuMDYyIEwyOS4xMjUsNTQuMDYzIFogTTMyLjUsMTEuMDYzIEMzMi40MzcsMTEuNzUxIDMyLjM3NSwxMi4zNzYgMzIuMzc1LDEzLjAwMSBDMzIuNDM4LDE0LjgxNCAzMi43NSwxNi40MzkgMzMuNDM4LDE3Ljc1MSBDMzQuMjUxLDE5LjYyNiAzNS44NzYsMjAuNjg5IDM4LjI1MSwyMS4wNjQgQzM4LjU2NCwyMS4wNjQgMzguODc2LDIxLjEyNyAzOS4xODksMjEuMTI3IEM0MS4xMjcsMjEuMDY0IDQyLjgxNCwyMC4xODkgNDQuMzE0LDE4LjU2NCBDNDUuOTM5LDE2LjU2NCA0Ny4wMDIsMTQuNDM5IDQ3LjM3NywxMi4wNjQgQzQ3LjM3NywxMS42ODkgNDcuNDQsMTEuMzE0IDQ3LjQ0LDEwLjkzOSBDNDcuNDQsOS4zMTQgNDYuODc3LDcuNjg5IDQ1LjgxNSw2LjAwMSBDNDQuNTAyLDMuOTM4IDQyLjk0LDIuNjg4IDQxLjA2NSwyLjMxMyBDNDAuODE1LDIuMjUgNDAuNTAyLDIuMjUgNDAuMjUyLDIuMjUgQzM4Ljc1MiwyLjI1IDM3LjI1MiwzLjEyNSAzNS42MjcsNC44NzUgQzMzLjc1Miw2LjkzOCAzMi43NTIsOSAzMi41MDIsMTEuMDYzIEwzMi41LDExLjA2MyBaIE00My44NzUsMjkuNjI1IEM0My44NzUsMzAuODc1IDQzLjkzOCwzMS44NzUgNDQuMTI1LDMyLjY4OCBDNDQuMjUsMzMuNTYzIDQ0LjUsMzQuNTAxIDQ1LDM1LjU2MyBDNDUuNDM4LDM2LjU2MyA0Ni4yNSwzNy4zNzYgNDcuNDM4LDM3Ljg3NiBDNDguNTAxLDM4LjMxNCA0OS44MTMsMzguNTY0IDUxLjQzOCwzOC41NjQgTDUxLjgxMywzOC41NjQgQzUyLjYyNiwzOC41NjQgNTMuMzc2LDM4LjUwMSA1NC4wNjMsMzguMzE0IEM1NC43NTEsMzguMDY0IDU1LjMxMywzNy44MTQgNTUuNzUxLDM3LjQzOSBDNTYuMjUxLDM3LjA2NCA1Ni42MjYsMzYuNjI2IDU3LjAwMSwzNi4yNTEgQzU3LjM3NiwzNS44MTMgNTcuNjI2LDM1LjMxMyA1Ny44MTQsMzQuNzUxIEM1OC4wMDIsMzQuMTI2IDU4LjE4OSwzMy42MjYgNTguMzE0LDMzLjE4OCBDNTguNDM5LDMyLjc1IDU4LjUwMiwzMi4yNSA1OC41NjQsMzEuNTYzIEM1OC42MjYsMzAuODc2IDU4LjYyNywzMC40MzggNTguNjI3LDMwLjEyNSBMNTguNjI3LDI3LjkzNyBDNTguNjI3LDI3LjM3NCA1OC41MDIsMjYuNjI0IDU4LjI1MiwyNS44MTIgQzU4LjAwMiwyNSA1Ny41NjQsMjQuMTg3IDU3LjA2NCwyMy4yNDkgQzU2LjUwMSwyMi4zMTEgNTUuNjg5LDIxLjU2MSA1NC42MjYsMjAuOTM2IEM1My41NjMsMjAuMzExIDUyLjI1MSwxOS45OTggNTAuODEzLDE5Ljk5OCBDNDYuMTg4LDE5Ljk5OCA0My44NzUsMjMuMTg2IDQzLjg3NSwyOS42MjMgTDQzLjg3NSwyOS42MjUgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=bitbucket] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI5NXB4IiB2aWV3Qm94PSIwIDAgMjU2IDI5NSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy43LjIgKDI4Mjc2KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT5Hcm91cDwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGlkPSJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMjgsNC42MDc0MjQwN2UtMDYgTDEyOCw0LjYwNzQyNDA3ZS0wNiBDNTcuNzMxODgxOCw0LjYwNzQyNDA3ZS0wNiAwLjAxMTYzOTUwNTEsMTguODIxODE1NyAwLjAxMTYzOTUwNTEsNDIuNjYyNzgxOCBDMC4wMTE2Mzk1MDUxLDQ4LjkzNjcyMjcgMTUuMDY5MDkzLDEzOC4wMjY2NjUgMjEuMzQzMDMzOSwxNzMuMTYwNzE1IEMyMy44NTI2MDU2LDE4OS40NzI5NjYgNjUuMjYwNjA4NSwyMTIuMDU5MTQ2IDEyOCwyMTIuMDU5MTQ2IEwxMjgsMjEyLjA1OTE0NiBDMTkwLjczOTM4NiwyMTIuMDU5MTQ2IDIzMC44OTI1OTEsMTg5LjQ3Mjk2NiAyMzQuNjU2OTcyLDE3My4xNjA3MTUgQzI0MC45MzA5MDEsMTM4LjAyNjY2NSAyNTUuOTg4MzU1LDQ4LjkzNjcyMjcgMjU1Ljk4ODM1NSw0Mi42NjI3ODE4IEMyNTQuNzMzNTY5LDE4LjgyMTgxNTcgMTk4LjI2ODExMiw0LjYwNzQyNDA3ZS0wNiAxMjgsNC42MDc0MjQwN2UtMDYgTDEyOCw0LjYwNzQyNDA3ZS0wNiBMMTI4LDQuNjA3NDI0MDdlLTA2IFogTTEyOCwxODMuMTk5MDI1IEMxMDUuNDEzODIsMTgzLjE5OTAyNSA4Ny44NDY3ODg4LDE2NS42MzE5ODggODcuODQ2Nzg4OCwxNDMuMDQ1ODA4IEM4Ny44NDY3ODg4LDEyMC40NTk2MjggMTA1LjQxMzgyLDEwMi44OTI2MDcgMTI4LDEwMi44OTI2MDcgQzE1MC41ODYxNjksMTAyLjg5MjYwNyAxNjguMTUzMjA1LDEyMC40NTk2MjggMTY4LjE1MzIwNSwxNDMuMDQ1ODA4IEMxNjguMTUzMjA1LDE2NC4zNzcyMDMgMTUwLjU4NjE2OSwxODMuMTk5MDI1IDEyOCwxODMuMTk5MDI1IEwxMjgsMTgzLjE5OTAyNSBMMTI4LDE4My4xOTkwMjUgWiBNMTI4LDU1LjIxMDY2MzYgQzgyLjgyNzYzMzcsNTUuMjEwNjYzNiA0Ni40Mzg3ODU5LDQ3LjY4MTkzNjggNDYuNDM4Nzg1OSwzNy42NDM2Mzg0IEM0Ni40Mzg3ODU5LDI3LjYwNTMyODMgODIuODI3NjMzNywyMC4wNzY2MDE2IDEyOCwyMC4wNzY2MDE2IEMxNzMuMTcyMzQ5LDIwLjA3NjYwMTYgMjA5LjU2MTIwOCwyNy42MDUzMjgzIDIwOS41NjEyMDgsMzcuNjQzNjM4NCBDMjA5LjU2MTIwOCw0Ny42ODE5MzY4IDE3My4xNzIzNDksNTUuMjEwNjYzNiAxMjgsNTUuMjEwNjYzNiBMMTI4LDU1LjIxMDY2MzYgTDEyOCw1NS4yMTA2NjM2IFoiIGlkPSJTaGFwZSI+PC9wYXRoPgogICAgICAgICAgICA8cGF0aCBkPSJNMjIwLjYwODE3NiwyMDcuMDM5OTkxIEMyMTguMDk4NTkyLDIwNy4wMzk5OTEgMjE2Ljg0MzgwNywyMDguMjk0Nzc3IDIxNi44NDM4MDcsMjA4LjI5NDc3NyBDMjE2Ljg0MzgwNywyMDguMjk0Nzc3IDE4NS40NzQxMTQsMjMzLjM5MDU0MSAxMjkuMDA4NjU3LDIzMy4zOTA1NDEgQzcyLjU0MzIxMTMsMjMzLjM5MDU0MSA0MS4xNzM1MDY5LDIwOC4yOTQ3NzcgNDEuMTczNTA2OSwyMDguMjk0Nzc3IEM0MS4xNzM1MDY5LDIwOC4yOTQ3NzcgMzguNjYzOTM1MSwyMDcuMDM5OTkxIDM3LjQwOTE0OTMsMjA3LjAzOTk5MSBDMzQuODk5NTY2LDIwNy4wMzk5OTEgMzIuMzg5OTk0MywyMDguMjk0Nzc3IDMyLjM4OTk5NDMsMjEyLjA1OTE0NiBMMzIuMzg5OTk0MywyMTMuMzEzOTMyIEMzNy40MDkxNDkzLDIzOS42NjQ0ODIgNDEuMTczNTA2OSwyNTguNDg2MjkzIDQxLjE3MzUwNjksMjYwLjk5NTg2NCBDNDQuOTM3ODc2LDI3OS44MTc2ODcgODIuNTgxNTA5OCwyOTQuODc1MTQxIDEyNy43NTM4NzEsMjk0Ljg3NTE0MSBMMTI3Ljc1Mzg3MSwyOTQuODc1MTQxIEMxNzIuOTI2MjMyLDI5NC44NzUxNDEgMjEwLjU2OTg2NiwyNzkuODE3Njg3IDIxNC4zMzQyMzUsMjYwLjk5NTg2NCBDMjE0LjMzNDIzNSwyNTguNDg2MjkzIDIxOC4wOTg1OTIsMjM5LjY2NDQ4MiAyMjMuMTE3NzQ3LDIxMy4zMTM5MzIgTDIyMy4xMTc3NDcsMjEyLjA1OTE0NiBDMjI0LjM3MjUzMywyMDkuNTQ5NTYzIDIyMy4xMTc3NDcsMjA3LjAzOTk5MSAyMjAuNjA4MTc2LDIwNy4wMzk5OTEgTDIyMC42MDgxNzYsMjA3LjAzOTk5MSBMMjIwLjYwODE3NiwyMDcuMDM5OTkxIFoiIGlkPSJTaGFwZSI+PC9wYXRoPgogICAgICAgICAgICA8Y2lyY2xlIGlkPSJPdmFsIiBjeD0iMTI4IiBjeT0iMTQxLjc5MTA4IiByPSIyMC4wNzY2MDUiPjwvY2lyY2xlPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+");   background-size: 45%; } .auth0-lock-social-button[data-provider^=box] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY1cHgiIGhlaWdodD0iMzZweCIgdmlld0JveD0iMCAwIDY1IDM2IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+Ym94PC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImJveCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0zNC41NjMsMTAuODc1IEM0MS40MzgsMTAuODc1IDQ3LjAwMSwxNi40MzggNDcuMDAxLDIzLjI1IEM0Ny4wMDEsMzAuMTI1IDQxLjQzOCwzNS42ODggMzQuNTYzLDM1LjY4OCBDMjkuODEzLDM1LjY4OCAyNS42ODgsMzMgMjMuNTYzLDI5LjA2MyBDMjEuNSwzMy4wMDEgMTcuMzc1LDM1LjY4OCAxMi42MjUsMzUuNjg4IEM1LjgxMiwzNS42ODggMC4zMTIsMzAuMjUgMC4xODcsMjMuNSBMMC4xODcsMjMuNSBMMC4xODcsMi44NzUgQzAuMjUsMS41IDEuMzEyLDAuNDM3IDIuNjg3LDAuNDM3IEM0LjA2MiwwLjQzNyA1LjEyNSwxLjUgNS4xODcsMi44NzUgTDUuMTg3LDIuODc1IEw1LjE4NywxMy4zMTMgQzcuMjUsMTEuNzUgOS44MTIsMTAuODc1IDEyLjYyNSwxMC44NzUgQzE3LjM3NSwxMC44NzUgMjEuNSwxMy41IDIzLjU2MywxNy40MzggQzI1LjY4OCwxMy41IDI5LjgxMywxMC44NzUgMzQuNTYzLDEwLjg3NSBMMzQuNTYzLDEwLjg3NSBaIE0xMi42MjUsMzAuNjg4IEMxNi43NSwzMC42ODggMjAuMDYzLDI3LjM3NSAyMC4wNjMsMjMuMjUgQzIwLjA2MywxOS4xODcgMTYuNzUsMTUuODEyIDEyLjYyNSwxNS44MTIgQzguNSwxNS44MTIgNS4xODcsMTkuMTg3IDUuMTg3LDIzLjI1IEM1LjE4NywyNy4zNzUgOC41LDMwLjY4OCAxMi42MjUsMzAuNjg4IEwxMi42MjUsMzAuNjg4IFogTTM0LjU2MywzMC42ODggQzM4LjY4OCwzMC42ODggNDIuMDAxLDI3LjM3NSA0Mi4wMDEsMjMuMjUgQzQyLjAwMSwxOS4xODcgMzguNjg4LDE1LjgxMiAzNC41NjMsMTUuODEyIEMzMC40MzgsMTUuODEyIDI3LjEyNSwxOS4xODcgMjcuMTI1LDIzLjI1IEMyNy4xMjUsMjcuMzc1IDMwLjQzOCwzMC42ODggMzQuNTYzLDMwLjY4OCBMMzQuNTYzLDMwLjY4OCBaIE02My42ODgsMzEuNzUgTDYzLjY4OCwzMS44MTMgQzY0LjQzOCwzMi44NzYgNjQuMjUxLDM0LjM3NiA2My4xODgsMzUuMTg4IEM2Mi4wNjMsMzYuMDYzIDYwLjU2MywzNS44MTMgNTkuNjg4LDM0Ljc1IEw1NC4yNSwyNy40MzcgTDQ4Ljc1LDM0Ljc1IEM0Ny44NzUsMzUuODEzIDQ2LjM3NSwzNi4wNjMgNDUuMzEyLDM1LjE4OCBDNDQuMTg3LDM0LjM3NSA0My45OTksMzIuODc1IDQ0Ljc0OSwzMS44MTMgTDUxLjEyNCwyMy4yNSBMNDQuNzQ5LDE0Ljc1IEM0My45OTksMTMuNjg3IDQ0LjE4NiwxMi4xMjUgNDUuMzEyLDExLjMxMiBDNDYuMzc1LDEwLjQ5OSA0Ny44NzUsMTAuNzQ5IDQ4Ljc1LDExLjgxMiBMNTQuMjUsMTkuMTI1IEw1OS42ODgsMTEuODEyIEM2MC41NjMsMTAuNzQ5IDYyLjA2MywxMC40OTkgNjMuMTg4LDExLjMxMiBDNjQuMjUxLDEyLjEyNSA2NC40MzgsMTMuNjg3IDYzLjY4OCwxNC43NSBMNTcuMzEzLDIzLjI1IEw2My42ODgsMzEuNzUgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=dropbox] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY2cHgiIGhlaWdodD0iNjNweCIgdmlld0JveD0iMCAwIDY2IDYzIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZHJvcGJveDwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJkcm9wYm94IiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTAuMjUsMzMuODEzIEwyMC4xMjUsNDUuNjI2IEwzMy4xMjUsMzUuNjI2IEw0Ni4xMjUsNDUuNjI2IEw2NS43NSwzMy44MTMgTDUzLjEyNSwyMi45MzggTDY1Ljc1LDEyLjM3NSBMNDYuNDM3LDAgTDMzLjEyNCwxMS4xMjUgTDIwLjEyNCwwIEwwLjI0OSwxMyBMMTMuOTM3LDIzLjM3NSBMMC4yNSwzMy44MTMgWiBNMTMuODc1LDQ5Ljg3NSBMMzIuOTM4LDYyLjYyNSBMMzIuOTM4LDM5Ljg3NSBMMzIuODc1LDM5LjgxMiBMMTkuODc1LDQ5Ljc1IEwxMy44NzUsNDYuMTg3IEwxMy44NzUsNDkuODc1IEwxMy44NzUsNDkuODc1IFogTTE0LjE4OCwyMy4yNSBMMzMuMTI2LDExLjY4NyBMNTEuOTM5LDIyLjU2MiBMMzMuMDAxLDM1LjA2MiBMMTQuMTg4LDIzLjI1IFogTTMyLjkzOCw2Mi42MjUgTDUyLjQzOCw0OS45MzcgTDUyLjQzOCw0NS44NzQgTDQ2LjA2Myw0OS43NDkgTDMzLjEyNSwzOS44MTEgTDMzLDM5Ljg3NCBMMzIuOTM4LDYyLjYyNSBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=dwolla] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjQwcHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDQwIDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZHdvbGxhPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImR3b2xsYSIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEuMDAwMDAwLCAwLjAwMDAwMCkiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMSw1NSBDMSw1OC4zMTMgMiw2MC45MzggNC4wNjMsNjIuODc1IEM2LjEyNiw2NC43NSA4LjkzOCw2NS4yNSAxMi41NjMsNjQuMzc1IEMxMy4zNzYsNjQuMTg3IDE0LjQzOCw2My43NSAxNS44MTMsNjMuMDYyIEwxOC4wNjMsNjEuODc0IEwyMy44MTMsNTkuMzc0IEMyMy45MzgsNTkuMzc0IDI0LjM3Niw1OS4xMjQgMjUuMjUxLDU4Ljc0OSBDMjYuMDY0LDU4LjM3NCAyNi44MTQsNTguMDYxIDI3LjUwMSw1Ny44MTEgQzI5LjEyNiw1Ny4xMjMgMzAuNDM5LDU2LjU2MSAzMS4zNzYsNTYuMDYxIEMzMi4xODksNTUuNjg2IDMzLjMxNCw1NS4wNjEgMzQuODE0LDU0LjEyMyBDMzYuMTI3LDUzLjMxIDM3LjEyNyw1Mi40MzUgMzcuODE0LDUxLjYyMyBDMzguNTY0LDUwLjgxIDM5LjEyNyw0OS42ODUgMzkuNjI3LDQ4LjMxIEM0MC4xOSw0Ny4wNiA0MC41MDIsNDUuNTYgNDAuNTAyLDQzLjk5NyBDNDAuNTAyLDQyLjY4NCA0MC4zMTQsNDEuNDM0IDQwLjAwMiw0MC4yNDcgQzM5LjY4OSwzOC45OTcgMzkuMzc3LDM3Ljk5NyAzOS4wMDIsMzcuMTIyIEMzOC42ODksMzYuMjQ3IDM4LjEyNywzNS4zMDkgMzcuMzc3LDM0LjE4NCBDMzYuNTY0LDMzLjA1OSAzNi4wMDIsMzIuMjQ2IDM1LjU2NCwzMS43NDYgQzM1LjEyNiwzMS4yNDYgMzQuNDM5LDMwLjQzMyAzMy40MzksMjkuMzcxIEMzMi40MzksMjguMjQ2IDMxLjg3NiwyNy41NTggMzEuNTY0LDI3LjI0NiBDMzEuMzc2LDI2Ljk5NiAzMC42ODksMjYuMjQ2IDI5LjU2NCwyNC45MzMgQzI4LjQzOSwyMy42ODMgMjcuNjg5LDIyLjgwOCAyNy4zNzYsMjIuMzcgQzI3LjAwMSwyMS45OTUgMjYuNDM4LDIxLjE4MiAyNS42MjYsMTkuOTk1IEMyNC44MTQsMTguODA4IDI0LjMxMywxNy44NyAyNC4wMDEsMTcuMDU3IEMyMy43NTEsMTYuMjQ0IDIzLjQzOCwxNS4yNDQgMjMuMTg4LDE0LjA1NyBDMjIuOTM4LDEyLjgwNyAyMi44NzUsMTEuNjE5IDIyLjg3NSwxMC4zNjkgQzIzLDcuMTgxIDI0LjM3NSw0Ljc0NCAyNywzLjA1NiBDMjguMTI1LDIuNDkzIDI4LjY4OCwxLjkzMSAyOC42ODgsMS40OTMgQzI4LjUsMC43NDMgMjcuOTM4LDAuNjE4IDI3LjEyNSwxLjA1NSBDMjUuOTM3LDEuNzQzIDI0LjA2MiwyLjU1NSAyMS42MjUsMy42MTggTDE3LjE4Nyw1LjU1NiBMMTQuMTg3LDYuOTMxIEMxMy42ODcsNy4xMTkgMTMuMDYyLDcuMzY5IDEyLjMxMiw3LjY4MSBDMTEuNTYyLDguMDU2IDExLjA2Miw4LjI0NCAxMC44NzQsOC4zMDYgQzEwLjQ5OSw4LjQ5NCA5LjU2MSw4Ljk5NCA3Ljk5OSw5LjkzMSBDNi43NDksMTAuNjgxIDUuODExLDExLjM2OSA1LjMxMSwxMS45OTQgQzMuODExLDEzLjQ5NCAyLjg3MywxNS40MzIgMi42MjMsMTcuODA3IEMxLjkzNSwyMi42ODIgMy45MzYsMjcuOTk1IDguNjIzLDMzLjYyIEM4Ljk5OCwzNC4wNTggMTAuMjQ4LDM1LjU1OCAxMi40MzYsMzguMTIgQzEzLjg3NCwzOS43NDUgMTQuOTk5LDQxLjE4MyAxNS45MzYsNDIuNDk1IEMxNS41NjEsNDIuNjgzIDEyLjkzNiw0My44NyA4LjEyMyw0NS45MzMgQzcuMDYsNDYuMzcxIDUuODczLDQ2Ljk5NiA0LjYyMyw0Ny44MDggQzIuMTg1LDQ5LjM3MSAwLjk5OCw1MS43NDYgMC45OTgsNTQuOTk2IEwxLDU1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+");   background-size: 30%; } .auth0-lock-social-button[data-provider^=ebay] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjkwcHgiIGhlaWdodD0iMzlweCIgdmlld0JveD0iMCAwIDkwIDM5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZWJheTwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJlYmF5IiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMS4wMDAwMDAsIDAuMDAwMDAwKSIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0xLDIzLjY4OCBDMSwyNS42MjYgMS4xODgsMjcuMTg4IDEuNjI1LDI4LjUwMSBDMiwyOS43NTEgMi44MTMsMzAuOTM5IDQsMzIuMDY0IEM1LjE4NywzMy4xODkgNy4wNjMsMzQuMDAyIDkuNTYzLDM0LjU2NCBDMTIuMDYzLDM1LjA2NCAxNS4zMTMsMzUuMzc3IDE5LjI1MSwzNS4zNzcgQzIyLjc1MSwzNS4zNzcgMjUuOTM5LDM1LjA2NCAyOC44MTQsMzQuMzc3IEMzMC4wNjQsMzQuMTI3IDMxLjI1MiwzMy43NTIgMzIuNDM5LDMzLjE4OSBMMzIuNDM5LDI3LjUwMSBMMjQuNjg5LDI3LjUwMSBDMjQuNjg5LDMwLjA2NCAyMi44NzYsMzEuMzc2IDE5LjI1MSwzMS4zNzYgQzE3LjkzOCwzMS4zNzYgMTYuODc2LDMxLjE4OCAxNi4wNjMsMzAuODEzIEMxNS4yNSwzMC40MzggMTQuNjg4LDI5Ljg3NSAxNC4zNzUsMjkuMDYzIEMxNC4wNjIsMjguMzEzIDEzLjg3NSwyNy42ODggMTMuODEyLDI3LjEyNSBDMTMuNjg3LDI2LjYyNSAxMy42ODcsMjUuODc1IDEzLjY4NywyNSBMMzIuNDM3LDI1IEwzMi40MzcsMTQuNjg3IEMzMS42MjQsMTQuMjQ5IDMwLjM3NCwxMy44NzQgMjguNjg3LDEzLjU2MiBDMjYuMTI0LDEyLjk5OSAyMi45OTksMTIuNjg3IDE5LjI0OSwxMi42ODcgQzE2LjA2MSwxMi42ODcgMTMuMzExLDEyLjg3NSAxMC45OTksMTMuMzEyIEM4Ljc0OSwxMy42ODcgNi45MzYsMTQuMjUgNS42ODYsMTQuODc1IEM0LjM3MywxNS40MzggMy4zNzMsMTYuMzEzIDIuNjg2LDE3LjMxMyBDMS45OTksMTguMzEzIDEuNTYxLDE5LjMxMyAxLjMxMSwyMC4zMTMgQzEuMTIzLDIxLjI1MSAwLjk5OCwyMi4zNzYgMC45OTgsMjMuNjg4IEwxLDIzLjY4OCBaIE0xMy42ODgsMjEuNTYzIEMxMy42ODgsMjAuODc1IDEzLjY4OCwyMC4zMTMgMTMuNzUxLDE5LjkzOCBDMTMuODE0LDE5LjYyNSAxNC4wMDEsMTkuMDYzIDE0LjMxNCwxOC40MzggQzE0LjYyNywxNy43NSAxNS4xODksMTcuMjUgMTYuMDAyLDE2LjkzOCBDMTYuODE1LDE2LjYyNiAxNy45NCwxNi41IDE5LjI1MiwxNi41IEMyMC42MjcsMTYuNSAyMS44MTUsMTYuNjI1IDIyLjY5LDE2LjkzOCBDMjMuNTY1LDE3LjI1MSAyNC4xMjgsMTcuNjg4IDI0LjQ0LDE4LjMxMyBDMjQuNzUzLDE5LjAwMSAyNC44NzgsMTkuNTAxIDI0Ljk0LDE5LjgxMyBDMjUuMDY1LDIwLjE4OCAyNS4wNjUsMjAuNzUxIDI1LjA2NSwyMS41NjMgTDEzLjY5LDIxLjU2MyBMMTMuNjg4LDIxLjU2MyBaIE0zMi40MzgsMzMuMTg4IEMzMi41MDEsMzMuMTg4IDMyLjYyNiwzMy4xMjUgMzIuNjg4LDMzLjA2MyBDMzUuODEzLDMxLjUgMzcuMzc2LDI5LjY4OCAzNy40MzgsMjcuNSBMMzIuNDM4LDI3LjUgTDMyLjQzOCwzMy4xODggTDMyLjQzOCwzMy4xODggWiBNMzIuNDM4LDMzLjE4OCBMMzIuNDM4LDM4LjI1MSBMMzkuMDAxLDM4LjI1MSBMMzkuMDAxLDM1LjU2MyBMMzkuMDY0LDM1LjU2MyBDNDAuMjUyLDM3LjY4OCA0Mi4xODksMzguNzUxIDQ0Ljg3NywzOC43NTEgQzQ2LjI1MiwzOC43NTEgNDcuNDQsMzguNTAxIDQ4LjMxNSwzNy45MzggQzQ5LjI1MywzNy40MzggNDkuOTQsMzYuNjI1IDUwLjQ0LDM1LjYyNSBDNTAuODc4LDM0LjU2MiA1MS4xOSwzMy41NjIgNTEuMzc4LDMyLjYyNSBDNTEuNTY2LDMxLjYyNSA1MS42OTEsMzAuNSA1MS43NTMsMjkuMTI1IEM0OC41MDMsMjguMzc1IDQ2Ljg3OCwyNS43NSA0Ni44NzgsMjEuMzEyIEM0Ni44NzgsMTguMjQ5IDQ3Ljc1MywxNi4wNjIgNDkuNDQxLDE0LjgxMiBDNDguMzE2LDEzLjY4NyA0Ni44NzgsMTMuMTI0IDQ1LjA2NiwxMy4xMjQgQzQyLjYyOCwxMy4xMjQgNDAuNzUzLDE0LjA2MiAzOS4zNzgsMTUuOTM3IEwzOS4yNTMsMTUuOTM3IEwzOS4yNTMsMi45OTkgTDMyLjQ0LDIuOTk5IEwzMi40NCwxNC42ODcgQzM0LjY5LDE1LjY4NyAzNi4xOSwxNyAzNi44MTUsMTguNjI1IEMzNy4zNzgsMjAgMzcuNjksMjEuNjI1IDM3LjY5LDIzLjUgQzM3LjY5LDI0IDM3LjYyNywyNC41IDM3LjYyNywyNSBMMzIuNDM5LDI1IEwzMi40MzksMjcuNSBMMzcuNDM5LDI3LjUgQzM3LjM3NiwyOS42ODggMzUuODE0LDMxLjUgMzIuNjg5LDMzLjA2MyBDMzIuNjI2LDMzLjEyNiAzMi41MDEsMzMuMTg4IDMyLjQzOSwzMy4xODggTDMyLjQzOCwzMy4xODggWiBNMzIuNDM4LDI1IEwzNy42MjYsMjUgQzM3LjYyNiwyNC41IDM3LjY4OSwyNCAzNy42ODksMjMuNSBDMzcuNjg5LDIxLjYyNSAzNy4zNzYsMjAgMzYuODE0LDE4LjYyNSBDMzYuMTg5LDE3IDM0LjY4OSwxNS42ODcgMzIuNDM5LDE0LjY4NyBMMzIuNDM5LDI1IEwzMi40MzgsMjUgWiBNMzkuMjUsMjUuNjg4IEMzOS4yNSwyNC4xMjUgMzkuMzEzLDIyLjkzOCAzOS4zMTMsMjIuMjUgQzM5LjM3NiwyMS41IDM5LjUwMSwyMC42ODcgMzkuNjI2LDE5LjgxMiBDMzkuNzUxLDE4LjkzNyA0MC4wNjQsMTguMjQ5IDQwLjQzOSwxNy45MzcgQzQwLjg3NywxNy41NjIgNDEuMzc3LDE3LjM3NCA0Mi4wNjQsMTcuMzc0IEM0Mi44MTQsMTcuMzc0IDQzLjM3NywxNy41NjIgNDMuODE0LDE3Ljg3NCBDNDQuMTg5LDE4LjI0OSA0NC41MDIsMTguODEyIDQ0LjYyNywxOS42ODcgQzQ0LjgxNSwyMC41NjIgNDQuOTQsMjEuMzc1IDQ0Ljk0LDIyLjA2MiBDNDUuMDAzLDIyLjc1IDQ1LjA2NSwyMy44NzUgNDUuMDY1LDI1LjM3NSBMNDUuMDY1LDI1LjY4OCBDNDUuMDY1LDI5LjAwMSA0NC44MTUsMzEuMjUxIDQ0LjQ0LDMyLjU2MyBDNDQuMDY1LDMzLjg3NSA0My4zMTUsMzQuNTAxIDQyLjA2NSwzNC41MDEgQzQwLjk0LDM0LjUwMSA0MC4xOSwzMy44NzYgMzkuODE1LDMyLjU2MyBDMzkuNDQsMzEuMjUgMzkuMjUyLDI5IDM5LjI1MiwyNS42ODggTDM5LjI1LDI1LjY4OCBaIE00Ni44NzUsMjEuMzEzIEM0Ni44NzUsMjUuNzUxIDQ4LjUsMjguMzc2IDUxLjc1LDI5LjEyNiBMNTEuNzUsMjUuODEzIEM1MS44MTMsMjQgNTEuODEzLDIyLjYyNSA1MS43NSwyMS43NSBDNTEuNjg3LDIwLjg3NSA1MS41LDE5LjY4NyA1MS4xMjUsMTguMTg3IEM1MC43NSwxNi42ODcgNTAuMTg3LDE1LjU2MiA0OS40MzcsMTQuODEyIEM0Ny43NDksMTYuMDYyIDQ2Ljg3NCwxOC4yNSA0Ni44NzQsMjEuMzEyIEw0Ni44NzUsMjEuMzEzIFogTTQ3LjM3NSwxMS4xODggTDU0LjI1LDExLjE4OCBDNTQuMjUsOS45MzggNTQuMzc1LDkgNTQuNjg4LDguMzEzIEM1NS4wMDEsNy42MjYgNTUuNjg4LDcuMzEzIDU2LjgxMyw3LjMxMyBDNTcuOTM4LDcuMzEzIDU4LjY4OCw3LjYyNiA1OS4wNjMsOC4yNTEgQzU5LjQzOCw4LjgxNCA1OS42MjYsOS43NTEgNTkuNjI2LDExLjAwMSBMNTkuNjI2LDEyLjkzOSBMNTguMDYzLDEyLjkzOSBDNTMuOTM4LDEyLjkzOSA1MS4wNjMsMTMuNTY0IDQ5LjQzOCwxNC44MTQgQzUwLjE4OCwxNS41NjQgNTAuNzUxLDE2LjY4OSA1MS4xMjYsMTguMTg5IEM1MS41MDEsMTkuNjg5IDUxLjY4OSwyMC44NzcgNTEuNzUxLDIxLjc1MiBMNTEuNzUxLDI5LjEyNyBDNTIuMDY0LDI5LjE5IDUyLjYyNiwyOS4xOSA1My40MzksMjkuMTkgQzU2LjI1MiwyOS4xOSA1OC40MzksMjguMDAyIDU5LjgxNCwyNS41MDIgTDU5LjkzOSwyNS41MDIgTDYwLjI1MiwyOC44MTUgTDY2LjY5LDI4LjgxNSBDNjYuNjksMjguNDQgNjYuNjI3LDI3Ljc1MiA2Ni41NjUsMjYuNjI3IEM2Ni40NCwyNS41NjQgNjYuNDQsMjQuNzUyIDY2LjQ0LDI0LjE4OSBMNjYuNDQsMTcuNjI2IEw1OS41NjUsMy42ODggQzU3LjYyNywzLjU2MyA1Ni42MjcsMy41IDU2LjQ0LDMuNSBDNTMuNTY1LDMuNSA1MS40NCw0LjA2MyA0OS45NCw1LjEyNSBDNDguMjUyLDYuMTg4IDQ3LjM3Nyw4LjI1IDQ3LjM3NywxMS4xODggTDQ3LjM3NSwxMS4xODggWiBNNTMuNjI1LDIxIEM1My4xODcsMjAuNjI1IDUzLjE4NywyMC4xODcgNTMuNjg4LDE5Ljc1IEM1NC4xODksMTkuMzEzIDU0LjI1MSwxOC45MzcgNTQuMDAxLDE4Ljc1IEM1My42ODgsMTguNTYyIDUzLjg3NiwxOC4zMTIgNTQuNDM5LDE4LjA2MiBDNTQuOTM5LDE3LjgxMiA1NS4xODksMTcuNjI0IDU1LjAwMiwxNy41NjIgQzU0Ljg3NywxNy40MzcgNTUuMDY1LDE3LjMxMiA1NS42OSwxNy4xODcgQzU2LjMxNSwxNy4wNjIgNTYuNTY1LDE2Ljk5OSA1Ni41NjUsMTYuOTk5IEw1Ny41MDMsMTYuODc0IEM1Ny42MjgsMTYuODc0IDU4LjAwMywxNi44NzQgNTguNTY2LDE2LjgxMSBMNTkuNjI5LDE2LjgxMSBMNTkuNjI5LDE4LjA2MSBDNTkuNjkyLDE4Ljc0OSA1OS42OTIsMTkuMjQ5IDU5LjYyOSwxOS42MjQgQzU5LjYyOSwxOS45MzcgNTkuNjI5LDIwLjQzNyA1OS41NjYsMjEuMTI0IEM1OS41MDMsMjEuNzQ5IDU5LjQ0MSwyMi4zMTIgNTkuMjUzLDIyLjYyNCBDNTkuMTI4LDIyLjk5OSA1OC45NCwyMy4zNzQgNTguNjksMjMuODEyIEM1OC40NCwyNC4xODcgNTguMDY1LDI0LjUgNTcuNjksMjQuNjg3IEM1Ny4yNTIsMjQuODc1IDU2LjgxNSwyNSA1Ni4yNTIsMjUgQzU0LjUwMiwyNSA1My42MjcsMjMuNjg3IDUzLjYyNywyMSBMNTMuNjI1LDIxIFogTTU3Ljg3NSwwLjM3NSBMNTkuNTYzLDMuNjg4IEM2Mi4zMTMsNC4wNjMgNjQuMTI2LDQuOTM4IDY1LjA2Myw2LjI1MSBDNjUuOTM4LDcuNjI2IDY2LjQzOCw5LjQzOSA2Ni40MzgsMTEuODE0IEw2Ni40MzgsMTcuNjI3IEw2OS4xODgsMjMuMzE1IEw2OS4xODgsMzUuNTAzIEw3OC4xODgsMzUuNTAzIEw3OC4xODgsMjMuMzE1IEw5MC4yNTEsMC4zNzcgTDgxLjEyNiwwLjM3NyBMNzQuMTI2LDE1LjE5IEw2Ny43NTEsMC4zNzcgTDU3Ljg3NiwwLjM3NyBMNTcuODc1LDAuMzc1IFogTTU5LjU2MywzLjY4OCBMNjYuNDM4LDE3LjYyNiBMNjYuNDM4LDExLjgxMyBDNjYuNDM4LDkuNDM4IDY1LjkzOCw3LjYyNSA2NS4wNjMsNi4yNSBDNjQuMTI1LDQuOTM3IDYyLjMxMyw0LjA2MiA1OS41NjMsMy42ODcgTDU5LjU2MywzLjY4OCBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==");   background-size: 70%; } .auth0-lock-social-button[data-provider^=exact] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjQzcHgiIGhlaWdodD0iMzJweCIgdmlld0JveD0iMCAwIDQzIDMyIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZXhhY3Q8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0iZXhhY3QiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8ZyBpZD0iR3JvdXAiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPgogICAgICAgICAgICAgICAgPHBhdGggZD0iTTAuMDQ5LDEuMDA4IEMxNC4wMTIsMC44IDI3Ljk3NCwwLjgyOSA0MS45MzcsMC45NzggQzQyLjAyNCwzLjcxOCA0Mi4yMjYsOS4xOTggNDIuMzEzLDExLjkzOSBDMjguNTI0LDEyLjQ0NSAxNC43MDYsMTIuMjA3IDAuODg4LDEyLjI5NyBDMC41OTksOC41NDQgMC4zMSw0Ljc5MSAwLjA1LDEuMDA5IEwwLjA1LDEuMDA5IEwwLjA1LDEuMDA5IEwwLjA0OSwxLjAwOCBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLjIyMywyMC4yMTkgQzE0LjA0MSwyMC4yNDkgMjcuOTQ2LDE5LjI5NiA0MS43NjQsMjAuNjM2IEM0Mi4xMTEsMjQuMTUxIDQyLjExMSwyNy43MjUgNDIuMTQsMzEuMjY5IEMyOC4yMzUsMzEuMjM5IDE0LjM1OSwzMS4yMzkgMC40NTQsMzEuMjEgQzAuMzY3LDI3LjU0NyAwLjI4MSwyMy44ODMgMC4yMjMsMjAuMjIgTDAuMjIzLDIwLjIyIEwwLjIyMywyMC4yMiBMMC4yMjMsMjAuMjE5IFoiIGlkPSJTaGFwZSI+PC9wYXRoPgogICAgICAgICAgICA8L2c+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=");   background-size: 30%; } .auth0-lock-social-button[data-provider^=facebook] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjM2cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDM2IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZmFjZWJvb2s8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0iZmFjZWJvb2siIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMC45MzgsMzUgTDEwLjc1MSwzNSBMMTAuNzUxLDY0LjYyNSBMMjMuMDY0LDY0LjYyNSBMMjMuMDY0LDM1IEwzNS4zNzcsMzUgTDM1LjM3NywyMi43NSBMMjMuMDY0LDIyLjc1IEwyMy4wNjQsMTYuNSBDMjMuMDY0LDE1LjQzNyAyMy4zMTQsMTQuNjI1IDIzLjgxNCwxMy44NzUgQzI0LjM3NywxMy4xODcgMjQuOTM5LDEyLjg3NSAyNS41NjQsMTIuODc1IEwzNS4zNzcsMTIuODc1IEwzNS4zNzcsMC42MjUgTDI1LjU2NCwwLjYyNSBDMjEuNDM5LDAuNjI1IDE4LjAwMSwyLjE4OCAxNS4xMjYsNS4zMTMgQzEyLjE4OCw4LjQzOCAxMC43NTEsMTIuMTg4IDEwLjc1MSwxNi42MjYgTDEwLjc1MSwyMi43NTEgTDAuOTM4LDIyLjc1MSBMMC45MzgsMzUuMDAxIEwwLjkzOCwzNSBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==");   background-size: 25%; } .auth0-lock-social-button[data-provider^=fitbit] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYwcHgiIGhlaWdodD0iNTlweCIgdmlld0JveD0iMCAwIDYwIDU5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+Zml0Yml0PC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImZpdGJpdCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0zOC4zNzUsNDIgQzM4LjM3NSw0NC40MzggNDAuMzEzLDQ2LjMxMyA0Mi44MTMsNDYuMzEzIEM0NS4yNTEsNDYuMzEzIDQ3LjI1MSw0NC4zNzUgNDcuMzEzLDQyIEM0Ny4zMTMsMzkuNjI1IDQ1LjI1LDM3LjU2MiA0Mi43NSwzNy42MjUgQzQwLjMxMiwzNy42MjUgMzguMzc1LDM5LjUgMzguMzc1LDQyIEwzOC4zNzUsNDIgWiBNNjAsMjkuNSBDNjAsMjYuOTM3IDU4LjE4NywyNS4xMjUgNTUuNjg3LDI1LjEyNSBDNTMuMTg3LDI1LjA2MiA1MS4xMjQsMjcuMDYzIDUxLjEyNCwyOS40MzggQzUxLjE4NywzMS44MTMgNTMuMTg3LDMzLjgxMyA1NS41NjIsMzMuODEzIEM1OC4wNjIsMzMuODc2IDYwLDMxLjkzOCA2MCwyOS41IEw2MCwyOS41IFogTTM4LjM3NSwxNi45MzggQzM4LjM3NSwxOS4zNzYgNDAuMzc1LDIxLjMxMyA0Mi44MTMsMjEuMzEzIEM0NS4yNTEsMjEuMjUgNDcuMjUxLDE5LjI1IDQ3LjMxMywxNi45MzggQzQ3LjMxMywxNC42MjUgNDUuMjUsMTIuNTYzIDQyLjg3NSwxMi41NjMgQzQwLjM3NSwxMi41IDM4LjM3NSwxNC40MzggMzguMzc1LDE2LjkzOCBMMzguMzc1LDE2LjkzOCBaIE0wLDI5LjQzOCBDMCwzMS44NzYgMiwzMy44MTMgNC4zNzUsMzMuODEzIEM2Ljg3NSwzMy44MTMgOC44NzUsMzEuNzUgOC44NzUsMjkuMzc1IEM4LjgxMiwyNyA2LjgxMiwyNS4xMjUgNC4zNzUsMjUuMTI1IEMxLjgxMiwyNS4xMjUgMCwyNi45MzggMCwyOS40MzggTDAsMjkuNDM4IFogTTM4LjM3NSwyOS40MzggQzM4LjM3NSwzMS44MTMgNDAuMzc1LDMzLjgxMyA0Mi44MTMsMzMuODEzIEM0NS4yNTEsMzMuODEzIDQ3LjMxMywzMS43NSA0Ny4zMTMsMjkuMzc1IEM0Ny4yNSwyNyA0NS4yNSwyNS4xMjUgNDIuODEzLDI1LjEyNSBDNDAuMjUsMjUuMTI1IDM4LjM3NSwyNi45MzggMzguMzc1LDI5LjQzOCBMMzguMzc1LDI5LjQzOCBaIE0yMS42MjUsMjkuNSBDMjEuNjI1LDI3IDE5LjgxMiwyNS4xMjUgMTcuMzEyLDI1LjEyNSBDMTQuNzQ5LDI1LjA2MiAxMi43NDksMjYuOTM4IDEyLjY4NywyOS40MzggQzEyLjY4NywzMS43NTEgMTQuODEyLDMzLjgxMyAxNy4yNSwzMy44MTMgQzE5LjYyNSwzMy44MTMgMjEuNTYzLDMxLjg3NSAyMS42MjUsMjkuNSBMMjEuNjI1LDI5LjUgWiBNMjkuOTM4LDI1LjEyNSBDMjcuNSwyNS4xMjUgMjUuNSwyNy4wNjMgMjUuNTYzLDI5LjQzOCBDMjUuNTYzLDMxLjg3NiAyNy41NjMsMzMuODEzIDMwLjAwMSwzMy44MTMgQzMyLjQzOSwzMy44MTMgMzQuNDM5LDMxLjg3NSAzNC40MzksMjkuNSBDMzQuNTAyLDI3IDMyLjUwMSwyNS4xMjUgMjkuOTM5LDI1LjEyNSBMMjkuOTM4LDI1LjEyNSBaIE0zMCw4LjY4OCBDMzIuNSw4LjY4OCAzNC40MzgsNi43NSAzNC40MzgsNC4zMTMgQzM0LjM3NSwyIDMyLjMxMyw4Ljg4MTc4NDJlLTE2IDMwLDAuMDYzIEMyNy42MjUsMC4wNjMgMjUuNTYyLDIuMDYzIDI1LjU2Miw0LjQzOCBDMjUuNjI1LDYuNzUxIDI3LjYyNSw4LjY4OCAzMCw4LjY4OCBMMzAsOC42ODggWiBNMzAsNTguODEzIEMzMi40MzgsNTguODEzIDM0LjQzOCw1Ni44NzUgMzQuNDM4LDU0LjQzOCBDMzQuNDM4LDUyLjEyNSAzMi40MzgsNTAuMTg4IDMwLDUwLjE4OCBDMjcuNjI1LDUwLjEyNSAyNS41NjIsNTIuMTg4IDI1LjU2Miw1NC41MDEgQzI1LjU2Miw1Ni44NzYgMjcuNTYyLDU4Ljc1MSAzMCw1OC44MTQgTDMwLDU4LjgxMyBaIE0zNC40MzgsNDEuOTM4IEMzNC40MzgsMzkuNjI1IDMyLjQzOCwzNy42MjUgMzAsMzcuNjI1IEMyNy42ODcsMzcuNjI1IDI1LjYyNSwzOS42MjUgMjUuNTYyLDQxLjkzOCBDMjUuNTYyLDQ0LjI1MSAyNy42MjUsNDYuMzEzIDMwLjA2Miw0Ni4zMTMgQzMyLjQzNyw0Ni4yNSAzNC40MzcsNDQuMzEzIDM0LjQzNyw0MS45MzggTDM0LjQzOCw0MS45MzggWiBNMTIuODc1LDQyIEMxMi44NzUsNDQuNDM4IDE0Ljc1LDQ2LjMxMyAxNy4xODgsNDYuMzEzIEMxOS42MjYsNDYuMzEzIDIxLjU2Myw0NC4zNzUgMjEuNTYzLDQyIEMyMS41NjMsMzkuNjI1IDE5LjYyNSwzNy42MjUgMTcuMjUsMzcuNjI1IEMxNC42ODcsMzcuNjI1IDEyLjg3NSwzOS41IDEyLjg3NSw0MiBMMTIuODc1LDQyIFogTTMwLDEyLjYyNSBDMjcuNSwxMi42ODggMjUuNjI1LDE0LjUgMjUuNTYyLDE2Ljg3NSBDMjUuNTYyLDE5LjI1IDI3LjUsMjEuMTg4IDI5LjkzNywyMS4xODggQzMyLjUsMjEuMTg4IDM0LjQzNywxOS4zMTMgMzQuNDM3LDE2Ljg3NSBDMzQuMzc0LDE0LjUgMzIuNDM3LDEyLjYyNSAyOS45OTksMTIuNjI1IEwzMCwxMi42MjUgWiBNMTcuMjUsMjEuMTg4IEMxOS43NSwyMS4xODggMjEuNTYzLDE5LjM3NSAyMS41NjMsMTYuODc1IEMyMS41NjMsMTQuNDM3IDE5Ljc1LDEyLjY4NyAxNy4yNSwxMi42MjUgQzE0Ljc1LDEyLjYyNSAxMi42ODcsMTQuNjI1IDEyLjc1LDE2LjkzOCBDMTIuODEzLDE5LjMxMyAxNC44MTMsMjEuMTg4IDE3LjI1LDIxLjE4OCBMMTcuMjUsMjEuMTg4IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=github] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDY0IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+Z2l0aHViPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImdpdGh1YiIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik04LjQzNzY5NDk5ZS0xNSwzMi4yNSBDOC40Mzc2OTQ5OWUtMTUsMzYuNTYzIDAuODc1LDQwLjc1IDIuNTYzLDQ0LjYyNSBDNS45MzgsNTIuNjI1IDExLjU2Myw1OC4zMTMgMTkuNTAxLDYxLjc1IEMyMy40MzksNjMuNDM4IDI3LjU2NCw2NC4zMTMgMzEuOTM5LDY0LjMxMyBDMzYuMzE0LDY0LjMxMyA0MC40MzksNjMuNDM4IDQ0LjM3Nyw2MS43NSBDNTIuMTksNTguMzc1IDU3Ljg3Nyw1Mi42ODcgNjEuMzE1LDQ0LjYyNSBDNjMuMDAzLDQwLjYyNSA2My44NzgsMzYuNDM3IDYzLjg3OCwzMi4yNSBDNjMuODc4LDI4IDYzLjAwMywyMy44NzUgNjEuMzE1LDE5LjgxMiBDNTcuODc3LDExLjgxMiA1Mi4xOSw2LjE4NyA0NC4zNzcsMi44NzQgQzQwLjQzOSwxLjEyNCAzNi4zMTQsMC4zMTEgMzEuOTM5LDAuMzExIEMyNy41NjQsMC4zMTEgMjMuNDM5LDEuMTI0IDE5LjUwMSwyLjg3NCBDMTEuNTYzLDYuMjQ5IDUuOTM4LDExLjg3NCAyLjU2MywxOS44MTIgQzAuODc1LDIzLjc1IDAsMjcuODc1IDAsMzIuMjUgTDguNDM3Njk0OTllLTE1LDMyLjI1IFogTTUsMzIuMjUgQzUsMjguNjI1IDUuNjg4LDI1LjEyNSA3LjEyNSwyMS43NSBDOC41NjMsMTguNSAxMC41LDE1LjYyNSAxMi44NzUsMTMuMTg3IEMxNS4zNzUsMTAuNzQ5IDE4LjI1LDguODEyIDIxLjQzOCw3LjQzNyBDMjQuOTM4LDUuOTk5IDI4LjQzOCw1LjMxMiAzMS45MzgsNS4zMTIgQzM1LjUwMSw1LjMxMiAzOC45MzgsNiA0Mi4zNzYsNy40MzcgQzQ1LjY4OSw4Ljg3NSA0OC41NjQsMTAuNzUgNTAuOTM5LDEzLjE4NyBDNTMuNDM5LDE1LjYyNSA1NS4zMTQsMTguNSA1Ni42ODksMjEuNzUgQzU4LjEyNywyNS4xMjUgNTguODE0LDI4LjYyNSA1OC44MTQsMzIuMjUgQzU4LjgxNCwzOC4xODggNTcuMDY0LDQzLjU2MyA1My41NjQsNDguMjUgQzUwLjAwMSw1MyA0NS40MzksNTYuMzEzIDM5LjkzOSw1OC4zMTMgTDM5LjkzOSw1My4xODggQzM5LjkzOSw1MC42ODggMzkuMDY0LDQ4LjgxMyAzNy4zMTQsNDcuNjI1IEMzOS40MzksNDcuNDM3IDQxLjM3Nyw0NyA0My4xMjcsNDYuMzc1IEM0NS4yNTIsNDUuNjI1IDQ2Ljk0LDQ0LjU2MiA0OC4xOSw0My4xODcgQzUwLjU2NSw0MC43NDkgNTEuNjksMzcuMTI0IDUxLjY5LDMyLjM3NCBDNTEuNjksMjkuMTg2IDUwLjYyNywyNi40MzYgNDguNTAyLDI0LjE4NiBDNDkuNDQsMjEuNjIzIDQ5LjM3NywxOC45MzYgNDguMTg5LDE1Ljk5OCBMNDcuNDM5LDE1LjkzNSBDNDYuODE0LDE1LjgxIDQ1Ljg3NiwxNi4wNiA0NC41MDEsMTYuNTYgQzQzLjAwMSwxNy4xMjMgNDEuNTAxLDE3Ljk5OCAzOS44MTMsMTkuMTIzIEMzNy4xODgsMTguNDM1IDM0LjU2MywxOC4wNiAzMi4wNjMsMTguMDYgQzI5LjU2MywxOC4wNiAyNywxOC40MzUgMjQuMzc1LDE5LjEyMyBDMjIuMzEyLDE3Ljc0OCAyMC41LDE2LjgxIDE4LjgxMiwxNi4zMSBDMTguMTg3LDE2LjA2IDE3LjYyNCwxNS45OTcgMTcuMTg3LDE1Ljk5NyBMMTUuOTM3LDE1Ljk5NyBDMTQuNzQ5LDE4LjkzNSAxNC42MjQsMjEuNjIyIDE1LjYyNCwyNC4xODUgQzEzLjQ5OSwyNi40MzUgMTIuNDM2LDI5LjE4NSAxMi40MzYsMzIuMzczIEMxMi40MzYsMzguNDk4IDE0LjM3NCw0Mi43NDggMTguMjQ5LDQ1LjEyMyBDMTkuNzQ5LDQ2LjA2MSAyMS42MjQsNDYuNzQ4IDIzLjgxMiw0Ny4xMjMgQzI0LjkzNyw0Ny4zNzMgMjUuOTM3LDQ3LjU2MSAyNi44MTIsNDcuNjIzIEMyNS4xMjQsNDguNzQ4IDI0LjI0OSw1MC42MjMgMjQuMjQ5LDUzLjE4NiBMMjQuMjQ5LDU4LjMxMSBDMTguNTYxLDU2LjMxMSAxMy45MzYsNTIuOTk4IDEwLjM3NCw0OC4zNzMgQzYuODExLDQzLjYyMyA0Ljk5OSwzOC4yNDggNC45OTksMzIuMjQ4IEw1LDMyLjI1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=google] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjU3cHgiIGhlaWdodD0iNThweCIgdmlld0JveD0iMCAwIDU3IDU4IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+Z29vZ2xlPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9Imdvb2dsZSIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0yOS4wMDQsMzQuNDE0IEwyOS4wMDQsMjMuODEyIEw1NS42OCwyMy44MTIgQzU2LjA4LDI1LjYwOCA1Ni4zOTIsMjcuMjg4IDU2LjM5MiwyOS42NTQgQzU2LjM5Miw0NS45MjggNDUuNDc2LDU3LjQ5OCAyOS4wMzIsNTcuNDk4IEMxMy4zLDU3LjQ5OCAwLjUzMiw0NC43MyAwLjUzMiwyOC45OTggQzAuNTMyLDEzLjI2NiAxMy4zLDAuNDk4IDI5LjAzMiwwLjQ5OCBDMzYuNzI4LDAuNDk4IDQzLjE2OCwzLjMyIDQ4LjA5OCw3LjkzNiBMNDAuMDA0LDE1LjgwMiBDMzcuOTUyLDEzLjg2NCAzNC4zNiwxMS41ODQgMjkuMDMyLDExLjU4NCBDMTkuNTk4LDExLjU4NCAxMS45MDQsMTkuNDIyIDExLjkwNCwyOS4wMjYgQzExLjkwNCwzOC42MyAxOS42LDQ2LjQ2OCAyOS4wMzIsNDYuNDY4IEMzOS45NDgsNDYuNDY4IDQzLjk2NiwzOC45MTYgNDQuNzA2LDM0LjQ0IEwyOS4wMDIsMzQuNDQgTDI5LjAwMiwzNC40MTIgTDI5LjAwNCwzNC40MTQgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=instagram] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDY0IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+aW5zdGFncmFtPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9Imluc3RhZ3JhbSIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEuMDAwMDAwLCAwLjAwMDAwMCkiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNNDYuMDYzLDIzLjY4OCBDNDcuOTM4LDI2LjMxMyA0OS4wNjMsMjkuNTYzIDQ5LjA2MywzMy4xMjYgQzQ5LjA2Myw0Mi4xMjYgNDEuODEzLDQ5LjM3NiAzMi44MTMsNDkuMzc2IEMyMy44MTMsNDkuMzc2IDE2LjUsNDIuMTI2IDE2LjUsMzMuMTI2IEMxNi41LDI5LjU2MyAxNy42MjUsMjYuMzEzIDE5LjUsMjMuNjg4IEwxLDIzLjY4OCBMMSw1Mi4yNTEgQzEsNTkuMTg5IDYuNjI1LDY0LjgxNCAxMy41NjMsNjQuODE0IEw1Mi4wNjMsNjQuODE0IEM1OS4wMDEsNjQuODE0IDY0LjY4OCw1OS4xODkgNjQuNjg4LDUyLjI1MSBMNjQuNjg4LDIzLjY4OCBMNDYuMDYzLDIzLjY4OCBMNDYuMDYzLDIzLjY4OCBaIE02NC42ODgsMTMuMzc1IEM2NC42ODgsNi40MzcgNTksMC44MTIgNTIuMDYzLDAuODEyIEwxNy42ODgsMC44MTIgTDE3LjY4OCwxNi42ODcgTDE1LjA2MywxNi42ODcgTDE1LjA2MywwLjgxMiBMMTMuMzEzLDAuODEyIEwxMy4zMTMsMTYuNjg3IEwxMC43NSwxNi42ODcgTDEwLjc1LDEuMTI0IEMxMC4xMjUsMS4zMTIgOS41LDEuNDk5IDguODc1LDEuNzQ5IEw4Ljg3NSwxNi42ODcgTDYuMzEyLDE2LjY4NyBMNi4zMTIsMy4xMjQgQzMuMTI0LDUuNDM3IDAuOTk5LDkuMTg3IDAuOTk5LDEzLjM3NCBMMC45OTksMjEuNjg3IEwyMS4xODcsMjEuNjg3IEMyNC4xMjUsMTguNjg3IDI4LjI1LDE2LjgxMiAzMi44MTIsMTYuODEyIEMzNy4zMTIsMTYuODEyIDQxLjQzNywxOC42ODcgNDQuMzc1LDIxLjY4NyBMNjQuNjg4LDIxLjY4NyBMNjQuNjg4LDEzLjM3NCBMNjQuNjg4LDEzLjM3NSBaIE01OC45MzgsOC4xMjUgTDU4LjkzOCwxNS4wNjMgQzU4LjkzOCwxNi4xODggNTgsMTcuMDYzIDU2Ljg3NSwxNy4wNjMgTDUwLjA2MiwxNy4wNjMgQzQ4Ljk5OSwxNy4wNjMgNDguMDYyLDE2LjE4OCA0OC4wNjIsMTUuMDYzIEw0OC4wNjIsOC4xMjUgQzQ4LjA2Miw3IDQ5LDYuMDYyIDUwLjA2Miw2LjA2MiBMNTYuODc1LDYuMDYyIEM1OCw2LjA2MiA1OC45MzgsNyA1OC45MzgsOC4xMjUgTDU4LjkzOCw4LjEyNSBaIE0yMC4yNSwzMy4xMjUgQzIwLjI1LDQwIDI1Ljg3NSw0NS42MjUgMzIuODEzLDQ1LjYyNSBDMzkuNjg4LDQ1LjYyNSA0NS4zMTMsNDAgNDUuMzEzLDMzLjEyNSBDNDUuMzEzLDI5LjM3NSA0My42ODgsMjYgNDEuMDYzLDIzLjY4NyBDNDAuMTI1LDIyLjg3NCAzOS4xMjUsMjIuMTg3IDM4LDIxLjY4NyBDMzYuMzc1LDIwLjkzNyAzNC42MjUsMjAuNTYyIDMyLjgxMiwyMC41NjIgQzMwLjkzNywyMC41NjIgMjkuMTg3LDIwLjkzNyAyNy42MjQsMjEuNjg3IEMyNi40OTksMjIuMTg3IDI1LjQzNiwyMi44NzUgMjQuNDk5LDIzLjY4NyBDMjEuODc0LDI2IDIwLjI0OSwyOS4zNzUgMjAuMjQ5LDMzLjEyNSBMMjAuMjUsMzMuMTI1IFogTTIzLjU2MywzMy4xMjUgQzIzLjU2MywyOCAyNy42ODgsMjMuODEyIDMyLjgxMywyMy44MTIgQzM3LjkzOCwyMy44MTIgNDIuMTI2LDI4IDQyLjEyNiwzMy4xMjUgQzQyLjEyNiwzOC4yNSAzNy45MzgsNDIuMzc1IDMyLjgxMyw0Mi4zNzUgQzI3LjY4OCw0Mi4zNzUgMjMuNTYzLDM4LjI1IDIzLjU2MywzMy4xMjUgTDIzLjU2MywzMy4xMjUgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=linkedin] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY3cHgiIGhlaWdodD0iNjRweCIgdmlld0JveD0iMCAwIDY3IDY0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+bGlua2VkaW48L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0ibGlua2VkaW4iIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMC42ODcsNy4zNzUgQzAuNjg3LDkuNSAxLjM3NSwxMS4yNSAyLjg3NSwxMi42ODggQzQuMzEzLDE0LjA2MyA2LjE4OCwxNC44MTMgOC41NjMsMTQuODEzIEw4LjYyNiwxNC44MTMgQzExLjA2NCwxNC44MTMgMTMuMDAxLDE0LjA2MyAxNC41MDEsMTIuNjg4IEMxNS45MzksMTEuMzEzIDE2LjY4OSw5LjYyNSAxNi42ODksNy41NjMgQzE2LjY4OSw1LjMxMyAxNS45MzksMy40MzggMTQuNDM5LDIuMDYzIEMxMy4wMDEsMC42ODggMTEuMDY0LDguODgxNzg0MmUtMTYgOC43NTEsOC44ODE3ODQyZS0xNiBDNi4zNzYsOC44ODE3ODQyZS0xNiA0LjQzOCwwLjY4OCAyLjkzOCwyLjA2MyBDMS40MzgsMy41MDEgMC42ODgsNS4yNTEgMC42ODgsNy4zNzYgTDAuNjg3LDcuMzc1IFogTTEuNSw2My4zNzUgTDE1Ljc1LDYzLjM3NSBMMTUuNzUsMjAuNjI1IEwxLjUsMjAuNjI1IEwxLjUsNjMuMzc1IEwxLjUsNjMuMzc1IFogTTIzLjU2Myw2My4zNzUgQzIzLjY4OCw1MC41IDIzLjc1MSw0MC41IDIzLjc1MSwzMy4zNzUgQzIzLjc1MSwyNi4yNSAyMy42ODgsMjIgMjMuNTYzLDIwLjYyNSBMMzcuODEzLDIwLjYyNSBMMzcuODEzLDI2LjY4OCBMMzcuNzUsMjYuODEzIEwzNy44MTMsMjYuODEzIEwzNy44MTMsMjYuNjg4IEM0MC44NzYsMjEuOTM4IDQ1LjE4OCwxOS41NjMgNTAuNjg4LDE5LjU2MyBDNTUuNTYzLDE5LjU2MyA1OS41MDEsMjEuMjUxIDYyLjUwMSwyNC41MDEgQzY1LjUwMSwyNy43NTEgNjcuMDAxLDMyLjU2NCA2Ny4wMDEsMzguODc2IEw2Ny4wMDEsNjMuMzc2IEw1Mi43NTEsNjMuMzc2IEw1Mi43NTEsNDAuNTAxIEM1Mi43NTEsMzQuMDYzIDUwLjM3NiwzMC44NzYgNDUuNjI2LDMwLjg3NiBDNDMuNzUxLDMwLjg3NiA0Mi4yNTEsMzEuMzc2IDQxLjA2MywzMi4zNzYgQzM5LjgxMywzMy4zNzYgMzguOTM4LDM0LjU2NCAzOC4zMTMsMzYuMDY0IEMzOCwzNi44NzcgMzcuODEzLDM4LjAwMiAzNy44MTMsMzkuNTAyIEwzNy44MTMsNjMuMzc3IEwyMy41NjMsNjMuMzc3IEwyMy41NjMsNjMuMzc1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=miicard] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjkxcHgiIGhlaWdodD0iNjFweCIgdmlld0JveD0iMCAwIDkxIDYxIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+bWlpY2FyZDwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJtaWljYXJkIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTQxLjUsNS42ODggQzY0LjE4OCwyLjU2MyA3NywwLjg3NSA3Ny42MjUsMC44NzUgQzc5LjQzOCwwLjg3NSA4MC44NzUsMS4zMTMgODIuNDM4LDIuMzc1IEM4My44MTMsMy4zNzUgODUuMDAxLDUuMTg4IDg1LjM3Niw2LjgxMyBDODUuNjg5LDguMzc2IDkwLjMxNCw0Mi41NjMgOTAuMzE0LDQzLjUwMSBDOTAuMzE0LDQ3LjE4OSA4Ny40MzksNTAuNTY0IDgzLjgxNCw1MS4xMjYgQzgwLjgxNCw1MS42MjYgMTMuMTg5LDYwLjc1MSAxMi41NjQsNjAuNzUxIEM5LjE4OSw2MC43NTEgNi4zMTQsNTguNjI2IDUuMTg5LDU1LjM3NiBDNS4wMDEsNTQuOTM4IDQuMTI2LDQ4LjYyNiAyLjUwMSwzNi44MTMgQzAuMjUxLDIwLjU2MyAwLjA2MywxOC43NSAwLjA2MywxNy43NSBDMC4xMjYsMTYuNSAwLjQzOCwxNS41NjIgMC45MzgsMTQuNSBDMS45MzgsMTIuNjg3IDMuNzUxLDExLjE4NyA1LjY4OCwxMC42ODcgQzYuMDYzLDEwLjU2MiAyMi4xODgsOC4zMTIgNDEuNTAxLDUuNjg3IEw0MS41LDUuNjg4IFogTTYyLjU2Myw4LjE4OCBDNjEuMzEzLDcuODEzIDYwLjEyNSw4LjA2MyA1OS4xODgsOS4wMDEgQzU4LjMxMyw5Ljg3NiA1OC4wNjMsMTEuMDAxIDU4LjQzOCwxMi4zMTQgQzU4LjY4OCwxMy4xODkgNTkuNTYzLDE0LjA2NCA2MC4zNzYsMTQuMjUyIEM2MS42ODksMTQuNjI3IDYzLjAwMSwxNC4zMTUgNjMuODc2LDEzLjM3NyBDNjUuMzE0LDExLjY4OSA2NC42MjYsOC44NzcgNjIuNTYzLDguMTg5IEw2Mi41NjMsOC4xODggWiBNNzguNjI1LDguMTg4IEM3Ny4zMTIsNy44MTMgNzYuMTI1LDguMDYzIDc1LjI1LDkuMDAxIEM3NC4zMTIsOS44NzYgNzQuMDYyLDExLjAwMSA3NC40MzcsMTIuMzE0IEM3NC42ODcsMTMuMTg5IDc1LjU2MiwxNC4wNjQgNzYuMzc1LDE0LjI1MiBDNzcuNzUsMTQuNjI3IDc5LjA2MywxNC4zMTUgNzkuODc1LDEzLjM3NyBDODEuMzc1LDExLjY4OSA4MC42ODgsOC44NzcgNzguNjI1LDguMTg5IEw3OC42MjUsOC4xODggWiBNMjQuMzEzLDE4LjU2MyBDMjMuOTM4LDE4LjQzOCAyMy4wNjMsMTguMzEzIDIyLjI1LDE4LjMxMyBDMTguNTYyLDE4LjE4OCAxNS42ODcsMTkuNjg4IDEzLjU2MiwyMi45MzggQzEzLjM3NCwyMy4yNTEgMTMuMzc0LDIzLjE4OCAxMy4xODcsMjAuMDYzIEwxMy4xMjQsMTguODEzIEwxMC44MTEsMTguODEzIEM4LjgxMSwxOC44NzYgOC40OTgsMTguODc2IDguNTYxLDE5LjA2MyBDOC42MjQsMTkuMTI2IDguNjI0LDI1LjM3NiA4LjY4NiwzMi44NzYgTDguNzQ5LDQ2LjUwMSBMMTMuODc0LDQ2LjUwMSBMMTMuOTk5LDI4LjA2MyBMMTQuMjQ5LDI3LjQzOCBDMTQuODEyLDI2LjA2MyAxNS4zNzQsMjUuMjUgMTYuMTI0LDI0LjQzOCBDMTguMDYyLDIyLjUgMjAuNjI0LDIyLjA2MyAyMi44MTIsMjMuMTg4IEMyNC4xMjUsMjMuODEzIDI1LjEyNSwyNS4yNTEgMjUuNjg3LDI3LjA2MyBDMjUuODc1LDI3LjkzOCAyNS44NzUsMjguMTI2IDI1LjkzNywzNy4yNTEgTDI2LDQ2LjU2NCBMMzEuMDYzLDQ2LjU2NCBMMzEuMTI2LDM3LjI1MSBDMzEuMTI2LDI4LjAwMSAzMS4xMjYsMjguMDAxIDMxLjM3NiwyNy4yNTEgQzMxLjg3NiwyNS43NTEgMzMuMDY0LDI0LjI1MSAzNC4yNTEsMjMuNTAxIEMzNS40MzksMjIuNjg4IDM3LjEyNiwyMi40MzggMzguNTAxLDIyLjY4OCBDNDAuNjI2LDIzLjEyNiA0Mi4wNjQsMjQuNjI2IDQyLjgxNCwyNy4zMTMgQzQzLjA2NCwyOC4xODggNDMuMDY0LDI4LjMxMyA0My4xMjcsMzcuMzc2IEw0My4xOSw0Ni41MDEgTDQ4LjMxNSw0Ni41MDEgTDQ4LjMxNSwzNy41NjMgQzQ4LjMxNSwyOC4xODggNDguMjUyLDI3LjY4OCA0Ny43NTIsMjUuNjg4IEM0Ni44MTQsMjEuODc1IDQ0LjYyNywxOS40MzggNDEuMzE0LDE4LjUgQzQwLjI1MSwxOC4yNSAzNy41NjQsMTguMjUgMzYuNTAxLDE4LjUgQzM1LjQzOCwxOC44MTMgMzQuMjUxLDE5LjMxMyAzMy4zMTMsMTkuOTM4IEMzMi4zNzUsMjAuNjI2IDMwLjkzOCwyMi4xMjYgMzAuMzEzLDIzLjAwMSBMMjkuODc1LDIzLjY4OSBMMjkuNSwyMi44NzYgQzI4LjQzNywyMC42ODggMjYuNSwxOS4xMjYgMjQuMzEyLDE4LjU2MyBMMjQuMzEzLDE4LjU2MyBaIE02NC4xMjUsMzIuNjg4IEw2NC4xMjUsMTguODc1IEw2MS41LDE4LjgxMiBDNTkuNSwxOC44MTIgNTguOTM3LDE4LjgxMiA1OC44NzUsMTguOTM3IEM1OC44MTMsMTkuMDYyIDU4LjgxMiwyNS4yNSA1OC44MTIsMzIuODEyIEw1OC44NzUsNDYuNSBMNjQuMTI1LDQ2LjUgTDY0LjEyNSwzMi42ODcgTDY0LjEyNSwzMi42ODggWiBNODAuMTI1LDMyLjY4OCBMODAuMTI1LDE4Ljg3NSBMNzcuNTYyLDE4LjgxMiBDNzUuNDk5LDE4LjgxMiA3NC45MzcsMTguODEyIDc0Ljg3NCwxOC45MzcgTDc0Ljg3NCw0Ni41IEw4MC4xMjQsNDYuNSBMODAuMTI0LDMyLjY4NyBMODAuMTI1LDMyLjY4OCBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=oauth2] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4xLjEsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAxNTAuMSAxNjcuOCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTUwLjEgMTY3LjgiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPGc+DQoJPHBvbHlnb24gZmlsbD0iI0ZGRkZGRiIgcG9pbnRzPSIzMSwxMzUuOCAzMC45LDEzNS44IDc1LjEsMTY3LjggMTE5LjIsMTM1LjggNzUuMSwxMDMuNyAJIi8+DQoJPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTMuNyw1MS45TDMuNyw1MS45Qy02LjYsODMuNiw1LjMsMTE3LjIsMzEsMTM1LjhsMCwwbDE2LjktNTEuOUwzLjcsNTEuOWw1NC41LDBMNzUuMSwwbDAsMEgyMC41TDMuNyw1MS45eg0KCQkiLz4NCgk8cGF0aCBmaWxsPSIjRkZGRkZGIiBkPSJNMTQ2LjUsNTEuOUwxNDYuNSw1MS45TDE0Ni41LDUxLjlMMTI5LjYsMEg3NS4xbDAsMGwxNi45LDUxLjlMMTQ2LjUsNTEuOWwtNDQuMSwzMi4xbDE2LjgsNTEuOQ0KCQlDMTQ2LjIsMTE2LjIsMTU2LjMsODIsMTQ2LjUsNTEuOXoiLz4NCjwvZz4NCjwvc3ZnPg0K"); } .auth0-lock-social-button[data-provider^=paypal] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYzcHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDYzIDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+cGF5cGFsPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InBheXBhbCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLDU3LjY4OCBMMTYuNDM4LDU3LjY4OCBMMjAuNTAxLDM4Ljc1IEwzMi4xODksMzguNzUgQzM3LjkzOSwzOC43NSA0Mi44NzcsMzcuMTI1IDQ3LjEyNywzMy43NSBDNTEuMzc3LDMwLjQzNyA1NC4xMjcsMjUuODc1IDU1LjM3NywyMC4wNjIgQzU2LjAwMiwxNi43NDkgNTYuMDAyLDEzLjg3NCA1NS4zNzcsMTEuNDM3IEM1NC43NTIsOSA1My42MjcsNi45OTkgNTIuMDY0LDUuMzc0IEM1MC40MzksMy44MTEgNDguNjI2LDIuNjI0IDQ2LjYyNiwxLjgxMSBDNDQuNjI2LDEuMDYxIDQyLjU2MywwLjY4NiA0MC40MzgsMC42ODYgTDEyLjQzOCwwLjY4NiBMMCw1Ny42ODggWiBNNi4zNzUsNjQuNjg4IEw3LjEyNSw2MS41NjMgTDIwLjkzOCw2MS41NjMgTDI0LjkzOCw0Mi42ODggTDM2LjY4OCw0Mi42ODggQzQyLjM3Niw0Mi42ODggNDcuMzc2LDQxIDUxLjYyNiwzNy42ODggQzU1Ljg3NiwzNC4zNzYgNTguNjI2LDI5LjgxMyA1OS44MTQsMjQgQzYwLjc1MiwxOS44NzUgNjAuNTAyLDE2LjI1IDU5LjA2NCwxMy4xMjUgQzYyLjEyNywxNi42ODggNjMuMDAyLDIxLjM3NSA2MS44MTQsMjcuMTI1IEM2MC41NjQsMzIuOTM4IDU3LjgxNCwzNy41IDUzLjU2NCw0MC44MTMgQzQ5LjM3Niw0NC4xMjYgNDQuMzc2LDQ1LjgxMyAzOC42MjYsNDUuODEzIEwyNi44NzYsNDUuODEzIEwyMi44NzYsNjQuNjg4IEw2LjM3Niw2NC42ODggTDYuMzc1LDY0LjY4OCBaIE0yMi44NzUsMjcuODc1IEwyNi4zNzUsMTIuMjUgTDM0LjM3NSwxMi4yNSBDMzUuNzUsMTIuMjUgMzYuOTM4LDEyLjYyNSAzNy45MzgsMTMuMzc1IEMzOC45MzgsMTQuMTI1IDM5LjYyNiwxNS4xMjUgMzkuOTM4LDE2LjM3NSBDMzkuMzEzLDE2LjI1IDM4LjkzOCwxNi4xODcgMzguODc1LDE2LjE4NyBMMzAuODc1LDE2LjE4NyBMMjguMTg3LDI3Ljg3NSBMMjIuODc0LDI3Ljg3NSBMMjIuODc1LDI3Ljg3NSBaIE0zMC44NzUsMjcuODEzIEwzMi43NSwxOS4zMTMgTDQwLjA2MywxOS4zMTMgQzQwLjA2MywxOS4zNzYgNDAuMDYzLDE5LjUwMSA0MCwxOS42ODggQzM5LjkzNywxOS44NzUgMzkuOTM3LDIwLjAwMSAzOS45MzcsMjAuMDYzIEMzOS40MzcsMjIuMTg4IDM4LjM3NCwyMy45MzggMzYuNTYyLDI1LjQzOCBDMzQuODEyLDI2LjkzOCAzMi44NzQsMjcuNzUxIDMwLjg3NCwyNy44MTMgTDMwLjg3NSwyNy44MTMgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=paypal-sandbox] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYzcHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDYzIDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+cGF5cGFsPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InBheXBhbCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLDU3LjY4OCBMMTYuNDM4LDU3LjY4OCBMMjAuNTAxLDM4Ljc1IEwzMi4xODksMzguNzUgQzM3LjkzOSwzOC43NSA0Mi44NzcsMzcuMTI1IDQ3LjEyNywzMy43NSBDNTEuMzc3LDMwLjQzNyA1NC4xMjcsMjUuODc1IDU1LjM3NywyMC4wNjIgQzU2LjAwMiwxNi43NDkgNTYuMDAyLDEzLjg3NCA1NS4zNzcsMTEuNDM3IEM1NC43NTIsOSA1My42MjcsNi45OTkgNTIuMDY0LDUuMzc0IEM1MC40MzksMy44MTEgNDguNjI2LDIuNjI0IDQ2LjYyNiwxLjgxMSBDNDQuNjI2LDEuMDYxIDQyLjU2MywwLjY4NiA0MC40MzgsMC42ODYgTDEyLjQzOCwwLjY4NiBMMCw1Ny42ODggWiBNNi4zNzUsNjQuNjg4IEw3LjEyNSw2MS41NjMgTDIwLjkzOCw2MS41NjMgTDI0LjkzOCw0Mi42ODggTDM2LjY4OCw0Mi42ODggQzQyLjM3Niw0Mi42ODggNDcuMzc2LDQxIDUxLjYyNiwzNy42ODggQzU1Ljg3NiwzNC4zNzYgNTguNjI2LDI5LjgxMyA1OS44MTQsMjQgQzYwLjc1MiwxOS44NzUgNjAuNTAyLDE2LjI1IDU5LjA2NCwxMy4xMjUgQzYyLjEyNywxNi42ODggNjMuMDAyLDIxLjM3NSA2MS44MTQsMjcuMTI1IEM2MC41NjQsMzIuOTM4IDU3LjgxNCwzNy41IDUzLjU2NCw0MC44MTMgQzQ5LjM3Niw0NC4xMjYgNDQuMzc2LDQ1LjgxMyAzOC42MjYsNDUuODEzIEwyNi44NzYsNDUuODEzIEwyMi44NzYsNjQuNjg4IEw2LjM3Niw2NC42ODggTDYuMzc1LDY0LjY4OCBaIE0yMi44NzUsMjcuODc1IEwyNi4zNzUsMTIuMjUgTDM0LjM3NSwxMi4yNSBDMzUuNzUsMTIuMjUgMzYuOTM4LDEyLjYyNSAzNy45MzgsMTMuMzc1IEMzOC45MzgsMTQuMTI1IDM5LjYyNiwxNS4xMjUgMzkuOTM4LDE2LjM3NSBDMzkuMzEzLDE2LjI1IDM4LjkzOCwxNi4xODcgMzguODc1LDE2LjE4NyBMMzAuODc1LDE2LjE4NyBMMjguMTg3LDI3Ljg3NSBMMjIuODc0LDI3Ljg3NSBMMjIuODc1LDI3Ljg3NSBaIE0zMC44NzUsMjcuODEzIEwzMi43NSwxOS4zMTMgTDQwLjA2MywxOS4zMTMgQzQwLjA2MywxOS4zNzYgNDAuMDYzLDE5LjUwMSA0MCwxOS42ODggQzM5LjkzNywxOS44NzUgMzkuOTM3LDIwLjAwMSAzOS45MzcsMjAuMDYzIEMzOS40MzcsMjIuMTg4IDM4LjM3NCwyMy45MzggMzYuNTYyLDI1LjQzOCBDMzQuODEyLDI2LjkzOCAzMi44NzQsMjcuNzUxIDMwLjg3NCwyNy44MTMgTDMwLjg3NSwyNy44MTMgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=planningcenter] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYzcHgiIGhlaWdodD0iNjNweCIgdmlld0JveD0iMCAwIDYzIDYzIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+cGxhbm5pbmdjZW50ZXI8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0icGxhbm5pbmdjZW50ZXIiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNNC4zMTMsNjEuNSBMNi4zMTMsNjIuNDM4IEwzMS40MzgsNjIuNDM4IEM1OC43NTEsNjIuNDM4IDU4LjMxMyw2Mi41MDEgNjAuNjg4LDU5LjkzOCBDNjEuMzc2LDU5LjE4OCA2Mi4xMjYsNTcuODEzIDYyLjM3Niw1Ni44MTMgQzYyLjY4OSw1NS42MjUgNjIuODc2LDQ3IDYyLjg3NiwzMS41NjMgQzYyLjg3NiwxMi4yNSA2Mi43NTEsNy43NSA2Mi4xODgsNS44NzUgQzYxLjU2MywzLjYyNSA2MCwxLjgxMiA1OC4wNjMsMC43NSBDNTcuMzc1LDAuMzc1IDQ5LjUsMC4yNSAzMS41NjMsMC4yNSBDNC4xODgsMC4yNSA0Ljg3NSwwLjE4NyAyLjYyNSwyLjYyNSBDMC4xODcsNS4xODggMC4xODcsNS4xMjUgMC4xODcsMzEuNzUgTDAuMTg3LDU2LjM3NSBMMS4yNSw1OC4zNzUgQzIsNTkuODc1IDIuODEzLDYwLjY4OCA0LjMxMyw2MS41IEw0LjMxMyw2MS41IFogTTIwLDU0LjEyNSBDMTkuNzUsNTUuMTg4IDE5LjY4Nyw1NS4xODggMTMuODc1LDU1LjE4OCBDMTAuNjg3LDU1LjE4OCA3LjkzNyw1NS4wNjMgNy44MTIsNTQuODc1IEM3LjYyNCw1NC43NSA3LjQ5OSw0NC4xODcgNy40OTksMzEuNSBMNy40OTksOC40MzcgTDU1LjE4Nyw4LjQzNyBMNTUuMTg3LDU1LjE4NyBMNDMuNDM3LDU1LjE4NyBMNDIuNTYyLDUzLjQ5OSBDNDEuNDM3LDUxLjI0OSA0MC4zNzQsNTAuOTk5IDMwLjM3NCw1MS4xODYgQzIxLjQzNiw1MS4zMTEgMjAuNjI0LDUxLjU2MSAxOS45OTksNTQuMTI0IEwyMCw1NC4xMjUgWiBNMjkuMzc1LDQ1LjM3NSBDMzAuNjI1LDQ2LjI1IDMxLjY4OCw0Ni4zMTMgMzMuMDYzLDQ1LjYyNSBDMzQuNjI2LDQ0LjgxMiAzNC43NTEsNDQuMzc1IDM0Ljc1MSwzOS44NzUgQzM0Ljc1MSwzNy41NjIgMzQuOTM5LDM1LjY4NyAzNS4xMjYsMzUuNjg3IEMzNS4zNzYsMzUuNjg3IDM3LjE4OSwzNi41NjIgMzkuMjUxLDM3LjY4NyBDNDEuMjUxLDM4Ljg3NSA0My40MzksMzkuNzUgNDMuOTM5LDM5Ljc1IEM0NS42MjcsMzkuNzUgNDcuNTY0LDM3LjQzNyA0Ny4zNzcsMzUuNjg3IEM0Ny4yNTIsMzQuMjQ5IDQ2Ljg3NywzMy45OTkgNDMuMDAyLDMxLjg3NCBDMzguMTg5LDI5LjI0OSAzOC4xMjcsMjkuNjI0IDQzLjgxNSwyNi40MzYgQzQ2LjYyOCwyNC45MzYgNDcuMjUzLDI0LjMxMSA0Ny4zNzgsMjMuMzExIEM0Ny41NjYsMjEuODExIDQ1LjM3OCwxOC44NzMgNDQuMTI4LDE4Ljg3MyBDNDMuNjksMTguODczIDQxLjM3OCwxOS45MzYgMzkuMDAzLDIxLjE4NiBMMzQuNzUzLDIzLjQ5OSBMMzQuNzUzLDE5LjI0OSBDMzQuNzUzLDEzLjgxMSAzNC40NCwxMy4zMTEgMzEuMTI4LDEzLjQ5OSBMMjguNjI4LDEzLjYyNCBMMjguMzc4LDE4LjQ5OSBMMjguMTI4LDIzLjQzNyBMMjQuMzc4LDIxLjEyNCBDMTkuNTAzLDE4LjI0OSAxOC41MDMsMTguMTg2IDE2LjY5LDIwLjk5OSBDMTUuMDAyLDIzLjQ5OSAxNS4xOSwyMy45OTkgMTguNTAzLDI1Ljg3NCBDMTkuODE2LDI2LjU2MiAyMS42MjgsMjcuNjI0IDIyLjYyOCwyOC4yNDkgTDI0LjM3OCwyOS4zNzQgTDIwLjMxNSwzMS44MTIgQzE4LjA2NSwzMy4xODcgMTYuMDAyLDM0LjU2MiAxNS43NTIsMzQuODc1IEMxNS4zMTQsMzUuMzc1IDE1LjUwMiwzNiAxNi41NjUsMzcuNjI1IEMxOC4zMTUsNDAuNDM4IDE5LjYyOCw0MC41IDI0LjEyOCwzNy42ODggQzI1Ljk0MSwzNi41NjMgMjcuNjkxLDM1LjY4OCAyNy45NDEsMzUuNjg4IEMyOC4xOTEsMzUuNjg4IDI4LjM3OSwzNy41NjMgMjguMzc5LDQwLjE4OCBDMjguMzc5LDQ0LjM3NiAyOC40NDIsNDQuNzUxIDI5LjM3OSw0NS4zNzYgTDI5LjM3NSw0NS4zNzUgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=renren] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYxcHgiIGhlaWdodD0iMzVweCIgdmlld0JveD0iMCAwIDYxIDM1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+cmVucmVuPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InJlbnJlbiIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0yMC4zNzUsMC40MzggQzIwLjY4OCw3LjEyNiAxOS41LDEzLjAwMSAyMS43NSwxOC41MDEgQzIyLjYyNSwyMC41NjQgMjMuODEzLDIyLjU2NCAyNS4zMTMsMjQuMjUxIEMyOS42ODgsMjkuMjUxIDMyLjE4OCwyOC44NzYgMzYuNDM4LDIzLjU2MyBDNDEuODEzLDE2Ljc1IDQwLjAwMSw5IDQwLjMxMywwLjU2MyBDMzcuNDM4LDIuMTI2IDM0LjkzOCwzLjA2MyAzMi45MzgsNC42ODggQzMwLjkzOCw2LjI1MSAyOS44NzUsNi40MzggMjcuODc1LDQuNjI1IEMyNiwyLjkzNyAyMy4zNzUsMi4wNjIgMjAuMzc1LDAuNDM3IEwyMC4zNzUsMC40MzggWiBNNC4xMjUsMjguMTg4IEMxMy44NzUsMjMuMzEzIDE1LjI1LDEzLjEyNSAxMy42ODgsMS4zNzUgQzEuNjI1LDMuMTg4IC0zLjgxMiwxOC4xODggNC4xMjUsMjguMTg4IEw0LjEyNSwyOC4xODggWiBNNDcuMTg4LDEuMjUgQzQ3LjE4OCw1LjkzOCA0Ni43NSwxMC41NjMgNDcuMzEzLDE1IEM0Ny45MzgsMjAuMTI1IDUwLjYyNiwyNC4zNzUgNTUuMDYzLDI3LjM3NSBDNTYuNDM4LDI4LjMxMyA1Ny4xMjYsMjguMTI1IDU4LjA2MywyNi42ODcgQzY0LjE4OCwxNi44MTIgNTguODc2LDMuODc0IDQ3LjE4OCwxLjI0OSBMNDcuMTg4LDEuMjUgWiBNNDMuNjg4LDI0LjQzOCBDNDEuNjI1LDI3LjAwMSAzOS4yNSwyOS45MzggMzYuNzUsMzMuMDYzIEM0MS41LDM1LjE4OCA0Ni4xODgsMzUuMDYzIDUwLjc1LDMzLjA2MyBDNDguMjUsMzAuMDYzIDQ1Ljg3NSwyNy4xMjUgNDMuNjg3LDI0LjQzOCBMNDMuNjg4LDI0LjQzOCBaIE0yNC4xODgsMzMuMDYzIEMyMS42MjUsMjkuODc1IDE5LjMxMywyNy4wNjMgMTcuMjUsMjQuNSBDMTUuMDYyLDI3LjEyNSAxMi43NSwzMC4wNjMgMTAuMzEyLDMzLjA2MyBDMTUsMzUuMDYzIDE5LjY4NywzNS4xMjYgMjQuMTg3LDMzLjA2MyBMMjQuMTg4LDMzLjA2MyBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=salesforce] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDY0IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+c2FsZXNmb3JjZTwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJzYWxlc2ZvcmNlIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTAsMTUuODc1IEMwLDE2LjEyNSAwLjA2MywxNi41IDAuMTI1LDE3IEwxMC42MjUsNjEgQzEwLjg3NSw2Mi4wNjMgMTEuNDM4LDYyLjkzOCAxMi4zMTMsNjMuNjI1IEMxMy4xODgsNjQuMjUgMTQuMTg4LDY0LjYyNSAxNS4yNTEsNjQuNjI1IEMxNS44NzYsNjQuNjI1IDE2LjU2NCw2NC41NjIgMTcuMjUxLDY0LjM3NSBDMTguMDAxLDY0LjI1IDE4LjgxNCw2NC4wNjIgMTkuNzUxLDYzLjc1IEMyMC42ODksNjMuNSAyMS4zMTQsNjMuMzEyIDIxLjc1MSw2My4xODcgQzE4LjAwMSw2MS45MzcgMTQuOTM4LDYwLjYyNCAxMi41NjMsNTkuMzEyIEwxNy42MjYsNDcuODc0IEMxOS4zNzYsNDkuNDk5IDIxLjYyNiw1MC43NDkgMjQuMzE0LDUxLjc0OSBDMjcuMDAyLDUyLjY4NyAyOS41NjQsNTMuMTg3IDMyLjA2NCw1My4xODcgQzM0LjAwMiw1My4xODcgMzUuNjg5LDUyLjYyNCAzNy4xODksNTEuNjI0IEMzOC42ODksNTAuNjI0IDM5LjQzOSw0OS4xODYgMzkuNDM5LDQ3LjMxMSBDMzkuNDM5LDQ2LjEyMyAzOS4wNjQsNDQuOTM2IDM4LjMxNCw0My44MTEgQzM3LjU2NCw0Mi42ODYgMzYuNTY0LDQxLjY4NiAzNS4zNzYsNDAuODExIEMzNC4xMjYsMzkuOTM2IDMzLjAwMSwzOS4yNDggMzEuODc2LDM4LjY4NiBDMzAuNzUxLDM4LjA2MSAyOS42MjYsMzcuNTYxIDI4LjQzOCwzNy4xMjMgQzE3LjYyNSwzMi45MzUgMTIuMjUsMjYuODczIDEyLjI1LDE4Ljk5OCBDMTIuMjUsMTQuODczIDEzLjU2MywxMS4zMSAxNi4yNSw4LjI0OCBMMy42MjUsMTEuMjQ4IEMyLjU2MiwxMS40OTggMS42ODcsMTIuMDYxIDEsMTIuOTM2IEMwLjMxMywxMy44MTEgMCwxNC44MTEgMCwxNS44NzQgTDAsMTUuODc1IFogTTI2LjgxMywxOC44MTMgQzI2LjgxMywyMi4zMTMgMzAuNDM4LDI1LjMxMyAzNy43NTEsMjcuNzUxIEM0Mi42MjYsMjkuMzc2IDQ2LjU2NCwzMS42ODkgNDkuNTY0LDM0Ljc1MSBDNTIuNTY0LDM3LjgxMyA1NC4wNjQsNDEuNjg5IDU0LjA2NCw0Ni40MzkgQzU0LjA2NCw0OS45MzkgNTMuMDY0LDUzLjE4OSA1MS4wNjQsNTYuMTg5IEw2MC4zNzcsNTQuMDAxIEM2MS40NCw1My43NTEgNjIuMzE1LDUzLjE4OCA2My4wMDIsNTIuMzEzIEM2My42ODksNTEuNDM4IDY0LjAwMiw1MC40MzggNjQuMDAyLDQ5LjM3NSBDNjQuMDAyLDQ5LjEyNSA2My45MzksNDguNzUgNjMuODc3LDQ4LjI1IEw1My4zNzcsNC4yNSBDNTMuMTI3LDMuMTg3IDUyLjU2NCwyLjMxMiA1MS42ODksMS42MjUgQzUwLjgxNCwwLjkzOCA0OS44MTQsMC42MjUgNDguNzUxLDAuNjI1IEM0OC4xODgsMC42MjUgNDcuMjUxLDAuNzUgNDYuMDYzLDEgQzQ0LjgxMywxLjI1IDQzLjMxMywxLjYyNSA0MS41LDIuMTg4IEMzOS42MjUsMi42ODggMzguNjg3LDIuOTM4IDM4LjU2MiwyLjkzOCBDNDIuNjg3LDMuNTYzIDQ2LjYyNSw0LjkzOCA1MC41LDYuOTM4IEw0Ni41NjIsMTcuODEzIEM0NS40MzcsMTYuNjI1IDQzLjU2MiwxNS42MjUgNDAuOTM3LDE0Ljg3NSBDMzguMzc0LDE0LjEyNSAzNS45OTksMTMuNzUgMzMuOTM3LDEzLjc1IEMzMi4xODcsMTMuNzUgMzAuNTYyLDE0LjE4OCAyOS4wNjIsMTUuMDYzIEMyNy41NjIsMTUuOTM4IDI2LjgxMiwxNy4xODggMjYuODEyLDE4LjgxMyBMMjYuODEzLDE4LjgxMyBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=shopify] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjU1cHgiIGhlaWdodD0iNjNweCIgdmlld0JveD0iMCAwIDU1IDYzIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+c2hvcGlmeTwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJzaG9waWZ5IiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTIxLjEyNSwxLjY4OCBDMjQuMTI1LDAuMTg4IDI1LjgxMywwLjEyNSAyNy4zNzUsMS4zNzUgQzI4LDEuODc1IDI5LjE4OCwyLjQzOCAzMC4wNjMsMi41NjMgQzMxLjc1MSwyLjkzOCAzNC4yNTEsNS40MzggMzQuODEzLDcuMTg4IEMzNS4xMjYsOC4xMjYgMzUuMzc2LDguMjUxIDM2LjY4OCw4LjAwMSBDMzcuOTM4LDcuNzUxIDM4LjQzOCw3LjkzOCA0MC4xMjYsOS42MjYgQzQxLjg3NiwxMS4zNzYgNDIuNTAxLDExLjY4OSA0NC45MzksMTEuODc2IEM0Ny4xODksMTIuMTI2IDQ3LjY4OSwxMi4zMTQgNDcuODc3LDEzLjE4OSBDNDguMDAyLDEzLjgxNCA0OC44NzcsMTkuNDM5IDQ5LjgxNSwyNS44MTQgQzUwLjc1MywzMi4xODkgNTIuMTksNDEuNzUyIDUyLjk0LDQ3LjEyNyBDNTMuNzUzLDUyLjQ0IDU0LjM3OCw1Ny4xMjcgNTQuMzc4LDU3LjU2NSBDNTQuMzc4LDU4LjEyOCA1Mi4zMTUsNTguNzUzIDQ1LjAwMyw2MC4zMTUgTDM1LjU2NSw2Mi4zNzggTDE4LjMxNSw1OS4xMjggQzguNzUyLDU3LjM3OCAwLjgxNSw1NS43NTMgMC42MjcsNTUuNTY1IEMwLjM3Nyw1NS4zNzcgMC43NTIsNTEuMDAyIDEuNDQsNDUuODE1IEMyLjEyOCw0MC42OSAzLjEyOCwzMy4wMDIgMy42MjgsMjguNzUyIEM1LjEyOCwxNi43NTIgNC41NjYsMTguMDY0IDguNjkxLDE2LjgxNCBMMTIuMTI5LDE1LjY4OSBMMTMuNTA0LDEyLjAwMSBDMTUuMzE3LDYuODc2IDE3Ljk0MiwzLjMxMyAyMS4xMjksMS42ODggTDIxLjEyNSwxLjY4OCBaIE0yNC4xODgsNC40MzggTDI1LjkzOCwyLjg3NSBMMjQuNTYzLDIuODc1IEMyMi4xODgsMi44NzUgMTkuMzc1LDUuMDYzIDE3LjMxMyw4LjY4OCBDMTYuMTg4LDEwLjYyNiAxNS4wNjMsMTMuOTM4IDE1LjM3NSwxNC4yNTEgQzE1LjU2MywxNC40MzkgMTYuNSwxNC4yNTEgMTcuNjI1LDE0LjAwMSBDMTkuMzc1LDEzLjU2MyAxOS42MjUsMTMuMjUxIDIwLjEyNSwxMS40MzggQzIwLjkzOCw4LjMxMyAyMi4yNSw2LjA2MyAyNC4xODgsNC40MzggTDI0LjE4OCw0LjQzOCBaIE0yOC4zNzUsMjIuNTYzIEMyOC4xMjUsMjIuMzEzIDI2LjUsMjIgMjQuODEyLDIxLjkzOCBDMTcuMzEyLDIxLjUgMTEuOTM3LDI2LjAwMSAxMS44NzQsMzIuODEzIEMxMS44NzQsMzUuOTM4IDEyLjgxMiwzNy44NzYgMTUuNDk5LDM5Ljg3NiBDMjEuMzEyLDQ0LjUwMSAxNy42ODcsNDkuMDY0IDExLjQ5OSw0NS4wMDEgQzEwLjEyNCw0NC4xMjYgMTAuMTI0LDQ0LjE4OCA5LjI0OSw0Ny4wMDEgQzguNTYxLDQ5LjI1MSA4LjU2MSw0OS4yNTEgOS45OTksNTAuNTAxIEMxMC44MTIsNTEuMTg5IDEyLjYyNCw1Mi4wMDEgMTQuMTI0LDUyLjQzOSBDMjAuNDM3LDU0LjMxNCAyNS41NjIsNTEuMDAxIDI2LjI0OSw0NC42MjYgQzI2LjY4Nyw0MC43NTEgMjUuMTI0LDM3LjkzOCAyMC43NDksMzQuNzUxIEMxOC42MjQsMzMuMTg4IDE4LjEyNCwzMi41NjMgMTguMTI0LDMxLjM3NiBDMTguMTI0LDI5LjMxMyAxOS45MzcsMjguMzEzIDIyLjg3NCwyOC42MjYgQzI0LjEyNCwyOC43NTEgMjUuNDk5LDI5LjAwMSAyNS44NzQsMjkuMTg5IEMyNi40MzcsMjkuMzc3IDI2Ljg3NCwyOC43NTEgMjcuNzQ5LDI2LjE4OSBDMjguMzEyLDI0LjMxNCAyOC41NjIsMjIuNzUxIDI4LjM3NCwyMi41NjQgTDI4LjM3NSwyMi41NjMgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=soundcloud] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9Ijc0cHgiIGhlaWdodD0iMzZweCIgdmlld0JveD0iMCAwIDc0IDM2IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+c291bmRjbG91ZDwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJzb3VuZGNsb3VkIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTAsMjYuMjUgQzAsMjkuMTI1IDAuMjUsMzAuNjg4IDAuODEzLDMxIEMxLjA2MywzMC44NzUgMS4zMTMsMzAuMTg3IDEuNTAxLDI5IEMxLjY4OSwyNy43NSAxLjgxNCwyNi44NzUgMS44MTQsMjYuMjUgQzEuODE0LDI1LjY4NyAxLjY4OSwyNC44MTIgMS41MDEsMjMuNTYyIEMxLjMxMywyMi4zMTIgMS4wNjMsMjEuNjI0IDAuODEzLDIxLjQzNyBDMC41NjMsMjEuNjI1IDAuMzc1LDIyLjI1IDAuMjUsMjMuNDM3IEMwLjA2MiwyNC42MjUgMCwyNS41NjIgMCwyNi4yNSBMMCwyNi4yNSBaIE00LjEyNSwyNi4yNSBDNC4xMjUsMjcuMzEzIDQuMTg4LDI4LjgxMyA0LjQzOCwzMC44NzUgQzQuNjI2LDMyLjg3NSA0Ljc1MSwzNC4xMjUgNC44MTMsMzQuNTYzIEM0LjgxMywzNC44NzYgNC45MzgsMzUuMDYzIDUuMTg4LDM1LjA2MyBDNS4zNzYsMzUuMDYzIDUuNTAxLDM0Ljg3NSA1LjU2MywzNC41NjMgQzUuNjI2LDM0LjA2MyA1Ljc1MSwzMi44MTMgNi4wMDEsMzAuODEzIEM2LjE4OSwyOC44MTMgNi4zMTQsMjcuMzEzIDYuMzE0LDI2LjI1IEM2LjMxNCwyNiA2LjA2NCwyMy4xMjUgNS41NjQsMTcuNjI1IEM1LjUwMSwxNy4zNzUgNS4zNzYsMTcuMjUgNS4xODksMTcuMjUgQzQuOTM5LDE3LjI1IDQuODE0LDE3LjM3NSA0LjgxNCwxNy42MjUgQzQuNzUxLDE4LjEyNSA0LjYyNiwxOS40MzggNC40MzksMjEuNTYzIEM0LjE4OSwyMy42MjYgNC4xMjYsMjUuMTg4IDQuMTI2LDI2LjI1MSBMNC4xMjUsMjYuMjUgWiBNOS4yNSwyNi4yNSBDOS4yNSwyNy4zNzUgOS4zNzUsMjkgOS42MjUsMzEuMjUgQzkuODEzLDMzLjQzOCA5LjkzOCwzNC42ODggOS45MzgsMzUgQzkuOTM4LDM1LjMxMiAxMC4wNjMsMzUuNSAxMC4zNzYsMzUuNSBDMTAuNjg5LDM1LjUgMTAuODc2LDM1LjMxMiAxMC44NzYsMzUgQzExLjM3NiwyOS44MTIgMTEuNTY0LDI2LjkzNyAxMS41NjQsMjYuMjUgQzExLjU2NCwyNS42MjUgMTEuMzc2LDIyLjg3NSAxMC44NzYsMTguMDYyIEMxMC44NzYsMTcuNjg3IDEwLjY4OCwxNy40OTkgMTAuMzc2LDE3LjQ5OSBDMTAuMDY0LDE3LjQ5OSA5LjkzOCwxNy42ODcgOS45MzgsMTguMDYyIEM5LjkzOCwxOC4zMTIgOS44MTMsMTkuNDM3IDkuNjI1LDIxLjU2MiBDOS4zNzUsMjMuNjg3IDkuMjUsMjUuMjUgOS4yNSwyNi4yNSBMOS4yNSwyNi4yNSBaIE0xNS4xODgsMjYuMjUgQzE1LjE4OCwyNi4zNzUgMTUuMzc2LDI5LjI1IDE1Ljc1MSwzNC45MzggQzE1Ljc1MSwzNS4zMTMgMTUuOTM5LDM1LjU2MyAxNi4zMTQsMzUuNTYzIEMxNi43NTIsMzUuNTYzIDE2LjkzOSwzNS4zMTMgMTYuOTM5LDM0LjkzOCBDMTYuOTM5LDM0LjYyNSAxNy4wNjQsMzMuMzc1IDE3LjI1MiwzMS4xODggQzE3LjUwMiwyOSAxNy42MjcsMjcuMzc1IDE3LjYyNywyNi4yNSBDMTcuNjI3LDI0LjEyNSAxNy41MDIsMjEgMTcuMzE0LDE2LjkzNyBDMTcuMTI2LDEyLjg3NCAxNy4wMDEsMTAuNDk5IDE2LjkzOSw5LjgxMiBDMTYuOTM5LDkuMzc0IDE2Ljc1MSw5LjE4NyAxNi4zMTQsOS4xODcgQzE1LjkzOSw5LjE4NyAxNS43NTEsOS4zNzUgMTUuNzUxLDkuODEyIEMxNS42ODgsMTEuMDYyIDE1LjYyNiwxMi44MTIgMTUuNTAxLDE1LjA2MiBDMTUuNDM4LDE3LjI1IDE1LjMxMywxOS4zMTIgMTUuMjUxLDIxLjEyNSBDMTUuMTg5LDIyLjkzOCAxNS4xODgsMjQuNjI1IDE1LjE4OCwyNi4yNSBMMTUuMTg4LDI2LjI1IFogTTIxLjE4OCwyNi4yNSBDMjEuMTg4LDI3LjM3NSAyMS4yNTEsMjguOTM4IDIxLjQzOCwzMSBDMjEuNTYzLDMzLjA2MyAyMS42MjYsMzQuMzEzIDIxLjYyNiwzNC43NSBDMjEuNjg5LDM1LjMxMyAyMi4wMDEsMzUuNTYzIDIyLjM3NiwzNS41NjMgQzIyLjgxNCwzNS41NjMgMjMuMDY0LDM1LjMxMyAyMy4xODksMzQuNzUgQzIzLjE4OSwzNC4xODcgMjMuMzE0LDMyLjg3NSAyMy40MzksMzAuODc1IEMyMy42MjcsMjguODc1IDIzLjY4OSwyNy4zMTIgMjMuNjg5LDI2LjI1IEMyMy42ODksMjMuOTM3IDIzLjYyNiwyMC42ODcgMjMuNDM5LDE2LjM3NSBDMjMuMzE0LDEyLjA2MiAyMy4xODksOS4xODcgMjMuMTg5LDcuODEyIEMyMy4wNjQsNy4zMTIgMjIuODE0LDcuMDYyIDIyLjM3Niw3LjA2MiBDMjIuMDAxLDcuMDYyIDIxLjY4OCw3LjMxMiAyMS42MjYsNy44MTIgQzIxLjU2Myw4Ljg3NSAyMS41MDEsMTEuNjI1IDIxLjM3NiwxNi4wNjIgQzIxLjI1MSwyMC40OTkgMjEuMTg4LDIzLjkzNyAyMS4xODgsMjYuMjUgTDIxLjE4OCwyNi4yNSBaIE0yNy4yNSwyNi4yNSBDMjcuMjUsMjYuMzc1IDI3LjM3NSwyOS4xMjUgMjcuNjI1LDM0LjYyNSBDMjcuNzUsMzUuMjUgMjguMDYzLDM1LjU2MyAyOC41NjMsMzUuNTYzIEMyOS4wNjMsMzUuNTYzIDI5LjM3NiwzNS4yNSAyOS40MzgsMzQuNTYzIEwyOS40MzgsMzQuNjI2IEMyOS42ODgsMjkuMTI2IDI5LjgxMywyNi4zNzYgMjkuODEzLDI2LjI1MSBDMjkuODEzLDI0LjU2MyAyOS44MTMsMjIuNzUxIDI5Ljc1LDIwLjgxMyBDMjkuNjg3LDE4LjkzOCAyOS42ODcsMTYuNzUgMjkuNjI1LDE0LjQzOCBDMjkuNTYyLDEyLjA2MyAyOS41LDEwLjI1IDI5LjQzNyw5IEMyOS4zNzQsOC4zNzUgMjkuMDYyLDggMjguNTYyLDggQzI4LjA2Miw4IDI3Ljc0OSw4LjM3NSAyNy42MjQsOSBDMjcuNjI0LDEwLjI1IDI3LjU2MSwxMi4wNjMgMjcuNDk5LDE0LjQzOCBDMjcuNDM2LDE2Ljc1MSAyNy4zNzQsMTguOTM4IDI3LjMxMSwyMC44MTMgQzI3LjMxMSwyMi43NTEgMjcuMjQ4LDI0LjU2MyAyNy4yNDgsMjYuMjUxIEwyNy4yNSwyNi4yNSBaIE0zMy4zNzUsMjYuMzEzIEMzMy4zNzUsMjYuMzc2IDMzLjUsMjkuMDYzIDMzLjc1LDM0LjQzOCBDMzMuODEzLDM1LjE4OCAzNC4xMjUsMzUuNTYzIDM0Ljc1LDM1LjU2MyBDMzUuMzc1LDM1LjU2MyAzNS42ODgsMzUuMTg4IDM1Ljc1LDM0LjQzOCBDMzYuMDYzLDI5LjA2MyAzNi4xODgsMjYuMzc1IDM2LjE4OCwyNi4zMTMgQzM2LjE4OCwyNi4xODggMzYuMDYzLDE4LjY4OCAzNS43NSwzLjg3NSBDMzUuNjg3LDMuMTI1IDM1LjM3NSwyLjY4NyAzNC43NSwyLjY4NyBDMzQuMTI1LDIuNjg3IDMzLjgxMiwzLjEyNSAzMy43NSwzLjg3NSBDMzMuNSwxOC42ODggMzMuMzc1LDI2LjE4OCAzMy4zNzUsMjYuMzEzIEwzMy4zNzUsMjYuMzEzIFogTTM4LjQzOCwxMi43NSBDMzguNDM4LDE2LjI1IDM4LjUwMSwyMC4xODggMzguNTAxLDI0LjQzOCBMMzguNTAxLDM0LjM3NiBDMzguNTAxLDM0LjY4OSAzOC42MjYsMzUuMDAxIDM4LjgxNCwzNS4yNTEgQzM5LjAwMiwzNS41MDEgMzkuMjUyLDM1LjYyNiAzOS41MDIsMzUuNjI2IEw2NC42MjcsMzUuNjI2IEM2Ny4xMjcsMzUuNjI2IDY5LjI1MiwzNC42MjYgNzEuMDY1LDMyLjY4OCBDNzIuODE1LDMwLjc1IDczLjY5LDI4LjM3NSA3My42OSwyNS42MjUgQzczLjY5LDIyLjg3NSA3Mi43NTIsMjAuNSA3MS4wMDIsMTguNTYyIEM2OS4yNTIsMTYuNjI0IDY3LjEyNywxNS42MjQgNjQuNjI3LDE1LjYyNCBDNjMuNTAyLDE1LjYyNCA2Mi4zMTQsMTUuOTM3IDYxLjEyNywxNi40OTkgQzYwLjc1MiwxMS45MzYgNTkuMDY0LDguMTI0IDU2LjAwMiw1LjA2MSBDNTIuOTM5LDEuOTM2IDQ5LjMxNCwwLjQzNiA0NS4xODksMC40MzYgQzQ0LjgxNCwwLjQzNiA0NC4yNTEsMC40MzYgNDMuNjI2LDAuNTYxIEM0Mi45MzgsMC42MjQgNDIuMTg4LDAuNzQ5IDQxLjQzOCwwLjg3NCBDNDAuNjI1LDEuMDYyIDM5Ljg3NSwxLjMxMiAzOS4zMTMsMS42MjQgQzM4Ljc1LDEuOTk5IDM4LjUsMi4zNzQgMzguNSwyLjc0OSBDMzguNSw1Ljg3NCAzOC40MzcsOS4xODcgMzguNDM3LDEyLjc0OSBMMzguNDM4LDEyLjc1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+");   background-size: 60%; } .auth0-lock-social-button[data-provider^=thecity] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYxcHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDYxIDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+dGhlY2l0eTwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJ0aGVjaXR5IiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTMuODEzLDMuNDM4IEwzLjgxMywzLjQzOCBDNy4wNjMsMC44MTMgNy4zNzYsMC44MTMgMjkuOTM4LDAuODEzIEM1MS4xODgsMC44MTMgNTMuMDYzLDAuOTM4IDU1LjYyNiwzLjAwMSBDNTkuMjUxLDUuODE0IDYwLjMxNCw5LjUwMSA2MC4xODksMTguMTg5IEM2MC4xODksMjQuNDM5IDYwLjAwMSwyNS4yNTIgNTguMDY0LDI1LjMxNCBDNTYuODE0LDI1LjQzOSA1NC43NTEsMjUuNTY0IDUzLjUwMSwyNS42MjcgQzUwLjAwMSwyNS44NzcgNDQuNjg4LDMwLjg3NyA0MS43NTEsMzYuNjkgQzM5LjkzOCw0MC4zMTUgMzguNTAxLDQxLjgxNSAzNy41NjMsNDEuMzc4IEMzNi4yNSw0MC44MTUgMzYuNjg4LDM5LjYyOCAzOS4yNTEsMzUuMzE1IEM0My42ODksMjguMTI3IDQ0LjM3NiwyMi4wNjUgNDEuMjUxLDE2LjEyNyBDMzUuNTYzLDQuOTM5IDE5LjA2Myw1LjEyNyAxMy43NTEsMTYuMzE1IEMxMS4zMTMsMjEuNDQgMTEuNTAxLDI3LjY5IDE0LjEyNiwzMS45NCBDMTUuODE0LDM0Ljg3OCAyMy44NzYsNDEuMDY1IDI3LjU2NCw0Mi4zNzggQzI4LjEyNyw0Mi41NjYgMjguMTg5LDQzLjMxNiAyNy43NTIsNDQuMTI4IEMyNy4xMjcsNDUuMDY2IDI2LjI1Miw0NC45NDEgMjQuMDY0LDQzLjU2NSBDMTUuNjI2LDM4LjAwMiAxMC41MDEsMzYuODE1IDQuODc2LDM5LjMxNSBDMi42MjYsNDAuMTkgMC42MjYsNDAuOTQgMC4zMTMsNDAuOTQgQzAuMTI1LDQwLjk0IC0yLjUwMDc3NzM2ZS0xNCwzMy4xMjcgMC4xODgsMjMuNTAyIEwwLjU2Myw2LjAwMiBMMy44MTMsMy40MzggWiBNMjQuMDYzLDEzLjkzOCBMMjQuMDYzLDEzLjkzOCBDMjcuNTYzLDEyLjc1IDMyLjE4OCwxMy44MTMgMzQuNjg4LDE2LjU2MyBDMzguMzc2LDIwLjQzOCAzOC41MDEsMjUuMDAxIDM1LjM3NiwzMC44NzYgQzMzLjE4OCwzNC42ODkgMzIuNzUxLDM2LjE4OSAzMy43NTEsMzcuMzc2IEMzNi4zMTQsNDAuMzc2IDMzLjkzOSwzOS42MjYgMjYuNjg4LDM1LjMxMyBDMTkuNDM4LDMwLjg3NSAxNy4zNzUsMjguMTI1IDE3LjM3NSwyMy4xODggQzE3LjM3NSwyMC4xMjUgMjEuMTI1LDE1IDI0LjA2MywxMy45MzggTDI0LjA2MywxMy45MzggWiBNNTMuNTYzLDMxLjc1IEw1My41NjMsMzEuNzUgQzU5LjI1MSwyOS4zMTIgNjAuMzEzLDMwLjc1IDYwLjEyNiw0MS4xODggQzU5Ljg3Niw1Mi4zMTMgNjAuMDAxLDUxLjgxMyA1Ny44MTMsNTEuODEzIEM1Ni4zMTMsNTEuODEzIDQ2LjQzOCw0Ny41NjMgNDMuNSw0NS42MjUgQzQzLjMxMiw0NS41IDQ0LjY4OCw0Mi42ODcgNDYuNjI1LDM5LjMxMiBDNDksMzUuMTg3IDUxLjMxMywzMi42ODcgNTMuNTYzLDMxLjc0OSBMNTMuNTYzLDMxLjc1IFogTTYuOTM4LDQ0LjE4OCBMNi45MzgsNDQuMTg4IEMxMC4wMDEsNDMuMTI1IDEzLjg3Niw0My44NzUgMTguMDAxLDQ2LjUwMSBDMTkuODc2LDQ3LjU2NCAyMi4yNTEsNDguNTY0IDIzLjE4OSw0OC41NjQgQzI2LjM3Nyw0OC41NjQgMTguNzUxLDYxLjQzOSAxNC41NjQsNjMuMzE0IEM3LjUwMSw2Ni4yNTIgMC4wMDEsNjEuMjUxIDAuMDAxLDUzLjYyNiBDMC4wMDEsNTAuNTAxIDMuNjg5LDQ1LjM3NiA2LjkzOSw0NC4xODggTDYuOTM4LDQ0LjE4OCBaIE0zOS4zMTMsNTIgTDM5Ljg3Niw1MS42ODcgTDMyLjEyNiw2My4zMTIgTDU3LjU2NCw2My41NjIgTDU2LjUwMSw1OC40MzcgTDM5LjMxMyw1MiBaIE0yMC4xODgsNjIuODc1IEwxOS4zMTMsNjMuNDM4IEwyNi42MjYsNjMuNjI2IEwzNC41MDEsNTEuMTI2IEwyOC44NzYsNTAuNjg4IEwyMC4xODgsNjIuODc1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=thirtysevensignals] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY1cHgiIGhlaWdodD0iNTVweCIgdmlld0JveD0iMCAwIDY1IDU1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+dGhpcnR5c2V2ZW5zaWduYWxzPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InRoaXJ0eXNldmVuc2lnbmFscyIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLjUsNDIuMTI1IEMwLjQzNyw0MiAwLjM3NSw0MS45MzcgMC4zMTIsNDEuODEyIEMwLjI0OSw0MS42ODcgMC4yNDksNDEuNjI0IDAuMjQ5LDQxLjQzNyBMMC4yNDksNDAuNDk5IEMwLjI0OSwzOS44NzQgMC4zNzQsMzkuMzExIDAuNDk5LDM4LjY4NiBDMS4yNDksMzQuMDYxIDIuNDM3LDI5LjU2MSA0LjEyNCwyNS4yNDggQzUuNzQ5LDIxLjE4NSA3Ljg3NCwxNy4yNDggMTAuNDk5LDEzLjc0OCBDMTIuOTk5LDEwLjQ5OCAxNS45OTksNy40OTggMTkuMzc0LDUuMTIzIEMyMS4xMjQsMy45MzUgMjIuOTk5LDIuODczIDI0LjkzNywyLjEyMyBDMjUuOTM3LDEuNzQ4IDI2LjkzNywxLjQzNSAyOCwxLjE4NSBDMjguNSwxLjA2IDI5LjA2MywwLjkzNSAyOS41NjMsMC44NzIgQzI5LjgxMywwLjgwOSAzMC4xMjYsMC43NDcgMzAuMzc2LDAuNzQ3IEMzMC42ODksMC42ODQgMzEuMDAxLDAuNjg0IDMxLjMxNCwwLjY4NCBMMzQuMzE0LDAuNjg0IEMzNC41NjQsMC42ODQgMzQuODc3LDAuODA5IDM1LjEyNywwLjgwOSBDMzYuMTksMS4wNTkgMzcuMTksMS4zMDkgMzguMTksMS42MjIgQzQwLjA2NSwyLjE4NSA0MS44NzgsMi45MzUgNDMuNjI4LDMuODcyIEM0Ni44NzgsNS42MjIgNDkuNjkxLDguMDYgNTIuMTI4LDEwLjgxIEM1NC42OTEsMTMuODEgNTYuOTQxLDE3LjEyMyA1OC43NTMsMjAuNjIzIEM2MC45NDEsMjQuNzQ4IDYyLjUwMywyOS4xODYgNjMuNTAzLDMzLjc0OCBDNjMuNjI4LDM0LjEyMyA2My42OTEsMzQuNDk4IDYzLjgxNiwzNC45MzYgQzY0LjA2NiwzNS45MzYgNjQuMzc5LDM2Ljk5OSA2NC41NjYsMzguMDYxIEM2NC43NTQsMzkuMDYxIDY0Ljk0MSw0MC4wNjEgNjQuODE2LDQwLjk5OSBDNjQuNzUzLDQxLjg3NCA2NC4zNzgsNDIuNTYyIDYzLjg3OCw0My4yNDkgQzYzLjMxNSw0NC4wNjIgNjIuNjI4LDQ0Ljc0OSA2MS44NzgsNDUuMzc0IEM1OS4wNjUsNDcuOTM3IDU1LjgxNSw0OS44NzQgNTIuMzE1LDUxLjMxMiBDNDguMzc3LDUyLjg3NSA0NC4xOSw1My43NSAzOS45NCw1NC4xODcgQzM1LjQ0LDU0LjY4NyAzMC44MTUsNTQuNjg3IDI2LjE5LDU0LjMxMiBDMjIuMzE1LDUzLjkzNyAxOC4zNzcsNTMuMzEyIDE0LjU2NSw1Mi4wNjIgQzExLjMxNSw1MC45OTkgOC4xOSw0OS40OTkgNS41MDIsNDcuMzc0IEM0LjE4OSw0Ni4zNzQgMy4wNjQsNDUuMjQ5IDIuMDAyLDQ0LjA2MSBDMS40MzksNDMuNDM2IDEuMDAyLDQyLjc0OCAwLjUwMiw0Mi4xMjMgTDAuNSw0Mi4xMjUgWiBNNC43NSwzOS4yNSBDNC42ODcsMzkuMzc1IDQuNzUsMzkuNDM4IDQuODEzLDM5LjU2MyBDNC44MTMsMzkuNjI2IDQuODc2LDM5Ljc1MSA0LjkzOCwzOS44MTMgQzUuMzEzLDQwLjUwMSA1LjY4OCw0MS4xODggNi4xODgsNDEuODEzIEM4LjI1MSw0NC40MzggMTEuMjUxLDQ2LjE4OCAxNC4zMTMsNDcuMzc2IEMxOC4wNjMsNDguODE0IDIyLjAwMSw0OS41MDEgMjUuOTM4LDQ5Ljg3NiBDMzAuMjUxLDUwLjMxNCAzNC42ODgsNTAuMzE0IDM5LjA2Myw1MC4wMDEgQzQzLjI1MSw0OS43NTEgNDcuNTAxLDQ5LjAwMSA1MS40MzgsNDcuNDM4IEM1NC43NTEsNDYuMTg4IDU4LjA2Myw0NC4yNSA1OS45MzgsNDEuMTI1IEM2MC4wMDEsNDEgNjAuMDYzLDQwLjkzNyA2MC4xMjYsNDAuODEyIEM2MS4xMjYsMzguNjg3IDYwLjA2MywzNi40OTkgNTkuMDYzLDM0LjYyNCBDNTcuODc1LDMyLjYyNCA1Ni44NzUsMzAuNDk5IDU1LjYyNSwyOC40OTkgQzU0LjYyNSwyNi44MTEgNTMuNDM3LDI1LjMxMSA1Mi4yNSwyMy44MTEgQzUxLDIyLjMxMSA0OS42ODcsMjAuODExIDQ4LjMxMiwxOS40MzYgQzQ2Ljc0OSwxNy44MTEgNDUuMDYyLDE2LjI0OCA0My4yNDksMTQuODczIEM0Mi45OTksMTQuNjg1IDQyLjc0OSwxNC41NiA0Mi41NjEsMTQuMzEgQzQyLjM3MywxNC4xMjIgNDIuMTg2LDEzLjk5NyA0MS45MzYsMTMuODcyIEM0MS40OTgsMTMuNjg0IDQwLjk5OCwxMy42MjIgNDAuNTYxLDEzLjgwOSBDMzkuNTYxLDE0LjEyMiAzOC44MTEsMTUuMDU5IDM4LjEyMywxNS44MDkgQzM2LjQzNSwxNy41NTkgMzUuMDYsMTkuNTU5IDMzLjU2LDIxLjU1OSBDMzIuMTg1LDIzLjMwOSAzMC44MSwyNS4xMjIgMjkuMDYsMjYuNTU5IEMyOC40MzUsMjcuMDU5IDI3LjY4NSwyNy42ODQgMjYuODcyLDI3Ljc0NyBDMjYuMjQ3LDI3Ljc0NyAyNS42ODQsMjcuNjIyIDI1LjE4NCwyNy4zNzIgQzIzLjk5NiwyNi44NzIgMjMuMTIxLDI1Ljg3MiAyMi4zMDksMjQuOTk3IEMyMC44MDksMjMuMzcyIDE4LjkzNCwyMC42ODQgMTYuMzcxLDIxLjQ5NyBDMTQuNjIxLDIyLjEyMiAxMy4xODMsMjMuNjg1IDEyLjA1OCwyNS4xMjIgQzExLjM3LDI1Ljk5NyAxMC43NDUsMjYuOTM1IDEwLjE4MywyNy44NzIgQzkuNTU4LDI4LjgxIDguOTk1LDI5Ljc0NyA4LjM3LDMwLjY4NSBDNy4yNDUsMzIuNjIzIDYuMTIsMzQuNTYgNS4zNywzNi42ODUgQzUuMTgyLDM3LjI0OCA1LjA1NywzNy44MSA0LjkzMiwzOC4zNzMgQzQuODY5LDM4LjYyMyA0LjgwNywzOC45MzYgNC43NDQsMzkuMjQ4IEw0Ljc1LDM5LjI1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=twitter] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9Ijc5cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDc5IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+dHdpdHRlcjwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJ0d2l0dGVyIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTAsNTcuNDM4IEM3LjYyNSw2Mi4yNTEgMTUuODc1LDY0LjYyNiAyNC43NSw2NC42MjYgQzMwLjUsNjQuNjI2IDM1LjkzOCw2My43NTEgNDAuOTM4LDYxLjkzOCBDNDUuOTM4LDYwLjEyNSA1MC4yNTEsNTcuNjg4IDUzLjgxMyw1NC42MjUgQzU3LjQzOCw1MS41IDYwLjUwMSw0OCA2My4wNjMsNDQuMDYyIEM2NS42MjUsNDAuMTI0IDY3LjU2MywzNS45OTkgNjguODEzLDMxLjYyNCBDNzAuMDYzLDI3LjMxMSA3MC43NTEsMjIuOTk5IDcwLjc1MSwxOC42ODYgTDcwLjc1MSwxNi41NjEgQzc0LjAwMSwxNC4xODYgNzYuNjg5LDExLjM3MyA3OC43NTEsOC4xODYgQzc1LjY4OCw5LjQ5OSA3Mi42MjYsMTAuMzc0IDY5LjUwMSwxMC43NDkgQzczLjAwMSw4LjY4NiA3NS4zNzYsNS42ODYgNzYuNTY0LDEuODExIEM3My40MzksMy42ODYgNzAuMDAxLDQuOTk5IDY2LjMxNCw1Ljc0OSBDNjMuMTI2LDIuMzc0IDU5LjE4OSwwLjYyNCA1NC41MDEsMC42MjQgQzUwLjA2MywwLjYyNCA0Ni4yNTEsMi4yNDkgNDMuMDYzLDUuMzc0IEMzOS45MzgsOC41NjIgMzguMzEzLDEyLjMxMiAzOC4zMTMsMTYuNzQ5IEMzOC4zMTMsMTcuODEyIDM4LjUwMSwxOS4wNjIgMzguODEzLDIwLjQ5OSBDMzIuMTg4LDIwLjEyNCAyNiwxOC40OTkgMjAuMTg4LDE1LjQ5OSBDMTQuNDM4LDEyLjU2MSA5LjUsOC41NjEgNS41LDMuNTYxIEM0LDYuMTI0IDMuMjUsOC44MTEgMy4yNSwxMS42ODYgQzMuMjUsMTQuNDk5IDMuOTM4LDE3LjA2MSA1LjE4OCwxOS40MzYgQzYuNTAxLDIxLjgxMSA4LjI1MSwyMy42ODYgMTAuNTAxLDI1LjE4NiBDNy44NzYsMjUuMTIzIDUuMzc2LDI0LjQzNiAzLjEyNiwyMy4xODYgTDMuMTI2LDIzLjM3NCBDMy4xMjYsMjcuMjQ5IDQuMzc2LDMwLjY4NyA2LjgxNCwzMy42MjQgQzkuMjUyLDM2LjYyNCAxMi4zNzcsMzguNDM3IDE2LjEyNywzOS4xODcgQzE0Ljc1MiwzOS41NjIgMTMuMzE0LDM5Ljc1IDExLjgxNCwzOS43NSBDMTAuNjg5LDM5Ljc1IDkuNjg5LDM5LjY4NyA4LjgxNCwzOS41IEM5Ljg3Nyw0Mi43NSAxMS43NTIsNDUuMzc1IDE0LjUwMiw0Ny41IEMxNy4zMTUsNDkuNTYzIDIwLjQ0LDUwLjYyNSAyMy45NCw1MC42ODggQzE4LjA2NSw1NS4zMTMgMTEuMzc3LDU3LjYyNiAzLjgxNSw1Ny42MjYgQzIuNTY1LDU3LjYyNiAxLjI1Miw1Ny41NjMgMC4wMDIsNTcuNDM4IEwwLDU3LjQzOCBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=vkontakte] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9Ijc5cHgiIGhlaWdodD0iNDZweCIgdmlld0JveD0iMCAwIDc5IDQ2IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+dms8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0idmsiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMC40MzcsMy44MTMgQzAuNDM3LDQuMzc2IDAuNSw0LjkzOCAwLjU2Miw1LjUwMSBDMC42ODcsNi4xMjYgMC44NzUsNi42ODkgMS4xMjUsNy4zMTQgQzEuMzEzLDcuOTM5IDEuNTYzLDguNDM5IDEuNjg4LDguODE0IEMxLjg3Niw5LjE4OSAyLjEyNiw5Ljc1MiAyLjUwMSwxMC40MzkgQzIuODE0LDExLjE4OSAzLjA2NCwxMS42MjcgMy4xODksMTEuODc3IEM3LjEyNywxOS45NCAxMS4zNzcsMjYuODE1IDE1LjgxNCwzMi41MDIgQzE3LjY4OSwzNC45NCAxOS4zNzcsMzYuODc3IDIwLjkzOSwzOC40NCBDMjIuNTY0LDM5Ljk0IDI0LjY4OSw0MS4zNzggMjcuMzc3LDQyLjc1MyBDMzAuMTI3LDQ0LjEyOCAzMy4xMjcsNDQuOTQxIDM2LjQ0LDQ1LjMxNiBDMzguMDY1LDQ1LjUwNCAzOS41MDMsNDUuNTY2IDQwLjY5LDQ1LjU2NiBDNDMuNTAzLDQ1LjU2NiA0NS4xOSw0NS4wNjYgNDUuNzUzLDQ0LjAwMyBDNDYuMDY2LDQzLjQ0IDQ2LjI1Myw0Mi4zNzggNDYuMzc4LDQwLjk0IEM0Ni40NDEsMzkuNDQgNDYuNjI4LDM4LjE5IDQ2Ljk0MSwzNy4xMjcgQzQ3LjI1NCwzNi4wNjQgNDcuODc5LDM1LjQzOSA0OC44NzksMzUuMjUyIEM0OS40NDIsMzUuMTg5IDUwLjAwNCwzNS4zMTUgNTAuNjI5LDM1LjYyNyBDNTEuMTkyLDM2LjAwMiA1MS42OTIsMzYuMzE1IDUyLjA2NywzNi43NTIgQzUyLjQ0MiwzNy4xMjcgNTIuOTQyLDM3LjYyNyA1My41MDUsMzguMzc3IEM1NC4wNjgsMzkuMDY1IDU0LjM4LDM5LjUwMiA1NC41NjgsMzkuNjkgQzU3LjY5Myw0My4xOSA2MC42MzEsNDUuMTkgNjMuNDQzLDQ1LjY5IEw2My44ODEsNDUuNjkgQzY0LjY5NCw0NS41MDIgNjUuNjMxLDQ1LjM3NyA2Ni43NTYsNDUuMzc3IEM2Ny40NDQsNDUuMzc3IDY4LjI1Niw0NS40NCA2OS4xMzEsNDUuNTAyIEM3MC4wNjksNDUuNjI3IDcwLjk0NCw0NS42OSA3MS44ODEsNDUuNjkgQzczLjAwNiw0NS42OSA3NC4xMzEsNDUuNjI3IDc1LjI1Niw0NS40NCBDNzcuNDQ0LDQ1LjA2NSA3OC41MDYsNDQuMTkgNzguNTA2LDQyLjgxNSBDNzguNTA2LDQxLjgxNSA3Ny42MzEsNDAuMjUyIDc1Ljk0MywzOC4wMDIgQzc0LjE5MywzNS44MTQgNzEuODE4LDMzLjMxNCA2OC43NTUsMzAuNTAyIEM2OC42OTIsMzAuNDM5IDY4LjQ0MiwzMC4xODkgNjguMDA1LDI5LjgxNCBDNjcuNTY4LDI5LjQzOSA2Ny4zMTcsMjkuMTI2IDY3LjEzLDI5LjAwMSBDNjcuMDA1LDI4LjgxMyA2Ni44MTcsMjguNTYzIDY2LjUwNSwyOC4xODggQzY2LjI1NSwyNy44NzUgNjYuMDA1LDI3LjU2MyA2NS44OCwyNy4yNSBDNjUuNzU1LDI2LjkzNyA2NS42OTIsMjYuNjI1IDY1LjY5MiwyNi4zMTIgQzY1LjY5MiwyNS43NDkgNjUuNzU1LDI1LjE4NyA2Ni4wMDUsMjQuNjI0IEM2Ni4yNTUsMjMuOTk5IDY2LjUwNSwyMy40OTkgNjYuNzU1LDIzLjE4NiBDNjcuMDA1LDIyLjgxMSA2Ny4zOCwyMi4zMTEgNjcuODgsMjEuNjIzIEM2OC4zOCwyMC45MzUgNjguNjkzLDIwLjU2IDY4Ljc1NSwyMC40MzUgQzY5LjE5MywxOS45MzUgNjkuOTQzLDE4LjkzNSA3MS4xMywxNy40OTcgQzcyLjMxOCwxNS45OTcgNzMuMzE4LDE0LjgwOSA3NC4wNjgsMTMuNzQ3IEM3NC44MTgsMTIuNzQ3IDc1LjU2OCwxMS42ODQgNzYuMjU2LDEwLjQzNCBDNzcuNzU2LDcuOTM0IDc4LjUwNiw2LjA1OSA3OC41MDYsNC44NzEgQzc4LjUwNiw0LjU1OCA3OC40NDMsNC4yNDYgNzguMzE4LDMuOTk2IEM3OC4xMywzLjY4MyA3Ny44MTgsMy4zNzEgNzcuNDQzLDMuMTgzIEM3Ny4wMDUsMi45OTUgNzYuNDQzLDIuODcgNzUuODE4LDIuODA4IEM3NS4xMywyLjc0NSA3NC41MDUsMi43NDUgNzMuODgsMi43NDUgQzczLjMxNywyLjgwOCA3Mi42MywyLjgwOCA3MS44MTcsMi44NyBDNzEuMDA0LDIuOTMyIDcwLjQ0MiwyLjkzMyA3MC4wNjcsMi45MzMgQzY5LjQ0MiwyLjkzMyA2OC40NDIsMi44NyA2Ny4wNjcsMi44MDggQzY1Ljk0MiwyLjc0NSA2NC45NDIsMi42ODMgNjQuMTI5LDIuNjgzIEw2My41MDQsMi42ODMgQzYyLjU2NiwyLjY4MyA2MS43NTQsMi44MDggNjEuMTI5LDMuMTIxIEM2MC40NDEsMy45OTYgNjAuMTI5LDQuMzA5IDYwLjEyOSwzLjk5NiBDNjAuMDY2LDMuNjgzIDU5LjgxNiw0LjEyMSA1OS4zMTYsNS4yNDYgQzU4Ljg3OCw2LjM3MSA1OC42MjgsNi45MzQgNTguNjI4LDYuOTM0IEw1OC4wMDMsOC4zNzIgQzU2LjAwMywxMi42ODUgNTQuMDAzLDE2LjE4NSA1Mi4wMDMsMTguODEgQzUxLjk0LDE4Ljg3MyA1MS43NTMsMTkuMTIzIDUxLjMxNSwxOS42ODUgQzUwLjk0LDIwLjI0OCA1MC42OSwyMC42MjMgNTAuNTY1LDIwLjc0OCBMNDkuODE1LDIxLjQ5OCBDNDkuNTAyLDIxLjgxMSA0OS4xOSwyMi4wNjEgNDguODE1LDIyLjE4NiBDNDguNTAyLDIyLjMxMSA0OC4xOSwyMi40MzYgNDcuODE1LDIyLjQzNiBDNDYuNjksMjEuNzQ4IDQ2LjA2NSwyMC40MzYgNDUuODc3LDE4LjU2MSBDNDUuNzUyLDE3LjY4NiA0NS43NTIsMTYuODczIDQ1Ljc1MiwxNi4xMjMgQzQ1Ljc1MiwxNS4xMjMgNDUuODE1LDE0LjEyMyA0NS45NCwxMy4xODUgQzQ1Ljk0LDEyLjc0NyA0Ni4wMDMsMTEuNjIyIDQ2LjE5LDkuODcyIEM0Ni4zMTUsOC40OTcgNDYuMzc4LDcuMzcyIDQ2LjM3OCw2LjQ5NyBDNDYuMzE1LDYuMTg0IDQ2LjMxNSw1LjkzNCA0Ni4zMTUsNS42MjIgQzQ2LjI1Miw0LjYyMiA0Ni4wMDIsMy42ODQgNDUuNjI3LDIuOTM0IEM0NS45NCwyLjc0NiA0NS42MjcsMi40MzQgNDQuODE0LDIuMDU5IEM0NC4wMDEsMS42MjEgNDMuNTY0LDEuNDM0IDQzLjU2NCwxLjQzNCBMNDIuMTI2LDEuMTIxIEM0Mi4xMjYsMC45OTYgNDEuNTYzLDAuOTMzIDQwLjQzOCwwLjkzMyBDMzkuMzEzLDAuODcgMzguNzUsMC44NyAzOC43NSwwLjg3IEwzNS4zNzUsMC44NyBDMzIuNzUsMC44NyAzMC42ODcsMS4wNTggMjkuMTg3LDEuNDMzIEMyNy42ODcsMS44NzEgMjYuNjI0LDIuNjIxIDI1Ljk5OSwzLjgwOCBDMjYuMzc0LDQuMDU4IDI2Ljg3NCw0LjI0NiAyNy40OTksNC40OTYgQzI4LjEyNCw0Ljc0NiAyOC42ODcsNC45OTYgMjkuMDYyLDUuMjQ2IEMyOS41LDUuNTU5IDI5LjgxMiw1LjkzNCAzMC4wNjIsNi4zNzEgQzMwLjY4Nyw3LjU1OSAzMSw5Ljc0NiAzMSwxMi45MzQgQzMxLDEzLjYyMiAzMSwxNC4zNzIgMzAuOTM3LDE1LjE4NCBDMzAuODEyLDE5LjkzNCAzMC4xODcsMjIuNDM0IDI4LjkzNywyMi42MjIgQzI4LjY4NywyMi42ODUgMjguNDM3LDIyLjY4NSAyOC4xODcsMjIuNjIyIEMyNy45MzcsMjIuNjIyIDI3LjY4NywyMi40OTcgMjcuNDM3LDIyLjMwOSBDMjcuMjQ5LDIyLjEyMSAyNi45OTksMjEuOTM0IDI2LjgxMiwyMS43NDYgQzI2LjU2MiwyMS41NTggMjYuMzc0LDIxLjMwOCAyNi4xMjQsMjEuMDU4IEMyNS44NzQsMjAuNzQ1IDI1LjY4NiwyMC40OTUgMjUuNTYxLDIwLjMwOCBDMjUuMzczLDIwLjEyIDI1LjE4NiwxOS44NyAyNC45OTgsMTkuNDk1IEMyNC44MSwxOS4xODIgMjQuNjIzLDE4LjkzMiAyNC41NiwxOC44MDcgQzIyLjE4NSwxNS4zNjkgMjAuMTg1LDExLjg2OSAxOC41Niw4LjM2OSBDMTguNDM1LDguMTgxIDE4LjE4NSw3LjY4MSAxNy44NzIsNi45OTQgQzE3LjYyMiw2LjMwNiAxNy4zNzIsNS43NDQgMTcuMTg0LDUuMzY5IEMxNi45MzQsNC45OTQgMTYuNzQ2LDQuNTU2IDE2LjQzNCw0LjExOSBDMTYuMTIxLDMuNzQ0IDE1Ljg3MSwzLjQzMSAxNS41NTksMy4zMDYgQzE1LjA1OSwzLjA1NiAxNC4zNzEsMi44NjggMTMuNTU5LDIuODA2IEMxMy4xMjEsMi44MDYgMTIuNjIxLDIuODA2IDEyLjA1OSwyLjc0MyBDMTEuNDk2LDIuNzQzIDEwLjg3MSwyLjc0MyAxMC4xODQsMi44MDYgQzguODcxLDIuODY5IDguMDU5LDIuOTMxIDcuODA5LDIuOTMxIEM3LjM3MSwyLjkzMSA2LjY4NCwyLjkzMSA1Ljc0NiwyLjg2OCBDNS4xMjEsMi44MDUgNC42MjEsMi44MDUgNC4xODMsMi44MDUgTDMuNjIsMi44MDUgQzMuMTIsMi44MDUgMi42MiwyLjg2OCAxLjk5NSwzLjA1NSBDMS4zNywzLjI0MiAwLjg3LDMuNDkzIDAuNDMyLDMuODA1IEwwLjQzNywzLjgxMyBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=windowslive] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjRweCIgdmlld0JveD0iMCAwIDY0IDY0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+d2luZG93czwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJ3aW5kb3dzIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPGcgaWQ9Ikdyb3VwIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLjA0NSwwLjA0NSBMMjguNzQ3LDAuMDQ1IEwyOC43NDcsMjguNzQ3IEwwLjA0NSwyOC43NDcgTDAuMDQ1LDAuMDQ1IEwwLjA0NSwwLjA0NSBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0zNC40MywwLjA0NSBMNjMuMTMyLDAuMDQ1IEw2My4xMzIsMjguNzQ3IEwzNC40MywyOC43NDcgTDM0LjQzLDAuMDQ1IEwzNC40MywwLjA0NSBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0yOC43NDgsMzUuMjU0IEwyOC43NDgsNjMuOTU2IEwwLjA0Niw2My45NTYgTDAuMDQ2LDM1LjI1NCBMMjguNzQ4LDM1LjI1NCBMMjguNzQ4LDM1LjI1NCBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0zNC40MywzNS4yNTQgTDYzLjEzMiwzNS4yNTQgTDYzLjEzMiw2My45NTYgTDM0LjQzLDYzLjk1NiBMMzQuNDMsMzUuMjU0IEwzNC40MywzNS4yNTQgWiIgaWQ9IlNoYXBlIj48L3BhdGg+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPgo="); } .auth0-lock-social-button[data-provider^=windows] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjRweCIgdmlld0JveD0iMCAwIDY0IDY0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+d2luZG93czwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJ3aW5kb3dzIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPGcgaWQ9Ikdyb3VwIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLjA0NSwwLjA0NSBMMjguNzQ3LDAuMDQ1IEwyOC43NDcsMjguNzQ3IEwwLjA0NSwyOC43NDcgTDAuMDQ1LDAuMDQ1IEwwLjA0NSwwLjA0NSBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0zNC40MywwLjA0NSBMNjMuMTMyLDAuMDQ1IEw2My4xMzIsMjguNzQ3IEwzNC40MywyOC43NDcgTDM0LjQzLDAuMDQ1IEwzNC40MywwLjA0NSBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0yOC43NDgsMzUuMjU0IEwyOC43NDgsNjMuOTU2IEwwLjA0Niw2My45NTYgTDAuMDQ2LDM1LjI1NCBMMjguNzQ4LDM1LjI1NCBMMjguNzQ4LDM1LjI1NCBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0zNC40MywzNS4yNTQgTDYzLjEzMiwzNS4yNTQgTDYzLjEzMiw2My45NTYgTDM0LjQzLDYzLjk1NiBMMzQuNDMsMzUuMjU0IEwzNC40MywzNS4yNTQgWiIgaWQ9IlNoYXBlIj48L3BhdGg+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=wordpress] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDY0IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+d29yZHByZXNzPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9IndvcmRwcmVzcyIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik03Ljk5MzYwNTc4ZS0xNSwzMi44MTMgQzcuOTkzNjA1NzhlLTE1LDM4LjYyNiAxLjQzOCw0NC4wMDEgNC4zMTMsNDguODc2IEM3LjEyNiw1My44MTQgMTEuMDAxLDU3LjY4OSAxNS45MzgsNjAuNTAxIEMyMC44MTMsNjMuMzc2IDI2LjE4OCw2NC44MTQgMzIuMDAxLDY0LjgxNCBDMzcuODE0LDY0LjgxNCA0My4xODksNjMuMzc2IDQ4LjA2NCw2MC41MDEgQzUzLjAwMiw1Ny42ODggNTYuODc3LDUzLjgxMyA1OS42ODksNDguODc2IEM2Mi41NjQsNDQuMDAxIDY0LjAwMiwzOC42MjYgNjQuMDAyLDMyLjgxMyBDNjQuMDAyLDI3IDYyLjU2NCwyMS42MjUgNTkuNjg5LDE2Ljc1IEM1Ni44NzYsMTEuODEyIDUzLjAwMSw3LjkzNyA0OC4wNjQsNS4xMjUgQzQzLjE4OSwyLjI1IDM3LjgxNCwwLjgxMiAzMi4wMDEsMC44MTIgQzI2LjE4OCwwLjgxMiAyMC44MTMsMi4yNSAxNS45MzgsNS4xMjUgQzExLDcuOTM4IDcuMTI1LDExLjgxMyA0LjMxMywxNi43NSBDMS40MzgsMjEuNjI1IDAsMjcgMCwzMi44MTMgTDcuOTkzNjA1NzhlLTE1LDMyLjgxMyBaIE0yLjUsMzIuODEzIEMyLjUsMjguNTYzIDMuMzc1LDI0LjU2MyA1LjA2MywyMC43NSBMMTkuMTI2LDU5LjM3NSBDMTQuMTI2LDU3IDEwLjEyNiw1My4zNzUgNy4wNjMsNDguNjI1IEM0LDQzLjgxMiAyLjUsMzguNTYyIDIuNSwzMi44MTIgTDIuNSwzMi44MTMgWiBNNy4zMTMsMTYuNjI1IEMxMC4wMDEsMTIuNSAxMy41MDEsOS4zMTIgMTcuODc2LDYuODc1IEMyMi4xODksNC41IDI2LjkzOSwzLjMxMiAzMi4wMDEsMy4zMTIgQzM5Ljc1MSwzLjMxMiA0Ni4zNzYsNS44NzUgNTEuOTM5LDExLjA2MiBDNTEuOTM5LDExLjA2MiA1MS44NzYsMTEuMDYyIDUxLjc1MSwxMC45OTkgTDUxLjU2MywxMC45OTkgQzUwLjE4OCwxMC45OTkgNDksMTEuNDk5IDQ4LjA2MywxMi41NjIgQzQ3LjA2MywxMy42MjUgNDYuNTYzLDE0LjgxMiA0Ni41NjMsMTYuMjUgQzQ2LjU2MywxNi42ODggNDYuNjI2LDE3LjEyNSA0Ni43NTEsMTcuNTYzIEM0Ni44MTQsMTguMDAxIDQ3LjAwMSwxOC41MDEgNDcuMjUxLDE5LjA2MyBDNDcuNTAxLDE5LjY4OCA0Ny42ODksMjAuMDYzIDQ3LjgxNCwyMC4zMTMgQzQ3LjkzOSwyMC41NjMgNDguMjUyLDIxLjA2MyA0OC42ODksMjEuODEzIEM0OS4xMjYsMjIuNTYzIDQ5LjM3NywyMy4wMDEgNDkuNTAyLDIzLjEyNiBDNTEuMTI3LDI1Ljg3NiA1MS45NCwyOC42MjYgNTEuOTQsMzEuMzE0IEM1MS45NCwzMi42ODkgNTEuMTksMzUuODc3IDQ5LjY5LDQwLjg3NyBMNDYuNzUyLDUwLjc1MiBMMzYuMTI3LDE5LjAwMiBMMzkuNDQsMTguNjg5IEMzOS45NCwxOC42MjYgNDAuMjUzLDE4LjM3NiA0MC40NCwxNy45MzkgQzQwLjYyOCwxNy41NjQgNDAuNTY1LDE3LjEyNiA0MC4zNzcsMTYuNzUxIEM0MC4xMjcsMTYuMzc2IDM5Ljc1MiwxNi4xODggMzkuMjUyLDE2LjI1MSBDMzYuMDY0LDE2LjUwMSAzMy40MzksMTYuNjI2IDMxLjM3NywxNi42MjYgTDIzLjYyNywxNi4yNTEgQzIzLjEyNywxNi4xODggMjIuNzUyLDE2LjM3NiAyMi41MDIsMTYuNzUxIEMyMi4yNTIsMTcuMTI2IDIyLjI1MiwxNy41NjQgMjIuMzc3LDE3LjkzOSBDMjIuNTY1LDE4LjM3NyAyMi45NCwxOC42MjcgMjMuNDQsMTguNjg5IEMyNC40NCwxOC43NTIgMjUuNTAzLDE4Ljg3NyAyNi41MDMsMTkuMDAyIEwzMS4xMjgsMzEuNjI3IEwyNC42MjgsNTAuOTQgTDEzLjg3OCwxOS4wMDIgTDE3LjI1MywxOC42ODkgQzE3LjgxNiwxOC42MjYgMTguMTI4LDE4LjM3NiAxOC4zMTYsMTcuOTM5IEMxOC41MDQsMTcuNTY0IDE4LjQ0MSwxNy4xMjYgMTguMTkxLDE2Ljc1MSBDMTguMDAzLDE2LjM3NiAxNy42MjgsMTYuMTg4IDE3LjA2NiwxNi4yNTEgQzEzLjg3OCwxNi41MDEgMTEuMjUzLDE2LjYyNiA5LjE5MSwxNi42MjYgTDcuMzE2LDE2LjYyNiBMNy4zMTMsMTYuNjI1IFogTTIzLjY4OCw2MS4xODggTDMyLjUwMSwzNS4zNzUgTDQxLjYyNiw2MC4yNSBMNDEuODE0LDYwLjYyNSBDMzguNjg5LDYxLjc1IDM1LjQzOSw2Mi4zMTMgMzIuMDAxLDYyLjMxMyBDMjkuMTI2LDYyLjMxMyAyNi4zMTMsNjEuOTM4IDIzLjY4OCw2MS4xODggTDIzLjY4OCw2MS4xODggWiBNNDYuODc1LDU4LjM3NSBMNTUuODc1LDMyLjI1IEM1Ny4zNzUsMjcuODc1IDU4LjEyNSwyNC4zNzUgNTguMTI1LDIxLjY4NyBDNTguMTI1LDIwLjU2MiA1OC4wNjIsMTkuNTYyIDU3LjkzNywxOC42ODcgQzYwLjMxMiwyMyA2MS41LDI3LjY4NyA2MS41LDMyLjgxMiBDNjEuNSwzOC4xMjUgNjAuMTg3LDQzLjA2MiA1Ny41NjIsNDcuNjI1IEM1NC44NzQsNTIuMTg4IDUxLjMxMiw1NS43NSA0Ni44NzQsNTguMzc1IEw0Ni44NzUsNTguMzc1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=yahoo] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9Ijg4cHgiIGhlaWdodD0iNTJweCIgdmlld0JveD0iMCAwIDg4IDUyIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+eWFob288L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0ieWFob28iIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMCw3LjY4OCBMMCw3LjE4OCBDMC4wNjMsNi45MzggMC4zMTMsNi43NSAwLjYyNSw2Ljc1IEwzMi4xMjUsNi43NSBDMzIuMTg4LDYuNzUgMzIuMzEzLDYuNzUgMzIuMzc1LDYuODc1IEMzMi41LDYuOTM4IDMyLjUsNy4wNjMgMzIuNSw3LjE4OCBMMzIuNSw4LjA2MyBDMzIuNSw4LjMxMyAzMi40MzcsOC41MDEgMzIuMzc1LDguNjI2IEMzMi4yNSw4LjgxNCAzMi4xMjUsOC45MzkgMzIuMDYyLDguOTM5IEMzMS45OTksOS4wMDIgMzEuOTM3LDkuMDAyIDMxLjg3NCw5LjAwMiBMMjcuNDk5LDEwLjM3NyBDMjcuMTI0LDEwLjU2NSAyNi42ODYsMTAuNjkgMjYuMTI0LDEwLjYyNyBMMjMuNDk5LDEwLjYyNyBMMzguMDYyLDI5LjI1MiBMNTEuMzEyLDE2Ljc1MiBMNDMuOTM3LDE2Ljc1MiBMNDIuODEyLDE2LjMxNCBMNDEuMzc0LDE0Ljg3NiBMNDEuMTg2LDE0LjYyNiBDNDEuMDYxLDE0LjQzOCA0MC45OTgsMTQuMjUxIDQwLjg3MywxNC4wMDEgQzQwLjc0OCwxMy42ODggNDAuNzQ4LDEzLjQzOCA0MC43NDgsMTMuMTg4IEw0MS4xODYsMTIuODEzIEw2OS4yNDksMTIuODEzIEM2OS4zMTIsMTIuODEzIDY5LjM3NCwxMi44MTMgNjkuNDM3LDEyLjg3NiBDNjkuNSwxMi45MzkgNjkuNTYyLDEzLjA2NCA2OS42MjUsMTMuMTg5IEw2OS42MjUsMTQuMDY0IEM2OS42MjUsMTQuNTY0IDY5LjUsMTQuOTM5IDY5LjI1LDE1LjI1MiBMNjguMTg3LDE2LjQ0IEM2Ny43NDksMTYuNzUzIDY3LjM3NCwxNi44NzggNjYuOTk5LDE2Ljg3OCBMNTguNDk5LDE2Ljg3OCBDNDcuNjg2LDI3LjA2NiA0Mi4wNjEsMzIuMzc4IDQxLjYyNCwzMi44MTYgTDQxLjQzNiwzMy4wMDQgQzQxLjI0OCwzMy4xOTIgNDEuMTg2LDMzLjMxNyA0MS4wNjEsMzMuNTA0IEM0MC45MzYsMzMuNjI5IDQwLjkzNiwzMy44MTcgNDAuOTM2LDMzLjk0MiBMNDAuOTM2LDQ2Ljg4IEM0MC45MzYsNDcuNTA1IDQxLjEyNCw0Ny44MTggNDEuNTYxLDQ3LjgxOCBMNTAuODc0LDQ3LjgxOCBDNTAuOTM3LDQ3LjgxOCA1MS4wNjIsNDcuODgxIDUxLjE4Nyw0Ny45NDMgQzUxLjI1LDQ4LjAwNiA1MS4zMTIsNDguMTMxIDUxLjMxMiw0OC4yNTYgTDUxLjMxMiw1MS45NDQgTDE4LjMxMiw1MS45NDQgTDE4LjMxMiw0OC4zODEgQzE4LjMxMiw0OC4wMDYgMTguNSw0Ny44MTggMTguOTM3LDQ3LjgxOCBDMjAuMjUsNDcuNjkzIDIzLjI1LDQ3LjYzIDI4LjA2Miw0Ny42MyBMMjguMjUsNDcuNjMgQzI4LjM3NSw0Ny41NjcgMjguNSw0Ny41MDUgMjguNTYzLDQ3LjMxNyBDMjguNjg4LDQ3LjEyOSAyOC43NTEsNDYuODc5IDI4Ljc1MSw0Ni41NjcgTDI4Ljc1MSwzNC4yNTQgQzI4Ljc1MSwzMy42OTEgMjguNTAxLDMzLjE5MSAyOC4wNjMsMzIuNjI5IEw5LjY4OCwxMC42MjkgTDIuNTYzLDEwLjYyOSBMMS4zNzUsMTAuMDA0IEwxLjE4Nyw5Ljg3OSBMMC44NzQsOS41NjYgQzAuNjg2LDkuMzc4IDAuNTYxLDkuMTkxIDAuMzc0LDguODc4IEwwLDcuNjg4IFogTTc2LjE4OCwwLjY4OCBMNzguODEzLDM3LjI1MSBMODIuNjg4LDM3LjQzOSBMODguMDAxLDEuMTg5IEw3Ni4xODgsMC42ODggWiBNNzcsNDkuNTYzIEw4NC4wNjMsNDkuODEzIEw4NC4zMTMsNDIuNzUgTDc3LjI1LDQyLjUgTDc3LDQ5LjU2MyBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=yammer] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYycHgiIGhlaWdodD0iNTNweCIgdmlld0JveD0iMCAwIDYyIDUzIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+eWFtbWVyPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InlhbW1lciIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLjUsMy41IEMwLjM3NSw0LjI1IDAuNSw0LjkzOCAwLjc1LDUuNjI1IEM1LjEyNSwxNi4zMTMgOS41NjMsMjcgMTQsMzcuNzUgQzE0LjEyNSwzOC4wNjMgMTQuMzEzLDM4LjM3NSAxNC4zNzUsMzguNzUgQzE0LjA2MiwzOS41IDEzLjYyNSw0MC4yNSAxMy4zNzUsNDEuMDYzIEMxMi43NSw0Mi42MjYgMTIsNDQuMjUxIDEwLjYyNSw0NS4zNzYgQzkuNDM3LDQ2LjM3NiA3LjgxMiw0Ni43NTEgNi4yNSw0Ni42ODkgQzUuNDM3LDQ2LjY4OSA0LjU2Miw0Ni40MzkgMy43NSw0Ni42ODkgQzIuNjg3LDQ3LjAwMiAxLjg3NSw0Ny45MzkgMS42ODcsNDkuMDAyIEMxLjQzNyw1MC41MDIgMi41LDUyLjA2NSA0LDUyLjMxNSBDNi40MzgsNTIuNjI4IDksNTIuNjI4IDExLjM3NSw1MS44NzcgQzEzLjE4OCw1MS4zMTQgMTQuODEzLDUwLjEyNyAxNiw0OC42MjcgQzE3LjYyNSw0Ni41NjQgMTguNjg4LDQ0LjA2NCAxOS42MjUsNDEuNjg5IEMyNC41LDI5LjU2NCAyOS4zMTMsMTcuNDM5IDM0LjI1LDUuMzc2IEMzNC43NSwzLjgxMyAzMy44NzUsMS45MzggMzIuMzc1LDEuNDM4IEMzMC44NzUsMC44MTMgMjksMS41NjMgMjguMzEyLDMuMDAxIEMyNC45OTksMTIuMDAxIDIxLjQ5OSwyMS4wMDEgMTguMDYyLDI5LjkzOSBDMTguMDYyLDMwLjEyNyAxNy45MzcsMzAuMjUyIDE3LjgxMiwzMC4zNzcgTDYuOTM3LDIuODE0IEM2LjM3NCwxLjU2NCA1LjA2MiwwLjc1MSAzLjc0OSwwLjgxNCBDMi4xODYsMC44MTQgMC43NDksMi4wMDIgMC40OTksMy41MDIgTDAuNSwzLjUgWiBNNTAuNTYzLDcuMjUgQzQ5LjEyNSw4IDQ3Ljg3NSw5IDQ2LjUsOS44NzUgQzQ0LjE4NywxMS41IDQxLjkzNywxMy4xMjUgMzkuNzUsMTQuOTM4IEMzOC41LDE1LjkzOCAzNy4yNSwxNi45MzggMzYuMTg3LDE4LjE4OCBDMzUuOTk5LDE4LjUwMSAzNS42ODcsMTguODEzIDM1LjY4NywxOS4yNTEgQzM1LjY4NywxOS40MzkgMzYsMTkuNTAxIDM2LjE4NywxOS41NjQgQzM3LDE5LjY4OSAzNy44NzUsMTkuNDM5IDM4LjY4NywxOS4yNTEgQzQwLjUsMTguNjg4IDQyLjE4NywxOC4wMDEgNDMuOTM3LDE3LjMxMyBDNDcuMTI1LDE1LjkzOCA1MC4yNSwxNC4zNzUgNTMuMjUsMTIuNzUgQzU0LjUsMTEuOTM3IDU0Ljg3NSwxMC4xODcgNTQuMjUsOC44NzUgQzUzLjYyNSw3LjU2MyA1MS45MzcsNi44MTIgNTAuNTYyLDcuMjUgTDUwLjU2Myw3LjI1IFogTTU2LjM3NSwyNC4yNSBDNTIuODc1LDI0LjU2MyA0OS40MzcsMjUgNDYsMjUuNjI1IEM0NC41LDI1Ljg3NSA0MywyNi4xODggNDEuNTYyLDI2LjY4OCBDNDEuMDYyLDI2Ljg3NiA0MC40OTksMjcuMDAxIDQwLjE4NywyNy41MDEgQzQwLjM3NSwyNy43NTEgNDAuNTYyLDI4LjAwMSA0MC44MTIsMjguMTI2IEM0MS41LDI4LjUwMSA0Mi4xODcsMjguNjg5IDQyLjkzNywyOC44NzYgQzQ0LjgxMiwyOS4zMTQgNDYuNzUsMjkuNTY0IDQ4LjY4NywyOS43NTEgQzUyLDMwLjA2NCA1NS4yNSwzMC4xMjYgNTguNSwzMC4xODkgQzYwLDMwLjI1MiA2MS4zNzUsMjkuMDAxIDYxLjUsMjcuNTAxIEM2MS43NSwyNi4wMDEgNjAuNjg3LDI0LjM3NiA1OS4xMjUsMjQuMDYzIEM1OC4xODcsMjQgNTcuMzEyLDI0LjE4OCA1Ni4zNzUsMjQuMjUxIEw1Ni4zNzUsMjQuMjUgWiBNMzUuOTM4LDM1LjA2MyBDMzUuNjI1LDM1LjE4OCAzNS42MjUsMzUuNjI2IDM1LjgxMywzNS44MTMgQzM2LjEyNiwzNi40MzggMzYuNjI2LDM2Ljg3NiAzNy4xMjYsMzcuMzc2IEMzOS4wMDEsMzkuMTg5IDQxLjA2NCw0MC43NTEgNDMuMTI2LDQyLjMxNCBDNDUuMzc2LDQzLjkzOSA0Ny42ODksNDUuNTY0IDUwLjA2NCw0Ny4wNjQgQzUwLjc1Miw0Ny41NjQgNTEuNjg5LDQ3LjU2NCA1Mi41MDIsNDcuMjUyIEM1My42MjcsNDYuODc3IDU0LjUwMiw0NS43NTIgNTQuNTY1LDQ0LjUwMiBDNTQuNjI4LDQzLjM3NyA1NC4wMDIsNDIuMTI3IDUyLjk0LDQxLjYyNyBDNDkuMzE1LDM5Ljc1MiA0NS42MjcsMzcuOTM5IDQxLjgxNSwzNi40MzkgQzQwLjM3NywzNS44NzYgMzguODc3LDM1LjMxNCAzNy4zMTUsMzUuMDY0IEMzNi44MTUsMzUuMDAxIDM2LjM3NywzNC45MzkgMzUuOTQsMzUuMDY0IEwzNS45MzgsMzUuMDYzIFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=yandex] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjI4cHgiIGhlaWdodD0iNjBweCIgdmlld0JveD0iMCAwIDI4IDYwIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+eWFuZGV4PC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InlhbmRleCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEuMDAwMDAwLCAwLjAwMDAwMCkiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMjcuNSwwLjYyNSBDMjgsMC42MjUgMjguMzEzLDAuODc1IDI4LjMxMywxLjQzOCBMMjguMzEzLDU4Ljc1MSBDMjguMzEzLDU5LjEyNiAyOC4xMjUsNTkuMzc2IDI3LjY4OCw1OS4zNzYgTDIzLDU5LjM3NiBDMjIuNjg3LDU5LjM3NiAyMi40MzcsNTkuMDYzIDIyLjQzNyw1OC44MTMgTDIyLjQzNywzNy42MjUgTDE4LjYyNCwzNy42MjUgTDguMDYxLDU4LjgxMyBDNy45MzYsNTkuMTg4IDcuNjIzLDU5LjM3NiA3LjE4Niw1OS4zNzYgTDEuNzQ4LDU5LjM3NiBDMS4xMjMsNTkuMzc2IDAuNzQ4LDU4LjgxMyAxLjEyMyw1OC4xMjYgTDEyLjgxMSwzNi41MDEgQzYuNTYxLDMzLjY4OCAzLjA2MSwyOC4wMDEgMy4wNjEsMjAuMjUxIEMzLjA2MSw3LjMxMyAxMC4yNDksMC42MjYgMTguODExLDAuNjI2IEwyNy40OTksMC42MjYgTDI3LjUsMC42MjUgWiBNMjIuNDM4LDMyLjU2MyBMMjIuNDM4LDUuNjg4IEwxOC41NjMsNS42ODggQzEzLjkzOCw1LjY4OCA5LjM3NSw5LjYyNiA5LjM3NSwxOS40MzggQzkuMzc1LDI4LjgxMyAxNC4yNSwzMi41NjMgMTkuMjUsMzIuNTYzIEwyMi40MzgsMzIuNTYzIEwyMi40MzgsMzIuNTYzIFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+");   background-size: 30%; } .auth0-lock-social-button[data-provider^=weibo] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjgwcHgiIGhlaWdodD0iNjRweCIgdmlld0JveD0iMCAwIDgwIDY0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+d2VpYnU8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0id2VpYnUiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xLjAwMDAwMCwgMC4wMDAwMDApIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTEsNDMgQzEsNDcuMTg4IDIuNjI1LDUwLjkzOCA1LjkzOCw1NC4xODggQzkuMTg4LDU3LjQzOCAxMy4zMTMsNTkuODc2IDE4LjMxMyw2MS41NjMgQzIzLjMxMyw2My4xODggMjguNTYzLDY0LjAwMSAzNC4xMjYsNjQuMDAxIEMzOS4zMTQsNjQuMDAxIDQ0LjE4OSw2My4zMTMgNDguNzUxLDYxLjg3NiBDNTMuMzc2LDYwLjUwMSA1Ny4xODksNTguNjg4IDYwLjE4OSw1Ni41MDEgQzYzLjE4OSw1NC4zMTQgNjUuNTY0LDUxLjkzOCA2Ny4zMTQsNDkuMzEzIEM2OS4wNjQsNDYuNjg4IDY5LjkzOSw0NC4xMjUgNjkuOTM5LDQxLjYyNSBDNjkuOTM5LDM4Ljg3NSA2OS4wMDEsMzYuNTYyIDY3LjEyNiwzNC43NSBDNjUuMjUxLDMyLjkzOCA2My4wMDEsMzEuNjI1IDYwLjMxMywzMC44MTIgQzU5Ljg3NSwzMC42ODcgNTkuNTYzLDMwLjU2MiA1OS4zNzUsMzAuNDM3IEM1OS4yNSwzMC4zNzQgNTkuMDYyLDMwLjE4NyA1OC44NzUsMjkuODc0IEM1OC42ODcsMjkuNjI0IDU4Ljc1LDI5LjI0OSA1OS4wNjMsMjguODExIEM1OS43NTEsMjcuMTIzIDYwLjA2MywyNS41NjEgNjAuMDYzLDI0LjI0OCBDNjAuMDYzLDIyLjk5OCA1OS43NSwyMS44NzMgNTkuMTI1LDIwLjkzNSBDNTcuNzUsMTkuMTIyIDU1LjUsMTguMjQ3IDUyLjMxMiwxOC4yNDcgQzQ5LjE4NywxOC4yNDcgNDUuNTYyLDE5LjEyMiA0MS40MzcsMjAuODEgTDQwLjgxMiwyMS4wNiBDNDAuNDM3LDIxLjE4NSA0MC4wNjIsMjEuMTg1IDM5LjgxMiwyMC45OTcgQzM5LjQ5OSwyMC44NzIgMzkuNDM3LDIwLjQ5NyAzOS41NjIsMTkuOTM0IEM0MC4xMjUsMTguMTg0IDQwLjM3NSwxNi42MjEgNDAuMzc1LDE1LjMwOSBDNDAuMzc1LDEzLjMwOSAzOS44MTIsMTEuODA5IDM4LjY4NywxMC42ODQgQzM3LjU2Miw5LjU1OSAzNS45OTksOC45MzQgMzQuMDYyLDguOTM0IEMzMi4zMTIsOC45MzQgMzAuMjQ5LDkuNDM0IDI3Ljg3NCwxMC40MzQgQzIyLjgxMSwxMi4zNzIgMTcuNzQ5LDE1Ljg3MiAxMi43NDksMjAuODA5IEM0LjkzNiwyOC43NDcgMC45OTksMzYuMTIyIDAuOTk5LDQyLjk5NyBMMSw0MyBaIE05LDQ2LjA2MyBDOC45MzcsNDUuNjg4IDguOTM3LDQ1LjMxMyA4LjkzNyw0NC45MzggQzguOTM3LDQyLjU2MyA5Ljc1LDQwLjE4OCAxMS4zNzUsMzcuOTM4IEMxMy4yNSwzNS4zNzUgMTUuOTM4LDMzLjI1IDE5LjQzOCwzMS41IEMyMi45MzgsMjkuNzUgMjYuODEzLDI4LjYyNSAzMS4xMjYsMjguMjUgQzMyLjQzOSwyOC4xMjUgMzMuNjg5LDI4LjA2MiAzNC45MzksMjguMDYyIEMzOS45MzksMjguMDYyIDQ0LjM3NywyOS4wNjIgNDguMzc3LDMxLjE4NyBDNTMuMjUyLDMzLjc1IDU1Ljk0LDM3LjEyNSA1Ni4zNzcsNDEuNDM3IEM1Ni4zNzcsNDEuODEyIDU2LjQ0LDQyLjE4NyA1Ni40NCw0Mi41NjIgQzU2LjQ0LDQ2LjM3NSA1NC40NCw0OS45MzcgNTAuNTY1LDUzLjEyNSBDNDYuMTksNTYuNjI1IDQwLjc1Miw1OC42ODggMzQuMTksNTkuMzEzIEMzMi44NzcsNTkuNDM4IDMxLjYyNyw1OS41MDEgMzAuMzc3LDU5LjUwMSBDMjUuMzc3LDU5LjUwMSAyMC45MzksNTguNTAxIDE3LjAwMiw1Ni4zNzYgQzEyLjA2NCw1My44MTMgOS40MzksNTAuMzc2IDkuMDAyLDQ2LjA2MyBMOSw0Ni4wNjMgWiBNMTkuMjUsNTAuMDYzIEMyMC40MzgsNTIuODEzIDIyLjU2Myw1NC42MjYgMjUuNjg4LDU1LjYyNiBDMjcuMTI2LDU2LjA2NCAyOC41NjMsNTYuMzE0IDMwLjAwMSw1Ni4zMTQgQzMxLjg3Niw1Ni4zMTQgMzMuNzUxLDU1LjkzOSAzNS42MjYsNTUuMTI2IEMzOC45MzksNTMuNjg4IDQxLjI1MSw1MS41MDEgNDIuNjI2LDQ4LjQzOCBDNDMuMjUxLDQ3LjA2MyA0My41NjQsNDUuNjg4IDQzLjU2NCw0NC4zMTMgQzQzLjU2NCw0Mi44MTMgNDMuMTg5LDQxLjQzOCA0Mi41MDEsNDAuMDYzIEM0MS4wNjMsMzcuNDM4IDM4Ljc1MSwzNS42ODggMzUuNTAxLDM0LjgxMyBDMzQuMzc2LDM0LjUgMzMuMTg4LDM0LjM3NSAzMi4wNjMsMzQuMzc1IEMzMC4wNjMsMzQuMzc1IDI4LjEyNSwzNC44MTMgMjYuMTg4LDM1LjYyNSBDMjMuMTI1LDM3IDIwLjg3NSwzOS4wNjMgMTkuNTYzLDQxLjgxMyBDMTguODEzLDQzLjMxMyAxOC40MzgsNDQuODEzIDE4LjQzOCw0Ni4yNTEgQzE4LjQzOCw0Ny41NjQgMTguNjg4LDQ4LjgxNCAxOS4yNTEsNTAuMDY0IEwxOS4yNSw1MC4wNjMgWiBNMjIuODEzLDQ4LjgxMyBDMjIuNzUsNDguNTYzIDIyLjY4OCw0OC4zMTMgMjIuNjg4LDQ4IEMyMi42ODgsNDcuMjUgMjIuOTM4LDQ2LjU2MiAyMy4zNzYsNDUuODc1IEMyNC4wMDEsNDQuOTM3IDI0Ljg3Niw0NC4yNSAyNi4wMDEsNDMuODc1IEMyNi41NjQsNDMuNjg3IDI3LjEyNiw0My41NjIgMjcuNjI2LDQzLjU2MiBDMjguMTg5LDQzLjU2MiAyOC43NTEsNDMuNjg3IDI5LjMxNCw0My45MzcgQzMwLjMxNCw0NC4zMTIgMzAuOTM5LDQ1LjA2MiAzMS4xODksNDYuMDYyIEMzMS4zMTQsNDYuNDM3IDMxLjM3Nyw0Ni43NSAzMS4zNzcsNDcuMDYyIEMzMS4zNzcsNDcuNzUgMzEuMTg5LDQ4LjQzNyAzMC43NTIsNDkuMDYyIEMzMC4xMjcsNTAuMTI1IDI5LjE4OSw1MC44MTIgMjguMDAyLDUxLjE4NyBDMjcuNTAyLDUxLjM3NSAyNy4wMDIsNTEuNDM3IDI2LjUwMiw1MS40MzcgQzI1Ljg3Nyw1MS40MzcgMjUuMzE0LDUxLjMxMiAyNC43NTIsNTEuMDYyIEMyMy43NTIsNTAuNjI0IDIzLjA2NCw0OS44NzQgMjIuODE0LDQ4LjgxMiBMMjIuODEzLDQ4LjgxMyBaIE0zMS44NzUsNDMuNzUgTDMxLjg3NSw0My4zNzUgQzMxLjg3NSw0My4xMjUgMzEuOTM4LDQyLjg3NSAzMi4wNjMsNDIuNjI1IEMzMi4yNTEsNDIuMjUgMzIuNTYzLDQyIDMzLjA2Myw0MS44MTIgQzMzLjUwMSw0MS42ODcgMzMuODc2LDQxLjY4NyAzNC4yNTEsNDEuODEyIEMzNC42ODksNDEuOTM3IDM0LjkzOSw0Mi4yNSAzNS4wNjQsNDIuNjI1IEMzNS4xODksNDMgMzUuMTI3LDQzLjM3NSAzNC45MzksNDMuNzUgQzM0LjY4OSw0NC4xODggMzQuMzc2LDQ0LjQzOCAzMy44NzYsNDQuNjI1IEMzMy42ODgsNDQuNjg4IDMzLjUwMSw0NC43NSAzMy4zMTMsNDQuNzUgQzMzLjEyNSw0NC43NSAzMi44NzUsNDQuNjg3IDMyLjY4OCw0NC42MjUgQzMyLjI1LDQ0LjQzNyAzMiw0NC4xODcgMzEuODc1LDQzLjc1IEwzMS44NzUsNDMuNzUgWiBNNTIuMzc1LDQuMDYzIEM1Mi41NjMsNC44NzYgNTMsNS41MDEgNTMuNjg4LDUuOTM4IEM1NC4xODgsNi4zMTMgNTQuNzUxLDYuNDM4IDU1LjMxMyw2LjQzOCBDNTUuNTYzLDYuNDM4IDU1Ljc1MSw2LjQzOCA1Ni4wMDEsNi4zNzUgQzU3LjA2NCw2LjE4NyA1OC4wNjQsNi4wNjIgNTkuMTI2LDYuMDYyIEM2MC42MjYsNi4wNjIgNjIuMTI2LDYuMzEyIDYzLjU2NCw2Ljc1IEM2Ni4xMjcsNy41NjMgNjguMzE0LDguOTM4IDcwLjEyNywxMC45MzggQzcxLjk0LDEyLjkzOCA3My4xMjcsMTUuMjUxIDczLjY5LDE3LjkzOCBDNzMuODc4LDE5LjAwMSA3My45NCwyMC4wMDEgNzMuOTQsMjEuMDAxIEM3My45NCwyMi41NjQgNzMuNzUyLDI0LjAwMSA3My4yNTIsMjUuNTAxIEw3My4yNTIsMjUuNTY0IEM3My4xODksMjUuODE0IDczLjEyNywyNi4xODkgNzMuMTI3LDI2LjUwMiBDNzMuMTI3LDI2Ljk0IDczLjI1MiwyNy4zNzcgNzMuNDQsMjcuODc3IEM3My44MTUsMjguNTY1IDc0LjM3OCwyOS4wNjUgNzUuMTksMjkuMzE1IEM3NS41MDMsMjkuMzc4IDc1LjgxNSwyOS40NCA3Ni4xMjgsMjkuNDQgQzc2LjYyOCwyOS40NCA3Ny4wNjYsMjkuMzE1IDc3LjU2NiwyOS4xMjcgQzc4LjI1NCwyOC43NTIgNzguNzU0LDI4LjE4OSA3OS4wMDQsMjcuMzc3IEw3OS4wMDQsMjcuMzE0IEM3OS42OTIsMjUuMzE0IDgwLjA2NywyMy4yNTEgODAuMDY3LDIxLjA2NCBDODAuMDY3LDE5LjYyNiA3OS44NzksMTguMTg5IDc5LjU2NywxNi42ODkgQzc4LjgxNywxMy4wMDEgNzcuMTkyLDkuNzUxIDc0LjYyOSw2LjkzOSBDNzIuMDY2LDQuMTI3IDY5LjAwNCwyLjEyNiA2NS40NDEsMC45MzkgQzYzLjM3OCwwLjMxNCA2MS4yNTMsMC4wMDEgNTkuMDY2LDAuMDAxIEM1Ny42MjgsMC4wMDEgNTYuMTI4LDAuMTI2IDU0LjY5MSwwLjQzOSBDNTMuODc4LDAuNjg5IDUzLjI1MywxLjEyNyA1Mi44MTYsMS44MTQgQzUyLjUwMywyLjMxNCA1Mi4zMTYsMi44MTQgNTIuMzE2LDMuMzc3IEM1Mi4zMTYsMy42MjcgNTIuMzc5LDMuODE1IDUyLjM3OSw0LjA2NSBMNTIuMzc1LDQuMDYzIFogTTU0LjkzOCwxNC4wNjMgQzU1LjEyNiwxNC43NTEgNTUuNTAxLDE1LjMxMyA1Ni4xMjYsMTUuNjg4IEM1Ni41MDEsMTYuMDAxIDU3LjAwMSwxNi4xMjYgNTcuNDM5LDE2LjEyNiBDNTcuNjI3LDE2LjEyNiA1Ny44MTQsMTYuMTI2IDU4LjAwMiwxNi4wNjMgQzU4LjQ0LDE2IDU4Ljg3NywxNS45MzggNTkuMzE1LDE1LjkzOCBDNjAuNjksMTUuOTM4IDYxLjgxNSwxNi41MDEgNjIuNzUzLDE3LjYyNiBDNjMuNjI4LDE4LjU2NCA2NC4xMjgsMTkuNjI2IDY0LjEyOCwyMC44MTQgQzY0LjEyOCwyMS4zMTQgNjQuMDAzLDIxLjg3NyA2My44NzgsMjIuNDM5IEM2My43NTMsMjIuNzUyIDYzLjc1MywyMy4wMDIgNjMuNzUzLDIzLjMxNCBDNjMuNzUzLDIzLjY4OSA2My44MTYsMjQuMDY0IDY0LjAwMywyNC40MzkgQzY0LjMxNiwyNS4wNjQgNjQuODE2LDI1LjUwMiA2NS41MDMsMjUuNzUyIEM2NS43NTMsMjUuODE1IDY2LjA2NiwyNS44NzcgNjYuMzc4LDI1Ljg3NyBDNjYuNzUzLDI1Ljg3NyA2Ny4xMjgsMjUuNzUyIDY3LjUwMywyNS41NjQgQzY4LjEyOCwyNS4yNTEgNjguNTY2LDI0Ljc1MSA2OC43NTMsMjQuMDY0IEM2OS4xMjgsMjMuMDY0IDY5LjMxNiwyMi4wMDEgNjkuMzE2LDIxLjAwMSBDNjkuMzE2LDIwLjMxMyA2OS4yNTMsMTkuNjI2IDY5LjEyOCwxOC44NzYgQzY4LjY5LDE3LjA2MyA2Ny44NzgsMTUuNTAxIDY2LjY5LDE0LjA2MyBDNjQuNjI3LDExLjgxMyA2Mi4xOSwxMC42ODggNTkuMzE1LDEwLjY4OCBDNTguNTY1LDEwLjY4OCA1Ny43NTIsMTAuNzUxIDU2Ljk0LDEwLjkzOCBDNTYuMTksMTEuMTI2IDU1LjYyNywxMS41MDEgNTUuMjUyLDEyLjEyNiBDNTUuMDAyLDEyLjU2NCA1NC44NzcsMTMuMDAxIDU0Ljg3NywxMy40MzkgQzU0Ljg3NywxMy42ODkgNTQuOTQsMTMuODc3IDU0Ljk0LDE0LjA2NCBMNTQuOTM4LDE0LjA2MyBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=evernote] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjU0cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDU0IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZXZlcm5vdGU8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0iZXZlcm5vdGUiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNNy41NDk1MTY1N2UtMTUsMjAuMzc1IEM3LjU0OTUxNjU3ZS0xNSwyMS4xODggMC4wNjMsMjIuMjUgMC4yNSwyMy42ODggQzAuNSwyNS4zNzYgMSwyOC4xODggMS43NSwzMi4xODggQzIuNTYzLDM2LjE4OCAzLjMxMywzOC45MzggNC4wNjMsNDAuNDM4IEM0LjU2Myw0MS42ODggNS4zNzYsNDIuNTAxIDYuMzc2LDQzLjAwMSBDOS40MzksNDQuMzE0IDEzLjYyNiw0NS4zMTQgMTkuMDY0LDQ2LjAwMSBDMjAuMzc3LDQ2LjMxNCAyMS41MDIsNDYuNTAxIDIyLjUwMiw0Ni41MDEgTDIyLjk0LDQ2LjUwMSBDMjQuMDAzLDQ2LjQzOCAyNC44MTUsNDUuOTM4IDI1LjI1Myw0NC44NzYgTDI1LjgxNiw0My4zMTMgQzI2LjU2Niw0MS4wNjMgMjYuOTQxLDM4LjUgMjYuOTQxLDM1LjYyNSBDMjYuOTQxLDM1LjU2MiAyNy4wMDQsMzUuNSAyNy4xMjksMzUuNSBDMjcuMTkyLDM1LjUgMjcuMjU0LDM1LjU2MyAyNy4yNTQsMzUuNjI1IEMyNy4yNTQsMzkuODc1IDI4LjM3OSw0Mi4zNzUgMzAuNjI5LDQzLjI1IEMzMi4wMDQsNDMuNjg4IDM0LjUwNCw0NC4xMjUgMzguMjU0LDQ0LjUgQzM5Ljg3OSw0NC43NSA0MS4xMjksNDUuNDM4IDQxLjg3OSw0Ni41NjMgQzQyLjY5Miw0Ny42ODggNDMuMDY3LDQ5Ljg3NiA0My4wNjcsNTMuMTI2IEM0My4wNjcsNTUuMjUxIDQyLjc1NCw1Ni41NjQgNDIuMDY3LDU3LjE4OSBDNDEuMzc5LDU3Ljc1MiAzOS44MTcsNTguMDAyIDM3LjM3OSw1OC4wMDIgTDM1LjMxNiw1OC4wMDIgQzM1LjAwMyw1OC4wMDIgMzQuNTAzLDU4LjAwMiAzMy44NzgsNTcuODc3IEMzMy4yNTMsNTcuODE0IDMyLjg3OCw1Ny42ODkgMzIuNzUzLDU3LjQzOSBDMzIuNTY1LDU3LjI1MSAzMi40NCw1Ni45MzkgMzIuMjUzLDU2LjU2NCBDMzIuMDY2LDU2LjE4OSAzMi4wMDMsNTUuNjg5IDMyLjAwMyw1NS4wNjQgQzMyLjEyOCw1NC44MTQgMzIuMTI4LDU0LjU2NCAzMi4wNjYsNTQuMzc2IEMzMi4wMDMsNTQuMTI2IDMyLjA2Niw1My45MzggMzIuMzE2LDUzLjc1MSBDMzIuNTY2LDUzLjYyNiAzMi42OTEsNTMuNTAxIDMyLjY5MSw1My4zNzYgQzMyLjYyOCw1My4zMTMgMzIuODE2LDUzLjE4OCAzMy4xOTEsNTMuMTI2IEMzMy41NjYsNTMuMDY0IDMzLjc1NCw1My4wMDEgMzMuNzU0LDUzLjAwMSBDMzMuNzU0LDUyLjkzOCAzMy45NDIsNTIuODc2IDM0LjM3OSw1Mi44NzYgTDM2LjMxNyw1Mi44NzYgQzM2LjU2Nyw1Mi44NzYgMzYuNjkyLDUyLjgxMyAzNi43NTUsNTIuNjg4IEMzNi43NTUsNTIuNTYzIDM2Ljc1NSw1Mi4zMTMgMzYuNjkyLDUxLjkzOCBDMzYuNTY3LDUxLjUgMzYuNTY3LDUxLjEyNSAzNi41NjcsNTAuNzUgQzM2LjU2Nyw1MC41IDM2LjU2Nyw1MC4xODcgMzYuNjMsNDkuODc1IEMzNi42OTMsNDkuNjI1IDM2Ljc1NSw0OS4zNzUgMzYuODE4LDQ5LjE4NyBDMzYuODgxLDQ4Ljk5OSAzNi45NDMsNDguODc0IDM3LjAwNiw0OC42ODcgQzM3LjA2OSw0OC41NjIgMzcuMDA2LDQ4LjQzNyAzNi45NDMsNDguMzc0IEMzNi44OCw0OC4zMTEgMzYuNzU1LDQ4LjMxMSAzNi42Myw0OC4zMTEgTDM0LjgxNyw0OC4zMTEgQzMzLjc1NCw0OC4zMTEgMzIuODc5LDQ4LjMxMSAzMi4yNTQsNDguMzc0IEMzMS4yNTQsNDguNDM3IDMwLjMxNiw0OC43NDkgMjkuMjU0LDQ5LjE4NyBDMjguMjU0LDQ5LjY4NyAyNy41NjYsNTAuNDM3IDI3LjE5MSw1MS42MjUgQzI2Ljc1Myw1Mi43NSAyNi41NjYsNTQuMjUgMjYuNTY2LDU2LjE4OCBDMjYuNTY2LDU5LjYyNiAyNy4zNzksNjEuODc2IDI4Ljk0MSw2My4wMDEgQzMwLjU2Niw2NC4wNjQgMzMuNjkxLDY0LjYyNiAzOC4yNTQsNjQuNjI2IEMzOS45NDIsNjQuNjI2IDQxLjE5Miw2NC41NjMgNDIuMDA0LDY0LjUwMSBDNDIuODc5LDY0LjQzOCA0My43NTQsNjQuMjUxIDQ0Ljc1NCw2NC4wMDEgQzQ1LjY5Miw2My42ODggNDYuNTA0LDYzLjE4OCA0Ny4wNjcsNjIuNTAxIEM0Ny42Myw2MS44MTQgNDguMjU1LDYwLjkzOCA0OC44MTcsNTkuODEzIEM0OS40NDIsNTguNjg4IDUwLjAwNSw1Ny4xODggNTAuNjMsNTUuMzc1IEM1MS43NTUsNTEuODc1IDUyLjY5Myw0Ni41IDUzLjM4LDM5LjEyNSBDNTMuNTA1LDM4IDUzLjU2OCwzNi41IDUzLjU2OCwzNC42MjUgQzUzLjU2OCwzMi4xMjUgNTMuNDQzLDI5IDUzLjI1NSwyNS4xODcgQzUyLjk0MiwxOC41NjIgNTIuNTA1LDE0LjEyNCA1Mi4xMywxMS43NDkgQzUxLjYzLDkuNDM2IDUwLjUwNSw3Ljk5OSA0OC42OTIsNy40MzYgQzQ3LjMxNyw2LjkzNiA0NC41NjcsNi40MzYgNDAuNDQyLDUuOTM2IEMzOC45NDIsNS43NDggMzcuMDA0LDUuNjIzIDM0Ljc1NCw1LjYyMyBDMzMuODE2LDUuNjIzIDMyLjgxNiw1LjYyMyAzMS42OTEsNS42ODYgQzMxLjM3OCwzLjY4NiAzMC40NDEsMi4zNzMgMjguODE2LDEuNjg2IEMyNy4xMjgsMS4wNjEgMjUuMDY2LDAuNjg2IDIyLjUwMywwLjYyMyBMMjEuMzE1LDAuNjIzIEMxOS41MDIsMC42MjMgMTguMzc3LDAuNzQ4IDE3Ljk0LDAuOTk4IEMxNi40NCwxLjQzNiAxNS4zNzcsMi4wNjEgMTQuNzUyLDIuOTk4IEMxNC4xODksMy44MTEgMTMuOTM5LDQuNzQ4IDEzLjkzOSw1LjgxMSBMMTMuOTM5LDkuNTYxIEMxNC4wMDIsMTAuNTYxIDE0LjAwMiwxMS40OTkgMTQuMDAyLDEyLjM3NCBDMTQuMDAyLDEzLjA2MiAxMy44MTQsMTMuNTYyIDEzLjMxNCwxNC4wNjIgQzEyLjgxNCwxNC41IDEyLjMxNCwxNC43NSAxMS42MjYsMTQuNzUgTDUuNjI2LDE0Ljc1IEM0LjM3NiwxNC43NSAzLjM3NiwxNC45MzggMi42MjYsMTUuMzEzIEMxLjg3NiwxNS42MjYgMS4zNzYsMTYuMDYzIDAuOTM4LDE2LjY4OCBDMC4zMTMsMTcuNDM4IDAsMTguNjg4IDAsMjAuMzc2IEw3LjU0OTUxNjU3ZS0xNSwyMC4zNzUgWiBNMC4zNzUsMTIuNzUgQzAuNTYzLDEyLjY4NyAwLjc1LDEyLjU2MiAwLjkzOCwxMi40MzcgQzIuMDAxLDExLjk5OSAzLjMxMywxMS43NDkgNC43NTEsMTEuNzQ5IEwxMC42ODksMTEuNzQ5IEMxMS4xMjcsMTEuNzQ5IDExLjMxNCwxMS41NjEgMTEuMzE0LDExLjEyNCBDMTEuMzE0LDcuNjg2IDExLjI1MSw1LjQzNiAxMS4yNTEsNC40OTkgQzExLjI1MSwzLjMxMSAxMS41MDEsMi4zMTEgMTEuOTM5LDEuNDM2IEwxMi4xODksMS4wNjEgQzEyLjEyNiwxLjA2MSAxMi4xMjYsMS4wNjEgMTIuMTI2LDEuMTI0IEwwLjM3NiwxMi42MjQgTDAuMzc2LDEyLjc0OSBMMC4zNzUsMTIuNzUgWiBNMzYuNzUsMzEuMzEzIEMzNi45MzgsMzAgMzcuMzEzLDI4LjkzOCAzNy45MzgsMjggQzM4LjU2MywyNy4xODcgMzkuNTAxLDI2Ljc1IDQwLjc1MSwyNi43NSBMNDAuOTM5LDI2Ljc1IEM0My41NjQsMjYuODEzIDQ0Ljg3NywyOC42ODggNDQuODc3LDMyLjMxMyBDNDMuMzE0LDMxLjU2MyA0MS42MjcsMzEuMTg4IDM5LjY4OSwzMS4xMjUgQzM4LjYyNiwzMS4xMjUgMzcuNjI2LDMxLjE4OCAzNi43NTEsMzEuMzEzIEwzNi43NSwzMS4zMTMgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } @charset "UTF-8"; /* Animate.css - http://daneden.me/animate Licensed under the MIT license - http://opensource.org/licenses/MIT  Copyright (c) 2015 Daniel Eden */ .animated {   -webkit-animation-duration: 1s;   animation-duration: 1s;   -webkit-animation-fill-mode: both;   animation-fill-mode: both; } @-webkit-keyframes fadeIn {   0% {     opacity: 0;   }   100% {     opacity: 1;   } } .fadeIn {   -webkit-animation-name: fadeIn;   animation-name: fadeIn; } @-webkit-keyframes fadeInDown {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -100%, 0);     transform: translate3d(0, -100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } .fadeInDown {   -webkit-animation-name: fadeInDown;   animation-name: fadeInDown; } @-webkit-keyframes fadeInDownBig {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -2000px, 0);     transform: translate3d(0, -2000px, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } .fadeInDownBig {   -webkit-animation-name: fadeInDownBig;   animation-name: fadeInDownBig; } @-webkit-keyframes fadeInUp {   0% {     opacity: 0;     -webkit-transform: translate3d(0, 100%, 0);     transform: translate3d(0, 100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } .fadeInUp {   -webkit-animation-name: fadeInUp;   animation-name: fadeInUp; } @-webkit-keyframes fadeOut {   0% {     opacity: 1;   }   100% {     opacity: 0;   } } .fadeOut {   -webkit-animation-name: fadeOut;   animation-name: fadeOut; } @-webkit-keyframes fadeOutDownBig {   0% {     opacity: 1;   }   100% {     opacity: 0;     -webkit-transform: translate3d(0, 2000px, 0);     transform: translate3d(0, 2000px, 0);   } } .fadeOutDownBig {   -webkit-animation-name: fadeOutDownBig;   animation-name: fadeOutDownBig; } @-webkit-keyframes fadeIn {   0% {     opacity: 0;   }   100% {     opacity: 1;   } } @keyframes fadeIn {   0% {     opacity: 0;   }   100% {     opacity: 1;   } } @-webkit-keyframes fadeInDown {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -100%, 0);     transform: translate3d(0, -100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @keyframes fadeInDown {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -100%, 0);     transform: translate3d(0, -100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @-webkit-keyframes fadeInDownBig {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -2000px, 0);     transform: translate3d(0, -2000px, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @keyframes fadeInDownBig {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -2000px, 0);     transform: translate3d(0, -2000px, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @-webkit-keyframes fadeInUp {   0% {     opacity: 0;     -webkit-transform: translate3d(0, 100%, 0);     transform: translate3d(0, 100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @keyframes fadeInUp {   0% {     opacity: 0;     -webkit-transform: translate3d(0, 100%, 0);     transform: translate3d(0, 100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @-webkit-keyframes fadeOut {   0% {     opacity: 1;   }   100% {     opacity: 0;   } } @keyframes fadeOut {   0% {     opacity: 1;   }   100% {     opacity: 0;   } } @-webkit-keyframes fadeOutDownBig {   0% {     opacity: 1;   }   100% {     opacity: 0;     -webkit-transform: translate3d(0, 2000px, 0);     transform: translate3d(0, 2000px, 0);   } } @keyframes fadeOutDownBig {   0% {     opacity: 1;   }   100% {     opacity: 0;     -webkit-transform: translate3d(0, 2000px, 0);     transform: translate3d(0, 2000px, 0);   } } .slide-enter {   -webkit-transform: translate3d(100%, 0, 0);   transform: translate3d(100%, 0, 0); } .slide-enter.slide-enter-active {   -webkit-transform: translate3d(0, 0, 0);   transform: translate3d(0, 0, 0);   -webkit-transition: -webkit-transform 0.3s ease-out;   transition: -webkit-transform 0.3s ease-out;   transition: transform 0.3s ease-out;   transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out; } .slide-exit {   -webkit-transform: translate3d(0, 0, 0);   transform: translate3d(0, 0, 0); } .slide-exit.slide-exit-active {   -webkit-transform: translate3d(100%, 0, 0);   transform: translate3d(100%, 0, 0);   -webkit-transition: -webkit-transform 0.3s ease-in;   transition: -webkit-transform 0.3s ease-in;   transition: transform 0.3s ease-in;   transition: transform 0.3s ease-in, -webkit-transform 0.3s ease-in; } .vslide-enter {   -webkit-transform: translate3d(0, 100%, 0);   transform: translate3d(0, 100%, 0); } .vslide-enter.vslide-enter-active {   -webkit-transform: translate3d(0, 0, 0);   transform: translate3d(0, 0, 0);   -webkit-transition: -webkit-transform 0.35s;   transition: -webkit-transform 0.35s;   transition: transform 0.35s;   transition: transform 0.35s, -webkit-transform 0.35s; } .reverse-vslide-enter {   opacity: 0;   -webkit-transform: translate3d(0, -100%, 0);   transform: translate3d(0, -100%, 0); } .reverse-vslide-enter.reverse-vslide-enter-active {   opacity: 1;   -webkit-transform: translate3d(0, 0, 0);   transform: translate3d(0, 0, 0);   -webkit-transition: -webkit-transform 0.35s;   transition: -webkit-transform 0.35s;   transition: transform 0.35s;   transition: transform 0.35s, -webkit-transform 0.35s; } .vslide-exit {   -webkit-transform: translate3d(0, 0, 0);   transform: translate3d(0, 0, 0); } .vslide-exit.vslide-exit-active {   -webkit-transform: translate3d(0, 100%, 0);   transform: translate3d(0, 100%, 0);   -webkit-transition: -webkit-transform 0.35s;   transition: -webkit-transform 0.35s;   transition: transform 0.35s;   transition: transform 0.35s, -webkit-transform 0.35s; } .horizontal-fade-enter {   position: relative;   top: 0;   left: 0;   z-index: 1;   -webkit-transform: translate3d(100%, 0, 0);   transform: translate3d(100%, 0, 0); } .horizontal-fade-enter.horizontal-fade-enter-active {   -webkit-transform: none;   transform: none;   -webkit-transition: -webkit-transform 0.5s;   transition: -webkit-transform 0.5s;   transition: transform 0.5s;   transition: transform 0.5s, -webkit-transform 0.5s; } .horizontal-fade-exit {   opacity: 1;   position: absolute;   width: 100%;   top: 0;   left: 0; } .horizontal-fade-exit.horizontal-fade-exit-active {   opacity: 0;   -webkit-transform: translate3d(-100%, 0, 0);   transform: translate3d(-100%, 0, 0);   -webkit-transition: -webkit-transform 0.5s, opacity 1s linear;   -webkit-transition: opacity 1s linear, -webkit-transform 0.5s;   transition: opacity 1s linear, -webkit-transform 0.5s;   transition: transform 0.5s, opacity 1s linear;   transition: transform 0.5s, opacity 1s linear, -webkit-transform 0.5s; } .reverse-horizontal-fade-enter {   position: relative;   top: 0;   left: 0;   z-index: 1;   -webkit-transform: translate3d(-100%, 0, 0);   transform: translate3d(-100%, 0, 0); } .reverse-horizontal-fade-enter.reverse-horizontal-fade-enter-active {   -webkit-transform: none;   transform: none;   -webkit-transition: -webkit-transform 0.5s;   transition: -webkit-transform 0.5s;   transition: transform 0.5s;   transition: transform 0.5s, -webkit-transform 0.5s; } .reverse-horizontal-fade-exit {   opacity: 1;   position: absolute;   width: 100%;   top: 0;   left: 0; } .reverse-horizontal-fade-exit.reverse-horizontal-fade-exit-active {   opacity: 0;   -webkit-transform: translate3d(100%, 0, 0);   transform: translate3d(100%, 0, 0);   -webkit-transition: -webkit-transform 0.5s, opacity 1s linear;   -webkit-transition: opacity 1s linear, -webkit-transform 0.5s;   transition: opacity 1s linear, -webkit-transform 0.5s;   transition: transform 0.5s, opacity 1s linear;   transition: transform 0.5s, opacity 1s linear, -webkit-transform 0.5s; } .fade-enter {   position: relative;   top: 0;   left: 0;   z-index: 1; } .fade-exit {   opacity: 1;   position: absolute;   width: 100%;   top: 0;   left: 0;   opacity: 1; } .fade-exit.fade-exit-active {   opacity: 0;   -webkit-transition: opacity 0.5s linear;   transition: opacity 0.5s linear; } @-webkit-keyframes stroke {   100% {     stroke-dashoffset: 0;   } } @-webkit-keyframes scale {   0%, 100% {     -webkit-transform: none;   }   50% {     -webkit-transform: scale3d(1.1, 1.1, 1);   } } @-webkit-keyframes fill {   100% {     box-shadow: inset 0px 0px 0px 30px #7ac142;   } } @-webkit-keyframes rotate {   0% {     -webkit-transform: rotate(0deg);   }   100% {     -webkit-transform: rotate(360deg);   } } @-webkit-keyframes stroke {   100% {     stroke-dashoffset: 0;   } } @keyframes stroke {   100% {     stroke-dashoffset: 0;   } } @-webkit-keyframes scale {   0%, 100% {     -webkit-transform: none;             transform: none;   }   50% {     -webkit-transform: scale3d(1.1, 1.1, 1);             transform: scale3d(1.1, 1.1, 1);   } } @keyframes scale {   0%, 100% {     -webkit-transform: none;             transform: none;   }   50% {     -webkit-transform: scale3d(1.1, 1.1, 1);             transform: scale3d(1.1, 1.1, 1);   } } @-webkit-keyframes fill {   100% {     box-shadow: inset 0px 0px 0px 30px #7ac142;   } } @keyframes fill {   100% {     box-shadow: inset 0px 0px 0px 30px #7ac142;   } } @-webkit-keyframes rotate {   0% {     -webkit-transform: rotate(0deg);             transform: rotate(0deg);   }   100% {     -webkit-transform: rotate(360deg);             transform: rotate(360deg);   } } @keyframes rotate {   0% {     -webkit-transform: rotate(0deg);             transform: rotate(0deg);   }   100% {     -webkit-transform: rotate(360deg);             transform: rotate(360deg);   } } @media screen and (max-width: 480px) {   html.auth0-lock-html body > * {     display: none;   }   html.auth0-lock-html body .auth0-lock-container {     background: #fff;     display: block !important;   } } .auth0-lock.auth0-lock, .auth0-lock.auth0-lock * {   box-sizing: initial; } .auth0-lock.auth0-lock svg {   background-color: transparent; } .auth0-lock.auth0-lock .auth0-global-message {   color: #fff;   text-align: center;   padding: 10px;   line-height: 1.8;   font-size: 11px;   font-weight: 600;   text-transform: uppercase; } .auth0-lock.auth0-lock .auth0-global-message.auth0-global-message-error {   background: #ff3e00; } .auth0-lock.auth0-lock .auth0-global-message.auth0-global-message-success {   background: #7ed321; } .auth0-lock.auth0-lock .auth0-global-message.global-message-enter {   height: 0;   paddingTop: 0;   paddingBottom: 0; } .auth0-lock.auth0-lock .auth0-global-message.global-message-enter.global-message-enter-active {   -webkit-transition: all 0.2s;   transition: all 0.2s;   height: auto;   paddingTop: 10px;   paddingBottom: 10px; } .auth0-lock.auth0-lock .auth0-global-message.global-message-exit {   -webkit-transition: all 0.2s;   transition: all 0.2s;   height: 0;   paddingTop: 0;   paddingBottom: 0; } .auth0-lock.auth0-lock .auth0-global-message span {   -webkit-animation-delay: 0.2s;   animation-delay: 0.2s; } .auth0-lock.auth0-lock {   font-family: "Avenir Next", Avenir, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, sans-serif;   text-rendering: optimizeLegibility;   pointer-events: none;   position: fixed;   bottom: 0;   left: 0;   width: 100%;   height: 100%;   right: 0;   z-index: 1000000; } @media (min-width: 481px) {   .auth0-lock.auth0-lock {     display: table;   } } .auth0-lock.auth0-lock a {   text-decoration: none; } .auth0-lock.auth0-lock a:active, .auth0-lock.auth0-lock a:focus {   outline: none; } .auth0-lock.auth0-lock input:focus, .auth0-lock.auth0-lock button:focus {   outline: none; } .auth0-lock.auth0-lock .auth0-lock-overlay {   background: -webkit-radial-gradient(#40404b, #111118) rgba(34,34,40,0.94);   background: radial-gradient(#40404b, #111118) rgba(34,34,40,0.94);   position: fixed;   top: 0;   bottom: 0;   right: 0;   left: 0;   z-index: -1;   opacity: 0;   -webkit-transition: opacity 0.2s ease-in 0.4s;   transition: opacity 0.2s ease-in 0.4s; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-center {     vertical-align: middle;     display: table-cell;     margin: auto;   } } .auth0-lock.auth0-lock .auth0-lock-widget {   width: 300px;   opacity: 0;   -webkit-transform: translateY(100%) scale(0.8);   transform: translateY(100%) scale(0.8);   -webkit-transition-timing-function: cubic-bezier(0.3, 0, 0, 1.4);   transition-timing-function: cubic-bezier(0.3, 0, 0, 1.4);   margin: 0 auto;   border-radius: 5px;   max-height: 100vh; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-widget {     -webkit-transition: -webkit-transform 0.4s, opacity 0.3s;     -webkit-transition: opacity 0.3s, -webkit-transform 0.4s;     transition: opacity 0.3s, -webkit-transform 0.4s;     transition: transform 0.4s, opacity 0.3s;     transition: transform 0.4s, opacity 0.3s, -webkit-transform 0.4s;   } } .auth0-lock.auth0-lock .auth0-lock-widget-container {   position: relative; } .auth0-lock.auth0-lock .auth0-lock-cred-pane {   height: 100%;   border-radius: 6px;   background: #fff;   position: relative; } .auth0-lock.auth0-lock .auth0-lock-cred-pane.horizontal-fade-exit .auth0-lock-content, .auth0-lock.auth0-lock .auth0-lock-cred-pane.horizontal-fade-exit .auth0-lock-terms {   opacity: 0.3;   pointer-events: none; } .auth0-lock.auth0-lock .auth0-lock-cred-pane.auth0-lock-moving {   overflow: hidden; } .auth0-lock.auth0-lock .auth0-lock-header {   text-align: center;   padding: 11px;   height: 118px;   color: #333;   position: relative;   background: #fff;   border-radius: 5px 5px 0 0;   overflow: hidden;   box-sizing: border-box; } .auth0-lock.auth0-lock .auth0-lock-close-button, .auth0-lock.auth0-lock .auth0-lock-back-button {   box-sizing: content-box !important;   background: #fff;   border-radius: 100px;   height: 10px;   width: 10px;   position: absolute;   top: 14px;   right: 14px;   box-shadow: 0 1px 3px rgba(0,0,0,0.1);   color: #333;   z-index: 100;   border: 6px solid #fff;   cursor: pointer;   line-height: 0; } .auth0-lock.auth0-lock .auth0-lock-close-button svg, .auth0-lock.auth0-lock .auth0-lock-back-button svg {   box-sizing: content-box; } .auth0-lock.auth0-lock .auth0-lock-close-button polygon, .auth0-lock.auth0-lock .auth0-lock-back-button polygon {   fill: #373737; } .auth0-lock.auth0-lock .auth0-lock-back-button {   left: 14px; } .auth0-lock.auth0-lock .auth0-lock-header-avatar {   height: 80px;   width: 80px;   display: block;   border-radius: 100px;   margin: -16px auto 0;   position: absolute;   left: 0;   right: 0;   z-index: 1000;   box-shadow: 0 1px 2px rgba(0,0,0,0.4);   -webkit-animation: fadeIn 0.75s both;   animation: fadeIn 0.75s both; } @media (min-width: 768px) {   .auth0-lock.auth0-lock .auth0-lock-header-avatar {     -webkit-animation: fadeInDown 0.75s both;     animation: fadeInDown 0.75s both;   } } .auth0-lock.auth0-lock .auth0-lock-header-bg {   position: absolute;   height: 118px;   width: 100%;   overflow: hidden;   top: 0;   left: 0;   pointer-events: none; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-header-bg {     background: rgba(241,241,241,0.8);   } } .auth0-lock.auth0-lock .auth0-lock-header-bg .auth0-lock-header-bg-blur {   display: none;   height: 100%;   width: 100%;   border-top-left-radius: 5px;   border-top-right-radius: 5px;   -webkit-filter: blur(40px) grayscale(1);   -ms-filter: blur(40px) grayscale(1);   filter: blur(40px) grayscale(1);   -webkit-backdrop-filter: blur(0);   background-color: #fff;   background-position: center;   background-repeat: no-repeat;   background-size: 300px;   opacity: 0;   -webkit-transition: 0s ease 0s;   transition: 0s ease 0s; } .auth0-lock.auth0-lock .auth0-lock-header-bg .auth0-lock-header-bg-blur.auth0-lock-no-grayscale {   -webkit-filter: blur(30px);   -ms-filter: blur(30px);   filter: blur(30px);   -webkit-backdrop-filter: blur(0);   background-position: center;   background-size: 800px; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-header-bg.auth0-lock-blur-support .auth0-lock-header-bg-blur {     display: block;   } } .auth0-lock.auth0-lock .auth0-lock-header-bg .auth0-lock-header-bg-solid {   height: 100%;   opacity: 0.08; } .auth0-lock.auth0-lock .auth0-lock-header-welcome {   font-size: 18px;   position: relative; } .auth0-lock.auth0-lock .auth0-lock-header-logo {   width: auto;   height: 58px;   display: inline-block;   margin: 0 0 11px;   vertical-align: middle;   -webkit-transition: margin-top 0.4s;   transition: margin-top 0.4s; } .auth0-lock.auth0-lock .auth0-lock-header-logo.centered {   margin-top: 20px; } .auth0-lock.auth0-lock .auth0-lock-firstname {   font-size: 18px;   margin-top: 64px;   text-overflow: ellipsis;   white-space: nowrap;   overflow: hidden;   padding: 0 10px; } .auth0-lock.auth0-lock .auth0-lock-name {   font-size: 22px;   text-overflow: ellipsis;   white-space: nowrap;   overflow: hidden;   padding: 0 10px; } .auth0-lock.auth0-lock .auth0-lock-content {   padding: 20px;   box-sizing: border-box; } .auth0-lock.auth0-lock .auth0-lock-form {   display: block;   -webkit-animation: fadeIn 0.2s;   animation: fadeIn 0.2s; } .auth0-lock.auth0-lock .auth0-lock-form h2 {   font-size: 22px;   font-weight: normal;   text-align: center;   margin: 0 0 15px;   color: #000; } .auth0-lock.auth0-lock .auth0-lock-form p {   font-size: 13px;   line-height: 1.8;   text-align: center;   margin-top: 0;   margin-bottom: 15px;   color: rgba(0,0,0,0.54); } .auth0-lock.auth0-lock .auth0-lock-form .auth0-lock-alternative {   margin-top: 20px;   margin-bottom: 0; } .auth0-lock.auth0-lock .auth0-lock-form .auth0-lock-alternative .auth0-lock-alternative-link {   font-size: 13px;   color: rgba(0,0,0,0.87);   cursor: pointer;   margin-bottom: 0; } .auth0-lock.auth0-lock .auth0-lock-input-block {   position: relative;   margin-bottom: 15px; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-input-block {     margin-bottom: 10px;   } } .auth0-lock.auth0-lock .auth0-lock-input-block:last-child {   margin-bottom: 0; } .auth0-lock.auth0-lock .auth0-lock-input-wrap {   border-radius: 3px;   border: 1px solid #f1f1f1;   position: relative;   background: #f1f1f1;   -webkit-transition: border-color 0.8s;   transition: border-color 0.8s; } .auth0-lock.auth0-lock .auth0-lock-input-wrap.auth0-lock-input-wrap-with-icon {   padding-left: 40px; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-icon-arrow {   position: absolute;   top: 14px;   width: 12px;   height: 14px;   right: 14px; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-icon, .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-custom-icon {   position: absolute;   font-size: 12px;   top: 13px;   left: 14px; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-icon path, .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-custom-icon path {   fill: #888; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-icon.auth0-lock-icon-mobile, .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-custom-icon.auth0-lock-icon-mobile {   width: 9px;   height: 14px;   top: 14px;   left: 16px; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-icon.auth0-lock-icon-box, .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-custom-icon.auth0-lock-icon-box {   width: 12px;   height: 14px;   top: auto;   bottom: 14px;   left: 14px; } .auth0-lock.auth0-lock .auth0-lock-input-wrap.auth0-lock-focused {   border-color: #a0a0a0; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-input {   border: 0;   padding: 0 14px;   right: 0;   height: 40px;   font-size: 13px;   width: 100%;   border-radius: 0 2px 2px 0;   box-sizing: border-box;   position: relative;   color: rgba(0,0,0,0.87); } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-input.animated {   -webkit-animation-duration: 0.5s;   animation-duration: 0.5s; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-input.auth0-lock-input-location {   background-color: #f9f9f9;   text-align: left; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-input.auth0-lock-input-location.auth0-lock-input-with-placeholder {   color: rgba(0,0,0,0.54); } .auth0-lock.auth0-lock .auth0-lock-error .auth0-lock-input-wrap {   border-color: #f00;   -webkit-transition: 0.3s ease-in-out;   transition: 0.3s ease-in-out; } .auth0-lock.auth0-lock .auth0-lock-input-checkbox {   text-align: left;   display: block;   font-size: 12px;   color: rgba(0,0,0,0.54);   line-height: 22px;   position: relative; } .auth0-lock.auth0-lock .auth0-lock-input-checkbox label input {   float: left;   margin-top: 5px; } .auth0-lock.auth0-lock .auth0-lock-input-checkbox span {   display: block;   margin-left: 20px; } .auth0-lock.auth0-lock .auth-lock-social-buttons-pane, .auth0-lock.auth0-lock .auth0-lock-last-login-pane {   position: relative; } .auth0-lock.auth0-lock .auth-lock-social-buttons-pane .auth0-loading-container, .auth0-lock.auth0-lock .auth0-lock-last-login-pane .auth0-loading-container {   -webkit-animation: fadeIn 0.75s ease-in-out !important;   animation: fadeIn 0.75s ease-in-out !important;   position: absolute;   width: 54px;   height: 54px;   top: 50%;   left: 50%;   -webkit-transform: translate(-50%, -50%);   transform: translate(-50%, -50%); } .auth0-lock.auth0-lock .auth-lock-social-buttons-pane .auth0-loading-container .auth0-loading, .auth0-lock.auth0-lock .auth0-lock-last-login-pane .auth0-loading-container .auth0-loading {   width: 50px;   height: 50px;   border-radius: 50%;   top: 0;   left: 0;   opacity: 1; } .auth0-lock.auth0-lock .auth0-lock-social-buttons-container {   text-align: center; } .auth0-lock.auth0-lock .auth0-lock-social-button {   border: 0;   padding: 0;   display: inline-block;   box-sizing: border-box;   overflow: hidden;   border-radius: 3px;   margin: 4px;   position: relative;   width: 40px;   height: 40px;   -webkit-transition: background-color 0.2s ease-in-out;   transition: background-color 0.2s ease-in-out; } .auth0-lock.auth0-lock .auth0-lock-social-button .auth0-lock-social-button-icon {   width: 40px;   height: 40px;   position: absolute;   top: 0;   left: 0;   transition: background-color 0.3s;   -webkit-transition: background-color 0.3s; } .auth0-lock.auth0-lock .auth0-lock-social-button:hover .auth0-lock-social-button-icon, .auth0-lock.auth0-lock .auth0-lock-social-button:focus .auth0-lock-social-button-icon {   background-color: rgba(0,0,0,0.3); } .auth0-lock.auth0-lock .auth0-lock-social-button .auth0-lock-social-button-text {   display: none; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button {   display: block;   margin: 10px 0 0;   width: 100%; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button:first-child {   margin-top: 0; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button[data-provider=""], .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button[data-provider="auth0"] {   background-color: #c0c0c0; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button[data-provider=""] .auth0-lock-social-button-icon, .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button[data-provider="auth0"] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iNTNweCIgaGVpZ2h0PSI2NXB4IiB2aWV3Qm94PSIwIDAgNTMgNjUiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+ICAgICAgICA8dGl0bGU+U2hhcGU8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4gICAgICAgIDxnIGlkPSI2NHB4IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTE1My4wMDAwMDAsIC02MDMzLjAwMDAwMCkiIGZpbGw9IiNGRkZGRkYiPiAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMTYxLjEyNSw2MDk4IEMxMTU2LjYzNzk3LDYwOTggMTE1Myw2MDk0LjM2MTg2IDExNTMsNjA4OS44NzU2MyBMMTE1Myw2MDY1LjQ5OTQ5IEMxMTUzLDYwNjEuMDEyMjUgMTE1Ni42Mzc5Nyw2MDU3LjM3MzEgMTE2MS4xMjUsNjA1Ny4zNzMxIEwxMTYxLjEyNSw2MDUxLjI4MjExIEMxMTYxLjEyNSw2MDQxLjE4NjMyIDExNjkuMzA5OTIsNjAzMyAxMTc5LjQwNjI1LDYwMzMgQzExODkuNTAyNTgsNjAzMyAxMTk3LjY4NzUsNjA0MS4xODYzMiAxMTk3LjY4NzUsNjA1MS4yODIxMSBMMTE5Ny42ODc1LDYwNTcuMzc0MTEgQzEyMDIuMTc0NTMsNjA1Ny4zNzQxMSAxMjA1LjgxMjUsNjA2MS4wMTIyNSAxMjA1LjgxMjUsNjA2NS40OTk0OSBMMTIwNS44MTI1LDYwODkuODc1NjMgQzEyMDUuODEyNSw2MDk0LjM2MTg2IDEyMDIuMTc0NTMsNjA5OCAxMTk3LjY4NzUsNjA5OCBMMTE2MS4xMjUsNjA5OCBaIE0xMTkzLjYyNjAyLDYwNTEuMjgyMTEgQzExOTMuNjI2MDIsNjA0My40Mjk5NCAxMTg3LjI1OTA2LDYwMzcuMDYyNjkgMTE3OS40MDcyNyw2MDM3LjA2MjY5IEMxMTcxLjU1NTQ3LDYwMzcuMDYyNjkgMTE2NS4xODg1Miw2MDQzLjQyOTk0IDExNjUuMTg4NTIsNjA1MS4yODIxMSBMMTE2NS4xODg1Miw2MDU3LjM3MzEgTDExOTMuNjI2MDIsNjA1Ny4zNzMxIEwxMTkzLjYyNjAyLDYwNTEuMjgyMTEgTDExOTMuNjI2MDIsNjA1MS4yODIxMSBaIE0xMjAxLjc1LDYwNjUuNDk5NDkgQzEyMDEuNzUsNjA2My4yNTQ4NiAxMTk5LjkzMTAyLDYwNjEuNDM1NzkgMTE5Ny42ODc1LDYwNjEuNDM1NzkgTDExNjEuMTI1LDYwNjEuNDM1NzkgQzExNTguODgxNDgsNjA2MS40MzU3OSAxMTU3LjA2MjUsNjA2My4yNTQ4NiAxMTU3LjA2MjUsNjA2NS40OTk0OSBMMTE1Ny4wNjI1LDYwODkuODc1NjMgQzExNTcuMDYyNSw2MDkyLjExNjIxIDExNTguODgxNDgsNjA5My45MzUyOCAxMTYxLjEyNSw2MDkzLjkzNTI4IEwxMTk3LjY4NzUsNjA5My45MzUyOCBDMTE5OS45MzEwMiw2MDkzLjkzNTI4IDEyMDEuNzUsNjA5Mi4xMTYyMSAxMjAxLjc1LDYwODkuODc1NjMgTDEyMDEuNzUsNjA2NS40OTk0OSBMMTIwMS43NSw2MDY1LjQ5OTQ5IFogTTExNzcuMzc1LDYwODMuNzgwNTggTDExNzcuMzc1LDYwNzEuNTkyNTEgQzExNzcuMzc1LDYwNzAuNDcxMjEgMTE3OC4yODM5OCw2MDY5LjU2MTE3IDExNzkuNDA2MjUsNjA2OS41NjExNyBDMTE4MC41Mjg1Miw2MDY5LjU2MTE3IDExODEuNDM3NSw2MDcwLjQ3MTIxIDExODEuNDM3NSw2MDcxLjU5MjUxIEwxMTgxLjQzNzUsNjA4My43ODA1OCBDMTE4MS40Mzc1LDYwODQuOTAwODcgMTE4MC41Mjg1Miw2MDg1LjgxMDkxIDExNzkuNDA2MjUsNjA4NS44MTA5MSBDMTE3OC4yODUsNjA4NS44MTA5MSAxMTc3LjM3NSw2MDg0LjkwMDg3IDExNzcuMzc1LDYwODMuNzgwNTggWiIgaWQ9IlNoYXBlIj48L3BhdGg+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4=");   background-size: 38%; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button .auth0-lock-social-button-icon {   background-color: rgba(0,0,0,0.3); } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button .auth0-lock-social-button-text {   box-sizing: border-box;   display: block;   overflow: hidden;   width: 100%;   padding-left: 54px;   padding-right: 15px;   line-height: 40px;   text-align: left;   text-transform: uppercase;   text-overflow: ellipsis;   font-size: 10px;   font-weight: 600;   letter-spacing: 0.7px;   color: #fff;   white-space: nowrap;   transition: background 0.3s;   -webkit-transition: background 0.3s; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button:hover:not([disabled]) .auth0-lock-social-button-icon, .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button:focus:not([disabled]) .auth0-lock-social-button-icon {   background-color: rgba(0,0,0,0.3); } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button:hover:not([disabled]) .auth0-lock-social-button-text, .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button:focus:not([disabled]) .auth0-lock-social-button-text {   background-color: rgba(0,0,0,0.3); } .auth0-lock.auth0-lock .auth0-lock-social-button[disabled] {   background-color: #9b9b9b !important; } .auth0-lock.auth0-lock .auth0-lock-terms {   background: #eee;   text-align: center;   display: block;   font-size: 12px;   color: rgba(0,0,0,0.54);   line-height: 22px;   padding: 10px;   position: relative; } .auth0-lock.auth0-lock .auth0-lock-terms a {   color: rgba(0,0,0,0.87); } .auth0-lock.auth0-lock .auth0-lock-submit {   border: 0;   padding: 14px;   display: block;   box-sizing: border-box;   width: 100%;   height: 70px;   overflow: hidden;   border-radius: 0 0 5px 5px;   -webkit-transition: 0.2s ease-in-out;   transition: 0.2s ease-in-out;   color: #fff;   letter-spacing: 1px;   font-size: 14px;   text-transform: uppercase; /*submit button animation*/ } .auth0-lock.auth0-lock .auth0-lock-submit span {   display: inline-block;   -webkit-transition: 0.2s ease-in-out;   transition: 0.2s ease-in-out; } .auth0-lock.auth0-lock .auth0-lock-submit span svg {   vertical-align: middle;   display: inline; } .auth0-lock.auth0-lock .auth0-lock-submit span svg.icon-text {   margin: -4px 0 0 5px; } .auth0-lock.auth0-lock .auth0-lock-submit .auth0-label-submit {   height: 42px;   line-height: 42px; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-submit:hover:not([disabled]) span {     -webkit-transform: scale(1.05);     transform: scale(1.05);   } } .auth0-lock.auth0-lock .auth0-lock-submit:focus {   box-shadow: inset 0 0 100px 20px rgba(0,0,0,0.2); } .auth0-lock.auth0-lock .auth0-lock-submit[disabled] {   background-color: #9b9b9b !important; } .auth0-lock.auth0-lock .auth0-lock-submit[disabled] span svg circle, .auth0-lock.auth0-lock .auth0-lock-submit[disabled] span svg path {   stroke: rgba(255,255,255,0.6);   -webkit-transition: 0.2s ease-in-out;   transition: 0.2s ease-in-out; } .auth0-lock.auth0-lock .auth0-lock-submit[disabled] span svg path {   fill: rgba(255,255,255,0.6); } .auth0-lock.auth0-lock .auth0-lock-submit.vslide-enter {   opacity: 0; } .auth0-lock.auth0-lock .auth0-lock-submit.vslide-enter.vslide-enter-active {   opacity: 1;   -webkit-transition-duration: 0.5s;           transition-duration: 0.5s; } .auth0-lock.auth0-lock .auth0-loading-container {   position: relative;   display: none; } .auth0-lock.auth0-lock .auth0-loading-container .auth0-loading {   position: absolute;   top: 4px;   left: 44%;   width: 30px;   height: 30px;   border-width: 2px;   border-style: solid;   border-color: rgba(0,0,0,0.4) rgba(0,0,0,0.4) rgba(0,0,0,0.2) rgba(0,0,0,0.2);   opacity: 0.9;   border-radius: 20px;   -webkit-animation: rotate 1s linear infinite;   animation: rotate 1s linear infinite; } .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-lock-content, .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-lock-terms {   opacity: 0.3;   pointer-events: none; } .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-lock-submit {   background-color: #eee !important;   -webkit-transition: background 0.5s ease;   transition: background 0.5s ease;   cursor: initial;   pointer-events: none; } .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-lock-submit span {   -webkit-animation: fadeOutDownBig 1s both;   animation: fadeOutDownBig 1s both; } .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-loading-container {   -webkit-animation: fadeInDownBig 1s both;   animation: fadeInDownBig 1s both;   display: block; } .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-lock-back-button {   opacity: 0;   visibility: hidden;   -webkit-transition: 0.25s;   transition: 0.25s; } .auth0-lock.auth0-lock.auth0-lock-auxiliary .auth0-lock-header-avatar {   -webkit-animation: fadeOut 0.3s both;   animation: fadeOut 0.3s both; } .auth0-lock.auth0-lock.auth0-lock-auxiliary .auth0-lock-content, .auth0-lock.auth0-lock.auth0-lock-auxiliary .auth0-lock-terms, .auth0-lock.auth0-lock.auth0-lock-auxiliary .auth0-lock-submit {   opacity: 0.3;   pointer-events: none; } .auth0-lock.auth0-lock.auth0-lock-auxiliary .auth0-lock-back-button {   opacity: 0;   visibility: hidden;   -webkit-transition: 0.25s;   transition: 0.25s; } .auth0-lock.auth0-lock .auth0-lock-select-country {   background-color: #fff;   position: absolute;   padding: 0;   font-size: 14px;   color: #666;   bottom: 0;   top: 0;   right: 0;   left: 0;   border-radius: 5px;   overflow: hidden;   z-index: 200; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-back-button {   opacity: 1;   visibility: visible;   top: 19px; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-search {   background-color: #e3e5e9;   padding: 10px; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-input-wrap {   margin: 0;   border: none;   margin-left: 40px;   overflow: hidden; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-icon {   width: 16px;   height: 16px;   top: 12px;   left: 9px;   z-index: 1; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-input-search {   border: none; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-list-code {   position: relative;   height: calc(100% - 60px);   overflow-y: scroll; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-list-code ul {   margin: 0;   padding: 0; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-list-code li {   list-style: none;   text-align: left;   border-bottom: 1px solid #eee;   cursor: pointer;   color: #000;   font-size: 14px;   padding: 15px 20px;   margin: 0;   text-overflow: ellipsis;   width: 100%;   white-space: nowrap;   overflow: hidden;   box-sizing: border-box; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-list-code li {     padding: 10px 20px;   } } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-list-code li.auth0-lock-list-code-highlighted {   background-color: #2eb5ff;   color: #fff; } .auth0-lock.auth0-lock .auth0-lock-confirmation {   background-color: #fff;   position: absolute;   text-align: center;   line-height: 2;   font-size: 14px;   color: #666;   width: 100%;   height: 100%;   top: 0;   left: 0;   z-index: 200;   border-radius: 5px; } .auth0-lock.auth0-lock .auth0-lock-confirmation .auth0-lock-confirmation-content {   width: 100%;   top: 50%;   left: 50%;   -webkit-transform: translate(-50%, -50%);   transform: translate(-50%, -50%);   position: absolute; } .auth0-lock.auth0-lock .auth0-lock-confirmation p {   padding: 0 14px;   margin-bottom: 6px; } .auth0-lock.auth0-lock .auth0-lock-confirmation a {   display: block;   font-weight: 500;   color: #09c; } .auth0-lock.auth0-lock .auth0-lock-confirmation a svg {   width: 15px;   height: 16px;   margin-bottom: -4px;   margin-left: 0px;   display: inline-block;   -webkit-transition: -webkit-transform 1s ease;   transition: -webkit-transform 1s ease;   transition: transform 1s ease;   transition: transform 1s ease, -webkit-transform 1s ease;   -webkit-transform: rotate(120deg);   transform: rotate(120deg); } .auth0-lock.auth0-lock .auth0-lock-confirmation a svg path {   fill: #09c; } .auth0-lock.auth0-lock .auth0-lock-confirmation a:hover svg {   -webkit-transform: rotate(490deg);   transform: rotate(490deg); } .auth0-lock.auth0-lock .auth0-lock-confirmation .auth0-lock-sent-label {   color: #008000;   -webkit-animation: fadeIn 1s both;   animation: fadeIn 1s both;   font-weight: 600; } .auth0-lock.auth0-lock .auth0-lock-confirmation .auth0-lock-sent-failed-label {   color: #f00;   -webkit-animation: fadeIn 1s both;   animation: fadeIn 1s both;   font-weight: 600; } .auth0-lock.auth0-lock .auth0-lock-confirmation .checkmark__circle {   stroke-dasharray: 166;   stroke-dashoffset: 166;   stroke-width: 2;   stroke-miterlimit: 10;   stroke: #7ac142;   fill: none;   -webkit-animation: stroke 0.6s 0.4s cubic-bezier(0.65, 0, 0.45, 1) forwards;   animation: stroke 0.6s 0.4s cubic-bezier(0.65, 0, 0.45, 1) forwards; } .auth0-lock.auth0-lock .auth0-lock-confirmation .checkmark {   width: 56px;   height: 56px;   border-radius: 50%;   display: block;   stroke-width: 2;   stroke: #fff;   stroke-miterlimit: 10;   margin: 0 auto;   box-shadow: inset 0px 0px 0px #7ac142;   -webkit-animation: fill 0.4s ease-in-out 0.7s forwards, scale 0.3s ease-in-out 1.1s both;   animation: fill 0.4s ease-in-out 0.7s forwards, scale 0.3s ease-in-out 1.1s both; } .auth0-lock.auth0-lock .auth0-lock-confirmation .checkmark__check {   -webkit-transform-origin: 50% 50%;           transform-origin: 50% 50%; } .auth0-lock.auth0-lock .auth0-lock-confirmation .auth0-lock-back-button {   opacity: 1;   visibility: visible; } .auth0-lock.auth0-lock .auth0-lock-forgot-link {   font-size: 12px;   display: block;   text-align: center;   margin: 30px 0 0 0;   color: #5c666f; } .auth0-lock.auth0-lock .auth0-lock-badge-bottom {   position: absolute;   bottom: 15px;   left: 15px;   z-index: -1;   text-align: center;   padding: 6px 10px;   border-radius: 3px;   background: rgba(255,255,255,0.1); } .auth0-lock.auth0-lock .auth0-lock-badge-bottom .auth0-lock-badge {   display: inline-block;   color: rgba(255,255,255,0.7);   font-size: 14px; } .auth0-lock.auth0-lock .auth0-lock-badge-bottom .auth0-lock-badge svg {   vertical-align: middle;   margin: 0 4px; } .auth0-lock.auth0-lock .auth0-lock-badge-bottom .auth0-lock-badge:hover svg g#LogoBadge {   fill: #eb5424;   fill-opacity: 1; } .auth0-lock.auth0-lock.auth0-lock-opened {   opacity: 1;   pointer-events: auto; } @media (min-width: 481px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-center {     overflow-y: auto;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened {     position: absolute;   } } .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-overlay {   opacity: 0.9;   -webkit-transition: opacity 0.3s ease-in 0s;   transition: opacity 0.3s ease-in 0s; } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-overlay {     display: none;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-header {     border-radius: 0;   } } .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-header-bg .auth0-lock-header-bg-blur {   opacity: 0.4;   -webkit-transition: 1s ease 1s;   transition: 1s ease 1s; } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-header-avatar {     width: 70px;     height: 70px;     margin: 10px auto 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-firstname {     margin-top: 72px;   } } .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-widget {   opacity: 1;   -webkit-transform: translateY(0%) scale(1);   transform: translateY(0%) scale(1); } @media (min-width: 481px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-widget {     -webkit-transition: -webkit-transform 0.6s, opacity 0.6s;     -webkit-transition: opacity 0.6s, -webkit-transform 0.6s;     transition: opacity 0.6s, -webkit-transform 0.6s;     transition: transform 0.6s, opacity 0.6s;     transition: transform 0.6s, opacity 0.6s, -webkit-transform 0.6s;     -webkit-transition-delay: 0.5s;     transition-delay: 0.5s;     box-shadow: 0 0 40px 4px #111118;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-widget {     width: 100%;     height: 100%;     position: absolute;     top: 0;     bottom: 0;     border-radius: 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-widget-container {     height: 100%;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-cred-pane {     border-radius: 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-body-content {     background: #fff;     min-height: calc(100vh - 188px);     display: table;     width: 100%;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-content {     width: 100%;     display: table-cell;     vertical-align: middle;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-content .auth0-lock-form p {     font-size: 14px;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-tabs-container {     position: absolute;     top: 0;     left: 0;     width: 100%;     margin: 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-terms {     position: absolute;     bottom: -42px;     width: 100%;     left: 0;     box-sizing: border-box;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-sign-up-terms-agreement label input {     top: 2px;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-submit {     border-radius: 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-badge-bottom {     display: none;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-confirmation {     border-radius: 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-iphone .auth0-lock-body-content {     min-height: calc(100vh - 256px);   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-no-submit .auth0-lock-body-content {     min-height: calc(100vh - 118px);   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-no-submit.auth0-lock-iphone .auth0-lock-body-content {     min-height: calc(100vh - 186px);   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-with-terms .auth0-lock-body-content {     margin-bottom: 42px;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-with-tabs .auth0-lock-body-content {     min-height: calc(100vh - 228px);     padding-top: 40px;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-with-tabs.auth0-lock-with-terms .auth0-lock-body-content {     min-height: calc(100vh - 228px - 42px);   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-with-tabs.auth0-lock-iphone .auth0-lock-body-content {     min-height: calc(100vh - 296px);   } } .auth0-lock.auth0-lock.auth0-lock-opened-in-frame {   opacity: 1;   pointer-events: auto;   position: relative;   width: auto;   margin-left: auto;   margin-right: auto; } .auth0-lock.auth0-lock.auth0-lock-opened-in-frame .auth0-lock-header-bg .auth0-lock-header-bg-blur {   opacity: 0.4;   -webkit-transition: 1s ease 1s;   transition: 1s ease 1s; } .auth0-lock.auth0-lock.auth0-lock-opened-in-frame .auth0-lock-header-bg .auth0-lock-header-bg-blur.auth0-lock-no-grayscale {   opacity: 0.5; } .auth0-lock.auth0-lock.auth0-lock-opened-in-frame .auth0-lock-widget {   opacity: 1;   -webkit-transform: translateY(0%) scale(1);   transform: translateY(0%) scale(1);   -webkit-transition: -webkit-transform 0.6s, opacity 0.6s;   -webkit-transition: opacity 0.6s, -webkit-transform 0.6s;   transition: opacity 0.6s, -webkit-transform 0.6s;   transition: transform 0.6s, opacity 0.6s;   transition: transform 0.6s, opacity 0.6s, -webkit-transform 0.6s;   -webkit-transition-delay: 0.5s;   transition-delay: 0.5s;   margin: auto; } .auth0-lock.auth0-lock.auth0-lock-opened-in-frame .global-error {   position: absolute;   display: none; } .auth0-lock .auth0-lock-form div.auth0-lock-pane-separator {   padding-top: 15px; } #social-container.lock-container .auth0-lock-mode-loading .auth0-lock-content {   opacity: 1; } #social-container.lock-container .auth0-lock-mode-loading .auth0-lock-content .auth0-lock-social-buttons-container {   opacity: 0.3; } .auth0-lock.auth0-lock .auth0-lock-tabs-container {   margin: -20px -20px 20px;   height: 40px; } .auth0-lock.auth0-lock .auth0-lock-tabs {   background: #fff;   padding: 0;   margin: 0;   font-size: 13px;   letter-spacing: 0.7px;   box-shadow: 0 1px 0 0 rgba(92,102,111,0.2);   display: -webkit-box;   display: -ms-flexbox;   display: flex;   -webkit-box-orient: horizontal;   -webkit-box-direction: normal;       -ms-flex-direction: row;           flex-direction: row;   -ms-flex-wrap: wrap;       flex-wrap: wrap;   -webkit-box-pack: center;       -ms-flex-pack: center;           justify-content: center;   -ms-flex-line-pack: center;       align-content: center;   -webkit-box-align: stretch;       -ms-flex-align: stretch;           align-items: stretch; } .auth0-lock.auth0-lock .auth0-lock-tabs:after {   content: "";   display: table;   clear: both; } .auth0-lock.auth0-lock .auth0-lock-tabs li {   width: 50%;   display: block;   list-style: none;   float: left;   padding: 0;   margin: 0;   text-align: center;   cursor: pointer; } .auth0-lock.auth0-lock .auth0-lock-tabs li a {   padding: 11px 10px;   display: block;   text-decoration: none;   color: rgba(92,102,111,0.6);   font-weight: 500; } .auth0-lock.auth0-lock .auth0-lock-tabs li.auth0-lock-tabs-current {   box-shadow: 0 1px 0 0 #5c666f;   cursor: default; } .auth0-lock.auth0-lock .auth0-lock-tabs li.auth0-lock-tabs-current a {   color: #5c666f; } .auth0-lock-password-strength {   width: 100%;   bottom: 41px;   display: block;   text-align: left;   padding-top: 0;   -webkit-animation-duration: 0.3s;   animation-duration: 0.3s;   -webkit-transition: height 0.3s ease;   transition: height 0.3s ease; } @media (min-width: 481px) {   .auth0-lock-password-strength {     position: absolute;     background: #1f242e;     box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);     -webkit-transition: none;     transition: none;     width: 100%;     border-radius: 3px;     z-index: 1000;   }   .auth0-lock-password-strength:after {     top: 100%;     left: 21px;     border: solid transparent;     content: " ";     height: 0;     width: 0;     position: absolute;     pointer-events: none;     border-top-color: #1f242e;     border-width: 9px;     margin-left: -9px;   } } .auth0-lock-password-strength.fadeOut {   opacity: 0;   -webkit-transition: 0.3s 0.3s ease;   transition: 0.3s 0.3s ease;   visibility: hidden; } .auth0-lock-password-strength.fadeIn ul {   -webkit-animation: fadeIn 0.3s 0.1s both;           animation: fadeIn 0.3s 0.1s both; } .auth0-lock-password-strength li, .auth0-lock-password-strength ul {   margin: 0;   padding: 0;   list-style: none;   color: #dd4b39; } .auth0-lock-password-strength > ul {   padding: 15px;   padding-top: 0; } @media (min-width: 481px) {   .auth0-lock-password-strength > ul {     padding-top: 12px;   } } .auth0-lock-password-strength li span {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMTJweCIgaGVpZ2h0PSIxMnB4IiB2aWV3Qm94PSIwIDAgMTIgMTIiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+ICAgICAgICA8dGl0bGU+RXJyb3I8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFzc3dvcmQtUG9saWN5IiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4gICAgICAgIDxnIGlkPSJBcnRib2FyZC0xIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjAwLjAwMDAwMCwgLTE0OC4wMDAwMDApIj4gICAgICAgICAgICA8ZyBpZD0iR3JvdXAtMiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTUwLjAwMDAwMCwgNzUuMDAwMDAwKSI+ICAgICAgICAgICAgICAgIDxnIGlkPSJHcm91cC1Db3B5IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzNS4wMDAwMDAsIDM2LjAwMDAwMCkiPiAgICAgICAgICAgICAgICAgICAgPGcgaWQ9IkVycm9yIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNS4wMDAwMDAsIDM3LjAwMDAwMCkiPiAgICAgICAgICAgICAgICAgICAgICAgIDxlbGxpcHNlIGlkPSJPdmFsLTkwIiBmaWxsPSIjQkU0NTI3IiBjeD0iNiIgY3k9IjYiIHJ4PSI2IiByeT0iNiI+PC9lbGxpcHNlPiAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik05LDMuNjA0Mjg1NzEgTDguMzk1NzE0MjksMyBMNiw1LjM5NTcxNDI5IEwzLjYwNDI4NTcxLDMgTDMsMy42MDQyODU3MSBMNS4zOTU3MTQyOSw2IEwzLDguMzk1NzE0MjkgTDMuNjA0Mjg1NzEsOSBMNiw2LjYwNDI4NTcxIEw4LjM5NTcxNDI5LDkgTDksOC4zOTU3MTQyOSBMNi42MDQyODU3MSw2IEw5LDMuNjA0Mjg1NzEgWiIgaWQ9IlNoYXBlIiBmaWxsPSIjRkZGRkZGIj48L3BhdGg+ICAgICAgICAgICAgICAgICAgICA8L2c+ICAgICAgICAgICAgICAgIDwvZz4gICAgICAgICAgICA8L2c+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4=");   background-position: left center;   background-repeat: no-repeat;   padding-left: 20px; } .auth0-lock-password-strength ul li ul {   margin-left: 20px; } .auth0-lock-password-strength ul li ul li {   color: #000; } @media (min-width: 481px) {   .auth0-lock-password-strength ul li ul li {     color: #fff;   } } .auth0-lock-password-strength ul li ul li span {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMTNweCIgaGVpZ2h0PSIxMnB4IiB2aWV3Qm94PSIwIDAgMTMgMTIiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+ICAgICAgICA8dGl0bGU+T3ZhbCAxPC90aXRsZT4gICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+ICAgICAgICA8ZyBpZD0iSXBob25lLTYtLS1OYXRpdmUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00NC4wMDAwMDAsIC0yMTQuMDAwMDAwKSIgZmlsbD0iI0QwRDJEMyI+ICAgICAgICAgICAgPHBhdGggZD0iTTUwLjExNDk3MzMsMjI2IEM1My40Mjg2ODE4LDIyNiA1Ni4xMTQ5NzMzLDIyMy4zMTM3MDggNTYuMTE0OTczMywyMjAgQzU2LjExNDk3MzMsMjE2LjY4NjI5MiA1My40Mjg2ODE4LDIxNCA1MC4xMTQ5NzMzLDIxNCBDNDYuODAxMjY0OCwyMTQgNDQuMTE0OTczMywyMTYuNjg2MjkyIDQ0LjExNDk3MzMsMjIwIEM0NC4xMTQ5NzMzLDIyMy4zMTM3MDggNDYuODAxMjY0OCwyMjYgNTAuMTE0OTczMywyMjYgWiIgaWQ9Ik92YWwtMSI+PC9wYXRoPiAgICAgICAgPC9nPiAgICA8L2c+PC9zdmc+"); } .auth0-lock-password-strength li {   line-height: 1.5;   margin-top: 5px;   font-size: 13px;   -webkit-transition: color 0.3s ease-in;   transition: color 0.3s ease-in;   position: relative; } .auth0-lock-password-strength li.auth0-lock-checked {   color: #7ed321; } .auth0-lock-password-strength li.auth0-lock-checked span {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMTNweCIgaGVpZ2h0PSIxMnB4IiB2aWV3Qm94PSIwIDAgMTMgMTIiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+ICAgICAgICA8dGl0bGU+R3JvdXAgNDwvdGl0bGU+ICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPiAgICA8ZGVmcz48L2RlZnM+ICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9IklwaG9uZS02LS0tTmF0aXZlIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNDQuMDAwMDAwLCAtMjQwLjAwMDAwMCkiPiAgICAgICAgICAgIDxnIGlkPSJHcm91cC00IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0NC4xMTQ5NzMsIDI0MC4wMDAwMDApIj4gICAgICAgICAgICAgICAgPGVsbGlwc2UgaWQ9Ik92YWwtOTAiIGZpbGw9IiM4MEQxMzUiIGN4PSI2IiBjeT0iNiIgcng9IjYiIHJ5PSI2Ij48L2VsbGlwc2U+ICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik00LjU0MjM1MzYxLDcuNzMzNzgwNzYgTDIuNjQ1ODIxNDksNS44NjgwMDg5NSBMMiw2LjQ5ODg4MTQzIEw0LjU0MjM1MzYxLDkgTDEwLDMuNjMwODcyNDggTDkuMzU4NzI2NTUsMyBMNC41NDIzNTM2MSw3LjczMzc4MDc2IFoiIGlkPSJTaGFwZSIgZmlsbD0iI0ZGRkZGRiI+PC9wYXRoPiAgICAgICAgICAgIDwvZz4gICAgICAgIDwvZz4gICAgPC9nPjwvc3ZnPg=="); } .auth0-lock-error-msg {   color: #f00;   font-size: 12px;   margin-top: 5px; } @media (min-width: 481px) {   .auth0-lock-error-msg {     color: #000;     background: #fff;     box-shadow: 0 0 5px 0 rgba(0,0,0,0.6);     margin: 0;     border-radius: 3px;     position: absolute;     left: calc(100% + 7px);     top: 1px;     display: inline-table;   }   .auth0-lock-error-msg span {     background: #fff;     padding: 12px 15px;     display: block;     position: relative;     border-radius: 3px;     z-index: 1;   }   .auth0-lock-error-msg:after {     content: "";     background: #fff;     height: 6px;     width: 6px;     position: absolute;     pointer-events: none;     box-shadow: 0 0 5px 0 rgba(0,0,0,0.6);     right: calc(100% - 3px);     top: 50%;     -webkit-transform: translateY(-50%) rotate(45deg);             transform: translateY(-50%) rotate(45deg);   } } .auth0-lock .auth0-loading-screen {   min-height: 42px; } .auth0-lock .auth0-loading-screen .auth0-loading-container {   display: block; } .auth0-lock .auth0-sso-notice-container {   background: rgba(0,0,0,0.03);   color: rgba(0,0,0,0.54);   padding: 10px 0;   margin: -20px -20px 20px;   text-align: center;   font-size: 10px;   text-transform: uppercase;   letter-spacing: 1px; } .auth0-lock .auth0-sso-notice-container .auth0-lock-icon {   width: 12px;   height: 14px;   position: relative;   top: 2px;   right: 2px; } .auth0-lock .auth0-lock-last-login-pane .auth0-lock-social-button.auth0-lock-social-big-button {   margin-top: 0; } .auth0-lock .auth0-lock-last-login-pane .auth0-lock-social-button[data-provider="auth0"] .auth0-lock-social-button-text {   text-transform: none;   font-size: 12px;   font-weight: normal; } .auth0-lock .auth0-lock-sign-up-terms-agreement label input {   margin-right: 5px;   position: relative; } .auth0-lock-input-show-password {   position: relative; } .auth0-lock-input-show-password .auth0-lock-show-password {   position: absolute;   top: 14px;   right: 12px;   width: 20px;   height: 14px; } .auth0-lock-input-show-password .auth0-lock-show-password input[type=checkbox] {   display: none; } .auth0-lock-input-show-password .auth0-lock-show-password input[type=checkbox] + label {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIyMHB4IiBoZWlnaHQ9IjE0cHgiIHZpZXdCb3g9IjAgMCAyMCAxNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT5zaG93X3Bhc3N3b3JkX2luYWN0aXZlPC90aXRsZT4gICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+ICAgICAgICA8ZyBpZD0ic2hvd19wYXNzd29yZF9pbmFjdGl2ZSIgZmlsbC1ydWxlPSJub256ZXJvIiBmaWxsPSIjQ0NDQ0NDIj4gICAgICAgICAgICA8cGF0aCBkPSJNMjAsNy4xNDY0NjA3MSBDMjAsNy4zMjQ1NTU5MyAxOS44OTM4NzQ5LDcuNTA0OTY0MDcgMTkuNzg5NzkwNiw3LjYyMjkyMzI5IEMxOS41Nzk1ODExLDcuOTIxMjkwNjQgMTkuMzY5MzcxNiw4LjE1OTUyMTkzIDE5LjEwNjA5OTYsOC40NTc4ODkyMSBDMTcuODQyODAyMSw5Ljg4OTU4OTkzIDE2LjQyMDMxNjksMTEuMTQzMTk1NCAxNC44NDA2ODQ3LDEyLjA5ODQzMzUgQzEzLjg0MDY1OTIsMTIuNjk1MTY4MSAxMi43ODc1NzExLDEzLjE3Mzk0MzcgMTEuNjgxNDIwNCwxMy40MTIxNzUgQzEwLjQ2OTE0NDYsMTMuNjUwNDA2MyA5LjI1ODkwOTY0LDEzLjY1MDQwNjMgOC4wNDY2MzM4NiwxMy4zNTIwMzg5IEM1LjkzODQxNjgxLDEyLjgxNTQ0MDMgNC4wNDI0NTAwNCwxMS41NjE4MzQ5IDIuMzU2NjkyNzcsMTAuMDA5ODYyMSBDMS41NjY4NzY3MSw5LjI5Mjg1NTI5IDAuODMwMTIzMjE0LDguNTE4MDI1MjkgMC4xOTc0NTQwMTYsNy42MjI5MjMyOSBDLTAuMDY1ODE4MDA1Myw3LjI2NDQxOTg2IC0wLjA2NTgxODAwNTMsNi43ODc5NTczIDAuMTk3NDU0MDE2LDYuNDI5NDUzODcgQzAuNDA3NjYzNDU5LDYuMTMxMDg2NTUgMC42MTc4NzI5MDYsNS44OTI4NTUyNiAwLjg4MTE0NDkyOSw1LjU5NDQ4NzkgQzIuMTQ0NDQyNDYsNC4xNjI3ODcyMSAzLjU2NjkyNzczLDIuOTA5MTgxNzcgNS4xNDY1NTk4NSwxLjk1Mzk0MzY4IEM2LjE0NjU4NTM2LDEuMzU3MjA4OTkgNy4xOTk2NzM0MywwLjg3ODQzMzQ3MSA4LjMwNTgyNDE0LDAuNjQwMjAyMTgxIEM5LjUxODEsMC40MDE5NzA4ODkgMTAuNzI4MzM0OSwwLjQwMTk3MDg4OSAxMS45NDA2MTA3LDAuNzAwMzM4MjM2IEMxNC4wNDY3ODY5LDEuMjM2OTM2ODggMTUuOTQyNzUzNiwyLjQ5MDU0MjMxIDE3LjYyODUxMDksNC4wNDI1MTUxMSBDMTguNDE4MzI3LDQuNzU5NTIxOTEgMTkuMTU1MDgwNSw1LjUzNDM1MTgzIDE5Ljc4Nzc0OTYsNi40Mjk0NTM4NyBDMTkuODkzODc0OSw2LjU0OTcyNjAxIDE5Ljk5Nzk1OTEsNi43Mjc4MjEyMyAxOS45OTc5NTkxLDYuOTA1OTE2NDUgQzIwLDcuMDI2MTg4NTkgMjAsNy4wMjYxODg1OSAyMCw3LjA4NjMyNDYyIEMyMCw3LjE0NjQ2MDcxIDIwLDcuMTQ2NDYwNzEgMjAsNy4xNDY0NjA3MSBaIE05Ljk5MTk0NjA3LDIuMjkyOTUyNDIgQzcuNDk4OTQzMTQsMi4yOTI5NTI0MiA1LjQ1MjAwNDM4LDQuMzM5ODkxMiA1LjQ1MjAwNDM4LDYuODMyODk0MTMgQzUuNDUyMDA0MzgsOS4zMjU4OTcgNy40OTg5NDMxNCwxMS4zNzI4MzU5IDkuOTkxOTQ2MDcsMTEuMzcyODM1OSBDMTIuNDg0OTQ5LDExLjM3MjgzNTkgMTQuNTMxODg3Nyw5LjMyNTg5NyAxNC41MzE4ODc3LDYuODMyODk0MTMgQzE0LjUzMTg4NzcsNC4zMzk4OTEyIDEyLjQ4NDk0OSwyLjI5Mjk1MjQyIDkuOTkxOTQ2MDcsMi4yOTI5NTI0MiBaIE05Ljk5MTk0NjA3LDkuMTM3NTU4NzkgQzguNzEzMjI4ODYsOS4xMzc1NTg3OSA3LjY4OTc1OTQzLDguMTE0MDg5NDMgNy42ODk3NTk0Myw2LjgzNTM3MjI0IEM3LjY4OTc1OTQzLDUuNTU2NjU1MDcgOC43MTMyMjg4Niw0LjUzMzE4NTY2IDkuOTkxOTQ2MDcsNC41MzMxODU2NiBDMTEuMjcwNjYzMyw0LjUzMzE4NTY2IDEyLjI5NDEzMjYsNS41NTY2NTUwNyAxMi4yOTQxMzI2LDYuODM1MzcyMjQgQzEyLjI5NDEzMjYsOC4xMTQwODk0MyAxMS4yNzA2NjMzLDkuMTM3NTU4NzkgOS45OTE5NDYwNyw5LjEzNzU1ODc5IFoiIGlkPSJTaGFwZSI+PC9wYXRoPiAgICAgICAgPC9nPiAgICA8L2c+PC9zdmc+");   width: 20px;   height: 14px;   display: inline-block;   cursor: pointer;   vertical-align: top; } .auth0-lock-input-show-password .auth0-lock-show-password input[type=checkbox]:checked + label {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIyMHB4IiBoZWlnaHQ9IjE0cHgiIHZpZXdCb3g9IjAgMCAyMCAxNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT5zaG93X3Bhc3N3b3JkX2FjdGl2ZTwvdGl0bGU+ICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPiAgICA8ZGVmcz48L2RlZnM+ICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9InNob3dfcGFzc3dvcmRfYWN0aXZlIiBmaWxsLXJ1bGU9Im5vbnplcm8iIGZpbGw9IiMyMEI0RkYiPiAgICAgICAgICAgIDxwYXRoIGQ9Ik0yMCw3LjE0NjQ2MDcxIEMyMCw3LjMyNDU1NTkzIDE5Ljg5Mzg3NDksNy41MDQ5NjQwNyAxOS43ODk3OTA2LDcuNjIyOTIzMjkgQzE5LjU3OTU4MTEsNy45MjEyOTA2NCAxOS4zNjkzNzE2LDguMTU5NTIxOTMgMTkuMTA2MDk5Niw4LjQ1Nzg4OTIxIEMxNy44NDI4MDIxLDkuODg5NTg5OTMgMTYuNDIwMzE2OSwxMS4xNDMxOTU0IDE0Ljg0MDY4NDcsMTIuMDk4NDMzNSBDMTMuODQwNjU5MiwxMi42OTUxNjgxIDEyLjc4NzU3MTEsMTMuMTczOTQzNyAxMS42ODE0MjA0LDEzLjQxMjE3NSBDMTAuNDY5MTQ0NiwxMy42NTA0MDYzIDkuMjU4OTA5NjQsMTMuNjUwNDA2MyA4LjA0NjYzMzg2LDEzLjM1MjAzODkgQzUuOTM4NDE2ODEsMTIuODE1NDQwMyA0LjA0MjQ1MDA0LDExLjU2MTgzNDkgMi4zNTY2OTI3NywxMC4wMDk4NjIxIEMxLjU2Njg3NjcxLDkuMjkyODU1MjkgMC44MzAxMjMyMTQsOC41MTgwMjUyOSAwLjE5NzQ1NDAxNiw3LjYyMjkyMzI5IEMtMC4wNjU4MTgwMDUzLDcuMjY0NDE5ODYgLTAuMDY1ODE4MDA1Myw2Ljc4Nzk1NzMgMC4xOTc0NTQwMTYsNi40Mjk0NTM4NyBDMC40MDc2NjM0NTksNi4xMzEwODY1NSAwLjYxNzg3MjkwNiw1Ljg5Mjg1NTI2IDAuODgxMTQ0OTI5LDUuNTk0NDg3OSBDMi4xNDQ0NDI0Niw0LjE2Mjc4NzIxIDMuNTY2OTI3NzMsMi45MDkxODE3NyA1LjE0NjU1OTg1LDEuOTUzOTQzNjggQzYuMTQ2NTg1MzYsMS4zNTcyMDg5OSA3LjE5OTY3MzQzLDAuODc4NDMzNDcxIDguMzA1ODI0MTQsMC42NDAyMDIxODEgQzkuNTE4MSwwLjQwMTk3MDg4OSAxMC43MjgzMzQ5LDAuNDAxOTcwODg5IDExLjk0MDYxMDcsMC43MDAzMzgyMzYgQzE0LjA0Njc4NjksMS4yMzY5MzY4OCAxNS45NDI3NTM2LDIuNDkwNTQyMzEgMTcuNjI4NTEwOSw0LjA0MjUxNTExIEMxOC40MTgzMjcsNC43NTk1MjE5MSAxOS4xNTUwODA1LDUuNTM0MzUxODMgMTkuNzg3NzQ5Niw2LjQyOTQ1Mzg3IEMxOS44OTM4NzQ5LDYuNTQ5NzI2MDEgMTkuOTk3OTU5MSw2LjcyNzgyMTIzIDE5Ljk5Nzk1OTEsNi45MDU5MTY0NSBDMjAsNy4wMjYxODg1OSAyMCw3LjAyNjE4ODU5IDIwLDcuMDg2MzI0NjIgQzIwLDcuMTQ2NDYwNzEgMjAsNy4xNDY0NjA3MSAyMCw3LjE0NjQ2MDcxIFogTTkuOTkxOTQ2MDcsMi4yOTI5NTI0MiBDNy40OTg5NDMxNCwyLjI5Mjk1MjQyIDUuNDUyMDA0MzgsNC4zMzk4OTEyIDUuNDUyMDA0MzgsNi44MzI4OTQxMyBDNS40NTIwMDQzOCw5LjMyNTg5NyA3LjQ5ODk0MzE0LDExLjM3MjgzNTkgOS45OTE5NDYwNywxMS4zNzI4MzU5IEMxMi40ODQ5NDksMTEuMzcyODM1OSAxNC41MzE4ODc3LDkuMzI1ODk3IDE0LjUzMTg4NzcsNi44MzI4OTQxMyBDMTQuNTMxODg3Nyw0LjMzOTg5MTIgMTIuNDg0OTQ5LDIuMjkyOTUyNDIgOS45OTE5NDYwNywyLjI5Mjk1MjQyIFogTTkuOTkxOTQ2MDcsOS4xMzc1NTg3OSBDOC43MTMyMjg4Niw5LjEzNzU1ODc5IDcuNjg5NzU5NDMsOC4xMTQwODk0MyA3LjY4OTc1OTQzLDYuODM1MzcyMjQgQzcuNjg5NzU5NDMsNS41NTY2NTUwNyA4LjcxMzIyODg2LDQuNTMzMTg1NjYgOS45OTE5NDYwNyw0LjUzMzE4NTY2IEMxMS4yNzA2NjMzLDQuNTMzMTg1NjYgMTIuMjk0MTMyNiw1LjU1NjY1NTA3IDEyLjI5NDEzMjYsNi44MzUzNzIyNCBDMTIuMjk0MTMyNiw4LjExNDA4OTQzIDExLjI3MDY2MzMsOS4xMzc1NTg3OSA5Ljk5MTk0NjA3LDkuMTM3NTU4NzkgWiIgaWQ9IlNoYXBlIj48L3BhdGg+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4="); } input[type="button"] {   cursor: pointer; } ';
+var css = '/* normalize.css v3.0.2 | MIT License | git.io/normalize */ .auth0-lock html {   font-family: sans-serif; /* 1 */   -ms-text-size-adjust: 100%; /* 2 */   -webkit-text-size-adjust: 100%; /* 2 */ } .auth0-lock body {   margin: 0; } .auth0-lock article, .auth0-lock aside, .auth0-lock details, .auth0-lock figcaption, .auth0-lock figure, .auth0-lock footer, .auth0-lock header, .auth0-lock hgroup, .auth0-lock main, .auth0-lock menu, .auth0-lock nav, .auth0-lock section, .auth0-lock summary {   display: block; } .auth0-lock audio, .auth0-lock canvas, .auth0-lock progress, .auth0-lock video {   display: inline-block; /* 1 */   vertical-align: baseline; /* 2 */ } .auth0-lock audio:not([controls]) {   display: none;   height: 0; } .auth0-lock [hidden], .auth0-lock template {   display: none; } .auth0-lock a {   background-color: transparent; } .auth0-lock a:active, .auth0-lock a:hover {   outline: 0; } .auth0-lock abbr[title] {   border-bottom: 1px dotted; } .auth0-lock b, .auth0-lock strong {   font-weight: bold; } .auth0-lock dfn {   font-style: italic; } .auth0-lock h1 {   font-size: 2em;   margin: 0.67em 0; } .auth0-lock mark {   background: #ff0;   color: #000; } .auth0-lock small {   font-size: 80%; } .auth0-lock sub, .auth0-lock sup {   font-size: 75%;   line-height: 0;   position: relative;   vertical-align: baseline; } .auth0-lock sup {   top: -0.5em; } .auth0-lock sub {   bottom: -0.25em; } .auth0-lock img {   border: 0; } .auth0-lock svg:not(:root) {   overflow: hidden; } .auth0-lock figure {   margin: 1em 40px; } .auth0-lock hr {   box-sizing: content-box;   height: 0; } .auth0-lock pre {   overflow: auto; } .auth0-lock code, .auth0-lock kbd, .auth0-lock pre, .auth0-lock samp {   font-family: monospace, monospace;   font-size: 1em; } .auth0-lock button, .auth0-lock input, .auth0-lock optgroup, .auth0-lock select, .auth0-lock textarea {   color: inherit; /* 1 */   font: inherit; /* 2 */   margin: 0; /* 3 */ } .auth0-lock button {   overflow: visible; } .auth0-lock button, .auth0-lock select {   text-transform: none; } .auth0-lock button, .auth0-lock html input[type="button"], .auth0-lock input[type="reset"], .auth0-lock input[type="submit"] {   -webkit-appearance: button; /* 2 */   cursor: pointer; /* 3 */ } .auth0-lock button[disabled], .auth0-lock html input[disabled] {   cursor: default; } .auth0-lock button::-moz-focus-inner, .auth0-lock input::-moz-focus-inner {   border: 0;   padding: 0; } .auth0-lock input {   line-height: normal; } .auth0-lock input[type="checkbox"], .auth0-lock input[type="radio"] {   box-sizing: border-box; /* 1 */   padding: 0; /* 2 */ } .auth0-lock input[type="number"]::-webkit-inner-spin-button, .auth0-lock input[type="number"]::-webkit-outer-spin-button {   height: auto; } .auth0-lock input[type="search"] {   -webkit-appearance: textfield; /* 1 */ /* 2 */   box-sizing: content-box; } .auth0-lock input[type="search"]::-webkit-search-cancel-button, .auth0-lock input[type="search"]::-webkit-search-decoration {   -webkit-appearance: none; } .auth0-lock fieldset {   border: 1px solid #c0c0c0;   margin: 0 2px;   padding: 0.35em 0.625em 0.75em; } .auth0-lock legend {   border: 0; /* 1 */   padding: 0; /* 2 */ } .auth0-lock textarea {   overflow: auto; } .auth0-lock optgroup {   font-weight: bold; } .auth0-lock table {   border-collapse: collapse;   border-spacing: 0; } .auth0-lock td, .auth0-lock th {   padding: 0; } .auth0-lock-social-button-icon {   background-repeat: no-repeat;   background-size: 50%;   background-position: center center; } .auth0-lock-social-button[data-provider="amazon"] {   background-color: #f90; } .auth0-lock-social-button[data-provider="aol"] {   background-color: #ff0b00; } .auth0-lock-social-button[data-provider="baidu"] {   background-color: #2529d8; } .auth0-lock-social-button[data-provider="bitbucket"] {   background-color: #205081; } .auth0-lock-social-button[data-provider="dropbox"] {   background-color: #007ee5; } .auth0-lock-social-button[data-provider="ebay"] {   background-color: #0064d2; } .auth0-lock-social-button[data-provider="facebook"] {   background-color: #3b5998; } .auth0-lock-social-button[data-provider^="google"] {   background-color: #4285f4; } .auth0-lock-social-button[data-provider="instagram"] {   background-color: #3f729b; } .auth0-lock-social-button[data-provider="linkedin"] {   background-color: #0077b5; } .auth0-lock-social-button[data-provider="github"] {   background-color: #333; } .auth0-lock-social-button[data-provider="oauth2"] {   background-color: #eb5424; } .auth0-lock-social-button[data-provider="paypal"] {   background-color: #009cde; } .auth0-lock-social-button[data-provider="paypal-sandbox"] {   background-color: #009cde; } .auth0-lock-social-button[data-provider^="salesforce"] {   background-color: #1798c1; } .auth0-lock-social-button[data-provider="shopify"] {   background-color: #96bf48; } .auth0-lock-social-button[data-provider="soundcloud"] {   background-color: #f80; } .auth0-lock-social-button[data-provider="renren"] {   background-color: #0056b5; } .auth0-lock-social-button[data-provider="exact"] {   background-color: #ed1c24; } .auth0-lock-social-button[data-provider="twitter"] {   background-color: #55acee; } .auth0-lock-social-button[data-provider=""] {   background-color: #c7eaff; } .auth0-lock-social-button[data-provider="yandex"] {   background-color: #fc0; } .auth0-lock-social-button[data-provider^="thecity"] {   background-color: #767571; } .auth0-lock-social-button[data-provider="planningcenter"] {   background-color: #4e4e4e; } .auth0-lock-social-button[data-provider="thirtysevensignals"] {   background-color: #6ac071; } .auth0-lock-social-button[data-provider="fitbit"] {   background-color: #4cc2c4; } .auth0-lock-social-button[data-provider="wordpress"] {   background-color: #21759b; } .auth0-lock-social-button[data-provider="yahoo"] {   background-color: #410093; } .auth0-lock-social-button[data-provider="box"] {   background-color: #267bb6; } .auth0-lock-social-button[data-provider="vkontakte"] {   background-color: #45668e; } .auth0-lock-social-button[data-provider="dwolla"] {   background-color: #f5891f; } .auth0-lock-social-button[data-provider="miicard"] {   background-color: #3fb7ff; } .auth0-lock-social-button[data-provider="yammer"] {   background-color: #0072c6; } .auth0-lock-social-button[data-provider="weibo"] {   background-color: #dd4b39; } .auth0-lock-social-button[data-provider^="evernote"] {   background-color: #2dbe60; } .auth0-lock-social-button[data-provider^="windows"], .auth0-lock-social-button[data-provider^="microsoft"] {   background-color: #00a1f1; } .auth0-lock-social-button[data-provider^=amazon] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjcycHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDcyIDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+YW1hem9uPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImFtYXpvbiIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0xLjA2Myw1MC4zMTMgQzEsNTAuNDM4IDAuOTM4LDUwLjU2MyAwLjkzOCw1MC42ODggQzAuOTM4LDUwLjg3NiAxLjA2Myw1MS4xMjYgMS4zMTMsNTEuMzEzIEM2LjAwMSw1NS41NjMgMTEuMzEzLDU4LjgxMyAxNy4yNTEsNjEuMTI2IEMyMy4xODksNjMuNDM5IDI5LjUwMSw2NC42MjYgMzYuMTI2LDY0LjYyNiBDNDAuNDM5LDY0LjYyNiA0NC44NzYsNjQuMDAxIDQ5LjM3Niw2Mi44MTMgQzUzLjkzOSw2MS42MjUgNTguMDAxLDU5LjkzOCA2MS42ODksNTcuNzUgQzYyLjg3Nyw1Ny4wNjIgNjMuODc3LDU2LjQzNyA2NC42MjcsNTUuODc1IEM2NS4xOSw1NS40MzcgNjUuMzE1LDU0LjkzNyA2NC45NCw1NC40MzcgQzY0LjYyNyw1My45MzcgNjQuMTI3LDUzLjgxMiA2My40NCw1NC4wNjIgQzYzLjMxNSw1NC4xMjUgNjMuMDAyLDU0LjI1IDYyLjYyNyw1NC40MzcgQzYyLjE4OSw1NC42MjUgNjEuODc3LDU0Ljc1IDYxLjY4OSw1NC44MTIgQzUzLjUwMSw1Ny45MzcgNDUuMjUxLDU5LjUgMzYuODc2LDU5LjUgQzI0LjM3Niw1OS41IDEyLjc1MSw1Ni40MzcgMi4wNjMsNTAuMjUgQzEuNjI1LDQ5LjkzNyAxLjI1LDQ5LjkzNyAxLjA2Myw1MC4zMTMgTDEuMDYzLDUwLjMxMyBaIE0yMC4zMTMsMzIuMDYzIEMyMC4zMTMsMzUuNzUxIDIxLjM3NiwzOC42MjYgMjMuNTAxLDQwLjYyNiBDMjUuNjI2LDQyLjY4OSAyOC4zMTQsNDMuNjg5IDMxLjU2NCw0My42ODkgQzMzLjc1Miw0My42ODkgMzUuNTAyLDQzLjUwMSAzNi45MzksNDMuMDY0IEMzOS4yNTIsNDIuNDM5IDQxLjYyNyw0MC44MTQgNDQuMDAyLDM4LjE4OSBDNDQuMTksMzguMzc3IDQ0LjUwMiwzOC44MTQgNDQuODc3LDM5LjQzOSBDNDUuMzE1LDQwLjA2NCA0NS42MjcsNDAuNTAyIDQ1LjgxNSw0MC42ODkgTDQ2LjgxNSw0MS42ODkgQzQ3LjI1Myw0Mi4xODkgNDcuNzUzLDQyLjY4OSA0OC4zNzgsNDMuMTg5IEM0OS4wNjYsNDMuNTAyIDQ5LjY5MSw0My40MzkgNTAuMTkxLDQzLjA2NCBDNTAuNTA0LDQyLjgxNCA1Mi40NDEsNDEuMTI2IDU2LjAwNCwzOC4wNjQgQzU2LjMxNywzNy44MTQgNTYuNTA0LDM3LjUwMSA1Ni41MDQsMzcuMTg5IEM1Ni41MDQsMzYuODc3IDU2LjM3OSwzNi41MDEgNTYuMTI5LDM2LjEyNiBDNTUuNDQxLDM1LjI1MSA1NC45NDEsMzQuNjI2IDU0LjYyOSwzNC4xODggQzU0LjMxNiwzMy44MTMgNTQuMDA0LDMzLjEyNSA1My42OTEsMzIuMTg4IEM1My4zNzgsMzEuMzEzIDUzLjI1MywzMC4yNSA1My4yNTMsMjkuMTg4IEw1My4yNTMsMTMuNjg4IEM1My4yNTMsMTMuNSA1My4xOSwxMi45MzggNTMuMTksMTIuMDYzIEM1My4xMjcsMTEuMTI1IDUzLjA2NSwxMC41IDUyLjk0LDEwLjI1IEw1Mi41NjUsOC43NSBDNTIuNDQsOCA1Mi4yNTIsNy40MzcgNTIuMDAyLDcuMDYyIEM1MS44MTQsNi42ODcgNTEuNTAyLDYuMjQ5IDUxLjEyNyw1Ljc0OSBDNTAuODE0LDUuMzExIDUwLjM3Nyw0LjgxMSA0OS45MzksNC4zNzQgQzQ3LjI1MSwxLjg3NCA0My40MzksMC42MjQgMzguNTY0LDAuNjI0IEwzNi45MzksMC42MjQgQzMzLjE4OSwwLjgxMiAyOS44NzYsMS44NzQgMjcuMDAxLDMuNjg3IEMyNC4xODgsNS41IDIyLjM3Niw4LjMxMiAyMS42ODgsMTIuMTI1IEMyMS42MjUsMTIuMzEzIDIxLjYyNSwxMi40MzggMjEuNjI1LDEyLjU2MyBDMjEuNjI1LDEzLjE4OCAyMiwxMy41NjMgMjIuNjg4LDEzLjc1MSBMMzAuMDYzLDE0LjYyNiBDMzAuNzUxLDE0LjUwMSAzMS4xODgsMTQuMDAxIDMxLjMxMywxMy4xODggQzMxLjYyNiwxMS44MTMgMzIuMzEzLDEwLjc1IDMzLjMxMyw5LjkzOCBDMzQuMzc2LDkuMTg4IDM1LjU2Myw4Ljc1IDM2LjkzOCw4LjYyNSBMMzcuNTAxLDguNjI1IEMzOS4zNzYsOC42MjUgNDAuODE0LDkuMjUgNDEuNjg5LDEwLjU2MyBDNDIuMzE0LDExLjUwMSA0Mi42MjcsMTMuMzEzIDQyLjYyNywxNi4wNjMgTDQyLjYyNywxNy4xMjYgQzQwLjAwMiwxNy4zNzYgMzguMTI3LDE3LjUwMSAzNi45MzksMTcuNjI2IEMzMy42MjYsMTguMDY0IDMwLjc1MSwxOC43NTEgMjguNDM5LDE5Ljc1MSBDMjUuOTM5LDIwLjgxNCAyMy45MzksMjIuMzc2IDIyLjUwMSwyNC41MDEgQzIxLjA2MywyNi41NjQgMjAuMzEzLDI5LjEyNiAyMC4zMTMsMzIuMDY0IEwyMC4zMTMsMzIuMDYzIFogTTMxLjMxMywzMC43NSBDMzEuMzEzLDI3LjEyNSAzMy4xODgsMjQuNzUgMzYuOTM4LDIzLjY4NyBDMzguMjUxLDIzLjMxMiA0MC4xMjYsMjMuMTI0IDQyLjYyNiwyMy4xMjQgTDQyLjYyNiwyNC43NDkgQzQyLjYyNiwyNi4xMjQgNDIuNTYzLDI3LjEyNCA0Mi41NjMsMjcuNjg3IEM0Mi41NjMsMjguMzEyIDQyLjQzOCwyOS4wNjIgNDIuMTg4LDMwIEM0MS45MzgsMzEgNDEuNjI1LDMxLjg3NSA0MS4xMjUsMzIuNjg4IEM0MC4xMjUsMzQuNTAxIDM4Ljc1LDM1LjY4OCAzNi45MzcsMzYuMTI2IEMzNi44NzQsMzYuMTI2IDM2Ljc0OSwzNi4xODkgMzYuNDk5LDM2LjE4OSBDMzYuMjQ5LDM2LjI1MiAzNi4wNjEsMzYuMjUyIDM1LjkzNiwzNi4yNTIgQzM0LjU2MSwzNi4yNTIgMzMuNDM2LDM1Ljc1MiAzMi41NjEsMzQuNzUyIEMzMS43NDgsMzMuNzUyIDMxLjMxMSwzMi40MzkgMzEuMzExLDMwLjc1MiBMMzEuMzEzLDMwLjc1IFogTTU4LjE4OCw1MS4zNzUgQzU4LjE4OCw1MS40MzggNTguMTI1LDUxLjUgNTguMTI1LDUxLjU2MyBDNTguMTI1LDUxLjYyNiA1OC4xMjUsNTEuNzUxIDU4LjE4OCw1MS44MTMgQzU4LjMxMyw1MS44NzYgNTguNTAxLDUxLjkzOCA1OC43NTEsNTEuOTM4IEM1OS42MjYsNTEuODEzIDYwLjYyNiw1MS42ODggNjEuNjg5LDUxLjU2MyBDNjIuNjI3LDUxLjUgNjMuNTAyLDUxLjQzOCA2NC4yNTIsNTEuNDM4IEM2Ni4xOSw1MS40MzggNjcuMzc3LDUxLjY4OCA2Ny44MTUsNTIuMTg4IEM2OC4wMDMsNTIuNDM4IDY4LjA2NSw1Mi43NTEgNjguMDY1LDUzLjI1MSBDNjguMDY1LDU0LjY4OSA2Ny4zMTUsNTcuMjUxIDY1LjY5LDYxLjAwMSBDNjUuNTY1LDYxLjMxNCA2NS42MjcsNjEuNTY0IDY1Ljg3OCw2MS42ODkgQzY2LjAwMyw2MS43NTIgNjYuMDY2LDYxLjc1MiA2Ni4xMjgsNjEuNzUyIEM2Ni4zMTYsNjEuNzUyIDY2LjUwMyw2MS42MjcgNjYuNzUzLDYxLjUwMiBDNjguMTkxLDYwLjI1MiA2OS4zMTYsNTguNjI3IDcwLjEyOCw1Ni41NjQgQzcwLjk0MSw1NC41NjQgNzEuMzE2LDUyLjgxNCA3MS4zMTYsNTEuMzE0IEw3MS4zMTYsNTAuODc2IEM3MS4zMTYsNTAuMzc2IDcxLjI1Myw0OS45MzggNzEuMDY2LDQ5LjY4OCBDNzAuNjkxLDQ5LjI1IDY5LjU2Niw0OC45MzggNjcuNjI4LDQ4Ljc1IEM2Ny4yNTMsNDguNjg3IDY2LjgxNSw0OC42MjUgNjYuNDQsNDguNjg3IEM2NC44NzcsNDguNzUgNjMuMzE1LDQ4LjkzNyA2MS42OSw0OS4zNzUgQzYwLjY5LDQ5LjYyNSA1OS42OSw1MC4xMjUgNTguNjI3LDUwLjg3NSBDNTguNDM5LDUxIDU4LjMxNCw1MS4xODggNTguMTg5LDUxLjM3NSBMNTguMTg4LDUxLjM3NSBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=aol] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjkxcHgiIGhlaWdodD0iMzZweCIgdmlld0JveD0iMCAwIDkxIDM2IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+YW9sPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImFvbCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik00OS45MzgsNy43NSBDNTguMDAxLDcuNzUgNjQuMDYzLDE0IDY0LjA2MywyMS43NSBDNjQuMDYzLDI5Ljg3NSA1Ny43NSwzNS42ODggNDkuOTM4LDM1LjY4OCBDNDIuMTg4LDM1LjY4OCAzNS44NzUsMjkuODc1IDM1Ljg3NSwyMS43NSBDMzUuODc1LDE0IDQxLjkzOCw3Ljc1IDQ5LjkzOCw3Ljc1IEw0OS45MzgsNy43NSBaIE00OS45MzgsMTUuMTg4IEM0Ni41LDE1LjE4OCA0My42MjUsMTguMDYzIDQzLjYyNSwyMS43NTEgQzQzLjYyNSwyNS4zNzYgNDYuNSwyOC4zMTQgNDkuOTM4LDI4LjMxNCBDNTMuNDM4LDI4LjMxNCA1Ni4yNTEsMjUuMzc2IDU2LjI1MSwyMS43NTEgQzU2LjI1MSwxOC4wNjMgNTMuNDM4LDE1LjEyNiA0OS45MzgsMTUuMTg4IEw0OS45MzgsMTUuMTg4IFogTTkwLjEyNSwzMC44MTMgQzkwLjEyNSwyOC4xMjUgODcuOTM3LDI1LjkzOCA4NS4yNSwyNS45MzggQzgyLjU2MywyNS45MzggODAuMzc1LDI4LjEyNiA4MC4zNzUsMzAuODEzIEM4MC4zNzUsMzMuNSA4Mi41NjMsMzUuNjg4IDg1LjI1LDM1LjY4OCBDODcuOTM3LDM1LjY4OCA5MC4xMjUsMzMuNSA5MC4xMjUsMzAuODEzIEw5MC4xMjUsMzAuODEzIFogTTc1LjkzOCwzNC44MTMgTDc1LjkzOCwwLjEyNSBMNjguMjUsMC4xMjUgTDY4LjI1LDM0LjgxMyBMNzUuOTM4LDM0LjgxMyBMNzUuOTM4LDM0LjgxMyBaIE0wLjY4OCwzNC44MTMgTDEwLjUwMSwzNC44MTMgTDEyLjEyNiwyOS44NzUgTDI0LjI1MSwyOS44NzUgTDI1Ljg3NiwzNC44MTMgTDM1LjYyNiwzNC44MTMgTDIxLjg3NiwwLjEyNSBMMTQuNjg4LDAuMTI1IEwwLjY4OCwzNC44MTMgWiBNMjEuODc1LDIyLjY4OCBMMTguMzEyLDExLjA2MyBMMTQuNjg3LDIyLjY4OCBMMjEuODc1LDIyLjY4OCBMMjEuODc1LDIyLjY4OCBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=baidu] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjU5cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDU5IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+YmFpZHU8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0iYmFpZHUiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMC4xMjUsMjQgQzAuMDYyLDI0LjQzOCAwLDI0Ljg3NSAwLDI1LjMxMyBDMCwyNS45MzggMC4wNjMsMjYuNjI2IDAuMjUsMjcuMzc2IEMwLjUsMjguNjI2IDAuOTM4LDI5Ljg3NiAxLjYyNSwzMS4wNjQgQzIuMjUsMzIuMjUyIDMuMTg4LDMzLjE4OSA0LjUsMzMuODE0IEM1LjMxMywzNC4yNTIgNi4yNSwzNC41MDIgNy4yNSwzNC41MDIgQzcuODEzLDM0LjUwMiA4LjMxMywzNC40MzkgOC44NzUsMzQuMzE0IEMxMC41LDMzLjkzOSAxMS43NSwzMy4yNTEgMTIuNjg4LDMyLjE4OSBDMTMuNjg4LDMxLjE4OSAxNC4yNTEsMjkuOTM5IDE0LjUwMSwyOC41MDEgQzE0Ljc1MSwyNy4xMjYgMTQuODc2LDI2LjAwMSAxNC44NzYsMjUuMTI2IEwxNC44NzYsMjQuNzUxIEMxNC44NzYsMjQuMDAxIDE0LjgxMywyMy4zMTMgMTQuNjI2LDIyLjYyNiBDMTQuNTAxLDIxLjAwMSAxMy42MjYsMTkuMzc2IDEyLjA2MywxNy42MjYgQzEwLjU2MywxNi4xMjYgOC45MzgsMTUuMzEzIDcuMTI1LDE1LjMxMyBMNi41NjIsMTUuMzEzIEw1Ljk5OSwxNS40MzggQzUuNjI0LDE1LjUwMSA1LjEyNCwxNS42ODggNC41NjEsMTYuMDYzIEMzLjkzNiwxNi4zNzYgMy4zNzMsMTYuODEzIDIuNzQ4LDE3LjM3NiBDMi4xMjMsMTcuOTM5IDEuNjIzLDE4LjgxNCAxLjEyMywxOS45MzkgQzAuNjIzLDIxLjEyNyAwLjMxLDIyLjQzOSAwLjEyMywyNC4wMDIgTDAuMTI1LDI0IFogTTQuMjUsNTUuMTI1IEw0LjkzOCw1Ny4zMTMgQzUuMzc2LDU4Ljc1MSA2LjM3Niw2MC4yNTEgNy44NzYsNjEuNjg4IEM5LjMxNCw2My4wNjMgMTEuMDAxLDYzLjgxMyAxMy4wMDEsNjMuODEzIEwxMy4xODksNjMuODEzIEMxMy44NzcsNjMuOTM4IDE0LjYyNyw2NC4wMDEgMTUuNTAyLDYzLjkzOCBDMTYuMzE1LDYzLjkzOCAxNy4yNTIsNjMuODc1IDE4LjMxNSw2My44MTMgQzIwLjM3OCw2My41NjMgMjEuNzUzLDYzLjM3NSAyMi41MDMsNjMuMjUgQzIzLjI1Myw2My4xMjUgMjMuODE2LDYzLjA2MiAyNC4yNTMsNjIuOTM3IEwyNS44NzgsNjIuNjg3IEMyNi44MTYsNjIuNDk5IDI3Ljk0MSw2Mi40MzcgMjkuMzc4LDYyLjQzNyBMMzAuMjUzLDYyLjQzNyBDMzIuMTI4LDYyLjUgMzMuODE2LDYyLjc1IDM1LjMxNiw2My4yNSBDMzcuOTQxLDY0LjEyNSA0MC4zMTYsNjQuNTYzIDQyLjUwNCw2NC41NjMgQzQ0LjY5Miw2NC41NjMgNDYuMzc5LDY0LjMxMyA0Ny41NjcsNjMuODEzIEM0OC43NTUsNjMuMzEzIDQ5LjgxNyw2Mi42ODggNTAuNzU1LDYxLjgxMyBDNTEuNjkzLDYwLjkzOCA1Mi4yNTUsNjAuMzEzIDUyLjUwNSw1OS45MzggQzUyLjc1NSw1OS41NjMgNTIuOTQzLDU5LjI1IDUzLjAwNSw1OSBMNTMuMzgsNTggQzUzLjU2OCw1Ny4zNzUgNTMuODE4LDU2LjU2MiA1My45NDMsNTUuNSBDNTQuMTMxLDU0LjQzNyA1NC4xOTMsNTMuMzc1IDU0LjE5Myw1Mi4xODcgQzU0LjE5Myw1MC45OTkgNTMuOTQzLDQ5LjgxMiA1My4zOCw0OC40OTkgQzUyLjc1NSw0Ny4yNDkgNTEuOTQyLDQ2LjE4NiA1MC44MTcsNDUuMzc0IEM0OC41MDQsNDMuNDk5IDQ2LjE5Miw0MS40OTkgNDQuMDY3LDM5LjI0OSBDNDEuODc5LDM2Ljk5OSA0MC40NDIsMzUuNDM2IDM5Ljc1NCwzNC42MjQgQzM5LjEyOSwzMy44MTEgMzguNjI5LDMzLjEyNCAzOC4yNTQsMzIuNjI0IEMzNi43NTQsMzAuMzExIDM1LjA2NiwyOC42ODYgMzMuMTkxLDI3LjY4NiBDMzEuNzUzLDI2LjkzNiAzMC4zMTYsMjYuNTYxIDI5LjAwMywyNi41NjEgQzI4LjYyOCwyNi41NjEgMjguMzE1LDI2LjU2MSAyNy44NzgsMjYuNjI0IEMyNi4yNTMsMjYuODc0IDI0LjY5LDI3LjQzNyAyMy4zMTUsMjguMzc0IEMyMS45NCwyOS4zMTEgMjAuODc3LDMwLjQzNyAyMC4xMjcsMzEuODEyIEMxOS4yNTIsMzMuMzEyIDE4LjE4OSwzNC42ODcgMTYuOTM5LDM2IEMxNS43NTEsMzcuMzEzIDE0LjU2NCwzOC40MzggMTMuNTY0LDM5LjMxMyBDMTIuNTAxLDQwLjE4OCAxMS45MzksNDAuNjg4IDExLjgxNCw0MC43NTEgTDEwLjE4OSw0Mi4wNjQgQzkuMDY0LDQzLjAwMiA4LjA2NCw0My45MzkgNy4wNjQsNDUuMDAyIEM2LjEyNiw0Ni4wMDIgNS4zMTQsNDcuNDQgNC42MjYsNDkuMzE1IEM0LjE4OCw1MC41MDMgMy45MzgsNTEuNjI4IDMuOTM4LDUyLjg3OCBDMy45MzgsNTMuNjI4IDQuMDYzLDU0LjM3OCA0LjI1MSw1NS4xMjggTDQuMjUsNTUuMTI1IFogTTEzLjMxMyw0OC41IEwxMy44MTMsNDcuMTg3IEMxNC4xMjYsNDYuMzEyIDE0Ljc1MSw0NS40MzcgMTUuNzUxLDQ0LjU2MiBDMTYuNzUxLDQzLjY4NyAxNy44NzYsNDMuMjQ5IDE5LjEyNiw0My4yNDkgTDIzLjUwMSw0My4yNDkgTDIzLjUwMSwzNy45MzYgTDI3LjEyNiwzNy45OTkgTDI3LjEyNiw1Ny42MjQgTDE5LjAwMSw1Ny42MjQgQzE2LjU2Myw1Ny4xMjQgMTQuODc2LDU1LjkzNiAxMy45MzgsNTQuMTI0IEMxMy40MzgsNTIuODc0IDEzLjE4OCw1MS41NjEgMTMuMTg4LDUwLjI0OSBDMTMuMTg4LDQ5LjY4NiAxMy4yNTEsNDkuMDYxIDEzLjMxMyw0OC40OTkgTDEzLjMxMyw0OC41IFogTTE0Ljg3NSwxMC41IEMxNC44NzUsMTMuMTg4IDE1LjUsMTUuNTYzIDE2Ljg3NSwxNy40MzggQzE4LjE4OCwxOS4zNzYgMTkuODEzLDIwLjMxMyAyMS43NSwyMC4zMTMgQzIzLjY4NywyMC4zMTMgMjUuMzEzLDE5LjM3NSAyNi42MjUsMTcuNDM4IEMyOCwxNS41NjMgMjguNjg4LDEzLjE4OCAyOC42ODgsMTAuNSBDMjguNjg4LDcuNzUgMjgsNS40MzcgMjYuNjI1LDMuNSBDMjUuMzEyLDEuNTYyIDIzLjY4NywwLjYyNSAyMS43NSwwLjYyNSBDMTkuODEzLDAuNjI1IDE4LjE4NywxLjU2MyAxNi44NzUsMy41IEMxNS41LDUuNDM4IDE0Ljg3NSw3Ljc1IDE0Ljg3NSwxMC41IEwxNC44NzUsMTAuNSBaIE0xNy4xMjUsNTEuNjI1IEwxNy40MzgsNTIuMzEzIEMxNy41NjMsNTIuODEzIDE3LjkzOCw1My4yNTEgMTguMzc2LDUzLjY4OCBDMTguODc2LDU0LjE4OCAxOS41MDEsNTQuMzc2IDIwLjE4OSw1NC4zNzYgTDIzLjQzOSw1NC4zNzYgTDIzLjQzOSw0Ni4zNzYgTDE5Ljg3Niw0Ni4zNzYgQzE4LjY4OCw0Ni43NTEgMTcuODEzLDQ3LjUwMSAxNy40MzgsNDguNjI2IEMxNy4xMjUsNDkuMzc2IDE3LDUwLjAwMSAxNyw1MC42MjYgQzE3LDUwLjkzOSAxNy4wNjMsNTEuMzE0IDE3LjEyNSw1MS42MjYgTDE3LjEyNSw1MS42MjUgWiBNMjkuMTI1LDU0LjA2MyBMMjkuMTI1LDQzLjY4OCBMMzIuOTM4LDQzLjYyNSBMMzIuOTM4LDUyLjkzOCBMMzMuMDAxLDUzLjE4OCBDMzMuMTI2LDUzLjMxMyAzMy4yNTEsNTMuNTAxIDMzLjUwMSw1My43NTEgQzMzLjc1MSw1My45MzkgMzQuMDY0LDU0LjA2NCAzNC40MzksNTQuMTI2IEwzOC4yNTIsNTQuMTI2IEwzOC4yNTIsNDMuNjg4IEw0Mi4zMTUsNDMuNjg4IEw0Mi4zMTUsNTcuNTYzIEwzMi45NCw1Ny41NjMgTDMyLjAwMiw1Ny4yNSBDMzEuMzc3LDU3LjA2MiAzMC43NTIsNTYuNjI1IDMwLjA2NCw1Ni4wNjIgQzI5LjQzOSw1NS40OTkgMjkuMTI2LDU0LjgxMiAyOS4xMjYsNTQuMDYyIEwyOS4xMjUsNTQuMDYzIFogTTMyLjUsMTEuMDYzIEMzMi40MzcsMTEuNzUxIDMyLjM3NSwxMi4zNzYgMzIuMzc1LDEzLjAwMSBDMzIuNDM4LDE0LjgxNCAzMi43NSwxNi40MzkgMzMuNDM4LDE3Ljc1MSBDMzQuMjUxLDE5LjYyNiAzNS44NzYsMjAuNjg5IDM4LjI1MSwyMS4wNjQgQzM4LjU2NCwyMS4wNjQgMzguODc2LDIxLjEyNyAzOS4xODksMjEuMTI3IEM0MS4xMjcsMjEuMDY0IDQyLjgxNCwyMC4xODkgNDQuMzE0LDE4LjU2NCBDNDUuOTM5LDE2LjU2NCA0Ny4wMDIsMTQuNDM5IDQ3LjM3NywxMi4wNjQgQzQ3LjM3NywxMS42ODkgNDcuNDQsMTEuMzE0IDQ3LjQ0LDEwLjkzOSBDNDcuNDQsOS4zMTQgNDYuODc3LDcuNjg5IDQ1LjgxNSw2LjAwMSBDNDQuNTAyLDMuOTM4IDQyLjk0LDIuNjg4IDQxLjA2NSwyLjMxMyBDNDAuODE1LDIuMjUgNDAuNTAyLDIuMjUgNDAuMjUyLDIuMjUgQzM4Ljc1MiwyLjI1IDM3LjI1MiwzLjEyNSAzNS42MjcsNC44NzUgQzMzLjc1Miw2LjkzOCAzMi43NTIsOSAzMi41MDIsMTEuMDYzIEwzMi41LDExLjA2MyBaIE00My44NzUsMjkuNjI1IEM0My44NzUsMzAuODc1IDQzLjkzOCwzMS44NzUgNDQuMTI1LDMyLjY4OCBDNDQuMjUsMzMuNTYzIDQ0LjUsMzQuNTAxIDQ1LDM1LjU2MyBDNDUuNDM4LDM2LjU2MyA0Ni4yNSwzNy4zNzYgNDcuNDM4LDM3Ljg3NiBDNDguNTAxLDM4LjMxNCA0OS44MTMsMzguNTY0IDUxLjQzOCwzOC41NjQgTDUxLjgxMywzOC41NjQgQzUyLjYyNiwzOC41NjQgNTMuMzc2LDM4LjUwMSA1NC4wNjMsMzguMzE0IEM1NC43NTEsMzguMDY0IDU1LjMxMywzNy44MTQgNTUuNzUxLDM3LjQzOSBDNTYuMjUxLDM3LjA2NCA1Ni42MjYsMzYuNjI2IDU3LjAwMSwzNi4yNTEgQzU3LjM3NiwzNS44MTMgNTcuNjI2LDM1LjMxMyA1Ny44MTQsMzQuNzUxIEM1OC4wMDIsMzQuMTI2IDU4LjE4OSwzMy42MjYgNTguMzE0LDMzLjE4OCBDNTguNDM5LDMyLjc1IDU4LjUwMiwzMi4yNSA1OC41NjQsMzEuNTYzIEM1OC42MjYsMzAuODc2IDU4LjYyNywzMC40MzggNTguNjI3LDMwLjEyNSBMNTguNjI3LDI3LjkzNyBDNTguNjI3LDI3LjM3NCA1OC41MDIsMjYuNjI0IDU4LjI1MiwyNS44MTIgQzU4LjAwMiwyNSA1Ny41NjQsMjQuMTg3IDU3LjA2NCwyMy4yNDkgQzU2LjUwMSwyMi4zMTEgNTUuNjg5LDIxLjU2MSA1NC42MjYsMjAuOTM2IEM1My41NjMsMjAuMzExIDUyLjI1MSwxOS45OTggNTAuODEzLDE5Ljk5OCBDNDYuMTg4LDE5Ljk5OCA0My44NzUsMjMuMTg2IDQzLjg3NSwyOS42MjMgTDQzLjg3NSwyOS42MjUgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=bitbucket] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI5NXB4IiB2aWV3Qm94PSIwIDAgMjU2IDI5NSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy43LjIgKDI4Mjc2KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT5Hcm91cDwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGlkPSJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMjgsNC42MDc0MjQwN2UtMDYgTDEyOCw0LjYwNzQyNDA3ZS0wNiBDNTcuNzMxODgxOCw0LjYwNzQyNDA3ZS0wNiAwLjAxMTYzOTUwNTEsMTguODIxODE1NyAwLjAxMTYzOTUwNTEsNDIuNjYyNzgxOCBDMC4wMTE2Mzk1MDUxLDQ4LjkzNjcyMjcgMTUuMDY5MDkzLDEzOC4wMjY2NjUgMjEuMzQzMDMzOSwxNzMuMTYwNzE1IEMyMy44NTI2MDU2LDE4OS40NzI5NjYgNjUuMjYwNjA4NSwyMTIuMDU5MTQ2IDEyOCwyMTIuMDU5MTQ2IEwxMjgsMjEyLjA1OTE0NiBDMTkwLjczOTM4NiwyMTIuMDU5MTQ2IDIzMC44OTI1OTEsMTg5LjQ3Mjk2NiAyMzQuNjU2OTcyLDE3My4xNjA3MTUgQzI0MC45MzA5MDEsMTM4LjAyNjY2NSAyNTUuOTg4MzU1LDQ4LjkzNjcyMjcgMjU1Ljk4ODM1NSw0Mi42NjI3ODE4IEMyNTQuNzMzNTY5LDE4LjgyMTgxNTcgMTk4LjI2ODExMiw0LjYwNzQyNDA3ZS0wNiAxMjgsNC42MDc0MjQwN2UtMDYgTDEyOCw0LjYwNzQyNDA3ZS0wNiBMMTI4LDQuNjA3NDI0MDdlLTA2IFogTTEyOCwxODMuMTk5MDI1IEMxMDUuNDEzODIsMTgzLjE5OTAyNSA4Ny44NDY3ODg4LDE2NS42MzE5ODggODcuODQ2Nzg4OCwxNDMuMDQ1ODA4IEM4Ny44NDY3ODg4LDEyMC40NTk2MjggMTA1LjQxMzgyLDEwMi44OTI2MDcgMTI4LDEwMi44OTI2MDcgQzE1MC41ODYxNjksMTAyLjg5MjYwNyAxNjguMTUzMjA1LDEyMC40NTk2MjggMTY4LjE1MzIwNSwxNDMuMDQ1ODA4IEMxNjguMTUzMjA1LDE2NC4zNzcyMDMgMTUwLjU4NjE2OSwxODMuMTk5MDI1IDEyOCwxODMuMTk5MDI1IEwxMjgsMTgzLjE5OTAyNSBMMTI4LDE4My4xOTkwMjUgWiBNMTI4LDU1LjIxMDY2MzYgQzgyLjgyNzYzMzcsNTUuMjEwNjYzNiA0Ni40Mzg3ODU5LDQ3LjY4MTkzNjggNDYuNDM4Nzg1OSwzNy42NDM2Mzg0IEM0Ni40Mzg3ODU5LDI3LjYwNTMyODMgODIuODI3NjMzNywyMC4wNzY2MDE2IDEyOCwyMC4wNzY2MDE2IEMxNzMuMTcyMzQ5LDIwLjA3NjYwMTYgMjA5LjU2MTIwOCwyNy42MDUzMjgzIDIwOS41NjEyMDgsMzcuNjQzNjM4NCBDMjA5LjU2MTIwOCw0Ny42ODE5MzY4IDE3My4xNzIzNDksNTUuMjEwNjYzNiAxMjgsNTUuMjEwNjYzNiBMMTI4LDU1LjIxMDY2MzYgTDEyOCw1NS4yMTA2NjM2IFoiIGlkPSJTaGFwZSI+PC9wYXRoPgogICAgICAgICAgICA8cGF0aCBkPSJNMjIwLjYwODE3NiwyMDcuMDM5OTkxIEMyMTguMDk4NTkyLDIwNy4wMzk5OTEgMjE2Ljg0MzgwNywyMDguMjk0Nzc3IDIxNi44NDM4MDcsMjA4LjI5NDc3NyBDMjE2Ljg0MzgwNywyMDguMjk0Nzc3IDE4NS40NzQxMTQsMjMzLjM5MDU0MSAxMjkuMDA4NjU3LDIzMy4zOTA1NDEgQzcyLjU0MzIxMTMsMjMzLjM5MDU0MSA0MS4xNzM1MDY5LDIwOC4yOTQ3NzcgNDEuMTczNTA2OSwyMDguMjk0Nzc3IEM0MS4xNzM1MDY5LDIwOC4yOTQ3NzcgMzguNjYzOTM1MSwyMDcuMDM5OTkxIDM3LjQwOTE0OTMsMjA3LjAzOTk5MSBDMzQuODk5NTY2LDIwNy4wMzk5OTEgMzIuMzg5OTk0MywyMDguMjk0Nzc3IDMyLjM4OTk5NDMsMjEyLjA1OTE0NiBMMzIuMzg5OTk0MywyMTMuMzEzOTMyIEMzNy40MDkxNDkzLDIzOS42NjQ0ODIgNDEuMTczNTA2OSwyNTguNDg2MjkzIDQxLjE3MzUwNjksMjYwLjk5NTg2NCBDNDQuOTM3ODc2LDI3OS44MTc2ODcgODIuNTgxNTA5OCwyOTQuODc1MTQxIDEyNy43NTM4NzEsMjk0Ljg3NTE0MSBMMTI3Ljc1Mzg3MSwyOTQuODc1MTQxIEMxNzIuOTI2MjMyLDI5NC44NzUxNDEgMjEwLjU2OTg2NiwyNzkuODE3Njg3IDIxNC4zMzQyMzUsMjYwLjk5NTg2NCBDMjE0LjMzNDIzNSwyNTguNDg2MjkzIDIxOC4wOTg1OTIsMjM5LjY2NDQ4MiAyMjMuMTE3NzQ3LDIxMy4zMTM5MzIgTDIyMy4xMTc3NDcsMjEyLjA1OTE0NiBDMjI0LjM3MjUzMywyMDkuNTQ5NTYzIDIyMy4xMTc3NDcsMjA3LjAzOTk5MSAyMjAuNjA4MTc2LDIwNy4wMzk5OTEgTDIyMC42MDgxNzYsMjA3LjAzOTk5MSBMMjIwLjYwODE3NiwyMDcuMDM5OTkxIFoiIGlkPSJTaGFwZSI+PC9wYXRoPgogICAgICAgICAgICA8Y2lyY2xlIGlkPSJPdmFsIiBjeD0iMTI4IiBjeT0iMTQxLjc5MTA4IiByPSIyMC4wNzY2MDUiPjwvY2lyY2xlPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+");   background-size: 45%; } .auth0-lock-social-button[data-provider^=box] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY1cHgiIGhlaWdodD0iMzZweCIgdmlld0JveD0iMCAwIDY1IDM2IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+Ym94PC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImJveCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0zNC41NjMsMTAuODc1IEM0MS40MzgsMTAuODc1IDQ3LjAwMSwxNi40MzggNDcuMDAxLDIzLjI1IEM0Ny4wMDEsMzAuMTI1IDQxLjQzOCwzNS42ODggMzQuNTYzLDM1LjY4OCBDMjkuODEzLDM1LjY4OCAyNS42ODgsMzMgMjMuNTYzLDI5LjA2MyBDMjEuNSwzMy4wMDEgMTcuMzc1LDM1LjY4OCAxMi42MjUsMzUuNjg4IEM1LjgxMiwzNS42ODggMC4zMTIsMzAuMjUgMC4xODcsMjMuNSBMMC4xODcsMjMuNSBMMC4xODcsMi44NzUgQzAuMjUsMS41IDEuMzEyLDAuNDM3IDIuNjg3LDAuNDM3IEM0LjA2MiwwLjQzNyA1LjEyNSwxLjUgNS4xODcsMi44NzUgTDUuMTg3LDIuODc1IEw1LjE4NywxMy4zMTMgQzcuMjUsMTEuNzUgOS44MTIsMTAuODc1IDEyLjYyNSwxMC44NzUgQzE3LjM3NSwxMC44NzUgMjEuNSwxMy41IDIzLjU2MywxNy40MzggQzI1LjY4OCwxMy41IDI5LjgxMywxMC44NzUgMzQuNTYzLDEwLjg3NSBMMzQuNTYzLDEwLjg3NSBaIE0xMi42MjUsMzAuNjg4IEMxNi43NSwzMC42ODggMjAuMDYzLDI3LjM3NSAyMC4wNjMsMjMuMjUgQzIwLjA2MywxOS4xODcgMTYuNzUsMTUuODEyIDEyLjYyNSwxNS44MTIgQzguNSwxNS44MTIgNS4xODcsMTkuMTg3IDUuMTg3LDIzLjI1IEM1LjE4NywyNy4zNzUgOC41LDMwLjY4OCAxMi42MjUsMzAuNjg4IEwxMi42MjUsMzAuNjg4IFogTTM0LjU2MywzMC42ODggQzM4LjY4OCwzMC42ODggNDIuMDAxLDI3LjM3NSA0Mi4wMDEsMjMuMjUgQzQyLjAwMSwxOS4xODcgMzguNjg4LDE1LjgxMiAzNC41NjMsMTUuODEyIEMzMC40MzgsMTUuODEyIDI3LjEyNSwxOS4xODcgMjcuMTI1LDIzLjI1IEMyNy4xMjUsMjcuMzc1IDMwLjQzOCwzMC42ODggMzQuNTYzLDMwLjY4OCBMMzQuNTYzLDMwLjY4OCBaIE02My42ODgsMzEuNzUgTDYzLjY4OCwzMS44MTMgQzY0LjQzOCwzMi44NzYgNjQuMjUxLDM0LjM3NiA2My4xODgsMzUuMTg4IEM2Mi4wNjMsMzYuMDYzIDYwLjU2MywzNS44MTMgNTkuNjg4LDM0Ljc1IEw1NC4yNSwyNy40MzcgTDQ4Ljc1LDM0Ljc1IEM0Ny44NzUsMzUuODEzIDQ2LjM3NSwzNi4wNjMgNDUuMzEyLDM1LjE4OCBDNDQuMTg3LDM0LjM3NSA0My45OTksMzIuODc1IDQ0Ljc0OSwzMS44MTMgTDUxLjEyNCwyMy4yNSBMNDQuNzQ5LDE0Ljc1IEM0My45OTksMTMuNjg3IDQ0LjE4NiwxMi4xMjUgNDUuMzEyLDExLjMxMiBDNDYuMzc1LDEwLjQ5OSA0Ny44NzUsMTAuNzQ5IDQ4Ljc1LDExLjgxMiBMNTQuMjUsMTkuMTI1IEw1OS42ODgsMTEuODEyIEM2MC41NjMsMTAuNzQ5IDYyLjA2MywxMC40OTkgNjMuMTg4LDExLjMxMiBDNjQuMjUxLDEyLjEyNSA2NC40MzgsMTMuNjg3IDYzLjY4OCwxNC43NSBMNTcuMzEzLDIzLjI1IEw2My42ODgsMzEuNzUgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=dropbox] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY2cHgiIGhlaWdodD0iNjNweCIgdmlld0JveD0iMCAwIDY2IDYzIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZHJvcGJveDwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJkcm9wYm94IiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTAuMjUsMzMuODEzIEwyMC4xMjUsNDUuNjI2IEwzMy4xMjUsMzUuNjI2IEw0Ni4xMjUsNDUuNjI2IEw2NS43NSwzMy44MTMgTDUzLjEyNSwyMi45MzggTDY1Ljc1LDEyLjM3NSBMNDYuNDM3LDAgTDMzLjEyNCwxMS4xMjUgTDIwLjEyNCwwIEwwLjI0OSwxMyBMMTMuOTM3LDIzLjM3NSBMMC4yNSwzMy44MTMgWiBNMTMuODc1LDQ5Ljg3NSBMMzIuOTM4LDYyLjYyNSBMMzIuOTM4LDM5Ljg3NSBMMzIuODc1LDM5LjgxMiBMMTkuODc1LDQ5Ljc1IEwxMy44NzUsNDYuMTg3IEwxMy44NzUsNDkuODc1IEwxMy44NzUsNDkuODc1IFogTTE0LjE4OCwyMy4yNSBMMzMuMTI2LDExLjY4NyBMNTEuOTM5LDIyLjU2MiBMMzMuMDAxLDM1LjA2MiBMMTQuMTg4LDIzLjI1IFogTTMyLjkzOCw2Mi42MjUgTDUyLjQzOCw0OS45MzcgTDUyLjQzOCw0NS44NzQgTDQ2LjA2Myw0OS43NDkgTDMzLjEyNSwzOS44MTEgTDMzLDM5Ljg3NCBMMzIuOTM4LDYyLjYyNSBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=dwolla] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjQwcHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDQwIDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZHdvbGxhPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImR3b2xsYSIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEuMDAwMDAwLCAwLjAwMDAwMCkiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMSw1NSBDMSw1OC4zMTMgMiw2MC45MzggNC4wNjMsNjIuODc1IEM2LjEyNiw2NC43NSA4LjkzOCw2NS4yNSAxMi41NjMsNjQuMzc1IEMxMy4zNzYsNjQuMTg3IDE0LjQzOCw2My43NSAxNS44MTMsNjMuMDYyIEwxOC4wNjMsNjEuODc0IEwyMy44MTMsNTkuMzc0IEMyMy45MzgsNTkuMzc0IDI0LjM3Niw1OS4xMjQgMjUuMjUxLDU4Ljc0OSBDMjYuMDY0LDU4LjM3NCAyNi44MTQsNTguMDYxIDI3LjUwMSw1Ny44MTEgQzI5LjEyNiw1Ny4xMjMgMzAuNDM5LDU2LjU2MSAzMS4zNzYsNTYuMDYxIEMzMi4xODksNTUuNjg2IDMzLjMxNCw1NS4wNjEgMzQuODE0LDU0LjEyMyBDMzYuMTI3LDUzLjMxIDM3LjEyNyw1Mi40MzUgMzcuODE0LDUxLjYyMyBDMzguNTY0LDUwLjgxIDM5LjEyNyw0OS42ODUgMzkuNjI3LDQ4LjMxIEM0MC4xOSw0Ny4wNiA0MC41MDIsNDUuNTYgNDAuNTAyLDQzLjk5NyBDNDAuNTAyLDQyLjY4NCA0MC4zMTQsNDEuNDM0IDQwLjAwMiw0MC4yNDcgQzM5LjY4OSwzOC45OTcgMzkuMzc3LDM3Ljk5NyAzOS4wMDIsMzcuMTIyIEMzOC42ODksMzYuMjQ3IDM4LjEyNywzNS4zMDkgMzcuMzc3LDM0LjE4NCBDMzYuNTY0LDMzLjA1OSAzNi4wMDIsMzIuMjQ2IDM1LjU2NCwzMS43NDYgQzM1LjEyNiwzMS4yNDYgMzQuNDM5LDMwLjQzMyAzMy40MzksMjkuMzcxIEMzMi40MzksMjguMjQ2IDMxLjg3NiwyNy41NTggMzEuNTY0LDI3LjI0NiBDMzEuMzc2LDI2Ljk5NiAzMC42ODksMjYuMjQ2IDI5LjU2NCwyNC45MzMgQzI4LjQzOSwyMy42ODMgMjcuNjg5LDIyLjgwOCAyNy4zNzYsMjIuMzcgQzI3LjAwMSwyMS45OTUgMjYuNDM4LDIxLjE4MiAyNS42MjYsMTkuOTk1IEMyNC44MTQsMTguODA4IDI0LjMxMywxNy44NyAyNC4wMDEsMTcuMDU3IEMyMy43NTEsMTYuMjQ0IDIzLjQzOCwxNS4yNDQgMjMuMTg4LDE0LjA1NyBDMjIuOTM4LDEyLjgwNyAyMi44NzUsMTEuNjE5IDIyLjg3NSwxMC4zNjkgQzIzLDcuMTgxIDI0LjM3NSw0Ljc0NCAyNywzLjA1NiBDMjguMTI1LDIuNDkzIDI4LjY4OCwxLjkzMSAyOC42ODgsMS40OTMgQzI4LjUsMC43NDMgMjcuOTM4LDAuNjE4IDI3LjEyNSwxLjA1NSBDMjUuOTM3LDEuNzQzIDI0LjA2MiwyLjU1NSAyMS42MjUsMy42MTggTDE3LjE4Nyw1LjU1NiBMMTQuMTg3LDYuOTMxIEMxMy42ODcsNy4xMTkgMTMuMDYyLDcuMzY5IDEyLjMxMiw3LjY4MSBDMTEuNTYyLDguMDU2IDExLjA2Miw4LjI0NCAxMC44NzQsOC4zMDYgQzEwLjQ5OSw4LjQ5NCA5LjU2MSw4Ljk5NCA3Ljk5OSw5LjkzMSBDNi43NDksMTAuNjgxIDUuODExLDExLjM2OSA1LjMxMSwxMS45OTQgQzMuODExLDEzLjQ5NCAyLjg3MywxNS40MzIgMi42MjMsMTcuODA3IEMxLjkzNSwyMi42ODIgMy45MzYsMjcuOTk1IDguNjIzLDMzLjYyIEM4Ljk5OCwzNC4wNTggMTAuMjQ4LDM1LjU1OCAxMi40MzYsMzguMTIgQzEzLjg3NCwzOS43NDUgMTQuOTk5LDQxLjE4MyAxNS45MzYsNDIuNDk1IEMxNS41NjEsNDIuNjgzIDEyLjkzNiw0My44NyA4LjEyMyw0NS45MzMgQzcuMDYsNDYuMzcxIDUuODczLDQ2Ljk5NiA0LjYyMyw0Ny44MDggQzIuMTg1LDQ5LjM3MSAwLjk5OCw1MS43NDYgMC45OTgsNTQuOTk2IEwxLDU1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+");   background-size: 30%; } .auth0-lock-social-button[data-provider^=ebay] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjkwcHgiIGhlaWdodD0iMzlweCIgdmlld0JveD0iMCAwIDkwIDM5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZWJheTwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJlYmF5IiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMS4wMDAwMDAsIDAuMDAwMDAwKSIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0xLDIzLjY4OCBDMSwyNS42MjYgMS4xODgsMjcuMTg4IDEuNjI1LDI4LjUwMSBDMiwyOS43NTEgMi44MTMsMzAuOTM5IDQsMzIuMDY0IEM1LjE4NywzMy4xODkgNy4wNjMsMzQuMDAyIDkuNTYzLDM0LjU2NCBDMTIuMDYzLDM1LjA2NCAxNS4zMTMsMzUuMzc3IDE5LjI1MSwzNS4zNzcgQzIyLjc1MSwzNS4zNzcgMjUuOTM5LDM1LjA2NCAyOC44MTQsMzQuMzc3IEMzMC4wNjQsMzQuMTI3IDMxLjI1MiwzMy43NTIgMzIuNDM5LDMzLjE4OSBMMzIuNDM5LDI3LjUwMSBMMjQuNjg5LDI3LjUwMSBDMjQuNjg5LDMwLjA2NCAyMi44NzYsMzEuMzc2IDE5LjI1MSwzMS4zNzYgQzE3LjkzOCwzMS4zNzYgMTYuODc2LDMxLjE4OCAxNi4wNjMsMzAuODEzIEMxNS4yNSwzMC40MzggMTQuNjg4LDI5Ljg3NSAxNC4zNzUsMjkuMDYzIEMxNC4wNjIsMjguMzEzIDEzLjg3NSwyNy42ODggMTMuODEyLDI3LjEyNSBDMTMuNjg3LDI2LjYyNSAxMy42ODcsMjUuODc1IDEzLjY4NywyNSBMMzIuNDM3LDI1IEwzMi40MzcsMTQuNjg3IEMzMS42MjQsMTQuMjQ5IDMwLjM3NCwxMy44NzQgMjguNjg3LDEzLjU2MiBDMjYuMTI0LDEyLjk5OSAyMi45OTksMTIuNjg3IDE5LjI0OSwxMi42ODcgQzE2LjA2MSwxMi42ODcgMTMuMzExLDEyLjg3NSAxMC45OTksMTMuMzEyIEM4Ljc0OSwxMy42ODcgNi45MzYsMTQuMjUgNS42ODYsMTQuODc1IEM0LjM3MywxNS40MzggMy4zNzMsMTYuMzEzIDIuNjg2LDE3LjMxMyBDMS45OTksMTguMzEzIDEuNTYxLDE5LjMxMyAxLjMxMSwyMC4zMTMgQzEuMTIzLDIxLjI1MSAwLjk5OCwyMi4zNzYgMC45OTgsMjMuNjg4IEwxLDIzLjY4OCBaIE0xMy42ODgsMjEuNTYzIEMxMy42ODgsMjAuODc1IDEzLjY4OCwyMC4zMTMgMTMuNzUxLDE5LjkzOCBDMTMuODE0LDE5LjYyNSAxNC4wMDEsMTkuMDYzIDE0LjMxNCwxOC40MzggQzE0LjYyNywxNy43NSAxNS4xODksMTcuMjUgMTYuMDAyLDE2LjkzOCBDMTYuODE1LDE2LjYyNiAxNy45NCwxNi41IDE5LjI1MiwxNi41IEMyMC42MjcsMTYuNSAyMS44MTUsMTYuNjI1IDIyLjY5LDE2LjkzOCBDMjMuNTY1LDE3LjI1MSAyNC4xMjgsMTcuNjg4IDI0LjQ0LDE4LjMxMyBDMjQuNzUzLDE5LjAwMSAyNC44NzgsMTkuNTAxIDI0Ljk0LDE5LjgxMyBDMjUuMDY1LDIwLjE4OCAyNS4wNjUsMjAuNzUxIDI1LjA2NSwyMS41NjMgTDEzLjY5LDIxLjU2MyBMMTMuNjg4LDIxLjU2MyBaIE0zMi40MzgsMzMuMTg4IEMzMi41MDEsMzMuMTg4IDMyLjYyNiwzMy4xMjUgMzIuNjg4LDMzLjA2MyBDMzUuODEzLDMxLjUgMzcuMzc2LDI5LjY4OCAzNy40MzgsMjcuNSBMMzIuNDM4LDI3LjUgTDMyLjQzOCwzMy4xODggTDMyLjQzOCwzMy4xODggWiBNMzIuNDM4LDMzLjE4OCBMMzIuNDM4LDM4LjI1MSBMMzkuMDAxLDM4LjI1MSBMMzkuMDAxLDM1LjU2MyBMMzkuMDY0LDM1LjU2MyBDNDAuMjUyLDM3LjY4OCA0Mi4xODksMzguNzUxIDQ0Ljg3NywzOC43NTEgQzQ2LjI1MiwzOC43NTEgNDcuNDQsMzguNTAxIDQ4LjMxNSwzNy45MzggQzQ5LjI1MywzNy40MzggNDkuOTQsMzYuNjI1IDUwLjQ0LDM1LjYyNSBDNTAuODc4LDM0LjU2MiA1MS4xOSwzMy41NjIgNTEuMzc4LDMyLjYyNSBDNTEuNTY2LDMxLjYyNSA1MS42OTEsMzAuNSA1MS43NTMsMjkuMTI1IEM0OC41MDMsMjguMzc1IDQ2Ljg3OCwyNS43NSA0Ni44NzgsMjEuMzEyIEM0Ni44NzgsMTguMjQ5IDQ3Ljc1MywxNi4wNjIgNDkuNDQxLDE0LjgxMiBDNDguMzE2LDEzLjY4NyA0Ni44NzgsMTMuMTI0IDQ1LjA2NiwxMy4xMjQgQzQyLjYyOCwxMy4xMjQgNDAuNzUzLDE0LjA2MiAzOS4zNzgsMTUuOTM3IEwzOS4yNTMsMTUuOTM3IEwzOS4yNTMsMi45OTkgTDMyLjQ0LDIuOTk5IEwzMi40NCwxNC42ODcgQzM0LjY5LDE1LjY4NyAzNi4xOSwxNyAzNi44MTUsMTguNjI1IEMzNy4zNzgsMjAgMzcuNjksMjEuNjI1IDM3LjY5LDIzLjUgQzM3LjY5LDI0IDM3LjYyNywyNC41IDM3LjYyNywyNSBMMzIuNDM5LDI1IEwzMi40MzksMjcuNSBMMzcuNDM5LDI3LjUgQzM3LjM3NiwyOS42ODggMzUuODE0LDMxLjUgMzIuNjg5LDMzLjA2MyBDMzIuNjI2LDMzLjEyNiAzMi41MDEsMzMuMTg4IDMyLjQzOSwzMy4xODggTDMyLjQzOCwzMy4xODggWiBNMzIuNDM4LDI1IEwzNy42MjYsMjUgQzM3LjYyNiwyNC41IDM3LjY4OSwyNCAzNy42ODksMjMuNSBDMzcuNjg5LDIxLjYyNSAzNy4zNzYsMjAgMzYuODE0LDE4LjYyNSBDMzYuMTg5LDE3IDM0LjY4OSwxNS42ODcgMzIuNDM5LDE0LjY4NyBMMzIuNDM5LDI1IEwzMi40MzgsMjUgWiBNMzkuMjUsMjUuNjg4IEMzOS4yNSwyNC4xMjUgMzkuMzEzLDIyLjkzOCAzOS4zMTMsMjIuMjUgQzM5LjM3NiwyMS41IDM5LjUwMSwyMC42ODcgMzkuNjI2LDE5LjgxMiBDMzkuNzUxLDE4LjkzNyA0MC4wNjQsMTguMjQ5IDQwLjQzOSwxNy45MzcgQzQwLjg3NywxNy41NjIgNDEuMzc3LDE3LjM3NCA0Mi4wNjQsMTcuMzc0IEM0Mi44MTQsMTcuMzc0IDQzLjM3NywxNy41NjIgNDMuODE0LDE3Ljg3NCBDNDQuMTg5LDE4LjI0OSA0NC41MDIsMTguODEyIDQ0LjYyNywxOS42ODcgQzQ0LjgxNSwyMC41NjIgNDQuOTQsMjEuMzc1IDQ0Ljk0LDIyLjA2MiBDNDUuMDAzLDIyLjc1IDQ1LjA2NSwyMy44NzUgNDUuMDY1LDI1LjM3NSBMNDUuMDY1LDI1LjY4OCBDNDUuMDY1LDI5LjAwMSA0NC44MTUsMzEuMjUxIDQ0LjQ0LDMyLjU2MyBDNDQuMDY1LDMzLjg3NSA0My4zMTUsMzQuNTAxIDQyLjA2NSwzNC41MDEgQzQwLjk0LDM0LjUwMSA0MC4xOSwzMy44NzYgMzkuODE1LDMyLjU2MyBDMzkuNDQsMzEuMjUgMzkuMjUyLDI5IDM5LjI1MiwyNS42ODggTDM5LjI1LDI1LjY4OCBaIE00Ni44NzUsMjEuMzEzIEM0Ni44NzUsMjUuNzUxIDQ4LjUsMjguMzc2IDUxLjc1LDI5LjEyNiBMNTEuNzUsMjUuODEzIEM1MS44MTMsMjQgNTEuODEzLDIyLjYyNSA1MS43NSwyMS43NSBDNTEuNjg3LDIwLjg3NSA1MS41LDE5LjY4NyA1MS4xMjUsMTguMTg3IEM1MC43NSwxNi42ODcgNTAuMTg3LDE1LjU2MiA0OS40MzcsMTQuODEyIEM0Ny43NDksMTYuMDYyIDQ2Ljg3NCwxOC4yNSA0Ni44NzQsMjEuMzEyIEw0Ni44NzUsMjEuMzEzIFogTTQ3LjM3NSwxMS4xODggTDU0LjI1LDExLjE4OCBDNTQuMjUsOS45MzggNTQuMzc1LDkgNTQuNjg4LDguMzEzIEM1NS4wMDEsNy42MjYgNTUuNjg4LDcuMzEzIDU2LjgxMyw3LjMxMyBDNTcuOTM4LDcuMzEzIDU4LjY4OCw3LjYyNiA1OS4wNjMsOC4yNTEgQzU5LjQzOCw4LjgxNCA1OS42MjYsOS43NTEgNTkuNjI2LDExLjAwMSBMNTkuNjI2LDEyLjkzOSBMNTguMDYzLDEyLjkzOSBDNTMuOTM4LDEyLjkzOSA1MS4wNjMsMTMuNTY0IDQ5LjQzOCwxNC44MTQgQzUwLjE4OCwxNS41NjQgNTAuNzUxLDE2LjY4OSA1MS4xMjYsMTguMTg5IEM1MS41MDEsMTkuNjg5IDUxLjY4OSwyMC44NzcgNTEuNzUxLDIxLjc1MiBMNTEuNzUxLDI5LjEyNyBDNTIuMDY0LDI5LjE5IDUyLjYyNiwyOS4xOSA1My40MzksMjkuMTkgQzU2LjI1MiwyOS4xOSA1OC40MzksMjguMDAyIDU5LjgxNCwyNS41MDIgTDU5LjkzOSwyNS41MDIgTDYwLjI1MiwyOC44MTUgTDY2LjY5LDI4LjgxNSBDNjYuNjksMjguNDQgNjYuNjI3LDI3Ljc1MiA2Ni41NjUsMjYuNjI3IEM2Ni40NCwyNS41NjQgNjYuNDQsMjQuNzUyIDY2LjQ0LDI0LjE4OSBMNjYuNDQsMTcuNjI2IEw1OS41NjUsMy42ODggQzU3LjYyNywzLjU2MyA1Ni42MjcsMy41IDU2LjQ0LDMuNSBDNTMuNTY1LDMuNSA1MS40NCw0LjA2MyA0OS45NCw1LjEyNSBDNDguMjUyLDYuMTg4IDQ3LjM3Nyw4LjI1IDQ3LjM3NywxMS4xODggTDQ3LjM3NSwxMS4xODggWiBNNTMuNjI1LDIxIEM1My4xODcsMjAuNjI1IDUzLjE4NywyMC4xODcgNTMuNjg4LDE5Ljc1IEM1NC4xODksMTkuMzEzIDU0LjI1MSwxOC45MzcgNTQuMDAxLDE4Ljc1IEM1My42ODgsMTguNTYyIDUzLjg3NiwxOC4zMTIgNTQuNDM5LDE4LjA2MiBDNTQuOTM5LDE3LjgxMiA1NS4xODksMTcuNjI0IDU1LjAwMiwxNy41NjIgQzU0Ljg3NywxNy40MzcgNTUuMDY1LDE3LjMxMiA1NS42OSwxNy4xODcgQzU2LjMxNSwxNy4wNjIgNTYuNTY1LDE2Ljk5OSA1Ni41NjUsMTYuOTk5IEw1Ny41MDMsMTYuODc0IEM1Ny42MjgsMTYuODc0IDU4LjAwMywxNi44NzQgNTguNTY2LDE2LjgxMSBMNTkuNjI5LDE2LjgxMSBMNTkuNjI5LDE4LjA2MSBDNTkuNjkyLDE4Ljc0OSA1OS42OTIsMTkuMjQ5IDU5LjYyOSwxOS42MjQgQzU5LjYyOSwxOS45MzcgNTkuNjI5LDIwLjQzNyA1OS41NjYsMjEuMTI0IEM1OS41MDMsMjEuNzQ5IDU5LjQ0MSwyMi4zMTIgNTkuMjUzLDIyLjYyNCBDNTkuMTI4LDIyLjk5OSA1OC45NCwyMy4zNzQgNTguNjksMjMuODEyIEM1OC40NCwyNC4xODcgNTguMDY1LDI0LjUgNTcuNjksMjQuNjg3IEM1Ny4yNTIsMjQuODc1IDU2LjgxNSwyNSA1Ni4yNTIsMjUgQzU0LjUwMiwyNSA1My42MjcsMjMuNjg3IDUzLjYyNywyMSBMNTMuNjI1LDIxIFogTTU3Ljg3NSwwLjM3NSBMNTkuNTYzLDMuNjg4IEM2Mi4zMTMsNC4wNjMgNjQuMTI2LDQuOTM4IDY1LjA2Myw2LjI1MSBDNjUuOTM4LDcuNjI2IDY2LjQzOCw5LjQzOSA2Ni40MzgsMTEuODE0IEw2Ni40MzgsMTcuNjI3IEw2OS4xODgsMjMuMzE1IEw2OS4xODgsMzUuNTAzIEw3OC4xODgsMzUuNTAzIEw3OC4xODgsMjMuMzE1IEw5MC4yNTEsMC4zNzcgTDgxLjEyNiwwLjM3NyBMNzQuMTI2LDE1LjE5IEw2Ny43NTEsMC4zNzcgTDU3Ljg3NiwwLjM3NyBMNTcuODc1LDAuMzc1IFogTTU5LjU2MywzLjY4OCBMNjYuNDM4LDE3LjYyNiBMNjYuNDM4LDExLjgxMyBDNjYuNDM4LDkuNDM4IDY1LjkzOCw3LjYyNSA2NS4wNjMsNi4yNSBDNjQuMTI1LDQuOTM3IDYyLjMxMyw0LjA2MiA1OS41NjMsMy42ODcgTDU5LjU2MywzLjY4OCBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==");   background-size: 70%; } .auth0-lock-social-button[data-provider^=exact] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjQzcHgiIGhlaWdodD0iMzJweCIgdmlld0JveD0iMCAwIDQzIDMyIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZXhhY3Q8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0iZXhhY3QiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8ZyBpZD0iR3JvdXAiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPgogICAgICAgICAgICAgICAgPHBhdGggZD0iTTAuMDQ5LDEuMDA4IEMxNC4wMTIsMC44IDI3Ljk3NCwwLjgyOSA0MS45MzcsMC45NzggQzQyLjAyNCwzLjcxOCA0Mi4yMjYsOS4xOTggNDIuMzEzLDExLjkzOSBDMjguNTI0LDEyLjQ0NSAxNC43MDYsMTIuMjA3IDAuODg4LDEyLjI5NyBDMC41OTksOC41NDQgMC4zMSw0Ljc5MSAwLjA1LDEuMDA5IEwwLjA1LDEuMDA5IEwwLjA1LDEuMDA5IEwwLjA0OSwxLjAwOCBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLjIyMywyMC4yMTkgQzE0LjA0MSwyMC4yNDkgMjcuOTQ2LDE5LjI5NiA0MS43NjQsMjAuNjM2IEM0Mi4xMTEsMjQuMTUxIDQyLjExMSwyNy43MjUgNDIuMTQsMzEuMjY5IEMyOC4yMzUsMzEuMjM5IDE0LjM1OSwzMS4yMzkgMC40NTQsMzEuMjEgQzAuMzY3LDI3LjU0NyAwLjI4MSwyMy44ODMgMC4yMjMsMjAuMjIgTDAuMjIzLDIwLjIyIEwwLjIyMywyMC4yMiBMMC4yMjMsMjAuMjE5IFoiIGlkPSJTaGFwZSI+PC9wYXRoPgogICAgICAgICAgICA8L2c+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=");   background-size: 30%; } .auth0-lock-social-button[data-provider^=facebook] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjM2cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDM2IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZmFjZWJvb2s8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0iZmFjZWJvb2siIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMC45MzgsMzUgTDEwLjc1MSwzNSBMMTAuNzUxLDY0LjYyNSBMMjMuMDY0LDY0LjYyNSBMMjMuMDY0LDM1IEwzNS4zNzcsMzUgTDM1LjM3NywyMi43NSBMMjMuMDY0LDIyLjc1IEwyMy4wNjQsMTYuNSBDMjMuMDY0LDE1LjQzNyAyMy4zMTQsMTQuNjI1IDIzLjgxNCwxMy44NzUgQzI0LjM3NywxMy4xODcgMjQuOTM5LDEyLjg3NSAyNS41NjQsMTIuODc1IEwzNS4zNzcsMTIuODc1IEwzNS4zNzcsMC42MjUgTDI1LjU2NCwwLjYyNSBDMjEuNDM5LDAuNjI1IDE4LjAwMSwyLjE4OCAxNS4xMjYsNS4zMTMgQzEyLjE4OCw4LjQzOCAxMC43NTEsMTIuMTg4IDEwLjc1MSwxNi42MjYgTDEwLjc1MSwyMi43NTEgTDAuOTM4LDIyLjc1MSBMMC45MzgsMzUuMDAxIEwwLjkzOCwzNSBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==");   background-size: 25%; } .auth0-lock-social-button[data-provider^=fitbit] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYwcHgiIGhlaWdodD0iNTlweCIgdmlld0JveD0iMCAwIDYwIDU5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+Zml0Yml0PC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImZpdGJpdCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0zOC4zNzUsNDIgQzM4LjM3NSw0NC40MzggNDAuMzEzLDQ2LjMxMyA0Mi44MTMsNDYuMzEzIEM0NS4yNTEsNDYuMzEzIDQ3LjI1MSw0NC4zNzUgNDcuMzEzLDQyIEM0Ny4zMTMsMzkuNjI1IDQ1LjI1LDM3LjU2MiA0Mi43NSwzNy42MjUgQzQwLjMxMiwzNy42MjUgMzguMzc1LDM5LjUgMzguMzc1LDQyIEwzOC4zNzUsNDIgWiBNNjAsMjkuNSBDNjAsMjYuOTM3IDU4LjE4NywyNS4xMjUgNTUuNjg3LDI1LjEyNSBDNTMuMTg3LDI1LjA2MiA1MS4xMjQsMjcuMDYzIDUxLjEyNCwyOS40MzggQzUxLjE4NywzMS44MTMgNTMuMTg3LDMzLjgxMyA1NS41NjIsMzMuODEzIEM1OC4wNjIsMzMuODc2IDYwLDMxLjkzOCA2MCwyOS41IEw2MCwyOS41IFogTTM4LjM3NSwxNi45MzggQzM4LjM3NSwxOS4zNzYgNDAuMzc1LDIxLjMxMyA0Mi44MTMsMjEuMzEzIEM0NS4yNTEsMjEuMjUgNDcuMjUxLDE5LjI1IDQ3LjMxMywxNi45MzggQzQ3LjMxMywxNC42MjUgNDUuMjUsMTIuNTYzIDQyLjg3NSwxMi41NjMgQzQwLjM3NSwxMi41IDM4LjM3NSwxNC40MzggMzguMzc1LDE2LjkzOCBMMzguMzc1LDE2LjkzOCBaIE0wLDI5LjQzOCBDMCwzMS44NzYgMiwzMy44MTMgNC4zNzUsMzMuODEzIEM2Ljg3NSwzMy44MTMgOC44NzUsMzEuNzUgOC44NzUsMjkuMzc1IEM4LjgxMiwyNyA2LjgxMiwyNS4xMjUgNC4zNzUsMjUuMTI1IEMxLjgxMiwyNS4xMjUgMCwyNi45MzggMCwyOS40MzggTDAsMjkuNDM4IFogTTM4LjM3NSwyOS40MzggQzM4LjM3NSwzMS44MTMgNDAuMzc1LDMzLjgxMyA0Mi44MTMsMzMuODEzIEM0NS4yNTEsMzMuODEzIDQ3LjMxMywzMS43NSA0Ny4zMTMsMjkuMzc1IEM0Ny4yNSwyNyA0NS4yNSwyNS4xMjUgNDIuODEzLDI1LjEyNSBDNDAuMjUsMjUuMTI1IDM4LjM3NSwyNi45MzggMzguMzc1LDI5LjQzOCBMMzguMzc1LDI5LjQzOCBaIE0yMS42MjUsMjkuNSBDMjEuNjI1LDI3IDE5LjgxMiwyNS4xMjUgMTcuMzEyLDI1LjEyNSBDMTQuNzQ5LDI1LjA2MiAxMi43NDksMjYuOTM4IDEyLjY4NywyOS40MzggQzEyLjY4NywzMS43NTEgMTQuODEyLDMzLjgxMyAxNy4yNSwzMy44MTMgQzE5LjYyNSwzMy44MTMgMjEuNTYzLDMxLjg3NSAyMS42MjUsMjkuNSBMMjEuNjI1LDI5LjUgWiBNMjkuOTM4LDI1LjEyNSBDMjcuNSwyNS4xMjUgMjUuNSwyNy4wNjMgMjUuNTYzLDI5LjQzOCBDMjUuNTYzLDMxLjg3NiAyNy41NjMsMzMuODEzIDMwLjAwMSwzMy44MTMgQzMyLjQzOSwzMy44MTMgMzQuNDM5LDMxLjg3NSAzNC40MzksMjkuNSBDMzQuNTAyLDI3IDMyLjUwMSwyNS4xMjUgMjkuOTM5LDI1LjEyNSBMMjkuOTM4LDI1LjEyNSBaIE0zMCw4LjY4OCBDMzIuNSw4LjY4OCAzNC40MzgsNi43NSAzNC40MzgsNC4zMTMgQzM0LjM3NSwyIDMyLjMxMyw4Ljg4MTc4NDJlLTE2IDMwLDAuMDYzIEMyNy42MjUsMC4wNjMgMjUuNTYyLDIuMDYzIDI1LjU2Miw0LjQzOCBDMjUuNjI1LDYuNzUxIDI3LjYyNSw4LjY4OCAzMCw4LjY4OCBMMzAsOC42ODggWiBNMzAsNTguODEzIEMzMi40MzgsNTguODEzIDM0LjQzOCw1Ni44NzUgMzQuNDM4LDU0LjQzOCBDMzQuNDM4LDUyLjEyNSAzMi40MzgsNTAuMTg4IDMwLDUwLjE4OCBDMjcuNjI1LDUwLjEyNSAyNS41NjIsNTIuMTg4IDI1LjU2Miw1NC41MDEgQzI1LjU2Miw1Ni44NzYgMjcuNTYyLDU4Ljc1MSAzMCw1OC44MTQgTDMwLDU4LjgxMyBaIE0zNC40MzgsNDEuOTM4IEMzNC40MzgsMzkuNjI1IDMyLjQzOCwzNy42MjUgMzAsMzcuNjI1IEMyNy42ODcsMzcuNjI1IDI1LjYyNSwzOS42MjUgMjUuNTYyLDQxLjkzOCBDMjUuNTYyLDQ0LjI1MSAyNy42MjUsNDYuMzEzIDMwLjA2Miw0Ni4zMTMgQzMyLjQzNyw0Ni4yNSAzNC40MzcsNDQuMzEzIDM0LjQzNyw0MS45MzggTDM0LjQzOCw0MS45MzggWiBNMTIuODc1LDQyIEMxMi44NzUsNDQuNDM4IDE0Ljc1LDQ2LjMxMyAxNy4xODgsNDYuMzEzIEMxOS42MjYsNDYuMzEzIDIxLjU2Myw0NC4zNzUgMjEuNTYzLDQyIEMyMS41NjMsMzkuNjI1IDE5LjYyNSwzNy42MjUgMTcuMjUsMzcuNjI1IEMxNC42ODcsMzcuNjI1IDEyLjg3NSwzOS41IDEyLjg3NSw0MiBMMTIuODc1LDQyIFogTTMwLDEyLjYyNSBDMjcuNSwxMi42ODggMjUuNjI1LDE0LjUgMjUuNTYyLDE2Ljg3NSBDMjUuNTYyLDE5LjI1IDI3LjUsMjEuMTg4IDI5LjkzNywyMS4xODggQzMyLjUsMjEuMTg4IDM0LjQzNywxOS4zMTMgMzQuNDM3LDE2Ljg3NSBDMzQuMzc0LDE0LjUgMzIuNDM3LDEyLjYyNSAyOS45OTksMTIuNjI1IEwzMCwxMi42MjUgWiBNMTcuMjUsMjEuMTg4IEMxOS43NSwyMS4xODggMjEuNTYzLDE5LjM3NSAyMS41NjMsMTYuODc1IEMyMS41NjMsMTQuNDM3IDE5Ljc1LDEyLjY4NyAxNy4yNSwxMi42MjUgQzE0Ljc1LDEyLjYyNSAxMi42ODcsMTQuNjI1IDEyLjc1LDE2LjkzOCBDMTIuODEzLDE5LjMxMyAxNC44MTMsMjEuMTg4IDE3LjI1LDIxLjE4OCBMMTcuMjUsMjEuMTg4IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=github] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDY0IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+Z2l0aHViPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9ImdpdGh1YiIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik04LjQzNzY5NDk5ZS0xNSwzMi4yNSBDOC40Mzc2OTQ5OWUtMTUsMzYuNTYzIDAuODc1LDQwLjc1IDIuNTYzLDQ0LjYyNSBDNS45MzgsNTIuNjI1IDExLjU2Myw1OC4zMTMgMTkuNTAxLDYxLjc1IEMyMy40MzksNjMuNDM4IDI3LjU2NCw2NC4zMTMgMzEuOTM5LDY0LjMxMyBDMzYuMzE0LDY0LjMxMyA0MC40MzksNjMuNDM4IDQ0LjM3Nyw2MS43NSBDNTIuMTksNTguMzc1IDU3Ljg3Nyw1Mi42ODcgNjEuMzE1LDQ0LjYyNSBDNjMuMDAzLDQwLjYyNSA2My44NzgsMzYuNDM3IDYzLjg3OCwzMi4yNSBDNjMuODc4LDI4IDYzLjAwMywyMy44NzUgNjEuMzE1LDE5LjgxMiBDNTcuODc3LDExLjgxMiA1Mi4xOSw2LjE4NyA0NC4zNzcsMi44NzQgQzQwLjQzOSwxLjEyNCAzNi4zMTQsMC4zMTEgMzEuOTM5LDAuMzExIEMyNy41NjQsMC4zMTEgMjMuNDM5LDEuMTI0IDE5LjUwMSwyLjg3NCBDMTEuNTYzLDYuMjQ5IDUuOTM4LDExLjg3NCAyLjU2MywxOS44MTIgQzAuODc1LDIzLjc1IDAsMjcuODc1IDAsMzIuMjUgTDguNDM3Njk0OTllLTE1LDMyLjI1IFogTTUsMzIuMjUgQzUsMjguNjI1IDUuNjg4LDI1LjEyNSA3LjEyNSwyMS43NSBDOC41NjMsMTguNSAxMC41LDE1LjYyNSAxMi44NzUsMTMuMTg3IEMxNS4zNzUsMTAuNzQ5IDE4LjI1LDguODEyIDIxLjQzOCw3LjQzNyBDMjQuOTM4LDUuOTk5IDI4LjQzOCw1LjMxMiAzMS45MzgsNS4zMTIgQzM1LjUwMSw1LjMxMiAzOC45MzgsNiA0Mi4zNzYsNy40MzcgQzQ1LjY4OSw4Ljg3NSA0OC41NjQsMTAuNzUgNTAuOTM5LDEzLjE4NyBDNTMuNDM5LDE1LjYyNSA1NS4zMTQsMTguNSA1Ni42ODksMjEuNzUgQzU4LjEyNywyNS4xMjUgNTguODE0LDI4LjYyNSA1OC44MTQsMzIuMjUgQzU4LjgxNCwzOC4xODggNTcuMDY0LDQzLjU2MyA1My41NjQsNDguMjUgQzUwLjAwMSw1MyA0NS40MzksNTYuMzEzIDM5LjkzOSw1OC4zMTMgTDM5LjkzOSw1My4xODggQzM5LjkzOSw1MC42ODggMzkuMDY0LDQ4LjgxMyAzNy4zMTQsNDcuNjI1IEMzOS40MzksNDcuNDM3IDQxLjM3Nyw0NyA0My4xMjcsNDYuMzc1IEM0NS4yNTIsNDUuNjI1IDQ2Ljk0LDQ0LjU2MiA0OC4xOSw0My4xODcgQzUwLjU2NSw0MC43NDkgNTEuNjksMzcuMTI0IDUxLjY5LDMyLjM3NCBDNTEuNjksMjkuMTg2IDUwLjYyNywyNi40MzYgNDguNTAyLDI0LjE4NiBDNDkuNDQsMjEuNjIzIDQ5LjM3NywxOC45MzYgNDguMTg5LDE1Ljk5OCBMNDcuNDM5LDE1LjkzNSBDNDYuODE0LDE1LjgxIDQ1Ljg3NiwxNi4wNiA0NC41MDEsMTYuNTYgQzQzLjAwMSwxNy4xMjMgNDEuNTAxLDE3Ljk5OCAzOS44MTMsMTkuMTIzIEMzNy4xODgsMTguNDM1IDM0LjU2MywxOC4wNiAzMi4wNjMsMTguMDYgQzI5LjU2MywxOC4wNiAyNywxOC40MzUgMjQuMzc1LDE5LjEyMyBDMjIuMzEyLDE3Ljc0OCAyMC41LDE2LjgxIDE4LjgxMiwxNi4zMSBDMTguMTg3LDE2LjA2IDE3LjYyNCwxNS45OTcgMTcuMTg3LDE1Ljk5NyBMMTUuOTM3LDE1Ljk5NyBDMTQuNzQ5LDE4LjkzNSAxNC42MjQsMjEuNjIyIDE1LjYyNCwyNC4xODUgQzEzLjQ5OSwyNi40MzUgMTIuNDM2LDI5LjE4NSAxMi40MzYsMzIuMzczIEMxMi40MzYsMzguNDk4IDE0LjM3NCw0Mi43NDggMTguMjQ5LDQ1LjEyMyBDMTkuNzQ5LDQ2LjA2MSAyMS42MjQsNDYuNzQ4IDIzLjgxMiw0Ny4xMjMgQzI0LjkzNyw0Ny4zNzMgMjUuOTM3LDQ3LjU2MSAyNi44MTIsNDcuNjIzIEMyNS4xMjQsNDguNzQ4IDI0LjI0OSw1MC42MjMgMjQuMjQ5LDUzLjE4NiBMMjQuMjQ5LDU4LjMxMSBDMTguNTYxLDU2LjMxMSAxMy45MzYsNTIuOTk4IDEwLjM3NCw0OC4zNzMgQzYuODExLDQzLjYyMyA0Ljk5OSwzOC4yNDggNC45OTksMzIuMjQ4IEw1LDMyLjI1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=google] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjU3cHgiIGhlaWdodD0iNThweCIgdmlld0JveD0iMCAwIDU3IDU4IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+Z29vZ2xlPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9Imdvb2dsZSIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0yOS4wMDQsMzQuNDE0IEwyOS4wMDQsMjMuODEyIEw1NS42OCwyMy44MTIgQzU2LjA4LDI1LjYwOCA1Ni4zOTIsMjcuMjg4IDU2LjM5MiwyOS42NTQgQzU2LjM5Miw0NS45MjggNDUuNDc2LDU3LjQ5OCAyOS4wMzIsNTcuNDk4IEMxMy4zLDU3LjQ5OCAwLjUzMiw0NC43MyAwLjUzMiwyOC45OTggQzAuNTMyLDEzLjI2NiAxMy4zLDAuNDk4IDI5LjAzMiwwLjQ5OCBDMzYuNzI4LDAuNDk4IDQzLjE2OCwzLjMyIDQ4LjA5OCw3LjkzNiBMNDAuMDA0LDE1LjgwMiBDMzcuOTUyLDEzLjg2NCAzNC4zNiwxMS41ODQgMjkuMDMyLDExLjU4NCBDMTkuNTk4LDExLjU4NCAxMS45MDQsMTkuNDIyIDExLjkwNCwyOS4wMjYgQzExLjkwNCwzOC42MyAxOS42LDQ2LjQ2OCAyOS4wMzIsNDYuNDY4IEMzOS45NDgsNDYuNDY4IDQzLjk2NiwzOC45MTYgNDQuNzA2LDM0LjQ0IEwyOS4wMDIsMzQuNDQgTDI5LjAwMiwzNC40MTIgTDI5LjAwNCwzNC40MTQgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=instagram] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDY0IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+aW5zdGFncmFtPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9Imluc3RhZ3JhbSIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEuMDAwMDAwLCAwLjAwMDAwMCkiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNNDYuMDYzLDIzLjY4OCBDNDcuOTM4LDI2LjMxMyA0OS4wNjMsMjkuNTYzIDQ5LjA2MywzMy4xMjYgQzQ5LjA2Myw0Mi4xMjYgNDEuODEzLDQ5LjM3NiAzMi44MTMsNDkuMzc2IEMyMy44MTMsNDkuMzc2IDE2LjUsNDIuMTI2IDE2LjUsMzMuMTI2IEMxNi41LDI5LjU2MyAxNy42MjUsMjYuMzEzIDE5LjUsMjMuNjg4IEwxLDIzLjY4OCBMMSw1Mi4yNTEgQzEsNTkuMTg5IDYuNjI1LDY0LjgxNCAxMy41NjMsNjQuODE0IEw1Mi4wNjMsNjQuODE0IEM1OS4wMDEsNjQuODE0IDY0LjY4OCw1OS4xODkgNjQuNjg4LDUyLjI1MSBMNjQuNjg4LDIzLjY4OCBMNDYuMDYzLDIzLjY4OCBMNDYuMDYzLDIzLjY4OCBaIE02NC42ODgsMTMuMzc1IEM2NC42ODgsNi40MzcgNTksMC44MTIgNTIuMDYzLDAuODEyIEwxNy42ODgsMC44MTIgTDE3LjY4OCwxNi42ODcgTDE1LjA2MywxNi42ODcgTDE1LjA2MywwLjgxMiBMMTMuMzEzLDAuODEyIEwxMy4zMTMsMTYuNjg3IEwxMC43NSwxNi42ODcgTDEwLjc1LDEuMTI0IEMxMC4xMjUsMS4zMTIgOS41LDEuNDk5IDguODc1LDEuNzQ5IEw4Ljg3NSwxNi42ODcgTDYuMzEyLDE2LjY4NyBMNi4zMTIsMy4xMjQgQzMuMTI0LDUuNDM3IDAuOTk5LDkuMTg3IDAuOTk5LDEzLjM3NCBMMC45OTksMjEuNjg3IEwyMS4xODcsMjEuNjg3IEMyNC4xMjUsMTguNjg3IDI4LjI1LDE2LjgxMiAzMi44MTIsMTYuODEyIEMzNy4zMTIsMTYuODEyIDQxLjQzNywxOC42ODcgNDQuMzc1LDIxLjY4NyBMNjQuNjg4LDIxLjY4NyBMNjQuNjg4LDEzLjM3NCBMNjQuNjg4LDEzLjM3NSBaIE01OC45MzgsOC4xMjUgTDU4LjkzOCwxNS4wNjMgQzU4LjkzOCwxNi4xODggNTgsMTcuMDYzIDU2Ljg3NSwxNy4wNjMgTDUwLjA2MiwxNy4wNjMgQzQ4Ljk5OSwxNy4wNjMgNDguMDYyLDE2LjE4OCA0OC4wNjIsMTUuMDYzIEw0OC4wNjIsOC4xMjUgQzQ4LjA2Miw3IDQ5LDYuMDYyIDUwLjA2Miw2LjA2MiBMNTYuODc1LDYuMDYyIEM1OCw2LjA2MiA1OC45MzgsNyA1OC45MzgsOC4xMjUgTDU4LjkzOCw4LjEyNSBaIE0yMC4yNSwzMy4xMjUgQzIwLjI1LDQwIDI1Ljg3NSw0NS42MjUgMzIuODEzLDQ1LjYyNSBDMzkuNjg4LDQ1LjYyNSA0NS4zMTMsNDAgNDUuMzEzLDMzLjEyNSBDNDUuMzEzLDI5LjM3NSA0My42ODgsMjYgNDEuMDYzLDIzLjY4NyBDNDAuMTI1LDIyLjg3NCAzOS4xMjUsMjIuMTg3IDM4LDIxLjY4NyBDMzYuMzc1LDIwLjkzNyAzNC42MjUsMjAuNTYyIDMyLjgxMiwyMC41NjIgQzMwLjkzNywyMC41NjIgMjkuMTg3LDIwLjkzNyAyNy42MjQsMjEuNjg3IEMyNi40OTksMjIuMTg3IDI1LjQzNiwyMi44NzUgMjQuNDk5LDIzLjY4NyBDMjEuODc0LDI2IDIwLjI0OSwyOS4zNzUgMjAuMjQ5LDMzLjEyNSBMMjAuMjUsMzMuMTI1IFogTTIzLjU2MywzMy4xMjUgQzIzLjU2MywyOCAyNy42ODgsMjMuODEyIDMyLjgxMywyMy44MTIgQzM3LjkzOCwyMy44MTIgNDIuMTI2LDI4IDQyLjEyNiwzMy4xMjUgQzQyLjEyNiwzOC4yNSAzNy45MzgsNDIuMzc1IDMyLjgxMyw0Mi4zNzUgQzI3LjY4OCw0Mi4zNzUgMjMuNTYzLDM4LjI1IDIzLjU2MywzMy4xMjUgTDIzLjU2MywzMy4xMjUgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=linkedin] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY3cHgiIGhlaWdodD0iNjRweCIgdmlld0JveD0iMCAwIDY3IDY0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+bGlua2VkaW48L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0ibGlua2VkaW4iIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMC42ODcsNy4zNzUgQzAuNjg3LDkuNSAxLjM3NSwxMS4yNSAyLjg3NSwxMi42ODggQzQuMzEzLDE0LjA2MyA2LjE4OCwxNC44MTMgOC41NjMsMTQuODEzIEw4LjYyNiwxNC44MTMgQzExLjA2NCwxNC44MTMgMTMuMDAxLDE0LjA2MyAxNC41MDEsMTIuNjg4IEMxNS45MzksMTEuMzEzIDE2LjY4OSw5LjYyNSAxNi42ODksNy41NjMgQzE2LjY4OSw1LjMxMyAxNS45MzksMy40MzggMTQuNDM5LDIuMDYzIEMxMy4wMDEsMC42ODggMTEuMDY0LDguODgxNzg0MmUtMTYgOC43NTEsOC44ODE3ODQyZS0xNiBDNi4zNzYsOC44ODE3ODQyZS0xNiA0LjQzOCwwLjY4OCAyLjkzOCwyLjA2MyBDMS40MzgsMy41MDEgMC42ODgsNS4yNTEgMC42ODgsNy4zNzYgTDAuNjg3LDcuMzc1IFogTTEuNSw2My4zNzUgTDE1Ljc1LDYzLjM3NSBMMTUuNzUsMjAuNjI1IEwxLjUsMjAuNjI1IEwxLjUsNjMuMzc1IEwxLjUsNjMuMzc1IFogTTIzLjU2Myw2My4zNzUgQzIzLjY4OCw1MC41IDIzLjc1MSw0MC41IDIzLjc1MSwzMy4zNzUgQzIzLjc1MSwyNi4yNSAyMy42ODgsMjIgMjMuNTYzLDIwLjYyNSBMMzcuODEzLDIwLjYyNSBMMzcuODEzLDI2LjY4OCBMMzcuNzUsMjYuODEzIEwzNy44MTMsMjYuODEzIEwzNy44MTMsMjYuNjg4IEM0MC44NzYsMjEuOTM4IDQ1LjE4OCwxOS41NjMgNTAuNjg4LDE5LjU2MyBDNTUuNTYzLDE5LjU2MyA1OS41MDEsMjEuMjUxIDYyLjUwMSwyNC41MDEgQzY1LjUwMSwyNy43NTEgNjcuMDAxLDMyLjU2NCA2Ny4wMDEsMzguODc2IEw2Ny4wMDEsNjMuMzc2IEw1Mi43NTEsNjMuMzc2IEw1Mi43NTEsNDAuNTAxIEM1Mi43NTEsMzQuMDYzIDUwLjM3NiwzMC44NzYgNDUuNjI2LDMwLjg3NiBDNDMuNzUxLDMwLjg3NiA0Mi4yNTEsMzEuMzc2IDQxLjA2MywzMi4zNzYgQzM5LjgxMywzMy4zNzYgMzguOTM4LDM0LjU2NCAzOC4zMTMsMzYuMDY0IEMzOCwzNi44NzcgMzcuODEzLDM4LjAwMiAzNy44MTMsMzkuNTAyIEwzNy44MTMsNjMuMzc3IEwyMy41NjMsNjMuMzc3IEwyMy41NjMsNjMuMzc1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=miicard] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjkxcHgiIGhlaWdodD0iNjFweCIgdmlld0JveD0iMCAwIDkxIDYxIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+bWlpY2FyZDwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJtaWljYXJkIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTQxLjUsNS42ODggQzY0LjE4OCwyLjU2MyA3NywwLjg3NSA3Ny42MjUsMC44NzUgQzc5LjQzOCwwLjg3NSA4MC44NzUsMS4zMTMgODIuNDM4LDIuMzc1IEM4My44MTMsMy4zNzUgODUuMDAxLDUuMTg4IDg1LjM3Niw2LjgxMyBDODUuNjg5LDguMzc2IDkwLjMxNCw0Mi41NjMgOTAuMzE0LDQzLjUwMSBDOTAuMzE0LDQ3LjE4OSA4Ny40MzksNTAuNTY0IDgzLjgxNCw1MS4xMjYgQzgwLjgxNCw1MS42MjYgMTMuMTg5LDYwLjc1MSAxMi41NjQsNjAuNzUxIEM5LjE4OSw2MC43NTEgNi4zMTQsNTguNjI2IDUuMTg5LDU1LjM3NiBDNS4wMDEsNTQuOTM4IDQuMTI2LDQ4LjYyNiAyLjUwMSwzNi44MTMgQzAuMjUxLDIwLjU2MyAwLjA2MywxOC43NSAwLjA2MywxNy43NSBDMC4xMjYsMTYuNSAwLjQzOCwxNS41NjIgMC45MzgsMTQuNSBDMS45MzgsMTIuNjg3IDMuNzUxLDExLjE4NyA1LjY4OCwxMC42ODcgQzYuMDYzLDEwLjU2MiAyMi4xODgsOC4zMTIgNDEuNTAxLDUuNjg3IEw0MS41LDUuNjg4IFogTTYyLjU2Myw4LjE4OCBDNjEuMzEzLDcuODEzIDYwLjEyNSw4LjA2MyA1OS4xODgsOS4wMDEgQzU4LjMxMyw5Ljg3NiA1OC4wNjMsMTEuMDAxIDU4LjQzOCwxMi4zMTQgQzU4LjY4OCwxMy4xODkgNTkuNTYzLDE0LjA2NCA2MC4zNzYsMTQuMjUyIEM2MS42ODksMTQuNjI3IDYzLjAwMSwxNC4zMTUgNjMuODc2LDEzLjM3NyBDNjUuMzE0LDExLjY4OSA2NC42MjYsOC44NzcgNjIuNTYzLDguMTg5IEw2Mi41NjMsOC4xODggWiBNNzguNjI1LDguMTg4IEM3Ny4zMTIsNy44MTMgNzYuMTI1LDguMDYzIDc1LjI1LDkuMDAxIEM3NC4zMTIsOS44NzYgNzQuMDYyLDExLjAwMSA3NC40MzcsMTIuMzE0IEM3NC42ODcsMTMuMTg5IDc1LjU2MiwxNC4wNjQgNzYuMzc1LDE0LjI1MiBDNzcuNzUsMTQuNjI3IDc5LjA2MywxNC4zMTUgNzkuODc1LDEzLjM3NyBDODEuMzc1LDExLjY4OSA4MC42ODgsOC44NzcgNzguNjI1LDguMTg5IEw3OC42MjUsOC4xODggWiBNMjQuMzEzLDE4LjU2MyBDMjMuOTM4LDE4LjQzOCAyMy4wNjMsMTguMzEzIDIyLjI1LDE4LjMxMyBDMTguNTYyLDE4LjE4OCAxNS42ODcsMTkuNjg4IDEzLjU2MiwyMi45MzggQzEzLjM3NCwyMy4yNTEgMTMuMzc0LDIzLjE4OCAxMy4xODcsMjAuMDYzIEwxMy4xMjQsMTguODEzIEwxMC44MTEsMTguODEzIEM4LjgxMSwxOC44NzYgOC40OTgsMTguODc2IDguNTYxLDE5LjA2MyBDOC42MjQsMTkuMTI2IDguNjI0LDI1LjM3NiA4LjY4NiwzMi44NzYgTDguNzQ5LDQ2LjUwMSBMMTMuODc0LDQ2LjUwMSBMMTMuOTk5LDI4LjA2MyBMMTQuMjQ5LDI3LjQzOCBDMTQuODEyLDI2LjA2MyAxNS4zNzQsMjUuMjUgMTYuMTI0LDI0LjQzOCBDMTguMDYyLDIyLjUgMjAuNjI0LDIyLjA2MyAyMi44MTIsMjMuMTg4IEMyNC4xMjUsMjMuODEzIDI1LjEyNSwyNS4yNTEgMjUuNjg3LDI3LjA2MyBDMjUuODc1LDI3LjkzOCAyNS44NzUsMjguMTI2IDI1LjkzNywzNy4yNTEgTDI2LDQ2LjU2NCBMMzEuMDYzLDQ2LjU2NCBMMzEuMTI2LDM3LjI1MSBDMzEuMTI2LDI4LjAwMSAzMS4xMjYsMjguMDAxIDMxLjM3NiwyNy4yNTEgQzMxLjg3NiwyNS43NTEgMzMuMDY0LDI0LjI1MSAzNC4yNTEsMjMuNTAxIEMzNS40MzksMjIuNjg4IDM3LjEyNiwyMi40MzggMzguNTAxLDIyLjY4OCBDNDAuNjI2LDIzLjEyNiA0Mi4wNjQsMjQuNjI2IDQyLjgxNCwyNy4zMTMgQzQzLjA2NCwyOC4xODggNDMuMDY0LDI4LjMxMyA0My4xMjcsMzcuMzc2IEw0My4xOSw0Ni41MDEgTDQ4LjMxNSw0Ni41MDEgTDQ4LjMxNSwzNy41NjMgQzQ4LjMxNSwyOC4xODggNDguMjUyLDI3LjY4OCA0Ny43NTIsMjUuNjg4IEM0Ni44MTQsMjEuODc1IDQ0LjYyNywxOS40MzggNDEuMzE0LDE4LjUgQzQwLjI1MSwxOC4yNSAzNy41NjQsMTguMjUgMzYuNTAxLDE4LjUgQzM1LjQzOCwxOC44MTMgMzQuMjUxLDE5LjMxMyAzMy4zMTMsMTkuOTM4IEMzMi4zNzUsMjAuNjI2IDMwLjkzOCwyMi4xMjYgMzAuMzEzLDIzLjAwMSBMMjkuODc1LDIzLjY4OSBMMjkuNSwyMi44NzYgQzI4LjQzNywyMC42ODggMjYuNSwxOS4xMjYgMjQuMzEyLDE4LjU2MyBMMjQuMzEzLDE4LjU2MyBaIE02NC4xMjUsMzIuNjg4IEw2NC4xMjUsMTguODc1IEw2MS41LDE4LjgxMiBDNTkuNSwxOC44MTIgNTguOTM3LDE4LjgxMiA1OC44NzUsMTguOTM3IEM1OC44MTMsMTkuMDYyIDU4LjgxMiwyNS4yNSA1OC44MTIsMzIuODEyIEw1OC44NzUsNDYuNSBMNjQuMTI1LDQ2LjUgTDY0LjEyNSwzMi42ODcgTDY0LjEyNSwzMi42ODggWiBNODAuMTI1LDMyLjY4OCBMODAuMTI1LDE4Ljg3NSBMNzcuNTYyLDE4LjgxMiBDNzUuNDk5LDE4LjgxMiA3NC45MzcsMTguODEyIDc0Ljg3NCwxOC45MzcgTDc0Ljg3NCw0Ni41IEw4MC4xMjQsNDYuNSBMODAuMTI0LDMyLjY4NyBMODAuMTI1LDMyLjY4OCBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=oauth2] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4xLjEsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAxNTAuMSAxNjcuOCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTUwLjEgMTY3LjgiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPGc+DQoJPHBvbHlnb24gZmlsbD0iI0ZGRkZGRiIgcG9pbnRzPSIzMSwxMzUuOCAzMC45LDEzNS44IDc1LjEsMTY3LjggMTE5LjIsMTM1LjggNzUuMSwxMDMuNyAJIi8+DQoJPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTMuNyw1MS45TDMuNyw1MS45Qy02LjYsODMuNiw1LjMsMTE3LjIsMzEsMTM1LjhsMCwwbDE2LjktNTEuOUwzLjcsNTEuOWw1NC41LDBMNzUuMSwwbDAsMEgyMC41TDMuNyw1MS45eg0KCQkiLz4NCgk8cGF0aCBmaWxsPSIjRkZGRkZGIiBkPSJNMTQ2LjUsNTEuOUwxNDYuNSw1MS45TDE0Ni41LDUxLjlMMTI5LjYsMEg3NS4xbDAsMGwxNi45LDUxLjlMMTQ2LjUsNTEuOWwtNDQuMSwzMi4xbDE2LjgsNTEuOQ0KCQlDMTQ2LjIsMTE2LjIsMTU2LjMsODIsMTQ2LjUsNTEuOXoiLz4NCjwvZz4NCjwvc3ZnPg0K"); } .auth0-lock-social-button[data-provider^=paypal] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYzcHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDYzIDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+cGF5cGFsPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InBheXBhbCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLDU3LjY4OCBMMTYuNDM4LDU3LjY4OCBMMjAuNTAxLDM4Ljc1IEwzMi4xODksMzguNzUgQzM3LjkzOSwzOC43NSA0Mi44NzcsMzcuMTI1IDQ3LjEyNywzMy43NSBDNTEuMzc3LDMwLjQzNyA1NC4xMjcsMjUuODc1IDU1LjM3NywyMC4wNjIgQzU2LjAwMiwxNi43NDkgNTYuMDAyLDEzLjg3NCA1NS4zNzcsMTEuNDM3IEM1NC43NTIsOSA1My42MjcsNi45OTkgNTIuMDY0LDUuMzc0IEM1MC40MzksMy44MTEgNDguNjI2LDIuNjI0IDQ2LjYyNiwxLjgxMSBDNDQuNjI2LDEuMDYxIDQyLjU2MywwLjY4NiA0MC40MzgsMC42ODYgTDEyLjQzOCwwLjY4NiBMMCw1Ny42ODggWiBNNi4zNzUsNjQuNjg4IEw3LjEyNSw2MS41NjMgTDIwLjkzOCw2MS41NjMgTDI0LjkzOCw0Mi42ODggTDM2LjY4OCw0Mi42ODggQzQyLjM3Niw0Mi42ODggNDcuMzc2LDQxIDUxLjYyNiwzNy42ODggQzU1Ljg3NiwzNC4zNzYgNTguNjI2LDI5LjgxMyA1OS44MTQsMjQgQzYwLjc1MiwxOS44NzUgNjAuNTAyLDE2LjI1IDU5LjA2NCwxMy4xMjUgQzYyLjEyNywxNi42ODggNjMuMDAyLDIxLjM3NSA2MS44MTQsMjcuMTI1IEM2MC41NjQsMzIuOTM4IDU3LjgxNCwzNy41IDUzLjU2NCw0MC44MTMgQzQ5LjM3Niw0NC4xMjYgNDQuMzc2LDQ1LjgxMyAzOC42MjYsNDUuODEzIEwyNi44NzYsNDUuODEzIEwyMi44NzYsNjQuNjg4IEw2LjM3Niw2NC42ODggTDYuMzc1LDY0LjY4OCBaIE0yMi44NzUsMjcuODc1IEwyNi4zNzUsMTIuMjUgTDM0LjM3NSwxMi4yNSBDMzUuNzUsMTIuMjUgMzYuOTM4LDEyLjYyNSAzNy45MzgsMTMuMzc1IEMzOC45MzgsMTQuMTI1IDM5LjYyNiwxNS4xMjUgMzkuOTM4LDE2LjM3NSBDMzkuMzEzLDE2LjI1IDM4LjkzOCwxNi4xODcgMzguODc1LDE2LjE4NyBMMzAuODc1LDE2LjE4NyBMMjguMTg3LDI3Ljg3NSBMMjIuODc0LDI3Ljg3NSBMMjIuODc1LDI3Ljg3NSBaIE0zMC44NzUsMjcuODEzIEwzMi43NSwxOS4zMTMgTDQwLjA2MywxOS4zMTMgQzQwLjA2MywxOS4zNzYgNDAuMDYzLDE5LjUwMSA0MCwxOS42ODggQzM5LjkzNywxOS44NzUgMzkuOTM3LDIwLjAwMSAzOS45MzcsMjAuMDYzIEMzOS40MzcsMjIuMTg4IDM4LjM3NCwyMy45MzggMzYuNTYyLDI1LjQzOCBDMzQuODEyLDI2LjkzOCAzMi44NzQsMjcuNzUxIDMwLjg3NCwyNy44MTMgTDMwLjg3NSwyNy44MTMgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=paypal-sandbox] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYzcHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDYzIDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+cGF5cGFsPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InBheXBhbCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLDU3LjY4OCBMMTYuNDM4LDU3LjY4OCBMMjAuNTAxLDM4Ljc1IEwzMi4xODksMzguNzUgQzM3LjkzOSwzOC43NSA0Mi44NzcsMzcuMTI1IDQ3LjEyNywzMy43NSBDNTEuMzc3LDMwLjQzNyA1NC4xMjcsMjUuODc1IDU1LjM3NywyMC4wNjIgQzU2LjAwMiwxNi43NDkgNTYuMDAyLDEzLjg3NCA1NS4zNzcsMTEuNDM3IEM1NC43NTIsOSA1My42MjcsNi45OTkgNTIuMDY0LDUuMzc0IEM1MC40MzksMy44MTEgNDguNjI2LDIuNjI0IDQ2LjYyNiwxLjgxMSBDNDQuNjI2LDEuMDYxIDQyLjU2MywwLjY4NiA0MC40MzgsMC42ODYgTDEyLjQzOCwwLjY4NiBMMCw1Ny42ODggWiBNNi4zNzUsNjQuNjg4IEw3LjEyNSw2MS41NjMgTDIwLjkzOCw2MS41NjMgTDI0LjkzOCw0Mi42ODggTDM2LjY4OCw0Mi42ODggQzQyLjM3Niw0Mi42ODggNDcuMzc2LDQxIDUxLjYyNiwzNy42ODggQzU1Ljg3NiwzNC4zNzYgNTguNjI2LDI5LjgxMyA1OS44MTQsMjQgQzYwLjc1MiwxOS44NzUgNjAuNTAyLDE2LjI1IDU5LjA2NCwxMy4xMjUgQzYyLjEyNywxNi42ODggNjMuMDAyLDIxLjM3NSA2MS44MTQsMjcuMTI1IEM2MC41NjQsMzIuOTM4IDU3LjgxNCwzNy41IDUzLjU2NCw0MC44MTMgQzQ5LjM3Niw0NC4xMjYgNDQuMzc2LDQ1LjgxMyAzOC42MjYsNDUuODEzIEwyNi44NzYsNDUuODEzIEwyMi44NzYsNjQuNjg4IEw2LjM3Niw2NC42ODggTDYuMzc1LDY0LjY4OCBaIE0yMi44NzUsMjcuODc1IEwyNi4zNzUsMTIuMjUgTDM0LjM3NSwxMi4yNSBDMzUuNzUsMTIuMjUgMzYuOTM4LDEyLjYyNSAzNy45MzgsMTMuMzc1IEMzOC45MzgsMTQuMTI1IDM5LjYyNiwxNS4xMjUgMzkuOTM4LDE2LjM3NSBDMzkuMzEzLDE2LjI1IDM4LjkzOCwxNi4xODcgMzguODc1LDE2LjE4NyBMMzAuODc1LDE2LjE4NyBMMjguMTg3LDI3Ljg3NSBMMjIuODc0LDI3Ljg3NSBMMjIuODc1LDI3Ljg3NSBaIE0zMC44NzUsMjcuODEzIEwzMi43NSwxOS4zMTMgTDQwLjA2MywxOS4zMTMgQzQwLjA2MywxOS4zNzYgNDAuMDYzLDE5LjUwMSA0MCwxOS42ODggQzM5LjkzNywxOS44NzUgMzkuOTM3LDIwLjAwMSAzOS45MzcsMjAuMDYzIEMzOS40MzcsMjIuMTg4IDM4LjM3NCwyMy45MzggMzYuNTYyLDI1LjQzOCBDMzQuODEyLDI2LjkzOCAzMi44NzQsMjcuNzUxIDMwLjg3NCwyNy44MTMgTDMwLjg3NSwyNy44MTMgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=planningcenter] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYzcHgiIGhlaWdodD0iNjNweCIgdmlld0JveD0iMCAwIDYzIDYzIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+cGxhbm5pbmdjZW50ZXI8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0icGxhbm5pbmdjZW50ZXIiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNNC4zMTMsNjEuNSBMNi4zMTMsNjIuNDM4IEwzMS40MzgsNjIuNDM4IEM1OC43NTEsNjIuNDM4IDU4LjMxMyw2Mi41MDEgNjAuNjg4LDU5LjkzOCBDNjEuMzc2LDU5LjE4OCA2Mi4xMjYsNTcuODEzIDYyLjM3Niw1Ni44MTMgQzYyLjY4OSw1NS42MjUgNjIuODc2LDQ3IDYyLjg3NiwzMS41NjMgQzYyLjg3NiwxMi4yNSA2Mi43NTEsNy43NSA2Mi4xODgsNS44NzUgQzYxLjU2MywzLjYyNSA2MCwxLjgxMiA1OC4wNjMsMC43NSBDNTcuMzc1LDAuMzc1IDQ5LjUsMC4yNSAzMS41NjMsMC4yNSBDNC4xODgsMC4yNSA0Ljg3NSwwLjE4NyAyLjYyNSwyLjYyNSBDMC4xODcsNS4xODggMC4xODcsNS4xMjUgMC4xODcsMzEuNzUgTDAuMTg3LDU2LjM3NSBMMS4yNSw1OC4zNzUgQzIsNTkuODc1IDIuODEzLDYwLjY4OCA0LjMxMyw2MS41IEw0LjMxMyw2MS41IFogTTIwLDU0LjEyNSBDMTkuNzUsNTUuMTg4IDE5LjY4Nyw1NS4xODggMTMuODc1LDU1LjE4OCBDMTAuNjg3LDU1LjE4OCA3LjkzNyw1NS4wNjMgNy44MTIsNTQuODc1IEM3LjYyNCw1NC43NSA3LjQ5OSw0NC4xODcgNy40OTksMzEuNSBMNy40OTksOC40MzcgTDU1LjE4Nyw4LjQzNyBMNTUuMTg3LDU1LjE4NyBMNDMuNDM3LDU1LjE4NyBMNDIuNTYyLDUzLjQ5OSBDNDEuNDM3LDUxLjI0OSA0MC4zNzQsNTAuOTk5IDMwLjM3NCw1MS4xODYgQzIxLjQzNiw1MS4zMTEgMjAuNjI0LDUxLjU2MSAxOS45OTksNTQuMTI0IEwyMCw1NC4xMjUgWiBNMjkuMzc1LDQ1LjM3NSBDMzAuNjI1LDQ2LjI1IDMxLjY4OCw0Ni4zMTMgMzMuMDYzLDQ1LjYyNSBDMzQuNjI2LDQ0LjgxMiAzNC43NTEsNDQuMzc1IDM0Ljc1MSwzOS44NzUgQzM0Ljc1MSwzNy41NjIgMzQuOTM5LDM1LjY4NyAzNS4xMjYsMzUuNjg3IEMzNS4zNzYsMzUuNjg3IDM3LjE4OSwzNi41NjIgMzkuMjUxLDM3LjY4NyBDNDEuMjUxLDM4Ljg3NSA0My40MzksMzkuNzUgNDMuOTM5LDM5Ljc1IEM0NS42MjcsMzkuNzUgNDcuNTY0LDM3LjQzNyA0Ny4zNzcsMzUuNjg3IEM0Ny4yNTIsMzQuMjQ5IDQ2Ljg3NywzMy45OTkgNDMuMDAyLDMxLjg3NCBDMzguMTg5LDI5LjI0OSAzOC4xMjcsMjkuNjI0IDQzLjgxNSwyNi40MzYgQzQ2LjYyOCwyNC45MzYgNDcuMjUzLDI0LjMxMSA0Ny4zNzgsMjMuMzExIEM0Ny41NjYsMjEuODExIDQ1LjM3OCwxOC44NzMgNDQuMTI4LDE4Ljg3MyBDNDMuNjksMTguODczIDQxLjM3OCwxOS45MzYgMzkuMDAzLDIxLjE4NiBMMzQuNzUzLDIzLjQ5OSBMMzQuNzUzLDE5LjI0OSBDMzQuNzUzLDEzLjgxMSAzNC40NCwxMy4zMTEgMzEuMTI4LDEzLjQ5OSBMMjguNjI4LDEzLjYyNCBMMjguMzc4LDE4LjQ5OSBMMjguMTI4LDIzLjQzNyBMMjQuMzc4LDIxLjEyNCBDMTkuNTAzLDE4LjI0OSAxOC41MDMsMTguMTg2IDE2LjY5LDIwLjk5OSBDMTUuMDAyLDIzLjQ5OSAxNS4xOSwyMy45OTkgMTguNTAzLDI1Ljg3NCBDMTkuODE2LDI2LjU2MiAyMS42MjgsMjcuNjI0IDIyLjYyOCwyOC4yNDkgTDI0LjM3OCwyOS4zNzQgTDIwLjMxNSwzMS44MTIgQzE4LjA2NSwzMy4xODcgMTYuMDAyLDM0LjU2MiAxNS43NTIsMzQuODc1IEMxNS4zMTQsMzUuMzc1IDE1LjUwMiwzNiAxNi41NjUsMzcuNjI1IEMxOC4zMTUsNDAuNDM4IDE5LjYyOCw0MC41IDI0LjEyOCwzNy42ODggQzI1Ljk0MSwzNi41NjMgMjcuNjkxLDM1LjY4OCAyNy45NDEsMzUuNjg4IEMyOC4xOTEsMzUuNjg4IDI4LjM3OSwzNy41NjMgMjguMzc5LDQwLjE4OCBDMjguMzc5LDQ0LjM3NiAyOC40NDIsNDQuNzUxIDI5LjM3OSw0NS4zNzYgTDI5LjM3NSw0NS4zNzUgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=renren] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYxcHgiIGhlaWdodD0iMzVweCIgdmlld0JveD0iMCAwIDYxIDM1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+cmVucmVuPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InJlbnJlbiIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0yMC4zNzUsMC40MzggQzIwLjY4OCw3LjEyNiAxOS41LDEzLjAwMSAyMS43NSwxOC41MDEgQzIyLjYyNSwyMC41NjQgMjMuODEzLDIyLjU2NCAyNS4zMTMsMjQuMjUxIEMyOS42ODgsMjkuMjUxIDMyLjE4OCwyOC44NzYgMzYuNDM4LDIzLjU2MyBDNDEuODEzLDE2Ljc1IDQwLjAwMSw5IDQwLjMxMywwLjU2MyBDMzcuNDM4LDIuMTI2IDM0LjkzOCwzLjA2MyAzMi45MzgsNC42ODggQzMwLjkzOCw2LjI1MSAyOS44NzUsNi40MzggMjcuODc1LDQuNjI1IEMyNiwyLjkzNyAyMy4zNzUsMi4wNjIgMjAuMzc1LDAuNDM3IEwyMC4zNzUsMC40MzggWiBNNC4xMjUsMjguMTg4IEMxMy44NzUsMjMuMzEzIDE1LjI1LDEzLjEyNSAxMy42ODgsMS4zNzUgQzEuNjI1LDMuMTg4IC0zLjgxMiwxOC4xODggNC4xMjUsMjguMTg4IEw0LjEyNSwyOC4xODggWiBNNDcuMTg4LDEuMjUgQzQ3LjE4OCw1LjkzOCA0Ni43NSwxMC41NjMgNDcuMzEzLDE1IEM0Ny45MzgsMjAuMTI1IDUwLjYyNiwyNC4zNzUgNTUuMDYzLDI3LjM3NSBDNTYuNDM4LDI4LjMxMyA1Ny4xMjYsMjguMTI1IDU4LjA2MywyNi42ODcgQzY0LjE4OCwxNi44MTIgNTguODc2LDMuODc0IDQ3LjE4OCwxLjI0OSBMNDcuMTg4LDEuMjUgWiBNNDMuNjg4LDI0LjQzOCBDNDEuNjI1LDI3LjAwMSAzOS4yNSwyOS45MzggMzYuNzUsMzMuMDYzIEM0MS41LDM1LjE4OCA0Ni4xODgsMzUuMDYzIDUwLjc1LDMzLjA2MyBDNDguMjUsMzAuMDYzIDQ1Ljg3NSwyNy4xMjUgNDMuNjg3LDI0LjQzOCBMNDMuNjg4LDI0LjQzOCBaIE0yNC4xODgsMzMuMDYzIEMyMS42MjUsMjkuODc1IDE5LjMxMywyNy4wNjMgMTcuMjUsMjQuNSBDMTUuMDYyLDI3LjEyNSAxMi43NSwzMC4wNjMgMTAuMzEyLDMzLjA2MyBDMTUsMzUuMDYzIDE5LjY4NywzNS4xMjYgMjQuMTg3LDMzLjA2MyBMMjQuMTg4LDMzLjA2MyBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=salesforce] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDY0IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+c2FsZXNmb3JjZTwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJzYWxlc2ZvcmNlIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTAsMTUuODc1IEMwLDE2LjEyNSAwLjA2MywxNi41IDAuMTI1LDE3IEwxMC42MjUsNjEgQzEwLjg3NSw2Mi4wNjMgMTEuNDM4LDYyLjkzOCAxMi4zMTMsNjMuNjI1IEMxMy4xODgsNjQuMjUgMTQuMTg4LDY0LjYyNSAxNS4yNTEsNjQuNjI1IEMxNS44NzYsNjQuNjI1IDE2LjU2NCw2NC41NjIgMTcuMjUxLDY0LjM3NSBDMTguMDAxLDY0LjI1IDE4LjgxNCw2NC4wNjIgMTkuNzUxLDYzLjc1IEMyMC42ODksNjMuNSAyMS4zMTQsNjMuMzEyIDIxLjc1MSw2My4xODcgQzE4LjAwMSw2MS45MzcgMTQuOTM4LDYwLjYyNCAxMi41NjMsNTkuMzEyIEwxNy42MjYsNDcuODc0IEMxOS4zNzYsNDkuNDk5IDIxLjYyNiw1MC43NDkgMjQuMzE0LDUxLjc0OSBDMjcuMDAyLDUyLjY4NyAyOS41NjQsNTMuMTg3IDMyLjA2NCw1My4xODcgQzM0LjAwMiw1My4xODcgMzUuNjg5LDUyLjYyNCAzNy4xODksNTEuNjI0IEMzOC42ODksNTAuNjI0IDM5LjQzOSw0OS4xODYgMzkuNDM5LDQ3LjMxMSBDMzkuNDM5LDQ2LjEyMyAzOS4wNjQsNDQuOTM2IDM4LjMxNCw0My44MTEgQzM3LjU2NCw0Mi42ODYgMzYuNTY0LDQxLjY4NiAzNS4zNzYsNDAuODExIEMzNC4xMjYsMzkuOTM2IDMzLjAwMSwzOS4yNDggMzEuODc2LDM4LjY4NiBDMzAuNzUxLDM4LjA2MSAyOS42MjYsMzcuNTYxIDI4LjQzOCwzNy4xMjMgQzE3LjYyNSwzMi45MzUgMTIuMjUsMjYuODczIDEyLjI1LDE4Ljk5OCBDMTIuMjUsMTQuODczIDEzLjU2MywxMS4zMSAxNi4yNSw4LjI0OCBMMy42MjUsMTEuMjQ4IEMyLjU2MiwxMS40OTggMS42ODcsMTIuMDYxIDEsMTIuOTM2IEMwLjMxMywxMy44MTEgMCwxNC44MTEgMCwxNS44NzQgTDAsMTUuODc1IFogTTI2LjgxMywxOC44MTMgQzI2LjgxMywyMi4zMTMgMzAuNDM4LDI1LjMxMyAzNy43NTEsMjcuNzUxIEM0Mi42MjYsMjkuMzc2IDQ2LjU2NCwzMS42ODkgNDkuNTY0LDM0Ljc1MSBDNTIuNTY0LDM3LjgxMyA1NC4wNjQsNDEuNjg5IDU0LjA2NCw0Ni40MzkgQzU0LjA2NCw0OS45MzkgNTMuMDY0LDUzLjE4OSA1MS4wNjQsNTYuMTg5IEw2MC4zNzcsNTQuMDAxIEM2MS40NCw1My43NTEgNjIuMzE1LDUzLjE4OCA2My4wMDIsNTIuMzEzIEM2My42ODksNTEuNDM4IDY0LjAwMiw1MC40MzggNjQuMDAyLDQ5LjM3NSBDNjQuMDAyLDQ5LjEyNSA2My45MzksNDguNzUgNjMuODc3LDQ4LjI1IEw1My4zNzcsNC4yNSBDNTMuMTI3LDMuMTg3IDUyLjU2NCwyLjMxMiA1MS42ODksMS42MjUgQzUwLjgxNCwwLjkzOCA0OS44MTQsMC42MjUgNDguNzUxLDAuNjI1IEM0OC4xODgsMC42MjUgNDcuMjUxLDAuNzUgNDYuMDYzLDEgQzQ0LjgxMywxLjI1IDQzLjMxMywxLjYyNSA0MS41LDIuMTg4IEMzOS42MjUsMi42ODggMzguNjg3LDIuOTM4IDM4LjU2MiwyLjkzOCBDNDIuNjg3LDMuNTYzIDQ2LjYyNSw0LjkzOCA1MC41LDYuOTM4IEw0Ni41NjIsMTcuODEzIEM0NS40MzcsMTYuNjI1IDQzLjU2MiwxNS42MjUgNDAuOTM3LDE0Ljg3NSBDMzguMzc0LDE0LjEyNSAzNS45OTksMTMuNzUgMzMuOTM3LDEzLjc1IEMzMi4xODcsMTMuNzUgMzAuNTYyLDE0LjE4OCAyOS4wNjIsMTUuMDYzIEMyNy41NjIsMTUuOTM4IDI2LjgxMiwxNy4xODggMjYuODEyLDE4LjgxMyBMMjYuODEzLDE4LjgxMyBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=shopify] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjU1cHgiIGhlaWdodD0iNjNweCIgdmlld0JveD0iMCAwIDU1IDYzIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+c2hvcGlmeTwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJzaG9waWZ5IiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTIxLjEyNSwxLjY4OCBDMjQuMTI1LDAuMTg4IDI1LjgxMywwLjEyNSAyNy4zNzUsMS4zNzUgQzI4LDEuODc1IDI5LjE4OCwyLjQzOCAzMC4wNjMsMi41NjMgQzMxLjc1MSwyLjkzOCAzNC4yNTEsNS40MzggMzQuODEzLDcuMTg4IEMzNS4xMjYsOC4xMjYgMzUuMzc2LDguMjUxIDM2LjY4OCw4LjAwMSBDMzcuOTM4LDcuNzUxIDM4LjQzOCw3LjkzOCA0MC4xMjYsOS42MjYgQzQxLjg3NiwxMS4zNzYgNDIuNTAxLDExLjY4OSA0NC45MzksMTEuODc2IEM0Ny4xODksMTIuMTI2IDQ3LjY4OSwxMi4zMTQgNDcuODc3LDEzLjE4OSBDNDguMDAyLDEzLjgxNCA0OC44NzcsMTkuNDM5IDQ5LjgxNSwyNS44MTQgQzUwLjc1MywzMi4xODkgNTIuMTksNDEuNzUyIDUyLjk0LDQ3LjEyNyBDNTMuNzUzLDUyLjQ0IDU0LjM3OCw1Ny4xMjcgNTQuMzc4LDU3LjU2NSBDNTQuMzc4LDU4LjEyOCA1Mi4zMTUsNTguNzUzIDQ1LjAwMyw2MC4zMTUgTDM1LjU2NSw2Mi4zNzggTDE4LjMxNSw1OS4xMjggQzguNzUyLDU3LjM3OCAwLjgxNSw1NS43NTMgMC42MjcsNTUuNTY1IEMwLjM3Nyw1NS4zNzcgMC43NTIsNTEuMDAyIDEuNDQsNDUuODE1IEMyLjEyOCw0MC42OSAzLjEyOCwzMy4wMDIgMy42MjgsMjguNzUyIEM1LjEyOCwxNi43NTIgNC41NjYsMTguMDY0IDguNjkxLDE2LjgxNCBMMTIuMTI5LDE1LjY4OSBMMTMuNTA0LDEyLjAwMSBDMTUuMzE3LDYuODc2IDE3Ljk0MiwzLjMxMyAyMS4xMjksMS42ODggTDIxLjEyNSwxLjY4OCBaIE0yNC4xODgsNC40MzggTDI1LjkzOCwyLjg3NSBMMjQuNTYzLDIuODc1IEMyMi4xODgsMi44NzUgMTkuMzc1LDUuMDYzIDE3LjMxMyw4LjY4OCBDMTYuMTg4LDEwLjYyNiAxNS4wNjMsMTMuOTM4IDE1LjM3NSwxNC4yNTEgQzE1LjU2MywxNC40MzkgMTYuNSwxNC4yNTEgMTcuNjI1LDE0LjAwMSBDMTkuMzc1LDEzLjU2MyAxOS42MjUsMTMuMjUxIDIwLjEyNSwxMS40MzggQzIwLjkzOCw4LjMxMyAyMi4yNSw2LjA2MyAyNC4xODgsNC40MzggTDI0LjE4OCw0LjQzOCBaIE0yOC4zNzUsMjIuNTYzIEMyOC4xMjUsMjIuMzEzIDI2LjUsMjIgMjQuODEyLDIxLjkzOCBDMTcuMzEyLDIxLjUgMTEuOTM3LDI2LjAwMSAxMS44NzQsMzIuODEzIEMxMS44NzQsMzUuOTM4IDEyLjgxMiwzNy44NzYgMTUuNDk5LDM5Ljg3NiBDMjEuMzEyLDQ0LjUwMSAxNy42ODcsNDkuMDY0IDExLjQ5OSw0NS4wMDEgQzEwLjEyNCw0NC4xMjYgMTAuMTI0LDQ0LjE4OCA5LjI0OSw0Ny4wMDEgQzguNTYxLDQ5LjI1MSA4LjU2MSw0OS4yNTEgOS45OTksNTAuNTAxIEMxMC44MTIsNTEuMTg5IDEyLjYyNCw1Mi4wMDEgMTQuMTI0LDUyLjQzOSBDMjAuNDM3LDU0LjMxNCAyNS41NjIsNTEuMDAxIDI2LjI0OSw0NC42MjYgQzI2LjY4Nyw0MC43NTEgMjUuMTI0LDM3LjkzOCAyMC43NDksMzQuNzUxIEMxOC42MjQsMzMuMTg4IDE4LjEyNCwzMi41NjMgMTguMTI0LDMxLjM3NiBDMTguMTI0LDI5LjMxMyAxOS45MzcsMjguMzEzIDIyLjg3NCwyOC42MjYgQzI0LjEyNCwyOC43NTEgMjUuNDk5LDI5LjAwMSAyNS44NzQsMjkuMTg5IEMyNi40MzcsMjkuMzc3IDI2Ljg3NCwyOC43NTEgMjcuNzQ5LDI2LjE4OSBDMjguMzEyLDI0LjMxNCAyOC41NjIsMjIuNzUxIDI4LjM3NCwyMi41NjQgTDI4LjM3NSwyMi41NjMgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } .auth0-lock-social-button[data-provider^=soundcloud] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9Ijc0cHgiIGhlaWdodD0iMzZweCIgdmlld0JveD0iMCAwIDc0IDM2IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+c291bmRjbG91ZDwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJzb3VuZGNsb3VkIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTAsMjYuMjUgQzAsMjkuMTI1IDAuMjUsMzAuNjg4IDAuODEzLDMxIEMxLjA2MywzMC44NzUgMS4zMTMsMzAuMTg3IDEuNTAxLDI5IEMxLjY4OSwyNy43NSAxLjgxNCwyNi44NzUgMS44MTQsMjYuMjUgQzEuODE0LDI1LjY4NyAxLjY4OSwyNC44MTIgMS41MDEsMjMuNTYyIEMxLjMxMywyMi4zMTIgMS4wNjMsMjEuNjI0IDAuODEzLDIxLjQzNyBDMC41NjMsMjEuNjI1IDAuMzc1LDIyLjI1IDAuMjUsMjMuNDM3IEMwLjA2MiwyNC42MjUgMCwyNS41NjIgMCwyNi4yNSBMMCwyNi4yNSBaIE00LjEyNSwyNi4yNSBDNC4xMjUsMjcuMzEzIDQuMTg4LDI4LjgxMyA0LjQzOCwzMC44NzUgQzQuNjI2LDMyLjg3NSA0Ljc1MSwzNC4xMjUgNC44MTMsMzQuNTYzIEM0LjgxMywzNC44NzYgNC45MzgsMzUuMDYzIDUuMTg4LDM1LjA2MyBDNS4zNzYsMzUuMDYzIDUuNTAxLDM0Ljg3NSA1LjU2MywzNC41NjMgQzUuNjI2LDM0LjA2MyA1Ljc1MSwzMi44MTMgNi4wMDEsMzAuODEzIEM2LjE4OSwyOC44MTMgNi4zMTQsMjcuMzEzIDYuMzE0LDI2LjI1IEM2LjMxNCwyNiA2LjA2NCwyMy4xMjUgNS41NjQsMTcuNjI1IEM1LjUwMSwxNy4zNzUgNS4zNzYsMTcuMjUgNS4xODksMTcuMjUgQzQuOTM5LDE3LjI1IDQuODE0LDE3LjM3NSA0LjgxNCwxNy42MjUgQzQuNzUxLDE4LjEyNSA0LjYyNiwxOS40MzggNC40MzksMjEuNTYzIEM0LjE4OSwyMy42MjYgNC4xMjYsMjUuMTg4IDQuMTI2LDI2LjI1MSBMNC4xMjUsMjYuMjUgWiBNOS4yNSwyNi4yNSBDOS4yNSwyNy4zNzUgOS4zNzUsMjkgOS42MjUsMzEuMjUgQzkuODEzLDMzLjQzOCA5LjkzOCwzNC42ODggOS45MzgsMzUgQzkuOTM4LDM1LjMxMiAxMC4wNjMsMzUuNSAxMC4zNzYsMzUuNSBDMTAuNjg5LDM1LjUgMTAuODc2LDM1LjMxMiAxMC44NzYsMzUgQzExLjM3NiwyOS44MTIgMTEuNTY0LDI2LjkzNyAxMS41NjQsMjYuMjUgQzExLjU2NCwyNS42MjUgMTEuMzc2LDIyLjg3NSAxMC44NzYsMTguMDYyIEMxMC44NzYsMTcuNjg3IDEwLjY4OCwxNy40OTkgMTAuMzc2LDE3LjQ5OSBDMTAuMDY0LDE3LjQ5OSA5LjkzOCwxNy42ODcgOS45MzgsMTguMDYyIEM5LjkzOCwxOC4zMTIgOS44MTMsMTkuNDM3IDkuNjI1LDIxLjU2MiBDOS4zNzUsMjMuNjg3IDkuMjUsMjUuMjUgOS4yNSwyNi4yNSBMOS4yNSwyNi4yNSBaIE0xNS4xODgsMjYuMjUgQzE1LjE4OCwyNi4zNzUgMTUuMzc2LDI5LjI1IDE1Ljc1MSwzNC45MzggQzE1Ljc1MSwzNS4zMTMgMTUuOTM5LDM1LjU2MyAxNi4zMTQsMzUuNTYzIEMxNi43NTIsMzUuNTYzIDE2LjkzOSwzNS4zMTMgMTYuOTM5LDM0LjkzOCBDMTYuOTM5LDM0LjYyNSAxNy4wNjQsMzMuMzc1IDE3LjI1MiwzMS4xODggQzE3LjUwMiwyOSAxNy42MjcsMjcuMzc1IDE3LjYyNywyNi4yNSBDMTcuNjI3LDI0LjEyNSAxNy41MDIsMjEgMTcuMzE0LDE2LjkzNyBDMTcuMTI2LDEyLjg3NCAxNy4wMDEsMTAuNDk5IDE2LjkzOSw5LjgxMiBDMTYuOTM5LDkuMzc0IDE2Ljc1MSw5LjE4NyAxNi4zMTQsOS4xODcgQzE1LjkzOSw5LjE4NyAxNS43NTEsOS4zNzUgMTUuNzUxLDkuODEyIEMxNS42ODgsMTEuMDYyIDE1LjYyNiwxMi44MTIgMTUuNTAxLDE1LjA2MiBDMTUuNDM4LDE3LjI1IDE1LjMxMywxOS4zMTIgMTUuMjUxLDIxLjEyNSBDMTUuMTg5LDIyLjkzOCAxNS4xODgsMjQuNjI1IDE1LjE4OCwyNi4yNSBMMTUuMTg4LDI2LjI1IFogTTIxLjE4OCwyNi4yNSBDMjEuMTg4LDI3LjM3NSAyMS4yNTEsMjguOTM4IDIxLjQzOCwzMSBDMjEuNTYzLDMzLjA2MyAyMS42MjYsMzQuMzEzIDIxLjYyNiwzNC43NSBDMjEuNjg5LDM1LjMxMyAyMi4wMDEsMzUuNTYzIDIyLjM3NiwzNS41NjMgQzIyLjgxNCwzNS41NjMgMjMuMDY0LDM1LjMxMyAyMy4xODksMzQuNzUgQzIzLjE4OSwzNC4xODcgMjMuMzE0LDMyLjg3NSAyMy40MzksMzAuODc1IEMyMy42MjcsMjguODc1IDIzLjY4OSwyNy4zMTIgMjMuNjg5LDI2LjI1IEMyMy42ODksMjMuOTM3IDIzLjYyNiwyMC42ODcgMjMuNDM5LDE2LjM3NSBDMjMuMzE0LDEyLjA2MiAyMy4xODksOS4xODcgMjMuMTg5LDcuODEyIEMyMy4wNjQsNy4zMTIgMjIuODE0LDcuMDYyIDIyLjM3Niw3LjA2MiBDMjIuMDAxLDcuMDYyIDIxLjY4OCw3LjMxMiAyMS42MjYsNy44MTIgQzIxLjU2Myw4Ljg3NSAyMS41MDEsMTEuNjI1IDIxLjM3NiwxNi4wNjIgQzIxLjI1MSwyMC40OTkgMjEuMTg4LDIzLjkzNyAyMS4xODgsMjYuMjUgTDIxLjE4OCwyNi4yNSBaIE0yNy4yNSwyNi4yNSBDMjcuMjUsMjYuMzc1IDI3LjM3NSwyOS4xMjUgMjcuNjI1LDM0LjYyNSBDMjcuNzUsMzUuMjUgMjguMDYzLDM1LjU2MyAyOC41NjMsMzUuNTYzIEMyOS4wNjMsMzUuNTYzIDI5LjM3NiwzNS4yNSAyOS40MzgsMzQuNTYzIEwyOS40MzgsMzQuNjI2IEMyOS42ODgsMjkuMTI2IDI5LjgxMywyNi4zNzYgMjkuODEzLDI2LjI1MSBDMjkuODEzLDI0LjU2MyAyOS44MTMsMjIuNzUxIDI5Ljc1LDIwLjgxMyBDMjkuNjg3LDE4LjkzOCAyOS42ODcsMTYuNzUgMjkuNjI1LDE0LjQzOCBDMjkuNTYyLDEyLjA2MyAyOS41LDEwLjI1IDI5LjQzNyw5IEMyOS4zNzQsOC4zNzUgMjkuMDYyLDggMjguNTYyLDggQzI4LjA2Miw4IDI3Ljc0OSw4LjM3NSAyNy42MjQsOSBDMjcuNjI0LDEwLjI1IDI3LjU2MSwxMi4wNjMgMjcuNDk5LDE0LjQzOCBDMjcuNDM2LDE2Ljc1MSAyNy4zNzQsMTguOTM4IDI3LjMxMSwyMC44MTMgQzI3LjMxMSwyMi43NTEgMjcuMjQ4LDI0LjU2MyAyNy4yNDgsMjYuMjUxIEwyNy4yNSwyNi4yNSBaIE0zMy4zNzUsMjYuMzEzIEMzMy4zNzUsMjYuMzc2IDMzLjUsMjkuMDYzIDMzLjc1LDM0LjQzOCBDMzMuODEzLDM1LjE4OCAzNC4xMjUsMzUuNTYzIDM0Ljc1LDM1LjU2MyBDMzUuMzc1LDM1LjU2MyAzNS42ODgsMzUuMTg4IDM1Ljc1LDM0LjQzOCBDMzYuMDYzLDI5LjA2MyAzNi4xODgsMjYuMzc1IDM2LjE4OCwyNi4zMTMgQzM2LjE4OCwyNi4xODggMzYuMDYzLDE4LjY4OCAzNS43NSwzLjg3NSBDMzUuNjg3LDMuMTI1IDM1LjM3NSwyLjY4NyAzNC43NSwyLjY4NyBDMzQuMTI1LDIuNjg3IDMzLjgxMiwzLjEyNSAzMy43NSwzLjg3NSBDMzMuNSwxOC42ODggMzMuMzc1LDI2LjE4OCAzMy4zNzUsMjYuMzEzIEwzMy4zNzUsMjYuMzEzIFogTTM4LjQzOCwxMi43NSBDMzguNDM4LDE2LjI1IDM4LjUwMSwyMC4xODggMzguNTAxLDI0LjQzOCBMMzguNTAxLDM0LjM3NiBDMzguNTAxLDM0LjY4OSAzOC42MjYsMzUuMDAxIDM4LjgxNCwzNS4yNTEgQzM5LjAwMiwzNS41MDEgMzkuMjUyLDM1LjYyNiAzOS41MDIsMzUuNjI2IEw2NC42MjcsMzUuNjI2IEM2Ny4xMjcsMzUuNjI2IDY5LjI1MiwzNC42MjYgNzEuMDY1LDMyLjY4OCBDNzIuODE1LDMwLjc1IDczLjY5LDI4LjM3NSA3My42OSwyNS42MjUgQzczLjY5LDIyLjg3NSA3Mi43NTIsMjAuNSA3MS4wMDIsMTguNTYyIEM2OS4yNTIsMTYuNjI0IDY3LjEyNywxNS42MjQgNjQuNjI3LDE1LjYyNCBDNjMuNTAyLDE1LjYyNCA2Mi4zMTQsMTUuOTM3IDYxLjEyNywxNi40OTkgQzYwLjc1MiwxMS45MzYgNTkuMDY0LDguMTI0IDU2LjAwMiw1LjA2MSBDNTIuOTM5LDEuOTM2IDQ5LjMxNCwwLjQzNiA0NS4xODksMC40MzYgQzQ0LjgxNCwwLjQzNiA0NC4yNTEsMC40MzYgNDMuNjI2LDAuNTYxIEM0Mi45MzgsMC42MjQgNDIuMTg4LDAuNzQ5IDQxLjQzOCwwLjg3NCBDNDAuNjI1LDEuMDYyIDM5Ljg3NSwxLjMxMiAzOS4zMTMsMS42MjQgQzM4Ljc1LDEuOTk5IDM4LjUsMi4zNzQgMzguNSwyLjc0OSBDMzguNSw1Ljg3NCAzOC40MzcsOS4xODcgMzguNDM3LDEyLjc0OSBMMzguNDM4LDEyLjc1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+");   background-size: 60%; } .auth0-lock-social-button[data-provider^=thecity] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYxcHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDYxIDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+dGhlY2l0eTwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJ0aGVjaXR5IiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTMuODEzLDMuNDM4IEwzLjgxMywzLjQzOCBDNy4wNjMsMC44MTMgNy4zNzYsMC44MTMgMjkuOTM4LDAuODEzIEM1MS4xODgsMC44MTMgNTMuMDYzLDAuOTM4IDU1LjYyNiwzLjAwMSBDNTkuMjUxLDUuODE0IDYwLjMxNCw5LjUwMSA2MC4xODksMTguMTg5IEM2MC4xODksMjQuNDM5IDYwLjAwMSwyNS4yNTIgNTguMDY0LDI1LjMxNCBDNTYuODE0LDI1LjQzOSA1NC43NTEsMjUuNTY0IDUzLjUwMSwyNS42MjcgQzUwLjAwMSwyNS44NzcgNDQuNjg4LDMwLjg3NyA0MS43NTEsMzYuNjkgQzM5LjkzOCw0MC4zMTUgMzguNTAxLDQxLjgxNSAzNy41NjMsNDEuMzc4IEMzNi4yNSw0MC44MTUgMzYuNjg4LDM5LjYyOCAzOS4yNTEsMzUuMzE1IEM0My42ODksMjguMTI3IDQ0LjM3NiwyMi4wNjUgNDEuMjUxLDE2LjEyNyBDMzUuNTYzLDQuOTM5IDE5LjA2Myw1LjEyNyAxMy43NTEsMTYuMzE1IEMxMS4zMTMsMjEuNDQgMTEuNTAxLDI3LjY5IDE0LjEyNiwzMS45NCBDMTUuODE0LDM0Ljg3OCAyMy44NzYsNDEuMDY1IDI3LjU2NCw0Mi4zNzggQzI4LjEyNyw0Mi41NjYgMjguMTg5LDQzLjMxNiAyNy43NTIsNDQuMTI4IEMyNy4xMjcsNDUuMDY2IDI2LjI1Miw0NC45NDEgMjQuMDY0LDQzLjU2NSBDMTUuNjI2LDM4LjAwMiAxMC41MDEsMzYuODE1IDQuODc2LDM5LjMxNSBDMi42MjYsNDAuMTkgMC42MjYsNDAuOTQgMC4zMTMsNDAuOTQgQzAuMTI1LDQwLjk0IC0yLjUwMDc3NzM2ZS0xNCwzMy4xMjcgMC4xODgsMjMuNTAyIEwwLjU2Myw2LjAwMiBMMy44MTMsMy40MzggWiBNMjQuMDYzLDEzLjkzOCBMMjQuMDYzLDEzLjkzOCBDMjcuNTYzLDEyLjc1IDMyLjE4OCwxMy44MTMgMzQuNjg4LDE2LjU2MyBDMzguMzc2LDIwLjQzOCAzOC41MDEsMjUuMDAxIDM1LjM3NiwzMC44NzYgQzMzLjE4OCwzNC42ODkgMzIuNzUxLDM2LjE4OSAzMy43NTEsMzcuMzc2IEMzNi4zMTQsNDAuMzc2IDMzLjkzOSwzOS42MjYgMjYuNjg4LDM1LjMxMyBDMTkuNDM4LDMwLjg3NSAxNy4zNzUsMjguMTI1IDE3LjM3NSwyMy4xODggQzE3LjM3NSwyMC4xMjUgMjEuMTI1LDE1IDI0LjA2MywxMy45MzggTDI0LjA2MywxMy45MzggWiBNNTMuNTYzLDMxLjc1IEw1My41NjMsMzEuNzUgQzU5LjI1MSwyOS4zMTIgNjAuMzEzLDMwLjc1IDYwLjEyNiw0MS4xODggQzU5Ljg3Niw1Mi4zMTMgNjAuMDAxLDUxLjgxMyA1Ny44MTMsNTEuODEzIEM1Ni4zMTMsNTEuODEzIDQ2LjQzOCw0Ny41NjMgNDMuNSw0NS42MjUgQzQzLjMxMiw0NS41IDQ0LjY4OCw0Mi42ODcgNDYuNjI1LDM5LjMxMiBDNDksMzUuMTg3IDUxLjMxMywzMi42ODcgNTMuNTYzLDMxLjc0OSBMNTMuNTYzLDMxLjc1IFogTTYuOTM4LDQ0LjE4OCBMNi45MzgsNDQuMTg4IEMxMC4wMDEsNDMuMTI1IDEzLjg3Niw0My44NzUgMTguMDAxLDQ2LjUwMSBDMTkuODc2LDQ3LjU2NCAyMi4yNTEsNDguNTY0IDIzLjE4OSw0OC41NjQgQzI2LjM3Nyw0OC41NjQgMTguNzUxLDYxLjQzOSAxNC41NjQsNjMuMzE0IEM3LjUwMSw2Ni4yNTIgMC4wMDEsNjEuMjUxIDAuMDAxLDUzLjYyNiBDMC4wMDEsNTAuNTAxIDMuNjg5LDQ1LjM3NiA2LjkzOSw0NC4xODggTDYuOTM4LDQ0LjE4OCBaIE0zOS4zMTMsNTIgTDM5Ljg3Niw1MS42ODcgTDMyLjEyNiw2My4zMTIgTDU3LjU2NCw2My41NjIgTDU2LjUwMSw1OC40MzcgTDM5LjMxMyw1MiBaIE0yMC4xODgsNjIuODc1IEwxOS4zMTMsNjMuNDM4IEwyNi42MjYsNjMuNjI2IEwzNC41MDEsNTEuMTI2IEwyOC44NzYsNTAuNjg4IEwyMC4xODgsNjIuODc1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=thirtysevensignals] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY1cHgiIGhlaWdodD0iNTVweCIgdmlld0JveD0iMCAwIDY1IDU1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+dGhpcnR5c2V2ZW5zaWduYWxzPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InRoaXJ0eXNldmVuc2lnbmFscyIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLjUsNDIuMTI1IEMwLjQzNyw0MiAwLjM3NSw0MS45MzcgMC4zMTIsNDEuODEyIEMwLjI0OSw0MS42ODcgMC4yNDksNDEuNjI0IDAuMjQ5LDQxLjQzNyBMMC4yNDksNDAuNDk5IEMwLjI0OSwzOS44NzQgMC4zNzQsMzkuMzExIDAuNDk5LDM4LjY4NiBDMS4yNDksMzQuMDYxIDIuNDM3LDI5LjU2MSA0LjEyNCwyNS4yNDggQzUuNzQ5LDIxLjE4NSA3Ljg3NCwxNy4yNDggMTAuNDk5LDEzLjc0OCBDMTIuOTk5LDEwLjQ5OCAxNS45OTksNy40OTggMTkuMzc0LDUuMTIzIEMyMS4xMjQsMy45MzUgMjIuOTk5LDIuODczIDI0LjkzNywyLjEyMyBDMjUuOTM3LDEuNzQ4IDI2LjkzNywxLjQzNSAyOCwxLjE4NSBDMjguNSwxLjA2IDI5LjA2MywwLjkzNSAyOS41NjMsMC44NzIgQzI5LjgxMywwLjgwOSAzMC4xMjYsMC43NDcgMzAuMzc2LDAuNzQ3IEMzMC42ODksMC42ODQgMzEuMDAxLDAuNjg0IDMxLjMxNCwwLjY4NCBMMzQuMzE0LDAuNjg0IEMzNC41NjQsMC42ODQgMzQuODc3LDAuODA5IDM1LjEyNywwLjgwOSBDMzYuMTksMS4wNTkgMzcuMTksMS4zMDkgMzguMTksMS42MjIgQzQwLjA2NSwyLjE4NSA0MS44NzgsMi45MzUgNDMuNjI4LDMuODcyIEM0Ni44NzgsNS42MjIgNDkuNjkxLDguMDYgNTIuMTI4LDEwLjgxIEM1NC42OTEsMTMuODEgNTYuOTQxLDE3LjEyMyA1OC43NTMsMjAuNjIzIEM2MC45NDEsMjQuNzQ4IDYyLjUwMywyOS4xODYgNjMuNTAzLDMzLjc0OCBDNjMuNjI4LDM0LjEyMyA2My42OTEsMzQuNDk4IDYzLjgxNiwzNC45MzYgQzY0LjA2NiwzNS45MzYgNjQuMzc5LDM2Ljk5OSA2NC41NjYsMzguMDYxIEM2NC43NTQsMzkuMDYxIDY0Ljk0MSw0MC4wNjEgNjQuODE2LDQwLjk5OSBDNjQuNzUzLDQxLjg3NCA2NC4zNzgsNDIuNTYyIDYzLjg3OCw0My4yNDkgQzYzLjMxNSw0NC4wNjIgNjIuNjI4LDQ0Ljc0OSA2MS44NzgsNDUuMzc0IEM1OS4wNjUsNDcuOTM3IDU1LjgxNSw0OS44NzQgNTIuMzE1LDUxLjMxMiBDNDguMzc3LDUyLjg3NSA0NC4xOSw1My43NSAzOS45NCw1NC4xODcgQzM1LjQ0LDU0LjY4NyAzMC44MTUsNTQuNjg3IDI2LjE5LDU0LjMxMiBDMjIuMzE1LDUzLjkzNyAxOC4zNzcsNTMuMzEyIDE0LjU2NSw1Mi4wNjIgQzExLjMxNSw1MC45OTkgOC4xOSw0OS40OTkgNS41MDIsNDcuMzc0IEM0LjE4OSw0Ni4zNzQgMy4wNjQsNDUuMjQ5IDIuMDAyLDQ0LjA2MSBDMS40MzksNDMuNDM2IDEuMDAyLDQyLjc0OCAwLjUwMiw0Mi4xMjMgTDAuNSw0Mi4xMjUgWiBNNC43NSwzOS4yNSBDNC42ODcsMzkuMzc1IDQuNzUsMzkuNDM4IDQuODEzLDM5LjU2MyBDNC44MTMsMzkuNjI2IDQuODc2LDM5Ljc1MSA0LjkzOCwzOS44MTMgQzUuMzEzLDQwLjUwMSA1LjY4OCw0MS4xODggNi4xODgsNDEuODEzIEM4LjI1MSw0NC40MzggMTEuMjUxLDQ2LjE4OCAxNC4zMTMsNDcuMzc2IEMxOC4wNjMsNDguODE0IDIyLjAwMSw0OS41MDEgMjUuOTM4LDQ5Ljg3NiBDMzAuMjUxLDUwLjMxNCAzNC42ODgsNTAuMzE0IDM5LjA2Myw1MC4wMDEgQzQzLjI1MSw0OS43NTEgNDcuNTAxLDQ5LjAwMSA1MS40MzgsNDcuNDM4IEM1NC43NTEsNDYuMTg4IDU4LjA2Myw0NC4yNSA1OS45MzgsNDEuMTI1IEM2MC4wMDEsNDEgNjAuMDYzLDQwLjkzNyA2MC4xMjYsNDAuODEyIEM2MS4xMjYsMzguNjg3IDYwLjA2MywzNi40OTkgNTkuMDYzLDM0LjYyNCBDNTcuODc1LDMyLjYyNCA1Ni44NzUsMzAuNDk5IDU1LjYyNSwyOC40OTkgQzU0LjYyNSwyNi44MTEgNTMuNDM3LDI1LjMxMSA1Mi4yNSwyMy44MTEgQzUxLDIyLjMxMSA0OS42ODcsMjAuODExIDQ4LjMxMiwxOS40MzYgQzQ2Ljc0OSwxNy44MTEgNDUuMDYyLDE2LjI0OCA0My4yNDksMTQuODczIEM0Mi45OTksMTQuNjg1IDQyLjc0OSwxNC41NiA0Mi41NjEsMTQuMzEgQzQyLjM3MywxNC4xMjIgNDIuMTg2LDEzLjk5NyA0MS45MzYsMTMuODcyIEM0MS40OTgsMTMuNjg0IDQwLjk5OCwxMy42MjIgNDAuNTYxLDEzLjgwOSBDMzkuNTYxLDE0LjEyMiAzOC44MTEsMTUuMDU5IDM4LjEyMywxNS44MDkgQzM2LjQzNSwxNy41NTkgMzUuMDYsMTkuNTU5IDMzLjU2LDIxLjU1OSBDMzIuMTg1LDIzLjMwOSAzMC44MSwyNS4xMjIgMjkuMDYsMjYuNTU5IEMyOC40MzUsMjcuMDU5IDI3LjY4NSwyNy42ODQgMjYuODcyLDI3Ljc0NyBDMjYuMjQ3LDI3Ljc0NyAyNS42ODQsMjcuNjIyIDI1LjE4NCwyNy4zNzIgQzIzLjk5NiwyNi44NzIgMjMuMTIxLDI1Ljg3MiAyMi4zMDksMjQuOTk3IEMyMC44MDksMjMuMzcyIDE4LjkzNCwyMC42ODQgMTYuMzcxLDIxLjQ5NyBDMTQuNjIxLDIyLjEyMiAxMy4xODMsMjMuNjg1IDEyLjA1OCwyNS4xMjIgQzExLjM3LDI1Ljk5NyAxMC43NDUsMjYuOTM1IDEwLjE4MywyNy44NzIgQzkuNTU4LDI4LjgxIDguOTk1LDI5Ljc0NyA4LjM3LDMwLjY4NSBDNy4yNDUsMzIuNjIzIDYuMTIsMzQuNTYgNS4zNywzNi42ODUgQzUuMTgyLDM3LjI0OCA1LjA1NywzNy44MSA0LjkzMiwzOC4zNzMgQzQuODY5LDM4LjYyMyA0LjgwNywzOC45MzYgNC43NDQsMzkuMjQ4IEw0Ljc1LDM5LjI1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=twitter] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9Ijc5cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDc5IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+dHdpdHRlcjwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJ0d2l0dGVyIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTAsNTcuNDM4IEM3LjYyNSw2Mi4yNTEgMTUuODc1LDY0LjYyNiAyNC43NSw2NC42MjYgQzMwLjUsNjQuNjI2IDM1LjkzOCw2My43NTEgNDAuOTM4LDYxLjkzOCBDNDUuOTM4LDYwLjEyNSA1MC4yNTEsNTcuNjg4IDUzLjgxMyw1NC42MjUgQzU3LjQzOCw1MS41IDYwLjUwMSw0OCA2My4wNjMsNDQuMDYyIEM2NS42MjUsNDAuMTI0IDY3LjU2MywzNS45OTkgNjguODEzLDMxLjYyNCBDNzAuMDYzLDI3LjMxMSA3MC43NTEsMjIuOTk5IDcwLjc1MSwxOC42ODYgTDcwLjc1MSwxNi41NjEgQzc0LjAwMSwxNC4xODYgNzYuNjg5LDExLjM3MyA3OC43NTEsOC4xODYgQzc1LjY4OCw5LjQ5OSA3Mi42MjYsMTAuMzc0IDY5LjUwMSwxMC43NDkgQzczLjAwMSw4LjY4NiA3NS4zNzYsNS42ODYgNzYuNTY0LDEuODExIEM3My40MzksMy42ODYgNzAuMDAxLDQuOTk5IDY2LjMxNCw1Ljc0OSBDNjMuMTI2LDIuMzc0IDU5LjE4OSwwLjYyNCA1NC41MDEsMC42MjQgQzUwLjA2MywwLjYyNCA0Ni4yNTEsMi4yNDkgNDMuMDYzLDUuMzc0IEMzOS45MzgsOC41NjIgMzguMzEzLDEyLjMxMiAzOC4zMTMsMTYuNzQ5IEMzOC4zMTMsMTcuODEyIDM4LjUwMSwxOS4wNjIgMzguODEzLDIwLjQ5OSBDMzIuMTg4LDIwLjEyNCAyNiwxOC40OTkgMjAuMTg4LDE1LjQ5OSBDMTQuNDM4LDEyLjU2MSA5LjUsOC41NjEgNS41LDMuNTYxIEM0LDYuMTI0IDMuMjUsOC44MTEgMy4yNSwxMS42ODYgQzMuMjUsMTQuNDk5IDMuOTM4LDE3LjA2MSA1LjE4OCwxOS40MzYgQzYuNTAxLDIxLjgxMSA4LjI1MSwyMy42ODYgMTAuNTAxLDI1LjE4NiBDNy44NzYsMjUuMTIzIDUuMzc2LDI0LjQzNiAzLjEyNiwyMy4xODYgTDMuMTI2LDIzLjM3NCBDMy4xMjYsMjcuMjQ5IDQuMzc2LDMwLjY4NyA2LjgxNCwzMy42MjQgQzkuMjUyLDM2LjYyNCAxMi4zNzcsMzguNDM3IDE2LjEyNywzOS4xODcgQzE0Ljc1MiwzOS41NjIgMTMuMzE0LDM5Ljc1IDExLjgxNCwzOS43NSBDMTAuNjg5LDM5Ljc1IDkuNjg5LDM5LjY4NyA4LjgxNCwzOS41IEM5Ljg3Nyw0Mi43NSAxMS43NTIsNDUuMzc1IDE0LjUwMiw0Ny41IEMxNy4zMTUsNDkuNTYzIDIwLjQ0LDUwLjYyNSAyMy45NCw1MC42ODggQzE4LjA2NSw1NS4zMTMgMTEuMzc3LDU3LjYyNiAzLjgxNSw1Ny42MjYgQzIuNTY1LDU3LjYyNiAxLjI1Miw1Ny41NjMgMC4wMDIsNTcuNDM4IEwwLDU3LjQzOCBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=vkontakte] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9Ijc5cHgiIGhlaWdodD0iNDZweCIgdmlld0JveD0iMCAwIDc5IDQ2IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+dms8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0idmsiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMC40MzcsMy44MTMgQzAuNDM3LDQuMzc2IDAuNSw0LjkzOCAwLjU2Miw1LjUwMSBDMC42ODcsNi4xMjYgMC44NzUsNi42ODkgMS4xMjUsNy4zMTQgQzEuMzEzLDcuOTM5IDEuNTYzLDguNDM5IDEuNjg4LDguODE0IEMxLjg3Niw5LjE4OSAyLjEyNiw5Ljc1MiAyLjUwMSwxMC40MzkgQzIuODE0LDExLjE4OSAzLjA2NCwxMS42MjcgMy4xODksMTEuODc3IEM3LjEyNywxOS45NCAxMS4zNzcsMjYuODE1IDE1LjgxNCwzMi41MDIgQzE3LjY4OSwzNC45NCAxOS4zNzcsMzYuODc3IDIwLjkzOSwzOC40NCBDMjIuNTY0LDM5Ljk0IDI0LjY4OSw0MS4zNzggMjcuMzc3LDQyLjc1MyBDMzAuMTI3LDQ0LjEyOCAzMy4xMjcsNDQuOTQxIDM2LjQ0LDQ1LjMxNiBDMzguMDY1LDQ1LjUwNCAzOS41MDMsNDUuNTY2IDQwLjY5LDQ1LjU2NiBDNDMuNTAzLDQ1LjU2NiA0NS4xOSw0NS4wNjYgNDUuNzUzLDQ0LjAwMyBDNDYuMDY2LDQzLjQ0IDQ2LjI1Myw0Mi4zNzggNDYuMzc4LDQwLjk0IEM0Ni40NDEsMzkuNDQgNDYuNjI4LDM4LjE5IDQ2Ljk0MSwzNy4xMjcgQzQ3LjI1NCwzNi4wNjQgNDcuODc5LDM1LjQzOSA0OC44NzksMzUuMjUyIEM0OS40NDIsMzUuMTg5IDUwLjAwNCwzNS4zMTUgNTAuNjI5LDM1LjYyNyBDNTEuMTkyLDM2LjAwMiA1MS42OTIsMzYuMzE1IDUyLjA2NywzNi43NTIgQzUyLjQ0MiwzNy4xMjcgNTIuOTQyLDM3LjYyNyA1My41MDUsMzguMzc3IEM1NC4wNjgsMzkuMDY1IDU0LjM4LDM5LjUwMiA1NC41NjgsMzkuNjkgQzU3LjY5Myw0My4xOSA2MC42MzEsNDUuMTkgNjMuNDQzLDQ1LjY5IEw2My44ODEsNDUuNjkgQzY0LjY5NCw0NS41MDIgNjUuNjMxLDQ1LjM3NyA2Ni43NTYsNDUuMzc3IEM2Ny40NDQsNDUuMzc3IDY4LjI1Niw0NS40NCA2OS4xMzEsNDUuNTAyIEM3MC4wNjksNDUuNjI3IDcwLjk0NCw0NS42OSA3MS44ODEsNDUuNjkgQzczLjAwNiw0NS42OSA3NC4xMzEsNDUuNjI3IDc1LjI1Niw0NS40NCBDNzcuNDQ0LDQ1LjA2NSA3OC41MDYsNDQuMTkgNzguNTA2LDQyLjgxNSBDNzguNTA2LDQxLjgxNSA3Ny42MzEsNDAuMjUyIDc1Ljk0MywzOC4wMDIgQzc0LjE5MywzNS44MTQgNzEuODE4LDMzLjMxNCA2OC43NTUsMzAuNTAyIEM2OC42OTIsMzAuNDM5IDY4LjQ0MiwzMC4xODkgNjguMDA1LDI5LjgxNCBDNjcuNTY4LDI5LjQzOSA2Ny4zMTcsMjkuMTI2IDY3LjEzLDI5LjAwMSBDNjcuMDA1LDI4LjgxMyA2Ni44MTcsMjguNTYzIDY2LjUwNSwyOC4xODggQzY2LjI1NSwyNy44NzUgNjYuMDA1LDI3LjU2MyA2NS44OCwyNy4yNSBDNjUuNzU1LDI2LjkzNyA2NS42OTIsMjYuNjI1IDY1LjY5MiwyNi4zMTIgQzY1LjY5MiwyNS43NDkgNjUuNzU1LDI1LjE4NyA2Ni4wMDUsMjQuNjI0IEM2Ni4yNTUsMjMuOTk5IDY2LjUwNSwyMy40OTkgNjYuNzU1LDIzLjE4NiBDNjcuMDA1LDIyLjgxMSA2Ny4zOCwyMi4zMTEgNjcuODgsMjEuNjIzIEM2OC4zOCwyMC45MzUgNjguNjkzLDIwLjU2IDY4Ljc1NSwyMC40MzUgQzY5LjE5MywxOS45MzUgNjkuOTQzLDE4LjkzNSA3MS4xMywxNy40OTcgQzcyLjMxOCwxNS45OTcgNzMuMzE4LDE0LjgwOSA3NC4wNjgsMTMuNzQ3IEM3NC44MTgsMTIuNzQ3IDc1LjU2OCwxMS42ODQgNzYuMjU2LDEwLjQzNCBDNzcuNzU2LDcuOTM0IDc4LjUwNiw2LjA1OSA3OC41MDYsNC44NzEgQzc4LjUwNiw0LjU1OCA3OC40NDMsNC4yNDYgNzguMzE4LDMuOTk2IEM3OC4xMywzLjY4MyA3Ny44MTgsMy4zNzEgNzcuNDQzLDMuMTgzIEM3Ny4wMDUsMi45OTUgNzYuNDQzLDIuODcgNzUuODE4LDIuODA4IEM3NS4xMywyLjc0NSA3NC41MDUsMi43NDUgNzMuODgsMi43NDUgQzczLjMxNywyLjgwOCA3Mi42MywyLjgwOCA3MS44MTcsMi44NyBDNzEuMDA0LDIuOTMyIDcwLjQ0MiwyLjkzMyA3MC4wNjcsMi45MzMgQzY5LjQ0MiwyLjkzMyA2OC40NDIsMi44NyA2Ny4wNjcsMi44MDggQzY1Ljk0MiwyLjc0NSA2NC45NDIsMi42ODMgNjQuMTI5LDIuNjgzIEw2My41MDQsMi42ODMgQzYyLjU2NiwyLjY4MyA2MS43NTQsMi44MDggNjEuMTI5LDMuMTIxIEM2MC40NDEsMy45OTYgNjAuMTI5LDQuMzA5IDYwLjEyOSwzLjk5NiBDNjAuMDY2LDMuNjgzIDU5LjgxNiw0LjEyMSA1OS4zMTYsNS4yNDYgQzU4Ljg3OCw2LjM3MSA1OC42MjgsNi45MzQgNTguNjI4LDYuOTM0IEw1OC4wMDMsOC4zNzIgQzU2LjAwMywxMi42ODUgNTQuMDAzLDE2LjE4NSA1Mi4wMDMsMTguODEgQzUxLjk0LDE4Ljg3MyA1MS43NTMsMTkuMTIzIDUxLjMxNSwxOS42ODUgQzUwLjk0LDIwLjI0OCA1MC42OSwyMC42MjMgNTAuNTY1LDIwLjc0OCBMNDkuODE1LDIxLjQ5OCBDNDkuNTAyLDIxLjgxMSA0OS4xOSwyMi4wNjEgNDguODE1LDIyLjE4NiBDNDguNTAyLDIyLjMxMSA0OC4xOSwyMi40MzYgNDcuODE1LDIyLjQzNiBDNDYuNjksMjEuNzQ4IDQ2LjA2NSwyMC40MzYgNDUuODc3LDE4LjU2MSBDNDUuNzUyLDE3LjY4NiA0NS43NTIsMTYuODczIDQ1Ljc1MiwxNi4xMjMgQzQ1Ljc1MiwxNS4xMjMgNDUuODE1LDE0LjEyMyA0NS45NCwxMy4xODUgQzQ1Ljk0LDEyLjc0NyA0Ni4wMDMsMTEuNjIyIDQ2LjE5LDkuODcyIEM0Ni4zMTUsOC40OTcgNDYuMzc4LDcuMzcyIDQ2LjM3OCw2LjQ5NyBDNDYuMzE1LDYuMTg0IDQ2LjMxNSw1LjkzNCA0Ni4zMTUsNS42MjIgQzQ2LjI1Miw0LjYyMiA0Ni4wMDIsMy42ODQgNDUuNjI3LDIuOTM0IEM0NS45NCwyLjc0NiA0NS42MjcsMi40MzQgNDQuODE0LDIuMDU5IEM0NC4wMDEsMS42MjEgNDMuNTY0LDEuNDM0IDQzLjU2NCwxLjQzNCBMNDIuMTI2LDEuMTIxIEM0Mi4xMjYsMC45OTYgNDEuNTYzLDAuOTMzIDQwLjQzOCwwLjkzMyBDMzkuMzEzLDAuODcgMzguNzUsMC44NyAzOC43NSwwLjg3IEwzNS4zNzUsMC44NyBDMzIuNzUsMC44NyAzMC42ODcsMS4wNTggMjkuMTg3LDEuNDMzIEMyNy42ODcsMS44NzEgMjYuNjI0LDIuNjIxIDI1Ljk5OSwzLjgwOCBDMjYuMzc0LDQuMDU4IDI2Ljg3NCw0LjI0NiAyNy40OTksNC40OTYgQzI4LjEyNCw0Ljc0NiAyOC42ODcsNC45OTYgMjkuMDYyLDUuMjQ2IEMyOS41LDUuNTU5IDI5LjgxMiw1LjkzNCAzMC4wNjIsNi4zNzEgQzMwLjY4Nyw3LjU1OSAzMSw5Ljc0NiAzMSwxMi45MzQgQzMxLDEzLjYyMiAzMSwxNC4zNzIgMzAuOTM3LDE1LjE4NCBDMzAuODEyLDE5LjkzNCAzMC4xODcsMjIuNDM0IDI4LjkzNywyMi42MjIgQzI4LjY4NywyMi42ODUgMjguNDM3LDIyLjY4NSAyOC4xODcsMjIuNjIyIEMyNy45MzcsMjIuNjIyIDI3LjY4NywyMi40OTcgMjcuNDM3LDIyLjMwOSBDMjcuMjQ5LDIyLjEyMSAyNi45OTksMjEuOTM0IDI2LjgxMiwyMS43NDYgQzI2LjU2MiwyMS41NTggMjYuMzc0LDIxLjMwOCAyNi4xMjQsMjEuMDU4IEMyNS44NzQsMjAuNzQ1IDI1LjY4NiwyMC40OTUgMjUuNTYxLDIwLjMwOCBDMjUuMzczLDIwLjEyIDI1LjE4NiwxOS44NyAyNC45OTgsMTkuNDk1IEMyNC44MSwxOS4xODIgMjQuNjIzLDE4LjkzMiAyNC41NiwxOC44MDcgQzIyLjE4NSwxNS4zNjkgMjAuMTg1LDExLjg2OSAxOC41Niw4LjM2OSBDMTguNDM1LDguMTgxIDE4LjE4NSw3LjY4MSAxNy44NzIsNi45OTQgQzE3LjYyMiw2LjMwNiAxNy4zNzIsNS43NDQgMTcuMTg0LDUuMzY5IEMxNi45MzQsNC45OTQgMTYuNzQ2LDQuNTU2IDE2LjQzNCw0LjExOSBDMTYuMTIxLDMuNzQ0IDE1Ljg3MSwzLjQzMSAxNS41NTksMy4zMDYgQzE1LjA1OSwzLjA1NiAxNC4zNzEsMi44NjggMTMuNTU5LDIuODA2IEMxMy4xMjEsMi44MDYgMTIuNjIxLDIuODA2IDEyLjA1OSwyLjc0MyBDMTEuNDk2LDIuNzQzIDEwLjg3MSwyLjc0MyAxMC4xODQsMi44MDYgQzguODcxLDIuODY5IDguMDU5LDIuOTMxIDcuODA5LDIuOTMxIEM3LjM3MSwyLjkzMSA2LjY4NCwyLjkzMSA1Ljc0NiwyLjg2OCBDNS4xMjEsMi44MDUgNC42MjEsMi44MDUgNC4xODMsMi44MDUgTDMuNjIsMi44MDUgQzMuMTIsMi44MDUgMi42MiwyLjg2OCAxLjk5NSwzLjA1NSBDMS4zNywzLjI0MiAwLjg3LDMuNDkzIDAuNDMyLDMuODA1IEwwLjQzNywzLjgxMyBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=windowslive] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjRweCIgdmlld0JveD0iMCAwIDY0IDY0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+d2luZG93czwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJ3aW5kb3dzIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPGcgaWQ9Ikdyb3VwIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLjA0NSwwLjA0NSBMMjguNzQ3LDAuMDQ1IEwyOC43NDcsMjguNzQ3IEwwLjA0NSwyOC43NDcgTDAuMDQ1LDAuMDQ1IEwwLjA0NSwwLjA0NSBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0zNC40MywwLjA0NSBMNjMuMTMyLDAuMDQ1IEw2My4xMzIsMjguNzQ3IEwzNC40MywyOC43NDcgTDM0LjQzLDAuMDQ1IEwzNC40MywwLjA0NSBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0yOC43NDgsMzUuMjU0IEwyOC43NDgsNjMuOTU2IEwwLjA0Niw2My45NTYgTDAuMDQ2LDM1LjI1NCBMMjguNzQ4LDM1LjI1NCBMMjguNzQ4LDM1LjI1NCBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0zNC40MywzNS4yNTQgTDYzLjEzMiwzNS4yNTQgTDYzLjEzMiw2My45NTYgTDM0LjQzLDYzLjk1NiBMMzQuNDMsMzUuMjU0IEwzNC40MywzNS4yNTQgWiIgaWQ9IlNoYXBlIj48L3BhdGg+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPgo="); } .auth0-lock-social-button[data-provider^=windows] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjRweCIgdmlld0JveD0iMCAwIDY0IDY0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+d2luZG93czwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSJ3aW5kb3dzIiBza2V0Y2g6dHlwZT0iTVNMYXllckdyb3VwIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPGcgaWQ9Ikdyb3VwIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLjA0NSwwLjA0NSBMMjguNzQ3LDAuMDQ1IEwyOC43NDcsMjguNzQ3IEwwLjA0NSwyOC43NDcgTDAuMDQ1LDAuMDQ1IEwwLjA0NSwwLjA0NSBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0zNC40MywwLjA0NSBMNjMuMTMyLDAuMDQ1IEw2My4xMzIsMjguNzQ3IEwzNC40MywyOC43NDcgTDM0LjQzLDAuMDQ1IEwzNC40MywwLjA0NSBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0yOC43NDgsMzUuMjU0IEwyOC43NDgsNjMuOTU2IEwwLjA0Niw2My45NTYgTDAuMDQ2LDM1LjI1NCBMMjguNzQ4LDM1LjI1NCBMMjguNzQ4LDM1LjI1NCBaIiBpZD0iU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0zNC40MywzNS4yNTQgTDYzLjEzMiwzNS4yNTQgTDYzLjEzMiw2My45NTYgTDM0LjQzLDYzLjk1NiBMMzQuNDMsMzUuMjU0IEwzNC40MywzNS4yNTQgWiIgaWQ9IlNoYXBlIj48L3BhdGg+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=wordpress] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDY0IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+d29yZHByZXNzPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9IndvcmRwcmVzcyIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik03Ljk5MzYwNTc4ZS0xNSwzMi44MTMgQzcuOTkzNjA1NzhlLTE1LDM4LjYyNiAxLjQzOCw0NC4wMDEgNC4zMTMsNDguODc2IEM3LjEyNiw1My44MTQgMTEuMDAxLDU3LjY4OSAxNS45MzgsNjAuNTAxIEMyMC44MTMsNjMuMzc2IDI2LjE4OCw2NC44MTQgMzIuMDAxLDY0LjgxNCBDMzcuODE0LDY0LjgxNCA0My4xODksNjMuMzc2IDQ4LjA2NCw2MC41MDEgQzUzLjAwMiw1Ny42ODggNTYuODc3LDUzLjgxMyA1OS42ODksNDguODc2IEM2Mi41NjQsNDQuMDAxIDY0LjAwMiwzOC42MjYgNjQuMDAyLDMyLjgxMyBDNjQuMDAyLDI3IDYyLjU2NCwyMS42MjUgNTkuNjg5LDE2Ljc1IEM1Ni44NzYsMTEuODEyIDUzLjAwMSw3LjkzNyA0OC4wNjQsNS4xMjUgQzQzLjE4OSwyLjI1IDM3LjgxNCwwLjgxMiAzMi4wMDEsMC44MTIgQzI2LjE4OCwwLjgxMiAyMC44MTMsMi4yNSAxNS45MzgsNS4xMjUgQzExLDcuOTM4IDcuMTI1LDExLjgxMyA0LjMxMywxNi43NSBDMS40MzgsMjEuNjI1IDAsMjcgMCwzMi44MTMgTDcuOTkzNjA1NzhlLTE1LDMyLjgxMyBaIE0yLjUsMzIuODEzIEMyLjUsMjguNTYzIDMuMzc1LDI0LjU2MyA1LjA2MywyMC43NSBMMTkuMTI2LDU5LjM3NSBDMTQuMTI2LDU3IDEwLjEyNiw1My4zNzUgNy4wNjMsNDguNjI1IEM0LDQzLjgxMiAyLjUsMzguNTYyIDIuNSwzMi44MTIgTDIuNSwzMi44MTMgWiBNNy4zMTMsMTYuNjI1IEMxMC4wMDEsMTIuNSAxMy41MDEsOS4zMTIgMTcuODc2LDYuODc1IEMyMi4xODksNC41IDI2LjkzOSwzLjMxMiAzMi4wMDEsMy4zMTIgQzM5Ljc1MSwzLjMxMiA0Ni4zNzYsNS44NzUgNTEuOTM5LDExLjA2MiBDNTEuOTM5LDExLjA2MiA1MS44NzYsMTEuMDYyIDUxLjc1MSwxMC45OTkgTDUxLjU2MywxMC45OTkgQzUwLjE4OCwxMC45OTkgNDksMTEuNDk5IDQ4LjA2MywxMi41NjIgQzQ3LjA2MywxMy42MjUgNDYuNTYzLDE0LjgxMiA0Ni41NjMsMTYuMjUgQzQ2LjU2MywxNi42ODggNDYuNjI2LDE3LjEyNSA0Ni43NTEsMTcuNTYzIEM0Ni44MTQsMTguMDAxIDQ3LjAwMSwxOC41MDEgNDcuMjUxLDE5LjA2MyBDNDcuNTAxLDE5LjY4OCA0Ny42ODksMjAuMDYzIDQ3LjgxNCwyMC4zMTMgQzQ3LjkzOSwyMC41NjMgNDguMjUyLDIxLjA2MyA0OC42ODksMjEuODEzIEM0OS4xMjYsMjIuNTYzIDQ5LjM3NywyMy4wMDEgNDkuNTAyLDIzLjEyNiBDNTEuMTI3LDI1Ljg3NiA1MS45NCwyOC42MjYgNTEuOTQsMzEuMzE0IEM1MS45NCwzMi42ODkgNTEuMTksMzUuODc3IDQ5LjY5LDQwLjg3NyBMNDYuNzUyLDUwLjc1MiBMMzYuMTI3LDE5LjAwMiBMMzkuNDQsMTguNjg5IEMzOS45NCwxOC42MjYgNDAuMjUzLDE4LjM3NiA0MC40NCwxNy45MzkgQzQwLjYyOCwxNy41NjQgNDAuNTY1LDE3LjEyNiA0MC4zNzcsMTYuNzUxIEM0MC4xMjcsMTYuMzc2IDM5Ljc1MiwxNi4xODggMzkuMjUyLDE2LjI1MSBDMzYuMDY0LDE2LjUwMSAzMy40MzksMTYuNjI2IDMxLjM3NywxNi42MjYgTDIzLjYyNywxNi4yNTEgQzIzLjEyNywxNi4xODggMjIuNzUyLDE2LjM3NiAyMi41MDIsMTYuNzUxIEMyMi4yNTIsMTcuMTI2IDIyLjI1MiwxNy41NjQgMjIuMzc3LDE3LjkzOSBDMjIuNTY1LDE4LjM3NyAyMi45NCwxOC42MjcgMjMuNDQsMTguNjg5IEMyNC40NCwxOC43NTIgMjUuNTAzLDE4Ljg3NyAyNi41MDMsMTkuMDAyIEwzMS4xMjgsMzEuNjI3IEwyNC42MjgsNTAuOTQgTDEzLjg3OCwxOS4wMDIgTDE3LjI1MywxOC42ODkgQzE3LjgxNiwxOC42MjYgMTguMTI4LDE4LjM3NiAxOC4zMTYsMTcuOTM5IEMxOC41MDQsMTcuNTY0IDE4LjQ0MSwxNy4xMjYgMTguMTkxLDE2Ljc1MSBDMTguMDAzLDE2LjM3NiAxNy42MjgsMTYuMTg4IDE3LjA2NiwxNi4yNTEgQzEzLjg3OCwxNi41MDEgMTEuMjUzLDE2LjYyNiA5LjE5MSwxNi42MjYgTDcuMzE2LDE2LjYyNiBMNy4zMTMsMTYuNjI1IFogTTIzLjY4OCw2MS4xODggTDMyLjUwMSwzNS4zNzUgTDQxLjYyNiw2MC4yNSBMNDEuODE0LDYwLjYyNSBDMzguNjg5LDYxLjc1IDM1LjQzOSw2Mi4zMTMgMzIuMDAxLDYyLjMxMyBDMjkuMTI2LDYyLjMxMyAyNi4zMTMsNjEuOTM4IDIzLjY4OCw2MS4xODggTDIzLjY4OCw2MS4xODggWiBNNDYuODc1LDU4LjM3NSBMNTUuODc1LDMyLjI1IEM1Ny4zNzUsMjcuODc1IDU4LjEyNSwyNC4zNzUgNTguMTI1LDIxLjY4NyBDNTguMTI1LDIwLjU2MiA1OC4wNjIsMTkuNTYyIDU3LjkzNywxOC42ODcgQzYwLjMxMiwyMyA2MS41LDI3LjY4NyA2MS41LDMyLjgxMiBDNjEuNSwzOC4xMjUgNjAuMTg3LDQzLjA2MiA1Ny41NjIsNDcuNjI1IEM1NC44NzQsNTIuMTg4IDUxLjMxMiw1NS43NSA0Ni44NzQsNTguMzc1IEw0Ni44NzUsNTguMzc1IFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=yahoo] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9Ijg4cHgiIGhlaWdodD0iNTJweCIgdmlld0JveD0iMCAwIDg4IDUyIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+eWFob288L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0ieWFob28iIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMCw3LjY4OCBMMCw3LjE4OCBDMC4wNjMsNi45MzggMC4zMTMsNi43NSAwLjYyNSw2Ljc1IEwzMi4xMjUsNi43NSBDMzIuMTg4LDYuNzUgMzIuMzEzLDYuNzUgMzIuMzc1LDYuODc1IEMzMi41LDYuOTM4IDMyLjUsNy4wNjMgMzIuNSw3LjE4OCBMMzIuNSw4LjA2MyBDMzIuNSw4LjMxMyAzMi40MzcsOC41MDEgMzIuMzc1LDguNjI2IEMzMi4yNSw4LjgxNCAzMi4xMjUsOC45MzkgMzIuMDYyLDguOTM5IEMzMS45OTksOS4wMDIgMzEuOTM3LDkuMDAyIDMxLjg3NCw5LjAwMiBMMjcuNDk5LDEwLjM3NyBDMjcuMTI0LDEwLjU2NSAyNi42ODYsMTAuNjkgMjYuMTI0LDEwLjYyNyBMMjMuNDk5LDEwLjYyNyBMMzguMDYyLDI5LjI1MiBMNTEuMzEyLDE2Ljc1MiBMNDMuOTM3LDE2Ljc1MiBMNDIuODEyLDE2LjMxNCBMNDEuMzc0LDE0Ljg3NiBMNDEuMTg2LDE0LjYyNiBDNDEuMDYxLDE0LjQzOCA0MC45OTgsMTQuMjUxIDQwLjg3MywxNC4wMDEgQzQwLjc0OCwxMy42ODggNDAuNzQ4LDEzLjQzOCA0MC43NDgsMTMuMTg4IEw0MS4xODYsMTIuODEzIEw2OS4yNDksMTIuODEzIEM2OS4zMTIsMTIuODEzIDY5LjM3NCwxMi44MTMgNjkuNDM3LDEyLjg3NiBDNjkuNSwxMi45MzkgNjkuNTYyLDEzLjA2NCA2OS42MjUsMTMuMTg5IEw2OS42MjUsMTQuMDY0IEM2OS42MjUsMTQuNTY0IDY5LjUsMTQuOTM5IDY5LjI1LDE1LjI1MiBMNjguMTg3LDE2LjQ0IEM2Ny43NDksMTYuNzUzIDY3LjM3NCwxNi44NzggNjYuOTk5LDE2Ljg3OCBMNTguNDk5LDE2Ljg3OCBDNDcuNjg2LDI3LjA2NiA0Mi4wNjEsMzIuMzc4IDQxLjYyNCwzMi44MTYgTDQxLjQzNiwzMy4wMDQgQzQxLjI0OCwzMy4xOTIgNDEuMTg2LDMzLjMxNyA0MS4wNjEsMzMuNTA0IEM0MC45MzYsMzMuNjI5IDQwLjkzNiwzMy44MTcgNDAuOTM2LDMzLjk0MiBMNDAuOTM2LDQ2Ljg4IEM0MC45MzYsNDcuNTA1IDQxLjEyNCw0Ny44MTggNDEuNTYxLDQ3LjgxOCBMNTAuODc0LDQ3LjgxOCBDNTAuOTM3LDQ3LjgxOCA1MS4wNjIsNDcuODgxIDUxLjE4Nyw0Ny45NDMgQzUxLjI1LDQ4LjAwNiA1MS4zMTIsNDguMTMxIDUxLjMxMiw0OC4yNTYgTDUxLjMxMiw1MS45NDQgTDE4LjMxMiw1MS45NDQgTDE4LjMxMiw0OC4zODEgQzE4LjMxMiw0OC4wMDYgMTguNSw0Ny44MTggMTguOTM3LDQ3LjgxOCBDMjAuMjUsNDcuNjkzIDIzLjI1LDQ3LjYzIDI4LjA2Miw0Ny42MyBMMjguMjUsNDcuNjMgQzI4LjM3NSw0Ny41NjcgMjguNSw0Ny41MDUgMjguNTYzLDQ3LjMxNyBDMjguNjg4LDQ3LjEyOSAyOC43NTEsNDYuODc5IDI4Ljc1MSw0Ni41NjcgTDI4Ljc1MSwzNC4yNTQgQzI4Ljc1MSwzMy42OTEgMjguNTAxLDMzLjE5MSAyOC4wNjMsMzIuNjI5IEw5LjY4OCwxMC42MjkgTDIuNTYzLDEwLjYyOSBMMS4zNzUsMTAuMDA0IEwxLjE4Nyw5Ljg3OSBMMC44NzQsOS41NjYgQzAuNjg2LDkuMzc4IDAuNTYxLDkuMTkxIDAuMzc0LDguODc4IEwwLDcuNjg4IFogTTc2LjE4OCwwLjY4OCBMNzguODEzLDM3LjI1MSBMODIuNjg4LDM3LjQzOSBMODguMDAxLDEuMTg5IEw3Ni4xODgsMC42ODggWiBNNzcsNDkuNTYzIEw4NC4wNjMsNDkuODEzIEw4NC4zMTMsNDIuNzUgTDc3LjI1LDQyLjUgTDc3LDQ5LjU2MyBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=yammer] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjYycHgiIGhlaWdodD0iNTNweCIgdmlld0JveD0iMCAwIDYyIDUzIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+eWFtbWVyPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InlhbW1lciIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgZmlsbD0iI0ZGRkZGRiI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0wLjUsMy41IEMwLjM3NSw0LjI1IDAuNSw0LjkzOCAwLjc1LDUuNjI1IEM1LjEyNSwxNi4zMTMgOS41NjMsMjcgMTQsMzcuNzUgQzE0LjEyNSwzOC4wNjMgMTQuMzEzLDM4LjM3NSAxNC4zNzUsMzguNzUgQzE0LjA2MiwzOS41IDEzLjYyNSw0MC4yNSAxMy4zNzUsNDEuMDYzIEMxMi43NSw0Mi42MjYgMTIsNDQuMjUxIDEwLjYyNSw0NS4zNzYgQzkuNDM3LDQ2LjM3NiA3LjgxMiw0Ni43NTEgNi4yNSw0Ni42ODkgQzUuNDM3LDQ2LjY4OSA0LjU2Miw0Ni40MzkgMy43NSw0Ni42ODkgQzIuNjg3LDQ3LjAwMiAxLjg3NSw0Ny45MzkgMS42ODcsNDkuMDAyIEMxLjQzNyw1MC41MDIgMi41LDUyLjA2NSA0LDUyLjMxNSBDNi40MzgsNTIuNjI4IDksNTIuNjI4IDExLjM3NSw1MS44NzcgQzEzLjE4OCw1MS4zMTQgMTQuODEzLDUwLjEyNyAxNiw0OC42MjcgQzE3LjYyNSw0Ni41NjQgMTguNjg4LDQ0LjA2NCAxOS42MjUsNDEuNjg5IEMyNC41LDI5LjU2NCAyOS4zMTMsMTcuNDM5IDM0LjI1LDUuMzc2IEMzNC43NSwzLjgxMyAzMy44NzUsMS45MzggMzIuMzc1LDEuNDM4IEMzMC44NzUsMC44MTMgMjksMS41NjMgMjguMzEyLDMuMDAxIEMyNC45OTksMTIuMDAxIDIxLjQ5OSwyMS4wMDEgMTguMDYyLDI5LjkzOSBDMTguMDYyLDMwLjEyNyAxNy45MzcsMzAuMjUyIDE3LjgxMiwzMC4zNzcgTDYuOTM3LDIuODE0IEM2LjM3NCwxLjU2NCA1LjA2MiwwLjc1MSAzLjc0OSwwLjgxNCBDMi4xODYsMC44MTQgMC43NDksMi4wMDIgMC40OTksMy41MDIgTDAuNSwzLjUgWiBNNTAuNTYzLDcuMjUgQzQ5LjEyNSw4IDQ3Ljg3NSw5IDQ2LjUsOS44NzUgQzQ0LjE4NywxMS41IDQxLjkzNywxMy4xMjUgMzkuNzUsMTQuOTM4IEMzOC41LDE1LjkzOCAzNy4yNSwxNi45MzggMzYuMTg3LDE4LjE4OCBDMzUuOTk5LDE4LjUwMSAzNS42ODcsMTguODEzIDM1LjY4NywxOS4yNTEgQzM1LjY4NywxOS40MzkgMzYsMTkuNTAxIDM2LjE4NywxOS41NjQgQzM3LDE5LjY4OSAzNy44NzUsMTkuNDM5IDM4LjY4NywxOS4yNTEgQzQwLjUsMTguNjg4IDQyLjE4NywxOC4wMDEgNDMuOTM3LDE3LjMxMyBDNDcuMTI1LDE1LjkzOCA1MC4yNSwxNC4zNzUgNTMuMjUsMTIuNzUgQzU0LjUsMTEuOTM3IDU0Ljg3NSwxMC4xODcgNTQuMjUsOC44NzUgQzUzLjYyNSw3LjU2MyA1MS45MzcsNi44MTIgNTAuNTYyLDcuMjUgTDUwLjU2Myw3LjI1IFogTTU2LjM3NSwyNC4yNSBDNTIuODc1LDI0LjU2MyA0OS40MzcsMjUgNDYsMjUuNjI1IEM0NC41LDI1Ljg3NSA0MywyNi4xODggNDEuNTYyLDI2LjY4OCBDNDEuMDYyLDI2Ljg3NiA0MC40OTksMjcuMDAxIDQwLjE4NywyNy41MDEgQzQwLjM3NSwyNy43NTEgNDAuNTYyLDI4LjAwMSA0MC44MTIsMjguMTI2IEM0MS41LDI4LjUwMSA0Mi4xODcsMjguNjg5IDQyLjkzNywyOC44NzYgQzQ0LjgxMiwyOS4zMTQgNDYuNzUsMjkuNTY0IDQ4LjY4NywyOS43NTEgQzUyLDMwLjA2NCA1NS4yNSwzMC4xMjYgNTguNSwzMC4xODkgQzYwLDMwLjI1MiA2MS4zNzUsMjkuMDAxIDYxLjUsMjcuNTAxIEM2MS43NSwyNi4wMDEgNjAuNjg3LDI0LjM3NiA1OS4xMjUsMjQuMDYzIEM1OC4xODcsMjQgNTcuMzEyLDI0LjE4OCA1Ni4zNzUsMjQuMjUxIEw1Ni4zNzUsMjQuMjUgWiBNMzUuOTM4LDM1LjA2MyBDMzUuNjI1LDM1LjE4OCAzNS42MjUsMzUuNjI2IDM1LjgxMywzNS44MTMgQzM2LjEyNiwzNi40MzggMzYuNjI2LDM2Ljg3NiAzNy4xMjYsMzcuMzc2IEMzOS4wMDEsMzkuMTg5IDQxLjA2NCw0MC43NTEgNDMuMTI2LDQyLjMxNCBDNDUuMzc2LDQzLjkzOSA0Ny42ODksNDUuNTY0IDUwLjA2NCw0Ny4wNjQgQzUwLjc1Miw0Ny41NjQgNTEuNjg5LDQ3LjU2NCA1Mi41MDIsNDcuMjUyIEM1My42MjcsNDYuODc3IDU0LjUwMiw0NS43NTIgNTQuNTY1LDQ0LjUwMiBDNTQuNjI4LDQzLjM3NyA1NC4wMDIsNDIuMTI3IDUyLjk0LDQxLjYyNyBDNDkuMzE1LDM5Ljc1MiA0NS42MjcsMzcuOTM5IDQxLjgxNSwzNi40MzkgQzQwLjM3NywzNS44NzYgMzguODc3LDM1LjMxNCAzNy4zMTUsMzUuMDY0IEMzNi44MTUsMzUuMDAxIDM2LjM3NywzNC45MzkgMzUuOTQsMzUuMDY0IEwzNS45MzgsMzUuMDYzIFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+"); } .auth0-lock-social-button[data-provider^=yandex] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjI4cHgiIGhlaWdodD0iNjBweCIgdmlld0JveD0iMCAwIDI4IDYwIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+eWFuZGV4PC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPGcgaWQ9InlhbmRleCIgc2tldGNoOnR5cGU9Ik1TTGF5ZXJHcm91cCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEuMDAwMDAwLCAwLjAwMDAwMCkiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNMjcuNSwwLjYyNSBDMjgsMC42MjUgMjguMzEzLDAuODc1IDI4LjMxMywxLjQzOCBMMjguMzEzLDU4Ljc1MSBDMjguMzEzLDU5LjEyNiAyOC4xMjUsNTkuMzc2IDI3LjY4OCw1OS4zNzYgTDIzLDU5LjM3NiBDMjIuNjg3LDU5LjM3NiAyMi40MzcsNTkuMDYzIDIyLjQzNyw1OC44MTMgTDIyLjQzNywzNy42MjUgTDE4LjYyNCwzNy42MjUgTDguMDYxLDU4LjgxMyBDNy45MzYsNTkuMTg4IDcuNjIzLDU5LjM3NiA3LjE4Niw1OS4zNzYgTDEuNzQ4LDU5LjM3NiBDMS4xMjMsNTkuMzc2IDAuNzQ4LDU4LjgxMyAxLjEyMyw1OC4xMjYgTDEyLjgxMSwzNi41MDEgQzYuNTYxLDMzLjY4OCAzLjA2MSwyOC4wMDEgMy4wNjEsMjAuMjUxIEMzLjA2MSw3LjMxMyAxMC4yNDksMC42MjYgMTguODExLDAuNjI2IEwyNy40OTksMC42MjYgTDI3LjUsMC42MjUgWiBNMjIuNDM4LDMyLjU2MyBMMjIuNDM4LDUuNjg4IEwxOC41NjMsNS42ODggQzEzLjkzOCw1LjY4OCA5LjM3NSw5LjYyNiA5LjM3NSwxOS40MzggQzkuMzc1LDI4LjgxMyAxNC4yNSwzMi41NjMgMTkuMjUsMzIuNTYzIEwyMi40MzgsMzIuNTYzIEwyMi40MzgsMzIuNTYzIFoiIGlkPSJTaGFwZSIgc2tldGNoOnR5cGU9Ik1TU2hhcGVHcm91cCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+");   background-size: 30%; } .auth0-lock-social-button[data-provider^=weibo] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjgwcHgiIGhlaWdodD0iNjRweCIgdmlld0JveD0iMCAwIDgwIDY0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+d2VpYnU8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0id2VpYnUiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xLjAwMDAwMCwgMC4wMDAwMDApIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTEsNDMgQzEsNDcuMTg4IDIuNjI1LDUwLjkzOCA1LjkzOCw1NC4xODggQzkuMTg4LDU3LjQzOCAxMy4zMTMsNTkuODc2IDE4LjMxMyw2MS41NjMgQzIzLjMxMyw2My4xODggMjguNTYzLDY0LjAwMSAzNC4xMjYsNjQuMDAxIEMzOS4zMTQsNjQuMDAxIDQ0LjE4OSw2My4zMTMgNDguNzUxLDYxLjg3NiBDNTMuMzc2LDYwLjUwMSA1Ny4xODksNTguNjg4IDYwLjE4OSw1Ni41MDEgQzYzLjE4OSw1NC4zMTQgNjUuNTY0LDUxLjkzOCA2Ny4zMTQsNDkuMzEzIEM2OS4wNjQsNDYuNjg4IDY5LjkzOSw0NC4xMjUgNjkuOTM5LDQxLjYyNSBDNjkuOTM5LDM4Ljg3NSA2OS4wMDEsMzYuNTYyIDY3LjEyNiwzNC43NSBDNjUuMjUxLDMyLjkzOCA2My4wMDEsMzEuNjI1IDYwLjMxMywzMC44MTIgQzU5Ljg3NSwzMC42ODcgNTkuNTYzLDMwLjU2MiA1OS4zNzUsMzAuNDM3IEM1OS4yNSwzMC4zNzQgNTkuMDYyLDMwLjE4NyA1OC44NzUsMjkuODc0IEM1OC42ODcsMjkuNjI0IDU4Ljc1LDI5LjI0OSA1OS4wNjMsMjguODExIEM1OS43NTEsMjcuMTIzIDYwLjA2MywyNS41NjEgNjAuMDYzLDI0LjI0OCBDNjAuMDYzLDIyLjk5OCA1OS43NSwyMS44NzMgNTkuMTI1LDIwLjkzNSBDNTcuNzUsMTkuMTIyIDU1LjUsMTguMjQ3IDUyLjMxMiwxOC4yNDcgQzQ5LjE4NywxOC4yNDcgNDUuNTYyLDE5LjEyMiA0MS40MzcsMjAuODEgTDQwLjgxMiwyMS4wNiBDNDAuNDM3LDIxLjE4NSA0MC4wNjIsMjEuMTg1IDM5LjgxMiwyMC45OTcgQzM5LjQ5OSwyMC44NzIgMzkuNDM3LDIwLjQ5NyAzOS41NjIsMTkuOTM0IEM0MC4xMjUsMTguMTg0IDQwLjM3NSwxNi42MjEgNDAuMzc1LDE1LjMwOSBDNDAuMzc1LDEzLjMwOSAzOS44MTIsMTEuODA5IDM4LjY4NywxMC42ODQgQzM3LjU2Miw5LjU1OSAzNS45OTksOC45MzQgMzQuMDYyLDguOTM0IEMzMi4zMTIsOC45MzQgMzAuMjQ5LDkuNDM0IDI3Ljg3NCwxMC40MzQgQzIyLjgxMSwxMi4zNzIgMTcuNzQ5LDE1Ljg3MiAxMi43NDksMjAuODA5IEM0LjkzNiwyOC43NDcgMC45OTksMzYuMTIyIDAuOTk5LDQyLjk5NyBMMSw0MyBaIE05LDQ2LjA2MyBDOC45MzcsNDUuNjg4IDguOTM3LDQ1LjMxMyA4LjkzNyw0NC45MzggQzguOTM3LDQyLjU2MyA5Ljc1LDQwLjE4OCAxMS4zNzUsMzcuOTM4IEMxMy4yNSwzNS4zNzUgMTUuOTM4LDMzLjI1IDE5LjQzOCwzMS41IEMyMi45MzgsMjkuNzUgMjYuODEzLDI4LjYyNSAzMS4xMjYsMjguMjUgQzMyLjQzOSwyOC4xMjUgMzMuNjg5LDI4LjA2MiAzNC45MzksMjguMDYyIEMzOS45MzksMjguMDYyIDQ0LjM3NywyOS4wNjIgNDguMzc3LDMxLjE4NyBDNTMuMjUyLDMzLjc1IDU1Ljk0LDM3LjEyNSA1Ni4zNzcsNDEuNDM3IEM1Ni4zNzcsNDEuODEyIDU2LjQ0LDQyLjE4NyA1Ni40NCw0Mi41NjIgQzU2LjQ0LDQ2LjM3NSA1NC40NCw0OS45MzcgNTAuNTY1LDUzLjEyNSBDNDYuMTksNTYuNjI1IDQwLjc1Miw1OC42ODggMzQuMTksNTkuMzEzIEMzMi44NzcsNTkuNDM4IDMxLjYyNyw1OS41MDEgMzAuMzc3LDU5LjUwMSBDMjUuMzc3LDU5LjUwMSAyMC45MzksNTguNTAxIDE3LjAwMiw1Ni4zNzYgQzEyLjA2NCw1My44MTMgOS40MzksNTAuMzc2IDkuMDAyLDQ2LjA2MyBMOSw0Ni4wNjMgWiBNMTkuMjUsNTAuMDYzIEMyMC40MzgsNTIuODEzIDIyLjU2Myw1NC42MjYgMjUuNjg4LDU1LjYyNiBDMjcuMTI2LDU2LjA2NCAyOC41NjMsNTYuMzE0IDMwLjAwMSw1Ni4zMTQgQzMxLjg3Niw1Ni4zMTQgMzMuNzUxLDU1LjkzOSAzNS42MjYsNTUuMTI2IEMzOC45MzksNTMuNjg4IDQxLjI1MSw1MS41MDEgNDIuNjI2LDQ4LjQzOCBDNDMuMjUxLDQ3LjA2MyA0My41NjQsNDUuNjg4IDQzLjU2NCw0NC4zMTMgQzQzLjU2NCw0Mi44MTMgNDMuMTg5LDQxLjQzOCA0Mi41MDEsNDAuMDYzIEM0MS4wNjMsMzcuNDM4IDM4Ljc1MSwzNS42ODggMzUuNTAxLDM0LjgxMyBDMzQuMzc2LDM0LjUgMzMuMTg4LDM0LjM3NSAzMi4wNjMsMzQuMzc1IEMzMC4wNjMsMzQuMzc1IDI4LjEyNSwzNC44MTMgMjYuMTg4LDM1LjYyNSBDMjMuMTI1LDM3IDIwLjg3NSwzOS4wNjMgMTkuNTYzLDQxLjgxMyBDMTguODEzLDQzLjMxMyAxOC40MzgsNDQuODEzIDE4LjQzOCw0Ni4yNTEgQzE4LjQzOCw0Ny41NjQgMTguNjg4LDQ4LjgxNCAxOS4yNTEsNTAuMDY0IEwxOS4yNSw1MC4wNjMgWiBNMjIuODEzLDQ4LjgxMyBDMjIuNzUsNDguNTYzIDIyLjY4OCw0OC4zMTMgMjIuNjg4LDQ4IEMyMi42ODgsNDcuMjUgMjIuOTM4LDQ2LjU2MiAyMy4zNzYsNDUuODc1IEMyNC4wMDEsNDQuOTM3IDI0Ljg3Niw0NC4yNSAyNi4wMDEsNDMuODc1IEMyNi41NjQsNDMuNjg3IDI3LjEyNiw0My41NjIgMjcuNjI2LDQzLjU2MiBDMjguMTg5LDQzLjU2MiAyOC43NTEsNDMuNjg3IDI5LjMxNCw0My45MzcgQzMwLjMxNCw0NC4zMTIgMzAuOTM5LDQ1LjA2MiAzMS4xODksNDYuMDYyIEMzMS4zMTQsNDYuNDM3IDMxLjM3Nyw0Ni43NSAzMS4zNzcsNDcuMDYyIEMzMS4zNzcsNDcuNzUgMzEuMTg5LDQ4LjQzNyAzMC43NTIsNDkuMDYyIEMzMC4xMjcsNTAuMTI1IDI5LjE4OSw1MC44MTIgMjguMDAyLDUxLjE4NyBDMjcuNTAyLDUxLjM3NSAyNy4wMDIsNTEuNDM3IDI2LjUwMiw1MS40MzcgQzI1Ljg3Nyw1MS40MzcgMjUuMzE0LDUxLjMxMiAyNC43NTIsNTEuMDYyIEMyMy43NTIsNTAuNjI0IDIzLjA2NCw0OS44NzQgMjIuODE0LDQ4LjgxMiBMMjIuODEzLDQ4LjgxMyBaIE0zMS44NzUsNDMuNzUgTDMxLjg3NSw0My4zNzUgQzMxLjg3NSw0My4xMjUgMzEuOTM4LDQyLjg3NSAzMi4wNjMsNDIuNjI1IEMzMi4yNTEsNDIuMjUgMzIuNTYzLDQyIDMzLjA2Myw0MS44MTIgQzMzLjUwMSw0MS42ODcgMzMuODc2LDQxLjY4NyAzNC4yNTEsNDEuODEyIEMzNC42ODksNDEuOTM3IDM0LjkzOSw0Mi4yNSAzNS4wNjQsNDIuNjI1IEMzNS4xODksNDMgMzUuMTI3LDQzLjM3NSAzNC45MzksNDMuNzUgQzM0LjY4OSw0NC4xODggMzQuMzc2LDQ0LjQzOCAzMy44NzYsNDQuNjI1IEMzMy42ODgsNDQuNjg4IDMzLjUwMSw0NC43NSAzMy4zMTMsNDQuNzUgQzMzLjEyNSw0NC43NSAzMi44NzUsNDQuNjg3IDMyLjY4OCw0NC42MjUgQzMyLjI1LDQ0LjQzNyAzMiw0NC4xODcgMzEuODc1LDQzLjc1IEwzMS44NzUsNDMuNzUgWiBNNTIuMzc1LDQuMDYzIEM1Mi41NjMsNC44NzYgNTMsNS41MDEgNTMuNjg4LDUuOTM4IEM1NC4xODgsNi4zMTMgNTQuNzUxLDYuNDM4IDU1LjMxMyw2LjQzOCBDNTUuNTYzLDYuNDM4IDU1Ljc1MSw2LjQzOCA1Ni4wMDEsNi4zNzUgQzU3LjA2NCw2LjE4NyA1OC4wNjQsNi4wNjIgNTkuMTI2LDYuMDYyIEM2MC42MjYsNi4wNjIgNjIuMTI2LDYuMzEyIDYzLjU2NCw2Ljc1IEM2Ni4xMjcsNy41NjMgNjguMzE0LDguOTM4IDcwLjEyNywxMC45MzggQzcxLjk0LDEyLjkzOCA3My4xMjcsMTUuMjUxIDczLjY5LDE3LjkzOCBDNzMuODc4LDE5LjAwMSA3My45NCwyMC4wMDEgNzMuOTQsMjEuMDAxIEM3My45NCwyMi41NjQgNzMuNzUyLDI0LjAwMSA3My4yNTIsMjUuNTAxIEw3My4yNTIsMjUuNTY0IEM3My4xODksMjUuODE0IDczLjEyNywyNi4xODkgNzMuMTI3LDI2LjUwMiBDNzMuMTI3LDI2Ljk0IDczLjI1MiwyNy4zNzcgNzMuNDQsMjcuODc3IEM3My44MTUsMjguNTY1IDc0LjM3OCwyOS4wNjUgNzUuMTksMjkuMzE1IEM3NS41MDMsMjkuMzc4IDc1LjgxNSwyOS40NCA3Ni4xMjgsMjkuNDQgQzc2LjYyOCwyOS40NCA3Ny4wNjYsMjkuMzE1IDc3LjU2NiwyOS4xMjcgQzc4LjI1NCwyOC43NTIgNzguNzU0LDI4LjE4OSA3OS4wMDQsMjcuMzc3IEw3OS4wMDQsMjcuMzE0IEM3OS42OTIsMjUuMzE0IDgwLjA2NywyMy4yNTEgODAuMDY3LDIxLjA2NCBDODAuMDY3LDE5LjYyNiA3OS44NzksMTguMTg5IDc5LjU2NywxNi42ODkgQzc4LjgxNywxMy4wMDEgNzcuMTkyLDkuNzUxIDc0LjYyOSw2LjkzOSBDNzIuMDY2LDQuMTI3IDY5LjAwNCwyLjEyNiA2NS40NDEsMC45MzkgQzYzLjM3OCwwLjMxNCA2MS4yNTMsMC4wMDEgNTkuMDY2LDAuMDAxIEM1Ny42MjgsMC4wMDEgNTYuMTI4LDAuMTI2IDU0LjY5MSwwLjQzOSBDNTMuODc4LDAuNjg5IDUzLjI1MywxLjEyNyA1Mi44MTYsMS44MTQgQzUyLjUwMywyLjMxNCA1Mi4zMTYsMi44MTQgNTIuMzE2LDMuMzc3IEM1Mi4zMTYsMy42MjcgNTIuMzc5LDMuODE1IDUyLjM3OSw0LjA2NSBMNTIuMzc1LDQuMDYzIFogTTU0LjkzOCwxNC4wNjMgQzU1LjEyNiwxNC43NTEgNTUuNTAxLDE1LjMxMyA1Ni4xMjYsMTUuNjg4IEM1Ni41MDEsMTYuMDAxIDU3LjAwMSwxNi4xMjYgNTcuNDM5LDE2LjEyNiBDNTcuNjI3LDE2LjEyNiA1Ny44MTQsMTYuMTI2IDU4LjAwMiwxNi4wNjMgQzU4LjQ0LDE2IDU4Ljg3NywxNS45MzggNTkuMzE1LDE1LjkzOCBDNjAuNjksMTUuOTM4IDYxLjgxNSwxNi41MDEgNjIuNzUzLDE3LjYyNiBDNjMuNjI4LDE4LjU2NCA2NC4xMjgsMTkuNjI2IDY0LjEyOCwyMC44MTQgQzY0LjEyOCwyMS4zMTQgNjQuMDAzLDIxLjg3NyA2My44NzgsMjIuNDM5IEM2My43NTMsMjIuNzUyIDYzLjc1MywyMy4wMDIgNjMuNzUzLDIzLjMxNCBDNjMuNzUzLDIzLjY4OSA2My44MTYsMjQuMDY0IDY0LjAwMywyNC40MzkgQzY0LjMxNiwyNS4wNjQgNjQuODE2LDI1LjUwMiA2NS41MDMsMjUuNzUyIEM2NS43NTMsMjUuODE1IDY2LjA2NiwyNS44NzcgNjYuMzc4LDI1Ljg3NyBDNjYuNzUzLDI1Ljg3NyA2Ny4xMjgsMjUuNzUyIDY3LjUwMywyNS41NjQgQzY4LjEyOCwyNS4yNTEgNjguNTY2LDI0Ljc1MSA2OC43NTMsMjQuMDY0IEM2OS4xMjgsMjMuMDY0IDY5LjMxNiwyMi4wMDEgNjkuMzE2LDIxLjAwMSBDNjkuMzE2LDIwLjMxMyA2OS4yNTMsMTkuNjI2IDY5LjEyOCwxOC44NzYgQzY4LjY5LDE3LjA2MyA2Ny44NzgsMTUuNTAxIDY2LjY5LDE0LjA2MyBDNjQuNjI3LDExLjgxMyA2Mi4xOSwxMC42ODggNTkuMzE1LDEwLjY4OCBDNTguNTY1LDEwLjY4OCA1Ny43NTIsMTAuNzUxIDU2Ljk0LDEwLjkzOCBDNTYuMTksMTEuMTI2IDU1LjYyNywxMS41MDEgNTUuMjUyLDEyLjEyNiBDNTUuMDAyLDEyLjU2NCA1NC44NzcsMTMuMDAxIDU0Ljg3NywxMy40MzkgQzU0Ljg3NywxMy42ODkgNTQuOTQsMTMuODc3IDU0Ljk0LDE0LjA2NCBMNTQuOTM4LDE0LjA2MyBaIiBpZD0iU2hhcGUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg=="); } .auth0-lock-social-button[data-provider^=evernote] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjU0cHgiIGhlaWdodD0iNjVweCIgdmlld0JveD0iMCAwIDU0IDY1IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggMy40ICgxNTU4OCkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+ZXZlcm5vdGU8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4KICAgICAgICA8ZyBpZD0iZXZlcm5vdGUiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIGZpbGw9IiNGRkZGRkYiPgogICAgICAgICAgICA8cGF0aCBkPSJNNy41NDk1MTY1N2UtMTUsMjAuMzc1IEM3LjU0OTUxNjU3ZS0xNSwyMS4xODggMC4wNjMsMjIuMjUgMC4yNSwyMy42ODggQzAuNSwyNS4zNzYgMSwyOC4xODggMS43NSwzMi4xODggQzIuNTYzLDM2LjE4OCAzLjMxMywzOC45MzggNC4wNjMsNDAuNDM4IEM0LjU2Myw0MS42ODggNS4zNzYsNDIuNTAxIDYuMzc2LDQzLjAwMSBDOS40MzksNDQuMzE0IDEzLjYyNiw0NS4zMTQgMTkuMDY0LDQ2LjAwMSBDMjAuMzc3LDQ2LjMxNCAyMS41MDIsNDYuNTAxIDIyLjUwMiw0Ni41MDEgTDIyLjk0LDQ2LjUwMSBDMjQuMDAzLDQ2LjQzOCAyNC44MTUsNDUuOTM4IDI1LjI1Myw0NC44NzYgTDI1LjgxNiw0My4zMTMgQzI2LjU2Niw0MS4wNjMgMjYuOTQxLDM4LjUgMjYuOTQxLDM1LjYyNSBDMjYuOTQxLDM1LjU2MiAyNy4wMDQsMzUuNSAyNy4xMjksMzUuNSBDMjcuMTkyLDM1LjUgMjcuMjU0LDM1LjU2MyAyNy4yNTQsMzUuNjI1IEMyNy4yNTQsMzkuODc1IDI4LjM3OSw0Mi4zNzUgMzAuNjI5LDQzLjI1IEMzMi4wMDQsNDMuNjg4IDM0LjUwNCw0NC4xMjUgMzguMjU0LDQ0LjUgQzM5Ljg3OSw0NC43NSA0MS4xMjksNDUuNDM4IDQxLjg3OSw0Ni41NjMgQzQyLjY5Miw0Ny42ODggNDMuMDY3LDQ5Ljg3NiA0My4wNjcsNTMuMTI2IEM0My4wNjcsNTUuMjUxIDQyLjc1NCw1Ni41NjQgNDIuMDY3LDU3LjE4OSBDNDEuMzc5LDU3Ljc1MiAzOS44MTcsNTguMDAyIDM3LjM3OSw1OC4wMDIgTDM1LjMxNiw1OC4wMDIgQzM1LjAwMyw1OC4wMDIgMzQuNTAzLDU4LjAwMiAzMy44NzgsNTcuODc3IEMzMy4yNTMsNTcuODE0IDMyLjg3OCw1Ny42ODkgMzIuNzUzLDU3LjQzOSBDMzIuNTY1LDU3LjI1MSAzMi40NCw1Ni45MzkgMzIuMjUzLDU2LjU2NCBDMzIuMDY2LDU2LjE4OSAzMi4wMDMsNTUuNjg5IDMyLjAwMyw1NS4wNjQgQzMyLjEyOCw1NC44MTQgMzIuMTI4LDU0LjU2NCAzMi4wNjYsNTQuMzc2IEMzMi4wMDMsNTQuMTI2IDMyLjA2Niw1My45MzggMzIuMzE2LDUzLjc1MSBDMzIuNTY2LDUzLjYyNiAzMi42OTEsNTMuNTAxIDMyLjY5MSw1My4zNzYgQzMyLjYyOCw1My4zMTMgMzIuODE2LDUzLjE4OCAzMy4xOTEsNTMuMTI2IEMzMy41NjYsNTMuMDY0IDMzLjc1NCw1My4wMDEgMzMuNzU0LDUzLjAwMSBDMzMuNzU0LDUyLjkzOCAzMy45NDIsNTIuODc2IDM0LjM3OSw1Mi44NzYgTDM2LjMxNyw1Mi44NzYgQzM2LjU2Nyw1Mi44NzYgMzYuNjkyLDUyLjgxMyAzNi43NTUsNTIuNjg4IEMzNi43NTUsNTIuNTYzIDM2Ljc1NSw1Mi4zMTMgMzYuNjkyLDUxLjkzOCBDMzYuNTY3LDUxLjUgMzYuNTY3LDUxLjEyNSAzNi41NjcsNTAuNzUgQzM2LjU2Nyw1MC41IDM2LjU2Nyw1MC4xODcgMzYuNjMsNDkuODc1IEMzNi42OTMsNDkuNjI1IDM2Ljc1NSw0OS4zNzUgMzYuODE4LDQ5LjE4NyBDMzYuODgxLDQ4Ljk5OSAzNi45NDMsNDguODc0IDM3LjAwNiw0OC42ODcgQzM3LjA2OSw0OC41NjIgMzcuMDA2LDQ4LjQzNyAzNi45NDMsNDguMzc0IEMzNi44OCw0OC4zMTEgMzYuNzU1LDQ4LjMxMSAzNi42Myw0OC4zMTEgTDM0LjgxNyw0OC4zMTEgQzMzLjc1NCw0OC4zMTEgMzIuODc5LDQ4LjMxMSAzMi4yNTQsNDguMzc0IEMzMS4yNTQsNDguNDM3IDMwLjMxNiw0OC43NDkgMjkuMjU0LDQ5LjE4NyBDMjguMjU0LDQ5LjY4NyAyNy41NjYsNTAuNDM3IDI3LjE5MSw1MS42MjUgQzI2Ljc1Myw1Mi43NSAyNi41NjYsNTQuMjUgMjYuNTY2LDU2LjE4OCBDMjYuNTY2LDU5LjYyNiAyNy4zNzksNjEuODc2IDI4Ljk0MSw2My4wMDEgQzMwLjU2Niw2NC4wNjQgMzMuNjkxLDY0LjYyNiAzOC4yNTQsNjQuNjI2IEMzOS45NDIsNjQuNjI2IDQxLjE5Miw2NC41NjMgNDIuMDA0LDY0LjUwMSBDNDIuODc5LDY0LjQzOCA0My43NTQsNjQuMjUxIDQ0Ljc1NCw2NC4wMDEgQzQ1LjY5Miw2My42ODggNDYuNTA0LDYzLjE4OCA0Ny4wNjcsNjIuNTAxIEM0Ny42Myw2MS44MTQgNDguMjU1LDYwLjkzOCA0OC44MTcsNTkuODEzIEM0OS40NDIsNTguNjg4IDUwLjAwNSw1Ny4xODggNTAuNjMsNTUuMzc1IEM1MS43NTUsNTEuODc1IDUyLjY5Myw0Ni41IDUzLjM4LDM5LjEyNSBDNTMuNTA1LDM4IDUzLjU2OCwzNi41IDUzLjU2OCwzNC42MjUgQzUzLjU2OCwzMi4xMjUgNTMuNDQzLDI5IDUzLjI1NSwyNS4xODcgQzUyLjk0MiwxOC41NjIgNTIuNTA1LDE0LjEyNCA1Mi4xMywxMS43NDkgQzUxLjYzLDkuNDM2IDUwLjUwNSw3Ljk5OSA0OC42OTIsNy40MzYgQzQ3LjMxNyw2LjkzNiA0NC41NjcsNi40MzYgNDAuNDQyLDUuOTM2IEMzOC45NDIsNS43NDggMzcuMDA0LDUuNjIzIDM0Ljc1NCw1LjYyMyBDMzMuODE2LDUuNjIzIDMyLjgxNiw1LjYyMyAzMS42OTEsNS42ODYgQzMxLjM3OCwzLjY4NiAzMC40NDEsMi4zNzMgMjguODE2LDEuNjg2IEMyNy4xMjgsMS4wNjEgMjUuMDY2LDAuNjg2IDIyLjUwMywwLjYyMyBMMjEuMzE1LDAuNjIzIEMxOS41MDIsMC42MjMgMTguMzc3LDAuNzQ4IDE3Ljk0LDAuOTk4IEMxNi40NCwxLjQzNiAxNS4zNzcsMi4wNjEgMTQuNzUyLDIuOTk4IEMxNC4xODksMy44MTEgMTMuOTM5LDQuNzQ4IDEzLjkzOSw1LjgxMSBMMTMuOTM5LDkuNTYxIEMxNC4wMDIsMTAuNTYxIDE0LjAwMiwxMS40OTkgMTQuMDAyLDEyLjM3NCBDMTQuMDAyLDEzLjA2MiAxMy44MTQsMTMuNTYyIDEzLjMxNCwxNC4wNjIgQzEyLjgxNCwxNC41IDEyLjMxNCwxNC43NSAxMS42MjYsMTQuNzUgTDUuNjI2LDE0Ljc1IEM0LjM3NiwxNC43NSAzLjM3NiwxNC45MzggMi42MjYsMTUuMzEzIEMxLjg3NiwxNS42MjYgMS4zNzYsMTYuMDYzIDAuOTM4LDE2LjY4OCBDMC4zMTMsMTcuNDM4IDAsMTguNjg4IDAsMjAuMzc2IEw3LjU0OTUxNjU3ZS0xNSwyMC4zNzUgWiBNMC4zNzUsMTIuNzUgQzAuNTYzLDEyLjY4NyAwLjc1LDEyLjU2MiAwLjkzOCwxMi40MzcgQzIuMDAxLDExLjk5OSAzLjMxMywxMS43NDkgNC43NTEsMTEuNzQ5IEwxMC42ODksMTEuNzQ5IEMxMS4xMjcsMTEuNzQ5IDExLjMxNCwxMS41NjEgMTEuMzE0LDExLjEyNCBDMTEuMzE0LDcuNjg2IDExLjI1MSw1LjQzNiAxMS4yNTEsNC40OTkgQzExLjI1MSwzLjMxMSAxMS41MDEsMi4zMTEgMTEuOTM5LDEuNDM2IEwxMi4xODksMS4wNjEgQzEyLjEyNiwxLjA2MSAxMi4xMjYsMS4wNjEgMTIuMTI2LDEuMTI0IEwwLjM3NiwxMi42MjQgTDAuMzc2LDEyLjc0OSBMMC4zNzUsMTIuNzUgWiBNMzYuNzUsMzEuMzEzIEMzNi45MzgsMzAgMzcuMzEzLDI4LjkzOCAzNy45MzgsMjggQzM4LjU2MywyNy4xODcgMzkuNTAxLDI2Ljc1IDQwLjc1MSwyNi43NSBMNDAuOTM5LDI2Ljc1IEM0My41NjQsMjYuODEzIDQ0Ljg3NywyOC42ODggNDQuODc3LDMyLjMxMyBDNDMuMzE0LDMxLjU2MyA0MS42MjcsMzEuMTg4IDM5LjY4OSwzMS4xMjUgQzM4LjYyNiwzMS4xMjUgMzcuNjI2LDMxLjE4OCAzNi43NTEsMzEuMzEzIEwzNi43NSwzMS4zMTMgWiIgaWQ9IlNoYXBlIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4="); } @charset "UTF-8"; /* Animate.css - http://daneden.me/animate Licensed under the MIT license - http://opensource.org/licenses/MIT  Copyright (c) 2015 Daniel Eden */ .animated {   -webkit-animation-duration: 1s;   animation-duration: 1s;   -webkit-animation-fill-mode: both;   animation-fill-mode: both; } @-webkit-keyframes fadeIn {   0% {     opacity: 0;   }   100% {     opacity: 1;   } } .fadeIn {   -webkit-animation-name: fadeIn;   animation-name: fadeIn; } @-webkit-keyframes fadeInDown {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -100%, 0);     transform: translate3d(0, -100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } .fadeInDown {   -webkit-animation-name: fadeInDown;   animation-name: fadeInDown; } @-webkit-keyframes fadeInDownBig {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -2000px, 0);     transform: translate3d(0, -2000px, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } .fadeInDownBig {   -webkit-animation-name: fadeInDownBig;   animation-name: fadeInDownBig; } @-webkit-keyframes fadeInUp {   0% {     opacity: 0;     -webkit-transform: translate3d(0, 100%, 0);     transform: translate3d(0, 100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } .fadeInUp {   -webkit-animation-name: fadeInUp;   animation-name: fadeInUp; } @-webkit-keyframes fadeOut {   0% {     opacity: 1;   }   100% {     opacity: 0;   } } .fadeOut {   -webkit-animation-name: fadeOut;   animation-name: fadeOut; } @-webkit-keyframes fadeOutDownBig {   0% {     opacity: 1;   }   100% {     opacity: 0;     -webkit-transform: translate3d(0, 2000px, 0);     transform: translate3d(0, 2000px, 0);   } } .fadeOutDownBig {   -webkit-animation-name: fadeOutDownBig;   animation-name: fadeOutDownBig; } @-webkit-keyframes fadeIn {   0% {     opacity: 0;   }   100% {     opacity: 1;   } } @keyframes fadeIn {   0% {     opacity: 0;   }   100% {     opacity: 1;   } } @-webkit-keyframes fadeInDown {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -100%, 0);     transform: translate3d(0, -100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @keyframes fadeInDown {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -100%, 0);     transform: translate3d(0, -100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @-webkit-keyframes fadeInDownBig {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -2000px, 0);     transform: translate3d(0, -2000px, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @keyframes fadeInDownBig {   0% {     opacity: 0;     -webkit-transform: translate3d(0, -2000px, 0);     transform: translate3d(0, -2000px, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @-webkit-keyframes fadeInUp {   0% {     opacity: 0;     -webkit-transform: translate3d(0, 100%, 0);     transform: translate3d(0, 100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @keyframes fadeInUp {   0% {     opacity: 0;     -webkit-transform: translate3d(0, 100%, 0);     transform: translate3d(0, 100%, 0);   }   100% {     opacity: 1;     -webkit-transform: none;     transform: none;   } } @-webkit-keyframes fadeOut {   0% {     opacity: 1;   }   100% {     opacity: 0;   } } @keyframes fadeOut {   0% {     opacity: 1;   }   100% {     opacity: 0;   } } @-webkit-keyframes fadeOutDownBig {   0% {     opacity: 1;   }   100% {     opacity: 0;     -webkit-transform: translate3d(0, 2000px, 0);     transform: translate3d(0, 2000px, 0);   } } @keyframes fadeOutDownBig {   0% {     opacity: 1;   }   100% {     opacity: 0;     -webkit-transform: translate3d(0, 2000px, 0);     transform: translate3d(0, 2000px, 0);   } } .slide-enter {   -webkit-transform: translate3d(100%, 0, 0);   transform: translate3d(100%, 0, 0); } .slide-enter.slide-enter-active {   -webkit-transform: translate3d(0, 0, 0);   transform: translate3d(0, 0, 0);   -webkit-transition: -webkit-transform 0.3s ease-out;   transition: -webkit-transform 0.3s ease-out;   transition: transform 0.3s ease-out;   transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out; } .slide-exit {   -webkit-transform: translate3d(0, 0, 0);   transform: translate3d(0, 0, 0); } .slide-exit.slide-exit-active {   -webkit-transform: translate3d(100%, 0, 0);   transform: translate3d(100%, 0, 0);   -webkit-transition: -webkit-transform 0.3s ease-in;   transition: -webkit-transform 0.3s ease-in;   transition: transform 0.3s ease-in;   transition: transform 0.3s ease-in, -webkit-transform 0.3s ease-in; } .vslide-enter {   -webkit-transform: translate3d(0, 100%, 0);   transform: translate3d(0, 100%, 0); } .vslide-enter.vslide-enter-active {   -webkit-transform: translate3d(0, 0, 0);   transform: translate3d(0, 0, 0);   -webkit-transition: -webkit-transform 0.35s;   transition: -webkit-transform 0.35s;   transition: transform 0.35s;   transition: transform 0.35s, -webkit-transform 0.35s; } .reverse-vslide-enter {   opacity: 0;   -webkit-transform: translate3d(0, -100%, 0);   transform: translate3d(0, -100%, 0); } .reverse-vslide-enter.reverse-vslide-enter-active {   opacity: 1;   -webkit-transform: translate3d(0, 0, 0);   transform: translate3d(0, 0, 0);   -webkit-transition: -webkit-transform 0.35s;   transition: -webkit-transform 0.35s;   transition: transform 0.35s;   transition: transform 0.35s, -webkit-transform 0.35s; } .vslide-exit {   -webkit-transform: translate3d(0, 0, 0);   transform: translate3d(0, 0, 0); } .vslide-exit.vslide-exit-active {   -webkit-transform: translate3d(0, 100%, 0);   transform: translate3d(0, 100%, 0);   -webkit-transition: -webkit-transform 0.35s;   transition: -webkit-transform 0.35s;   transition: transform 0.35s;   transition: transform 0.35s, -webkit-transform 0.35s; } .horizontal-fade-enter {   position: relative;   top: 0;   left: 0;   z-index: 1;   -webkit-transform: translate3d(100%, 0, 0);   transform: translate3d(100%, 0, 0); } .horizontal-fade-enter.horizontal-fade-enter-active {   -webkit-transform: none;   transform: none;   -webkit-transition: -webkit-transform 0.5s;   transition: -webkit-transform 0.5s;   transition: transform 0.5s;   transition: transform 0.5s, -webkit-transform 0.5s; } .horizontal-fade-exit {   opacity: 1;   position: absolute;   width: 100%;   top: 0;   left: 0; } .horizontal-fade-exit.horizontal-fade-exit-active {   opacity: 0;   -webkit-transform: translate3d(-100%, 0, 0);   transform: translate3d(-100%, 0, 0);   -webkit-transition: -webkit-transform 0.5s, opacity 1s linear;   -webkit-transition: opacity 1s linear, -webkit-transform 0.5s;   transition: opacity 1s linear, -webkit-transform 0.5s;   transition: transform 0.5s, opacity 1s linear;   transition: transform 0.5s, opacity 1s linear, -webkit-transform 0.5s; } .reverse-horizontal-fade-enter {   position: relative;   top: 0;   left: 0;   z-index: 1;   -webkit-transform: translate3d(-100%, 0, 0);   transform: translate3d(-100%, 0, 0); } .reverse-horizontal-fade-enter.reverse-horizontal-fade-enter-active {   -webkit-transform: none;   transform: none;   -webkit-transition: -webkit-transform 0.5s;   transition: -webkit-transform 0.5s;   transition: transform 0.5s;   transition: transform 0.5s, -webkit-transform 0.5s; } .reverse-horizontal-fade-exit {   opacity: 1;   position: absolute;   width: 100%;   top: 0;   left: 0; } .reverse-horizontal-fade-exit.reverse-horizontal-fade-exit-active {   opacity: 0;   -webkit-transform: translate3d(100%, 0, 0);   transform: translate3d(100%, 0, 0);   -webkit-transition: -webkit-transform 0.5s, opacity 1s linear;   -webkit-transition: opacity 1s linear, -webkit-transform 0.5s;   transition: opacity 1s linear, -webkit-transform 0.5s;   transition: transform 0.5s, opacity 1s linear;   transition: transform 0.5s, opacity 1s linear, -webkit-transform 0.5s; } .fade-enter {   position: relative;   top: 0;   left: 0;   z-index: 1; } .fade-exit {   opacity: 1;   position: absolute;   width: 100%;   top: 0;   left: 0;   opacity: 1; } .fade-exit.fade-exit-active {   opacity: 0;   -webkit-transition: opacity 0.5s linear;   transition: opacity 0.5s linear; } @-webkit-keyframes stroke {   100% {     stroke-dashoffset: 0;   } } @-webkit-keyframes scale {   0%, 100% {     -webkit-transform: none;   }   50% {     -webkit-transform: scale3d(1.1, 1.1, 1);   } } @-webkit-keyframes fill {   100% {     box-shadow: inset 0px 0px 0px 30px #7ac142;   } } @-webkit-keyframes rotate {   0% {     -webkit-transform: rotate(0deg);   }   100% {     -webkit-transform: rotate(360deg);   } } @-webkit-keyframes stroke {   100% {     stroke-dashoffset: 0;   } } @keyframes stroke {   100% {     stroke-dashoffset: 0;   } } @-webkit-keyframes scale {   0%, 100% {     -webkit-transform: none;             transform: none;   }   50% {     -webkit-transform: scale3d(1.1, 1.1, 1);             transform: scale3d(1.1, 1.1, 1);   } } @keyframes scale {   0%, 100% {     -webkit-transform: none;             transform: none;   }   50% {     -webkit-transform: scale3d(1.1, 1.1, 1);             transform: scale3d(1.1, 1.1, 1);   } } @-webkit-keyframes fill {   100% {     box-shadow: inset 0px 0px 0px 30px #7ac142;   } } @keyframes fill {   100% {     box-shadow: inset 0px 0px 0px 30px #7ac142;   } } @-webkit-keyframes rotate {   0% {     -webkit-transform: rotate(0deg);             transform: rotate(0deg);   }   100% {     -webkit-transform: rotate(360deg);             transform: rotate(360deg);   } } @keyframes rotate {   0% {     -webkit-transform: rotate(0deg);             transform: rotate(0deg);   }   100% {     -webkit-transform: rotate(360deg);             transform: rotate(360deg);   } } @media screen and (max-width: 480px) {   html.auth0-lock-html body > * {     display: none;   }   html.auth0-lock-html body .auth0-lock-container {     background: #fff;     display: block !important;   } } .auth0-lock.auth0-lock, .auth0-lock.auth0-lock * {   box-sizing: initial; } .auth0-lock.auth0-lock svg {   background-color: transparent; } .auth0-lock.auth0-lock .auth0-global-message {   color: #fff;   text-align: center;   padding: 10px;   line-height: 1.8;   font-size: 11px;   font-weight: 600;   text-transform: uppercase; } .auth0-lock.auth0-lock .auth0-global-message.auth0-global-message-error {   background: #ff3e00; } .auth0-lock.auth0-lock .auth0-global-message.auth0-global-message-success {   background: #7ed321; } .auth0-lock.auth0-lock .auth0-global-message.auth0-global-message-info {   background: #44c7f4; } .auth0-lock.auth0-lock .auth0-global-message.global-message-enter {   height: 0;   paddingTop: 0;   paddingBottom: 0; } .auth0-lock.auth0-lock .auth0-global-message.global-message-enter.global-message-enter-active {   -webkit-transition: all 0.2s;   transition: all 0.2s;   height: auto;   paddingTop: 10px;   paddingBottom: 10px; } .auth0-lock.auth0-lock .auth0-global-message.global-message-exit {   -webkit-transition: all 0.2s;   transition: all 0.2s;   height: 0;   paddingTop: 0;   paddingBottom: 0; } .auth0-lock.auth0-lock .auth0-global-message span {   -webkit-animation-delay: 0.2s;   animation-delay: 0.2s; } .auth0-lock.auth0-lock {   font-family: "Avenir Next", Avenir, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, sans-serif;   text-rendering: optimizeLegibility;   pointer-events: none;   position: fixed;   bottom: 0;   left: 0;   width: 100%;   height: 100%;   right: 0;   z-index: 1000000; } @media (min-width: 481px) {   .auth0-lock.auth0-lock {     display: table;   } } .auth0-lock.auth0-lock a {   text-decoration: none; } .auth0-lock.auth0-lock a:active, .auth0-lock.auth0-lock a:focus {   outline: none; } .auth0-lock.auth0-lock input:focus, .auth0-lock.auth0-lock button:focus {   outline: none; } .auth0-lock.auth0-lock .auth0-lock-overlay {   background: -webkit-radial-gradient(#40404b, #111118) rgba(34,34,40,0.94);   background: radial-gradient(#40404b, #111118) rgba(34,34,40,0.94);   position: fixed;   top: 0;   bottom: 0;   right: 0;   left: 0;   z-index: -1;   opacity: 0;   -webkit-transition: opacity 0.2s ease-in 0.4s;   transition: opacity 0.2s ease-in 0.4s; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-center {     vertical-align: middle;     display: table-cell;     margin: auto;   } } .auth0-lock.auth0-lock .auth0-lock-widget {   width: 300px;   opacity: 0;   -webkit-transform: translateY(100%) scale(0.8);   transform: translateY(100%) scale(0.8);   -webkit-transition-timing-function: cubic-bezier(0.3, 0, 0, 1.4);   transition-timing-function: cubic-bezier(0.3, 0, 0, 1.4);   margin: 0 auto;   border-radius: 5px;   max-height: 100vh; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-widget {     -webkit-transition: -webkit-transform 0.4s, opacity 0.3s;     -webkit-transition: opacity 0.3s, -webkit-transform 0.4s;     transition: opacity 0.3s, -webkit-transform 0.4s;     transition: transform 0.4s, opacity 0.3s;     transition: transform 0.4s, opacity 0.3s, -webkit-transform 0.4s;   } } .auth0-lock.auth0-lock .auth0-lock-widget-container {   position: relative; } .auth0-lock.auth0-lock .auth0-lock-cred-pane {   height: 100%;   border-radius: 6px;   background: #fff;   position: relative; } .auth0-lock.auth0-lock .auth0-lock-cred-pane.horizontal-fade-exit .auth0-lock-content, .auth0-lock.auth0-lock .auth0-lock-cred-pane.horizontal-fade-exit .auth0-lock-terms {   opacity: 0.3;   pointer-events: none; } .auth0-lock.auth0-lock .auth0-lock-cred-pane.auth0-lock-moving {   overflow: hidden; } .auth0-lock.auth0-lock .auth0-lock-header {   text-align: center;   padding: 11px;   height: 118px;   color: #333;   position: relative;   background: #fff;   border-radius: 5px 5px 0 0;   overflow: hidden;   box-sizing: border-box; } .auth0-lock.auth0-lock .auth0-lock-close-button, .auth0-lock.auth0-lock .auth0-lock-back-button {   box-sizing: content-box !important;   background: #fff;   border-radius: 100px;   height: 10px;   width: 10px;   position: absolute;   top: 14px;   right: 14px;   box-shadow: 0 1px 3px rgba(0,0,0,0.1);   color: #333;   z-index: 100;   border: 6px solid #fff;   cursor: pointer;   line-height: 0; } .auth0-lock.auth0-lock .auth0-lock-close-button svg, .auth0-lock.auth0-lock .auth0-lock-back-button svg {   box-sizing: content-box; } .auth0-lock.auth0-lock .auth0-lock-close-button polygon, .auth0-lock.auth0-lock .auth0-lock-back-button polygon {   fill: #373737; } .auth0-lock.auth0-lock .auth0-lock-back-button {   left: 14px; } .auth0-lock.auth0-lock .auth0-lock-header-avatar {   height: 80px;   width: 80px;   display: block;   border-radius: 100px;   margin: -16px auto 0;   position: absolute;   left: 0;   right: 0;   z-index: 1000;   box-shadow: 0 1px 2px rgba(0,0,0,0.4);   -webkit-animation: fadeIn 0.75s both;   animation: fadeIn 0.75s both; } @media (min-width: 768px) {   .auth0-lock.auth0-lock .auth0-lock-header-avatar {     -webkit-animation: fadeInDown 0.75s both;     animation: fadeInDown 0.75s both;   } } .auth0-lock.auth0-lock .auth0-lock-header-bg {   position: absolute;   height: 118px;   width: 100%;   overflow: hidden;   top: 0;   left: 0;   pointer-events: none; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-header-bg {     background: rgba(241,241,241,0.8);   } } .auth0-lock.auth0-lock .auth0-lock-header-bg .auth0-lock-header-bg-blur {   display: none;   height: 100%;   width: 100%;   border-top-left-radius: 5px;   border-top-right-radius: 5px;   -webkit-filter: blur(40px) grayscale(1);   -ms-filter: blur(40px) grayscale(1);   filter: blur(40px) grayscale(1);   -webkit-backdrop-filter: blur(0);   background-color: #fff;   background-position: center;   background-repeat: no-repeat;   background-size: 300px;   opacity: 0;   -webkit-transition: 0s ease 0s;   transition: 0s ease 0s; } .auth0-lock.auth0-lock .auth0-lock-header-bg .auth0-lock-header-bg-blur.auth0-lock-no-grayscale {   -webkit-filter: blur(30px);   -ms-filter: blur(30px);   filter: blur(30px);   -webkit-backdrop-filter: blur(0);   background-position: center;   background-size: 800px; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-header-bg.auth0-lock-blur-support .auth0-lock-header-bg-blur {     display: block;   } } .auth0-lock.auth0-lock .auth0-lock-header-bg .auth0-lock-header-bg-solid {   height: 100%;   opacity: 0.08; } .auth0-lock.auth0-lock .auth0-lock-header-welcome {   font-size: 18px;   position: relative; } .auth0-lock.auth0-lock .auth0-lock-header-logo {   width: auto;   height: 58px;   display: inline-block;   margin: 0 0 11px;   vertical-align: middle;   -webkit-transition: margin-top 0.4s;   transition: margin-top 0.4s; } .auth0-lock.auth0-lock .auth0-lock-header-logo.centered {   margin-top: 20px; } .auth0-lock.auth0-lock .auth0-lock-firstname {   font-size: 18px;   margin-top: 64px;   text-overflow: ellipsis;   white-space: nowrap;   overflow: hidden;   padding: 0 10px; } .auth0-lock.auth0-lock .auth0-lock-name {   font-size: 22px;   text-overflow: ellipsis;   white-space: nowrap;   overflow: hidden;   padding: 0 10px;   line-height: 30px; } .auth0-lock.auth0-lock .auth0-lock-content {   padding: 20px;   box-sizing: border-box; } .auth0-lock.auth0-lock .auth0-lock-form {   display: block;   -webkit-animation: fadeIn 0.2s;   animation: fadeIn 0.2s; } .auth0-lock.auth0-lock .auth0-lock-form h2 {   font-size: 22px;   font-weight: normal;   text-align: center;   margin: 0 0 15px;   color: #000; } .auth0-lock.auth0-lock .auth0-lock-form p {   font-size: 13px;   line-height: 1.8;   text-align: center;   margin-top: 0;   margin-bottom: 15px;   color: rgba(0,0,0,0.54); } .auth0-lock.auth0-lock .auth0-lock-form .auth0-lock-alternative {   margin-top: 20px;   margin-bottom: 0; } .auth0-lock.auth0-lock .auth0-lock-form .auth0-lock-alternative .auth0-lock-alternative-link {   font-size: 13px;   color: rgba(0,0,0,0.87);   cursor: pointer;   margin-bottom: 0; } .auth0-lock.auth0-lock .auth0-lock-input-block {   position: relative;   margin-bottom: 15px; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-input-block {     margin-bottom: 10px;   } } .auth0-lock.auth0-lock .auth0-lock-input-block:last-child {   margin-bottom: 0; } .auth0-lock.auth0-lock .auth0-lock-input-wrap {   border-radius: 3px;   border: 1px solid #f1f1f1;   position: relative;   background: #f1f1f1;   -webkit-transition: border-color 0.8s;   transition: border-color 0.8s; } .auth0-lock.auth0-lock .auth0-lock-input-wrap.auth0-lock-input-wrap-with-icon {   padding-left: 40px; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-icon-arrow {   position: absolute;   top: 14px;   width: 12px;   height: 14px;   right: 14px; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-icon, .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-custom-icon {   position: absolute;   font-size: 12px;   top: 13px;   left: 14px; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-icon path, .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-custom-icon path {   fill: #888; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-icon.auth0-lock-icon-mobile, .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-custom-icon.auth0-lock-icon-mobile {   width: 9px;   height: 14px;   top: 14px;   left: 16px; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-icon.auth0-lock-icon-box, .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-custom-icon.auth0-lock-icon-box {   width: 12px;   height: 14px;   top: auto;   bottom: 14px;   left: 14px; } .auth0-lock.auth0-lock .auth0-lock-input-wrap.auth0-lock-focused {   border-color: #a0a0a0; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-input {   border: 0;   padding: 0 14px;   right: 0;   height: 40px;   font-size: 13px;   width: 100%;   border-radius: 0 2px 2px 0;   box-sizing: border-box;   position: relative;   color: rgba(0,0,0,0.87); } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-input.animated {   -webkit-animation-duration: 0.5s;   animation-duration: 0.5s; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-input.auth0-lock-input-location {   background-color: #f9f9f9;   text-align: left; } .auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-input.auth0-lock-input-location.auth0-lock-input-with-placeholder {   color: rgba(0,0,0,0.54); } .auth0-lock.auth0-lock .auth0-lock-error .auth0-lock-input-wrap {   border-color: #f00;   -webkit-transition: 0.3s ease-in-out;   transition: 0.3s ease-in-out; } .auth0-lock.auth0-lock .auth0-lock-input-checkbox {   text-align: left;   display: block;   font-size: 12px;   color: rgba(0,0,0,0.54);   line-height: 22px;   position: relative; } .auth0-lock.auth0-lock .auth0-lock-input-checkbox label input {   float: left;   margin-top: 5px; } .auth0-lock.auth0-lock .auth0-lock-input-checkbox span {   display: block;   margin-left: 20px; } .auth0-lock.auth0-lock .auth-lock-social-buttons-pane, .auth0-lock.auth0-lock .auth0-lock-last-login-pane {   position: relative; } .auth0-lock.auth0-lock .auth-lock-social-buttons-pane .auth0-loading-container, .auth0-lock.auth0-lock .auth0-lock-last-login-pane .auth0-loading-container {   -webkit-animation: fadeIn 0.75s ease-in-out !important;   animation: fadeIn 0.75s ease-in-out !important;   position: absolute;   width: 54px;   height: 54px;   top: 50%;   left: 50%;   -webkit-transform: translate(-50%, -50%);   transform: translate(-50%, -50%); } .auth0-lock.auth0-lock .auth-lock-social-buttons-pane .auth0-loading-container .auth0-loading, .auth0-lock.auth0-lock .auth0-lock-last-login-pane .auth0-loading-container .auth0-loading {   width: 50px;   height: 50px;   border-radius: 50%;   top: 0;   left: 0;   opacity: 1; } .auth0-lock.auth0-lock .auth0-lock-social-buttons-container {   text-align: center; } .auth0-lock.auth0-lock .auth0-lock-social-button {   border: 0;   padding: 0;   display: inline-block;   box-sizing: border-box;   overflow: hidden;   border-radius: 3px;   margin: 4px;   position: relative;   width: 40px;   height: 40px;   -webkit-transition: background-color 0.2s ease-in-out;   transition: background-color 0.2s ease-in-out; } .auth0-lock.auth0-lock .auth0-lock-social-button .auth0-lock-social-button-icon {   width: 40px;   height: 40px;   position: absolute;   top: 0;   left: 0;   transition: background-color 0.3s;   -webkit-transition: background-color 0.3s; } .auth0-lock.auth0-lock .auth0-lock-social-button:hover .auth0-lock-social-button-icon, .auth0-lock.auth0-lock .auth0-lock-social-button:focus .auth0-lock-social-button-icon {   background-color: rgba(0,0,0,0.3); } .auth0-lock.auth0-lock .auth0-lock-social-button .auth0-lock-social-button-text {   display: none; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button {   display: block;   margin: 10px 0 0;   width: 100%; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button:first-child {   margin-top: 0; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button[data-provider=""], .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button[data-provider="auth0"] {   background-color: #c0c0c0; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button[data-provider=""] .auth0-lock-social-button-icon, .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button[data-provider="auth0"] .auth0-lock-social-button-icon {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iNTNweCIgaGVpZ2h0PSI2NXB4IiB2aWV3Qm94PSIwIDAgNTMgNjUiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+ICAgICAgICA8dGl0bGU+U2hhcGU8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4gICAgICAgIDxnIGlkPSI2NHB4IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTE1My4wMDAwMDAsIC02MDMzLjAwMDAwMCkiIGZpbGw9IiNGRkZGRkYiPiAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMTYxLjEyNSw2MDk4IEMxMTU2LjYzNzk3LDYwOTggMTE1Myw2MDk0LjM2MTg2IDExNTMsNjA4OS44NzU2MyBMMTE1Myw2MDY1LjQ5OTQ5IEMxMTUzLDYwNjEuMDEyMjUgMTE1Ni42Mzc5Nyw2MDU3LjM3MzEgMTE2MS4xMjUsNjA1Ny4zNzMxIEwxMTYxLjEyNSw2MDUxLjI4MjExIEMxMTYxLjEyNSw2MDQxLjE4NjMyIDExNjkuMzA5OTIsNjAzMyAxMTc5LjQwNjI1LDYwMzMgQzExODkuNTAyNTgsNjAzMyAxMTk3LjY4NzUsNjA0MS4xODYzMiAxMTk3LjY4NzUsNjA1MS4yODIxMSBMMTE5Ny42ODc1LDYwNTcuMzc0MTEgQzEyMDIuMTc0NTMsNjA1Ny4zNzQxMSAxMjA1LjgxMjUsNjA2MS4wMTIyNSAxMjA1LjgxMjUsNjA2NS40OTk0OSBMMTIwNS44MTI1LDYwODkuODc1NjMgQzEyMDUuODEyNSw2MDk0LjM2MTg2IDEyMDIuMTc0NTMsNjA5OCAxMTk3LjY4NzUsNjA5OCBMMTE2MS4xMjUsNjA5OCBaIE0xMTkzLjYyNjAyLDYwNTEuMjgyMTEgQzExOTMuNjI2MDIsNjA0My40Mjk5NCAxMTg3LjI1OTA2LDYwMzcuMDYyNjkgMTE3OS40MDcyNyw2MDM3LjA2MjY5IEMxMTcxLjU1NTQ3LDYwMzcuMDYyNjkgMTE2NS4xODg1Miw2MDQzLjQyOTk0IDExNjUuMTg4NTIsNjA1MS4yODIxMSBMMTE2NS4xODg1Miw2MDU3LjM3MzEgTDExOTMuNjI2MDIsNjA1Ny4zNzMxIEwxMTkzLjYyNjAyLDYwNTEuMjgyMTEgTDExOTMuNjI2MDIsNjA1MS4yODIxMSBaIE0xMjAxLjc1LDYwNjUuNDk5NDkgQzEyMDEuNzUsNjA2My4yNTQ4NiAxMTk5LjkzMTAyLDYwNjEuNDM1NzkgMTE5Ny42ODc1LDYwNjEuNDM1NzkgTDExNjEuMTI1LDYwNjEuNDM1NzkgQzExNTguODgxNDgsNjA2MS40MzU3OSAxMTU3LjA2MjUsNjA2My4yNTQ4NiAxMTU3LjA2MjUsNjA2NS40OTk0OSBMMTE1Ny4wNjI1LDYwODkuODc1NjMgQzExNTcuMDYyNSw2MDkyLjExNjIxIDExNTguODgxNDgsNjA5My45MzUyOCAxMTYxLjEyNSw2MDkzLjkzNTI4IEwxMTk3LjY4NzUsNjA5My45MzUyOCBDMTE5OS45MzEwMiw2MDkzLjkzNTI4IDEyMDEuNzUsNjA5Mi4xMTYyMSAxMjAxLjc1LDYwODkuODc1NjMgTDEyMDEuNzUsNjA2NS40OTk0OSBMMTIwMS43NSw2MDY1LjQ5OTQ5IFogTTExNzcuMzc1LDYwODMuNzgwNTggTDExNzcuMzc1LDYwNzEuNTkyNTEgQzExNzcuMzc1LDYwNzAuNDcxMjEgMTE3OC4yODM5OCw2MDY5LjU2MTE3IDExNzkuNDA2MjUsNjA2OS41NjExNyBDMTE4MC41Mjg1Miw2MDY5LjU2MTE3IDExODEuNDM3NSw2MDcwLjQ3MTIxIDExODEuNDM3NSw2MDcxLjU5MjUxIEwxMTgxLjQzNzUsNjA4My43ODA1OCBDMTE4MS40Mzc1LDYwODQuOTAwODcgMTE4MC41Mjg1Miw2MDg1LjgxMDkxIDExNzkuNDA2MjUsNjA4NS44MTA5MSBDMTE3OC4yODUsNjA4NS44MTA5MSAxMTc3LjM3NSw2MDg0LjkwMDg3IDExNzcuMzc1LDYwODMuNzgwNTggWiIgaWQ9IlNoYXBlIj48L3BhdGg+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4=");   background-size: 38%; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button .auth0-lock-social-button-icon {   background-color: rgba(0,0,0,0.3); } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button .auth0-lock-social-button-text {   box-sizing: border-box;   display: block;   overflow: hidden;   width: 100%;   padding-left: 54px;   padding-right: 15px;   line-height: 40px;   text-align: left;   text-transform: uppercase;   text-overflow: ellipsis;   font-size: 10px;   font-weight: 600;   letter-spacing: 0.7px;   color: #fff;   white-space: nowrap;   transition: background 0.3s;   -webkit-transition: background 0.3s; } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button:hover:not([disabled]) .auth0-lock-social-button-icon, .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button:focus:not([disabled]) .auth0-lock-social-button-icon {   background-color: rgba(0,0,0,0.3); } .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button:hover:not([disabled]) .auth0-lock-social-button-text, .auth0-lock.auth0-lock .auth0-lock-social-button.auth0-lock-social-big-button:focus:not([disabled]) .auth0-lock-social-button-text {   background-color: rgba(0,0,0,0.3); } .auth0-lock.auth0-lock .auth0-lock-social-button[disabled] {   background-color: #9b9b9b !important; } .auth0-lock.auth0-lock .auth0-lock-terms {   background: #eee;   text-align: center;   display: block;   font-size: 12px;   color: rgba(0,0,0,0.54);   line-height: 22px;   padding: 10px;   position: relative; } .auth0-lock.auth0-lock .auth0-lock-terms a {   color: rgba(0,0,0,0.87); } .auth0-lock.auth0-lock .auth0-lock-submit {   border: 0;   padding: 14px;   display: block;   box-sizing: border-box;   width: 100%;   height: 70px;   overflow: hidden;   border-radius: 0 0 5px 5px;   -webkit-transition: 0.2s ease-in-out;   transition: 0.2s ease-in-out;   color: #fff;   letter-spacing: 1px;   font-size: 14px;   text-transform: uppercase; /*submit button animation*/ } .auth0-lock.auth0-lock .auth0-lock-submit span {   display: inline-block;   -webkit-transition: 0.2s ease-in-out;   transition: 0.2s ease-in-out; } .auth0-lock.auth0-lock .auth0-lock-submit span svg {   vertical-align: middle;   display: inline; } .auth0-lock.auth0-lock .auth0-lock-submit span svg.icon-text {   margin: -4px 0 0 5px; } .auth0-lock.auth0-lock .auth0-lock-submit .auth0-label-submit {   height: 42px;   line-height: 42px; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-submit:hover:not([disabled]) span {     -webkit-transform: scale(1.05);     transform: scale(1.05);   } } .auth0-lock.auth0-lock .auth0-lock-submit:focus {   box-shadow: inset 0 0 100px 20px rgba(0,0,0,0.2); } .auth0-lock.auth0-lock .auth0-lock-submit[disabled] {   background-color: #9b9b9b !important; } .auth0-lock.auth0-lock .auth0-lock-submit[disabled] span svg circle, .auth0-lock.auth0-lock .auth0-lock-submit[disabled] span svg path {   stroke: rgba(255,255,255,0.6);   -webkit-transition: 0.2s ease-in-out;   transition: 0.2s ease-in-out; } .auth0-lock.auth0-lock .auth0-lock-submit[disabled] span svg path {   fill: rgba(255,255,255,0.6); } .auth0-lock.auth0-lock .auth0-lock-submit.vslide-enter {   opacity: 0; } .auth0-lock.auth0-lock .auth0-lock-submit.vslide-enter.vslide-enter-active {   opacity: 1;   -webkit-transition-duration: 0.5s;           transition-duration: 0.5s; } .auth0-lock.auth0-lock .auth0-loading-container {   position: relative;   display: none; } .auth0-lock.auth0-lock .auth0-loading-container .auth0-loading {   position: absolute;   top: 4px;   left: 44%;   width: 30px;   height: 30px;   border-width: 2px;   border-style: solid;   border-color: rgba(0,0,0,0.4) rgba(0,0,0,0.4) rgba(0,0,0,0.2) rgba(0,0,0,0.2);   opacity: 0.9;   border-radius: 20px;   -webkit-animation: rotate 1s linear infinite;   animation: rotate 1s linear infinite; } .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-lock-content, .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-lock-terms {   opacity: 0.3;   pointer-events: none; } .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-lock-submit {   background-color: #eee !important;   -webkit-transition: background 0.5s ease;   transition: background 0.5s ease;   cursor: initial;   pointer-events: none; } .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-lock-submit span {   -webkit-animation: fadeOutDownBig 1s both;   animation: fadeOutDownBig 1s both; } .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-loading-container {   -webkit-animation: fadeInDownBig 1s both;   animation: fadeInDownBig 1s both;   display: block; } .auth0-lock.auth0-lock.auth0-lock-mode-loading .auth0-lock-back-button {   opacity: 0;   visibility: hidden;   -webkit-transition: 0.25s;   transition: 0.25s; } .auth0-lock.auth0-lock.auth0-lock-auxiliary .auth0-lock-header-avatar {   -webkit-animation: fadeOut 0.3s both;   animation: fadeOut 0.3s both; } .auth0-lock.auth0-lock.auth0-lock-auxiliary .auth0-lock-content, .auth0-lock.auth0-lock.auth0-lock-auxiliary .auth0-lock-terms, .auth0-lock.auth0-lock.auth0-lock-auxiliary .auth0-lock-submit {   opacity: 0.3;   pointer-events: none; } .auth0-lock.auth0-lock.auth0-lock-auxiliary .auth0-lock-back-button {   opacity: 0;   visibility: hidden;   -webkit-transition: 0.25s;   transition: 0.25s; } .auth0-lock.auth0-lock .auth0-lock-select-country {   background-color: #fff;   position: absolute;   padding: 0;   font-size: 14px;   color: #666;   bottom: 0;   top: 0;   right: 0;   left: 0;   border-radius: 5px;   overflow: hidden;   z-index: 200; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-back-button {   opacity: 1;   visibility: visible;   top: 19px; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-search {   background-color: #e3e5e9;   padding: 10px; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-input-wrap {   margin: 0;   border: none;   margin-left: 40px;   overflow: hidden; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-icon {   width: 16px;   height: 16px;   top: 12px;   left: 9px;   z-index: 1; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-input-search {   border: none; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-list-code {   position: relative;   height: calc(100% - 60px);   overflow-y: scroll; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-list-code ul {   margin: 0;   padding: 0; } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-list-code li {   list-style: none;   text-align: left;   border-bottom: 1px solid #eee;   cursor: pointer;   color: #000;   font-size: 14px;   padding: 15px 20px;   margin: 0;   text-overflow: ellipsis;   width: 100%;   white-space: nowrap;   overflow: hidden;   box-sizing: border-box; } @media (min-width: 481px) {   .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-list-code li {     padding: 10px 20px;   } } .auth0-lock.auth0-lock .auth0-lock-select-country .auth0-lock-list-code li.auth0-lock-list-code-highlighted {   background-color: #2eb5ff;   color: #fff; } .auth0-lock.auth0-lock .auth0-lock-confirmation {   background-color: #fff;   position: absolute;   text-align: center;   line-height: 2;   font-size: 14px;   color: #666;   width: 100%;   height: 100%;   top: 0;   left: 0;   z-index: 200;   border-radius: 5px; } .auth0-lock.auth0-lock .auth0-lock-confirmation .auth0-lock-confirmation-content {   width: 100%;   top: 50%;   left: 50%;   -webkit-transform: translate(-50%, -50%);   transform: translate(-50%, -50%);   position: absolute; } .auth0-lock.auth0-lock .auth0-lock-confirmation p {   padding: 0 14px;   margin-bottom: 6px; } .auth0-lock.auth0-lock .auth0-lock-confirmation a {   display: block;   font-weight: 500;   color: #09c; } .auth0-lock.auth0-lock .auth0-lock-confirmation a svg {   width: 15px;   height: 16px;   margin-bottom: -4px;   margin-left: 0px;   display: inline-block;   -webkit-transition: -webkit-transform 1s ease;   transition: -webkit-transform 1s ease;   transition: transform 1s ease;   transition: transform 1s ease, -webkit-transform 1s ease;   -webkit-transform: rotate(120deg);   transform: rotate(120deg); } .auth0-lock.auth0-lock .auth0-lock-confirmation a svg path {   fill: #09c; } .auth0-lock.auth0-lock .auth0-lock-confirmation a:hover svg {   -webkit-transform: rotate(490deg);   transform: rotate(490deg); } .auth0-lock.auth0-lock .auth0-lock-confirmation .auth0-lock-sent-label {   color: #008000;   -webkit-animation: fadeIn 1s both;   animation: fadeIn 1s both;   font-weight: 600; } .auth0-lock.auth0-lock .auth0-lock-confirmation .auth0-lock-sent-failed-label {   color: #f00;   -webkit-animation: fadeIn 1s both;   animation: fadeIn 1s both;   font-weight: 600; } .auth0-lock.auth0-lock .auth0-lock-confirmation .checkmark__circle {   stroke-dasharray: 166;   stroke-dashoffset: 166;   stroke-width: 2;   stroke-miterlimit: 10;   stroke: #7ac142;   fill: none;   -webkit-animation: stroke 0.6s 0.4s cubic-bezier(0.65, 0, 0.45, 1) forwards;   animation: stroke 0.6s 0.4s cubic-bezier(0.65, 0, 0.45, 1) forwards; } .auth0-lock.auth0-lock .auth0-lock-confirmation .checkmark {   width: 56px;   height: 56px;   border-radius: 50%;   display: block;   stroke-width: 2;   stroke: #fff;   stroke-miterlimit: 10;   margin: 0 auto;   box-shadow: inset 0px 0px 0px #7ac142;   -webkit-animation: fill 0.4s ease-in-out 0.7s forwards, scale 0.3s ease-in-out 1.1s both;   animation: fill 0.4s ease-in-out 0.7s forwards, scale 0.3s ease-in-out 1.1s both; } .auth0-lock.auth0-lock .auth0-lock-confirmation .checkmark__check {   -webkit-transform-origin: 50% 50%;           transform-origin: 50% 50%; } .auth0-lock.auth0-lock .auth0-lock-confirmation .auth0-lock-back-button {   opacity: 1;   visibility: visible; } .auth0-lock.auth0-lock .auth0-lock-forgot-link {   font-size: 12px;   display: block;   text-align: center;   margin: 30px 0 0 0;   color: #5c666f; } .auth0-lock.auth0-lock .auth0-lock-badge-bottom {   position: absolute;   bottom: 15px;   left: 15px;   z-index: -1;   text-align: center;   padding: 6px 10px;   border-radius: 3px;   background: rgba(255,255,255,0.1); } .auth0-lock.auth0-lock .auth0-lock-badge-bottom .auth0-lock-badge {   display: inline-block;   color: rgba(255,255,255,0.7);   font-size: 14px; } .auth0-lock.auth0-lock .auth0-lock-badge-bottom .auth0-lock-badge svg {   vertical-align: middle;   margin: 0 4px; } .auth0-lock.auth0-lock .auth0-lock-badge-bottom .auth0-lock-badge:hover svg g#LogoBadge {   fill: #eb5424;   fill-opacity: 1; } .auth0-lock.auth0-lock.auth0-lock-opened {   opacity: 1;   pointer-events: auto; } @media (min-width: 481px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-center {     overflow-y: auto;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened {     position: absolute;   } } .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-overlay {   opacity: 0.9;   -webkit-transition: opacity 0.3s ease-in 0s;   transition: opacity 0.3s ease-in 0s; } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-overlay {     display: none;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-header {     border-radius: 0;   } } .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-header-bg .auth0-lock-header-bg-blur {   opacity: 0.4;   -webkit-transition: 1s ease 1s;   transition: 1s ease 1s; } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-header-avatar {     width: 70px;     height: 70px;     margin: 10px auto 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-firstname {     margin-top: 72px;   } } .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-widget {   opacity: 1;   -webkit-transform: translateY(0%) scale(1);   transform: translateY(0%) scale(1); } @media (min-width: 481px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-widget {     -webkit-transition: -webkit-transform 0.6s, opacity 0.6s;     -webkit-transition: opacity 0.6s, -webkit-transform 0.6s;     transition: opacity 0.6s, -webkit-transform 0.6s;     transition: transform 0.6s, opacity 0.6s;     transition: transform 0.6s, opacity 0.6s, -webkit-transform 0.6s;     -webkit-transition-delay: 0.5s;     transition-delay: 0.5s;     box-shadow: 0 0 40px 4px #111118;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-widget {     width: 100%;     height: 100%;     position: absolute;     top: 0;     bottom: 0;     border-radius: 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-widget-container {     height: 100%;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-cred-pane {     border-radius: 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-body-content {     background: #fff;     min-height: calc(100vh - 188px);     display: table;     width: 100%;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-content {     width: 100%;     display: table-cell;     vertical-align: middle;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-content .auth0-lock-form p {     font-size: 14px;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-tabs-container {     position: absolute;     top: 0;     left: 0;     width: 100%;     margin: 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-terms {     position: absolute;     bottom: -42px;     width: 100%;     left: 0;     box-sizing: border-box;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-sign-up-terms-agreement label input {     top: 2px;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-submit {     border-radius: 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-badge-bottom {     display: none;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-confirmation {     border-radius: 0;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-iphone .auth0-lock-body-content {     min-height: calc(100vh - 256px);   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-no-submit .auth0-lock-body-content {     min-height: calc(100vh - 118px);   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-no-submit.auth0-lock-iphone .auth0-lock-body-content {     min-height: calc(100vh - 186px);   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-with-terms .auth0-lock-body-content {     margin-bottom: 42px;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-with-tabs .auth0-lock-body-content {     min-height: calc(100vh - 228px);     padding-top: 40px;   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-with-tabs.auth0-lock-with-terms .auth0-lock-body-content {     min-height: calc(100vh - 228px - 42px);   } } @media screen and (max-width: 480px) {   .auth0-lock.auth0-lock.auth0-lock-opened.auth0-lock-with-tabs.auth0-lock-iphone .auth0-lock-body-content {     min-height: calc(100vh - 296px);   } } .auth0-lock.auth0-lock.auth0-lock-opened-in-frame {   opacity: 1;   pointer-events: auto;   position: relative;   width: auto;   margin-left: auto;   margin-right: auto; } .auth0-lock.auth0-lock.auth0-lock-opened-in-frame .auth0-lock-header-bg .auth0-lock-header-bg-blur {   opacity: 0.4;   -webkit-transition: 1s ease 1s;   transition: 1s ease 1s; } .auth0-lock.auth0-lock.auth0-lock-opened-in-frame .auth0-lock-header-bg .auth0-lock-header-bg-blur.auth0-lock-no-grayscale {   opacity: 0.5; } .auth0-lock.auth0-lock.auth0-lock-opened-in-frame .auth0-lock-widget {   opacity: 1;   -webkit-transform: translateY(0%) scale(1);   transform: translateY(0%) scale(1);   -webkit-transition: -webkit-transform 0.6s, opacity 0.6s;   -webkit-transition: opacity 0.6s, -webkit-transform 0.6s;   transition: opacity 0.6s, -webkit-transform 0.6s;   transition: transform 0.6s, opacity 0.6s;   transition: transform 0.6s, opacity 0.6s, -webkit-transform 0.6s;   -webkit-transition-delay: 0.5s;   transition-delay: 0.5s;   margin: auto; } .auth0-lock.auth0-lock.auth0-lock-opened-in-frame .global-error {   position: absolute;   display: none; } .auth0-lock .auth0-lock-form div.auth0-lock-pane-separator {   padding-top: 15px; } #social-container.lock-container .auth0-lock-mode-loading .auth0-lock-content {   opacity: 1; } #social-container.lock-container .auth0-lock-mode-loading .auth0-lock-content .auth0-lock-social-buttons-container {   opacity: 0.3; } .auth0-lock.auth0-lock .auth0-lock-tabs-container {   margin: -20px -20px 20px;   height: 40px; } .auth0-lock.auth0-lock .auth0-lock-tabs {   background: #fff;   padding: 0;   margin: 0;   font-size: 13px;   letter-spacing: 0.7px;   box-shadow: 0 1px 0 0 rgba(92,102,111,0.2);   display: -webkit-box;   display: -ms-flexbox;   display: flex;   -webkit-box-orient: horizontal;   -webkit-box-direction: normal;       -ms-flex-direction: row;           flex-direction: row;   -ms-flex-wrap: wrap;       flex-wrap: wrap;   -webkit-box-pack: center;       -ms-flex-pack: center;           justify-content: center;   -ms-flex-line-pack: center;       align-content: center;   -webkit-box-align: stretch;       -ms-flex-align: stretch;           align-items: stretch; } .auth0-lock.auth0-lock .auth0-lock-tabs:after {   content: "";   display: table;   clear: both; } .auth0-lock.auth0-lock .auth0-lock-tabs li {   width: 50%;   display: block;   list-style: none;   float: left;   padding: 0;   margin: 0;   text-align: center;   cursor: pointer; } .auth0-lock.auth0-lock .auth0-lock-tabs li a {   padding: 11px 10px;   display: block;   text-decoration: none;   color: rgba(92,102,111,0.6);   font-weight: 500; } .auth0-lock.auth0-lock .auth0-lock-tabs li.auth0-lock-tabs-current {   box-shadow: 0 1px 0 0 #5c666f;   cursor: default; } .auth0-lock.auth0-lock .auth0-lock-tabs li.auth0-lock-tabs-current a {   color: #5c666f; } .auth0-lock-password-strength {   width: 100%;   bottom: 41px;   display: block;   text-align: left;   padding-top: 0;   -webkit-animation-duration: 0.3s;   animation-duration: 0.3s;   -webkit-transition: height 0.3s ease;   transition: height 0.3s ease; } @media (min-width: 481px) {   .auth0-lock-password-strength {     position: absolute;     background: #1f242e;     box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);     -webkit-transition: none;     transition: none;     width: 100%;     border-radius: 3px;     z-index: 1000;   }   .auth0-lock-password-strength:after {     top: 100%;     left: 21px;     border: solid transparent;     content: " ";     height: 0;     width: 0;     position: absolute;     pointer-events: none;     border-top-color: #1f242e;     border-width: 9px;     margin-left: -9px;   } } .auth0-lock-password-strength.fadeOut {   opacity: 0;   -webkit-transition: 0.3s 0.3s ease;   transition: 0.3s 0.3s ease;   visibility: hidden; } .auth0-lock-password-strength.fadeIn ul {   -webkit-animation: fadeIn 0.3s 0.1s both;           animation: fadeIn 0.3s 0.1s both; } .auth0-lock-password-strength li, .auth0-lock-password-strength ul {   margin: 0;   padding: 0;   list-style: none;   color: #dd4b39; } .auth0-lock-password-strength > ul {   padding: 15px;   padding-top: 0; } @media (min-width: 481px) {   .auth0-lock-password-strength > ul {     padding-top: 12px;   } } .auth0-lock-password-strength li span {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMTJweCIgaGVpZ2h0PSIxMnB4IiB2aWV3Qm94PSIwIDAgMTIgMTIiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+ICAgICAgICA8dGl0bGU+RXJyb3I8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFzc3dvcmQtUG9saWN5IiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4gICAgICAgIDxnIGlkPSJBcnRib2FyZC0xIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjAwLjAwMDAwMCwgLTE0OC4wMDAwMDApIj4gICAgICAgICAgICA8ZyBpZD0iR3JvdXAtMiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTUwLjAwMDAwMCwgNzUuMDAwMDAwKSI+ICAgICAgICAgICAgICAgIDxnIGlkPSJHcm91cC1Db3B5IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzNS4wMDAwMDAsIDM2LjAwMDAwMCkiPiAgICAgICAgICAgICAgICAgICAgPGcgaWQ9IkVycm9yIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNS4wMDAwMDAsIDM3LjAwMDAwMCkiPiAgICAgICAgICAgICAgICAgICAgICAgIDxlbGxpcHNlIGlkPSJPdmFsLTkwIiBmaWxsPSIjQkU0NTI3IiBjeD0iNiIgY3k9IjYiIHJ4PSI2IiByeT0iNiI+PC9lbGxpcHNlPiAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik05LDMuNjA0Mjg1NzEgTDguMzk1NzE0MjksMyBMNiw1LjM5NTcxNDI5IEwzLjYwNDI4NTcxLDMgTDMsMy42MDQyODU3MSBMNS4zOTU3MTQyOSw2IEwzLDguMzk1NzE0MjkgTDMuNjA0Mjg1NzEsOSBMNiw2LjYwNDI4NTcxIEw4LjM5NTcxNDI5LDkgTDksOC4zOTU3MTQyOSBMNi42MDQyODU3MSw2IEw5LDMuNjA0Mjg1NzEgWiIgaWQ9IlNoYXBlIiBmaWxsPSIjRkZGRkZGIj48L3BhdGg+ICAgICAgICAgICAgICAgICAgICA8L2c+ICAgICAgICAgICAgICAgIDwvZz4gICAgICAgICAgICA8L2c+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4=");   background-position: left center;   background-repeat: no-repeat;   padding-left: 20px; } .auth0-lock-password-strength ul li ul {   margin-left: 20px; } .auth0-lock-password-strength ul li ul li {   color: #000; } @media (min-width: 481px) {   .auth0-lock-password-strength ul li ul li {     color: #fff;   } } .auth0-lock-password-strength ul li ul li span {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMTNweCIgaGVpZ2h0PSIxMnB4IiB2aWV3Qm94PSIwIDAgMTMgMTIiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+ICAgICAgICA8dGl0bGU+T3ZhbCAxPC90aXRsZT4gICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+ICAgICAgICA8ZyBpZD0iSXBob25lLTYtLS1OYXRpdmUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00NC4wMDAwMDAsIC0yMTQuMDAwMDAwKSIgZmlsbD0iI0QwRDJEMyI+ICAgICAgICAgICAgPHBhdGggZD0iTTUwLjExNDk3MzMsMjI2IEM1My40Mjg2ODE4LDIyNiA1Ni4xMTQ5NzMzLDIyMy4zMTM3MDggNTYuMTE0OTczMywyMjAgQzU2LjExNDk3MzMsMjE2LjY4NjI5MiA1My40Mjg2ODE4LDIxNCA1MC4xMTQ5NzMzLDIxNCBDNDYuODAxMjY0OCwyMTQgNDQuMTE0OTczMywyMTYuNjg2MjkyIDQ0LjExNDk3MzMsMjIwIEM0NC4xMTQ5NzMzLDIyMy4zMTM3MDggNDYuODAxMjY0OCwyMjYgNTAuMTE0OTczMywyMjYgWiIgaWQ9Ik92YWwtMSI+PC9wYXRoPiAgICAgICAgPC9nPiAgICA8L2c+PC9zdmc+"); } .auth0-lock-password-strength li {   line-height: 1.5;   margin-top: 5px;   font-size: 13px;   -webkit-transition: color 0.3s ease-in;   transition: color 0.3s ease-in;   position: relative; } .auth0-lock-password-strength li.auth0-lock-checked {   color: #7ed321; } .auth0-lock-password-strength li.auth0-lock-checked span {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMTNweCIgaGVpZ2h0PSIxMnB4IiB2aWV3Qm94PSIwIDAgMTMgMTIiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+ICAgICAgICA8dGl0bGU+R3JvdXAgNDwvdGl0bGU+ICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPiAgICA8ZGVmcz48L2RlZnM+ICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9IklwaG9uZS02LS0tTmF0aXZlIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNDQuMDAwMDAwLCAtMjQwLjAwMDAwMCkiPiAgICAgICAgICAgIDxnIGlkPSJHcm91cC00IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0NC4xMTQ5NzMsIDI0MC4wMDAwMDApIj4gICAgICAgICAgICAgICAgPGVsbGlwc2UgaWQ9Ik92YWwtOTAiIGZpbGw9IiM4MEQxMzUiIGN4PSI2IiBjeT0iNiIgcng9IjYiIHJ5PSI2Ij48L2VsbGlwc2U+ICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik00LjU0MjM1MzYxLDcuNzMzNzgwNzYgTDIuNjQ1ODIxNDksNS44NjgwMDg5NSBMMiw2LjQ5ODg4MTQzIEw0LjU0MjM1MzYxLDkgTDEwLDMuNjMwODcyNDggTDkuMzU4NzI2NTUsMyBMNC41NDIzNTM2MSw3LjczMzc4MDc2IFoiIGlkPSJTaGFwZSIgZmlsbD0iI0ZGRkZGRiI+PC9wYXRoPiAgICAgICAgICAgIDwvZz4gICAgICAgIDwvZz4gICAgPC9nPjwvc3ZnPg=="); } .auth0-lock-error-msg {   color: #f00;   font-size: 12px;   margin-top: 5px; } @media (min-width: 481px) {   .auth0-lock-error-msg {     color: #000;     background: #fff;     box-shadow: 0 0 5px 0 rgba(0,0,0,0.6);     margin: 0;     border-radius: 3px;     position: absolute;     left: calc(100% + 7px);     top: 1px;     display: inline-table;   }   .auth0-lock-error-msg span {     background: #fff;     padding: 12px 15px;     display: block;     position: relative;     border-radius: 3px;     z-index: 1;   }   .auth0-lock-error-msg:after {     content: "";     background: #fff;     height: 6px;     width: 6px;     position: absolute;     pointer-events: none;     box-shadow: 0 0 5px 0 rgba(0,0,0,0.6);     right: calc(100% - 3px);     top: 50%;     -webkit-transform: translateY(-50%) rotate(45deg);             transform: translateY(-50%) rotate(45deg);   } } .auth0-lock .auth0-loading-screen {   min-height: 42px; } .auth0-lock .auth0-loading-screen .auth0-loading-container {   display: block; } .auth0-lock .auth0-sso-notice-container {   background: rgba(0,0,0,0.03);   color: rgba(0,0,0,0.54);   padding: 10px 0;   margin: -20px -20px 20px;   text-align: center;   font-size: 10px;   text-transform: uppercase;   letter-spacing: 1px; } .auth0-lock .auth0-sso-notice-container .auth0-lock-icon {   width: 12px;   height: 14px;   position: relative;   top: 2px;   right: 2px; } .auth0-lock .auth0-lock-last-login-pane .auth0-lock-social-button.auth0-lock-social-big-button {   margin-top: 0; } .auth0-lock .auth0-lock-last-login-pane .auth0-lock-social-button[data-provider="auth0"] .auth0-lock-social-button-text {   text-transform: none;   font-size: 12px;   font-weight: normal; } .auth0-lock .auth0-lock-sign-up-terms-agreement label input {   margin-right: 5px;   position: relative; } .auth0-lock-input-show-password {   position: relative; } .auth0-lock-input-show-password .auth0-lock-show-password {   position: absolute;   top: 14px;   right: 12px;   width: 20px;   height: 14px; } .auth0-lock-input-show-password .auth0-lock-show-password input[type=checkbox] {   display: none; } .auth0-lock-input-show-password .auth0-lock-show-password input[type=checkbox] + label {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIyMHB4IiBoZWlnaHQ9IjE0cHgiIHZpZXdCb3g9IjAgMCAyMCAxNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT5zaG93X3Bhc3N3b3JkX2luYWN0aXZlPC90aXRsZT4gICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+ICAgICAgICA8ZyBpZD0ic2hvd19wYXNzd29yZF9pbmFjdGl2ZSIgZmlsbC1ydWxlPSJub256ZXJvIiBmaWxsPSIjQ0NDQ0NDIj4gICAgICAgICAgICA8cGF0aCBkPSJNMjAsNy4xNDY0NjA3MSBDMjAsNy4zMjQ1NTU5MyAxOS44OTM4NzQ5LDcuNTA0OTY0MDcgMTkuNzg5NzkwNiw3LjYyMjkyMzI5IEMxOS41Nzk1ODExLDcuOTIxMjkwNjQgMTkuMzY5MzcxNiw4LjE1OTUyMTkzIDE5LjEwNjA5OTYsOC40NTc4ODkyMSBDMTcuODQyODAyMSw5Ljg4OTU4OTkzIDE2LjQyMDMxNjksMTEuMTQzMTk1NCAxNC44NDA2ODQ3LDEyLjA5ODQzMzUgQzEzLjg0MDY1OTIsMTIuNjk1MTY4MSAxMi43ODc1NzExLDEzLjE3Mzk0MzcgMTEuNjgxNDIwNCwxMy40MTIxNzUgQzEwLjQ2OTE0NDYsMTMuNjUwNDA2MyA5LjI1ODkwOTY0LDEzLjY1MDQwNjMgOC4wNDY2MzM4NiwxMy4zNTIwMzg5IEM1LjkzODQxNjgxLDEyLjgxNTQ0MDMgNC4wNDI0NTAwNCwxMS41NjE4MzQ5IDIuMzU2NjkyNzcsMTAuMDA5ODYyMSBDMS41NjY4NzY3MSw5LjI5Mjg1NTI5IDAuODMwMTIzMjE0LDguNTE4MDI1MjkgMC4xOTc0NTQwMTYsNy42MjI5MjMyOSBDLTAuMDY1ODE4MDA1Myw3LjI2NDQxOTg2IC0wLjA2NTgxODAwNTMsNi43ODc5NTczIDAuMTk3NDU0MDE2LDYuNDI5NDUzODcgQzAuNDA3NjYzNDU5LDYuMTMxMDg2NTUgMC42MTc4NzI5MDYsNS44OTI4NTUyNiAwLjg4MTE0NDkyOSw1LjU5NDQ4NzkgQzIuMTQ0NDQyNDYsNC4xNjI3ODcyMSAzLjU2NjkyNzczLDIuOTA5MTgxNzcgNS4xNDY1NTk4NSwxLjk1Mzk0MzY4IEM2LjE0NjU4NTM2LDEuMzU3MjA4OTkgNy4xOTk2NzM0MywwLjg3ODQzMzQ3MSA4LjMwNTgyNDE0LDAuNjQwMjAyMTgxIEM5LjUxODEsMC40MDE5NzA4ODkgMTAuNzI4MzM0OSwwLjQwMTk3MDg4OSAxMS45NDA2MTA3LDAuNzAwMzM4MjM2IEMxNC4wNDY3ODY5LDEuMjM2OTM2ODggMTUuOTQyNzUzNiwyLjQ5MDU0MjMxIDE3LjYyODUxMDksNC4wNDI1MTUxMSBDMTguNDE4MzI3LDQuNzU5NTIxOTEgMTkuMTU1MDgwNSw1LjUzNDM1MTgzIDE5Ljc4Nzc0OTYsNi40Mjk0NTM4NyBDMTkuODkzODc0OSw2LjU0OTcyNjAxIDE5Ljk5Nzk1OTEsNi43Mjc4MjEyMyAxOS45OTc5NTkxLDYuOTA1OTE2NDUgQzIwLDcuMDI2MTg4NTkgMjAsNy4wMjYxODg1OSAyMCw3LjA4NjMyNDYyIEMyMCw3LjE0NjQ2MDcxIDIwLDcuMTQ2NDYwNzEgMjAsNy4xNDY0NjA3MSBaIE05Ljk5MTk0NjA3LDIuMjkyOTUyNDIgQzcuNDk4OTQzMTQsMi4yOTI5NTI0MiA1LjQ1MjAwNDM4LDQuMzM5ODkxMiA1LjQ1MjAwNDM4LDYuODMyODk0MTMgQzUuNDUyMDA0MzgsOS4zMjU4OTcgNy40OTg5NDMxNCwxMS4zNzI4MzU5IDkuOTkxOTQ2MDcsMTEuMzcyODM1OSBDMTIuNDg0OTQ5LDExLjM3MjgzNTkgMTQuNTMxODg3Nyw5LjMyNTg5NyAxNC41MzE4ODc3LDYuODMyODk0MTMgQzE0LjUzMTg4NzcsNC4zMzk4OTEyIDEyLjQ4NDk0OSwyLjI5Mjk1MjQyIDkuOTkxOTQ2MDcsMi4yOTI5NTI0MiBaIE05Ljk5MTk0NjA3LDkuMTM3NTU4NzkgQzguNzEzMjI4ODYsOS4xMzc1NTg3OSA3LjY4OTc1OTQzLDguMTE0MDg5NDMgNy42ODk3NTk0Myw2LjgzNTM3MjI0IEM3LjY4OTc1OTQzLDUuNTU2NjU1MDcgOC43MTMyMjg4Niw0LjUzMzE4NTY2IDkuOTkxOTQ2MDcsNC41MzMxODU2NiBDMTEuMjcwNjYzMyw0LjUzMzE4NTY2IDEyLjI5NDEzMjYsNS41NTY2NTUwNyAxMi4yOTQxMzI2LDYuODM1MzcyMjQgQzEyLjI5NDEzMjYsOC4xMTQwODk0MyAxMS4yNzA2NjMzLDkuMTM3NTU4NzkgOS45OTE5NDYwNyw5LjEzNzU1ODc5IFoiIGlkPSJTaGFwZSI+PC9wYXRoPiAgICAgICAgPC9nPiAgICA8L2c+PC9zdmc+");   width: 20px;   height: 14px;   display: inline-block;   cursor: pointer;   vertical-align: top; } .auth0-lock-input-show-password .auth0-lock-show-password input[type=checkbox]:checked + label {   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIyMHB4IiBoZWlnaHQ9IjE0cHgiIHZpZXdCb3g9IjAgMCAyMCAxNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT5zaG93X3Bhc3N3b3JkX2FjdGl2ZTwvdGl0bGU+ICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPiAgICA8ZGVmcz48L2RlZnM+ICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9InNob3dfcGFzc3dvcmRfYWN0aXZlIiBmaWxsLXJ1bGU9Im5vbnplcm8iIGZpbGw9IiMyMEI0RkYiPiAgICAgICAgICAgIDxwYXRoIGQ9Ik0yMCw3LjE0NjQ2MDcxIEMyMCw3LjMyNDU1NTkzIDE5Ljg5Mzg3NDksNy41MDQ5NjQwNyAxOS43ODk3OTA2LDcuNjIyOTIzMjkgQzE5LjU3OTU4MTEsNy45MjEyOTA2NCAxOS4zNjkzNzE2LDguMTU5NTIxOTMgMTkuMTA2MDk5Niw4LjQ1Nzg4OTIxIEMxNy44NDI4MDIxLDkuODg5NTg5OTMgMTYuNDIwMzE2OSwxMS4xNDMxOTU0IDE0Ljg0MDY4NDcsMTIuMDk4NDMzNSBDMTMuODQwNjU5MiwxMi42OTUxNjgxIDEyLjc4NzU3MTEsMTMuMTczOTQzNyAxMS42ODE0MjA0LDEzLjQxMjE3NSBDMTAuNDY5MTQ0NiwxMy42NTA0MDYzIDkuMjU4OTA5NjQsMTMuNjUwNDA2MyA4LjA0NjYzMzg2LDEzLjM1MjAzODkgQzUuOTM4NDE2ODEsMTIuODE1NDQwMyA0LjA0MjQ1MDA0LDExLjU2MTgzNDkgMi4zNTY2OTI3NywxMC4wMDk4NjIxIEMxLjU2Njg3NjcxLDkuMjkyODU1MjkgMC44MzAxMjMyMTQsOC41MTgwMjUyOSAwLjE5NzQ1NDAxNiw3LjYyMjkyMzI5IEMtMC4wNjU4MTgwMDUzLDcuMjY0NDE5ODYgLTAuMDY1ODE4MDA1Myw2Ljc4Nzk1NzMgMC4xOTc0NTQwMTYsNi40Mjk0NTM4NyBDMC40MDc2NjM0NTksNi4xMzEwODY1NSAwLjYxNzg3MjkwNiw1Ljg5Mjg1NTI2IDAuODgxMTQ0OTI5LDUuNTk0NDg3OSBDMi4xNDQ0NDI0Niw0LjE2Mjc4NzIxIDMuNTY2OTI3NzMsMi45MDkxODE3NyA1LjE0NjU1OTg1LDEuOTUzOTQzNjggQzYuMTQ2NTg1MzYsMS4zNTcyMDg5OSA3LjE5OTY3MzQzLDAuODc4NDMzNDcxIDguMzA1ODI0MTQsMC42NDAyMDIxODEgQzkuNTE4MSwwLjQwMTk3MDg4OSAxMC43MjgzMzQ5LDAuNDAxOTcwODg5IDExLjk0MDYxMDcsMC43MDAzMzgyMzYgQzE0LjA0Njc4NjksMS4yMzY5MzY4OCAxNS45NDI3NTM2LDIuNDkwNTQyMzEgMTcuNjI4NTEwOSw0LjA0MjUxNTExIEMxOC40MTgzMjcsNC43NTk1MjE5MSAxOS4xNTUwODA1LDUuNTM0MzUxODMgMTkuNzg3NzQ5Niw2LjQyOTQ1Mzg3IEMxOS44OTM4NzQ5LDYuNTQ5NzI2MDEgMTkuOTk3OTU5MSw2LjcyNzgyMTIzIDE5Ljk5Nzk1OTEsNi45MDU5MTY0NSBDMjAsNy4wMjYxODg1OSAyMCw3LjAyNjE4ODU5IDIwLDcuMDg2MzI0NjIgQzIwLDcuMTQ2NDYwNzEgMjAsNy4xNDY0NjA3MSAyMCw3LjE0NjQ2MDcxIFogTTkuOTkxOTQ2MDcsMi4yOTI5NTI0MiBDNy40OTg5NDMxNCwyLjI5Mjk1MjQyIDUuNDUyMDA0MzgsNC4zMzk4OTEyIDUuNDUyMDA0MzgsNi44MzI4OTQxMyBDNS40NTIwMDQzOCw5LjMyNTg5NyA3LjQ5ODk0MzE0LDExLjM3MjgzNTkgOS45OTE5NDYwNywxMS4zNzI4MzU5IEMxMi40ODQ5NDksMTEuMzcyODM1OSAxNC41MzE4ODc3LDkuMzI1ODk3IDE0LjUzMTg4NzcsNi44MzI4OTQxMyBDMTQuNTMxODg3Nyw0LjMzOTg5MTIgMTIuNDg0OTQ5LDIuMjkyOTUyNDIgOS45OTE5NDYwNywyLjI5Mjk1MjQyIFogTTkuOTkxOTQ2MDcsOS4xMzc1NTg3OSBDOC43MTMyMjg4Niw5LjEzNzU1ODc5IDcuNjg5NzU5NDMsOC4xMTQwODk0MyA3LjY4OTc1OTQzLDYuODM1MzcyMjQgQzcuNjg5NzU5NDMsNS41NTY2NTUwNyA4LjcxMzIyODg2LDQuNTMzMTg1NjYgOS45OTE5NDYwNyw0LjUzMzE4NTY2IEMxMS4yNzA2NjMzLDQuNTMzMTg1NjYgMTIuMjk0MTMyNiw1LjU1NjY1NTA3IDEyLjI5NDEzMjYsNi44MzUzNzIyNCBDMTIuMjk0MTMyNiw4LjExNDA4OTQzIDExLjI3MDY2MzMsOS4xMzc1NTg3OSA5Ljk5MTk0NjA3LDkuMTM3NTU4NzkgWiIgaWQ9IlNoYXBlIj48L3BhdGg+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4="); } input[type="button"] {   cursor: pointer; } ';
 
+var Base = function (_EventEmitter) {
+  _inherits(Base, _EventEmitter);
 
+  function Base(clientID, domain) {
+    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var engine = arguments[3];
+
+    _classCallCheck(this, Base);
+
+    if (typeof clientID != 'string') {
+      throw new Error('A `clientID` string must be provided as first argument.');
+    }
+    if (typeof domain != 'string') {
+      throw new Error('A `domain` string must be provided as second argument.');
+    }
+    if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) != 'object') {
+      throw new Error('When provided, the third argument must be an `options` object.');
+    }
+
+    var _this = _possibleConstructorReturn(this, _EventEmitter.call(this));
+
+    _this.validEvents = ['show', 'hide', 'unrecoverable_error', 'authenticated', 'authorization_error', 'hash_parsed', 'signin ready', 'signup ready', 'socialOrPhoneNumber ready', 'socialOrEmail ready', 'vcode ready', 'forgot_password ready', 'forgot_password submit', 'signin submit', 'signup submit', 'socialOrPhoneNumber submit', 'socialOrEmail submit', 'vcode submit', 'federated login'];
+
+    _this.id = idu.incremental();
+    _this.engine = engine;
+    var hookRunner = _this.runHook.bind(_this);
+    var emitEventFn = _this.emit.bind(_this);
+
+    (0, _sync.go)(_this.id);
+
+    var m = (0, _actions.setupLock)(_this.id, clientID, domain, options, hookRunner, emitEventFn);
+    _this.on('newListener', function (type) {
+      if (_this.validEvents.indexOf(type) === -1) {
+        l.emitUnrecoverableErrorEvent(m, 'Invalid event "' + type + '".');
+      }
+    });
+
+    if (l.auth.autoParseHash(m) && !Base.hasScheduledAuthCallback) {
+      Base.hasScheduledAuthCallback = true;
+      setTimeout(_actions.handleAuthCallback, 0);
+    }
+
+    (0, _index.observe)('render', _this.id, function (m) {
+      var partialApplyId = function partialApplyId(screen, handlerName) {
+        var handler = screen[handlerName](m);
+        return handler ? function () {
+          for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+          }
+
+          return handler.apply(undefined, [l.id(m)].concat(args));
+        } : handler;
+      };
+      var avatar = l.ui.avatar(m) && m.getIn(['avatar', 'transient', 'syncStatus']) === 'ok' || null;
+
+      if (l.rendering(m)) {
+        var screen = _this.engine.render(m);
+
+        var title = avatar ? i18n.str(m, 'welcome', m.getIn(['avatar', 'transient', 'displayName'])) : screen.getTitle(m);
+
+        var disableSubmitButton = screen.isSubmitDisabled(m);
+
+        var i18nProp = {
+          group: function group(keyPath) {
+            return i18n.group(m, keyPath);
+          },
+          html: function html(keyPath) {
+            for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+              args[_key2 - 1] = arguments[_key2];
+            }
+
+            return i18n.html.apply(i18n, [m, keyPath].concat(args));
+          },
+          str: function str(keyPath) {
+            for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+              args[_key3 - 1] = arguments[_key3];
+            }
+
+            return i18n.str.apply(i18n, [m, keyPath].concat(args));
+          }
+        };
+
+        var getScreenTitle = function getScreenTitle(m) {
+          // if it is the first screen and the flag is enabled, it should hide the title
+          return l.ui.hideMainScreenTitle(m) && screen.isFirstScreen(m) ? null : title;
+        };
+
+        var props = {
+          avatar: avatar && m.getIn(['avatar', 'transient', 'url']),
+          auxiliaryPane: screen.renderAuxiliaryPane(m),
+          autofocus: l.ui.autofocus(m),
+          backHandler: partialApplyId(screen, 'backHandler'),
+          badgeLink: 'https://auth0.com/?utm_source=lock&utm_campaign=badge&utm_medium=widget',
+          closeHandler: l.ui.closable(m) ? function () {
+            for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+              args[_key4] = arguments[_key4];
+            }
+
+            return _actions.closeLock.apply(undefined, [l.id(m)].concat(args));
+          } : undefined,
+          contentComponent: screen.render(),
+          contentProps: { i18n: i18nProp, model: m },
+          disableSubmitButton: disableSubmitButton,
+          error: l.globalError(m),
+          info: l.globalInfo(m),
+          isMobile: l.ui.mobile(m),
+          isModal: l.ui.appendContainer(m),
+          isSubmitting: l.submitting(m),
+          logo: l.ui.logo(m),
+          primaryColor: l.ui.primaryColor(m),
+          screenName: screen.name,
+          showBadge: l.showBadge(m) === true,
+          success: l.globalSuccess(m),
+          submitButtonLabel: l.ui.labeledSubmitButton(m) ? screen.submitButtonLabel(m) : null,
+          submitHandler: partialApplyId(screen, 'submitHandler'),
+          tabs: screen.renderTabs(m),
+          terms: screen.renderTerms(m, i18nProp.html('signUpTerms')),
+          title: getScreenTitle(m),
+          classNames: screen.name === 'loading' ? 'fade' : 'horizontal-fade',
+          scrollGlobalMessagesIntoView: l.ui.scrollGlobalMessagesIntoView(m)
+        };
+        (0, _box.render)(l.ui.containerID(m), props);
+
+        // TODO: hack so we can start testing the beta
+        if (!_this.oldScreenName || _this.oldScreenName != screen.name) {
+          if (screen.name === 'main.login') {
+            l.emitEvent(m, 'signin ready');
+          } else if (screen.name === 'main.signUp') {
+            l.emitEvent(m, 'signup ready');
+          } else if (screen.name === 'forgotPassword') {
+            l.emitEvent(m, 'forgot_password ready');
+          } else if (screen.name === 'socialOrEmail') {
+            l.emitEvent(m, 'socialOrEmail ready');
+          } else if (screen.name === 'socialOrPhoneNumber') {
+            l.emitEvent(m, 'socialOrPhoneNumber ready');
+          } else if (screen.name === 'vcode') {
+            l.emitEvent(m, 'vcode ready');
+          }
+        }
+        _this.oldScreenName = screen.name;
+      } else {
+        (0, _box.remove)(l.ui.containerID(m));
+      }
+    });
+    return _this;
+  }
+
+  Base.prototype.resumeAuth = function resumeAuth(hash, callback) {
+    (0, _actions.resumeAuth)(hash, callback);
+  };
+
+  Base.prototype.show = function show() {
+    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    (0, _actions.openLock)(this.id, opts);
+  };
+
+  Base.prototype.hide = function hide() {
+    (0, _actions.closeLock)(this.id, true);
+  };
+
+  Base.prototype.destroy = function destroy() {
+    (0, _actions.removeLock)(this.id);
+  };
+
+  Base.prototype.getProfile = function getProfile(token, cb) {
+    return this.getUserInfo(token, cb);
+  };
+
+  Base.prototype.getUserInfo = function getUserInfo(token, cb) {
+    return _web_api2.default.getUserInfo(this.id, token, cb);
+  };
+
+  Base.prototype.checkSession = function checkSession(options, cb) {
+    return _web_api2.default.checkSession(this.id, options, cb);
+  };
+
+  Base.prototype.logout = function logout() {
+    var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _web_api2.default.logout(this.id, query);
+  };
+
+  Base.prototype.update = function update(f) {
+    return (0, _actions.updateLock)(this.id, f);
+  };
+
+  Base.prototype.setModel = function setModel(m) {
+    return this.update(function () {
+      return m;
+    });
+  };
+
+  Base.prototype.runHook = function runHook(str, m) {
+    var _engine;
+
+    if (typeof this.engine[str] != 'function') return m;
+
+    for (var _len5 = arguments.length, args = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
+      args[_key5 - 2] = arguments[_key5];
+    }
+
+    return (_engine = this.engine)[str].apply(_engine, [m].concat(args));
+  };
+
+  return Base;
+}(_events.EventEmitter);
+
+exports.default = Base;
 function injectStyles() {
   var styleId = 'auth0-lock-style';
   var style = document.getElementById(styleId);
@@ -13860,35 +15018,9 @@ function injectStyles() {
   }
 }
 
-var Auth0Lock = function (_Core) {
-  _inherits(Auth0Lock, _Core);
-
-  function Auth0Lock(clientID, domain, options) {
-    _classCallCheck(this, Auth0Lock);
-
-    var _this = _possibleConstructorReturn(this, _Core.call(this, clientID, domain, options, _classic2.default));
-
-    injectStyles();
-    return _this;
-  }
-
-  return Auth0Lock;
-}(_core2.default);
-
-// telemetry
-
-
-exports.default = Auth0Lock;
-Auth0Lock.version = '10.24.3';
-Auth0Lock.css = css;
-
-// TODO: should we have different telemetry for classic/passwordless?
-// TODO: should we set telemetry info before each request?
-// TODO: should we inject styles here?
-
 
 /***/ }),
-/* 85 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13906,7 +15038,7 @@ Auth0Lock.css = css;
 
 
 
-var invariant = __webpack_require__(36);
+var invariant = __webpack_require__(38);
 
 /**
  * The CSSCore module specifies the API (and implements most of the methods)
@@ -13989,10 +15121,10 @@ var CSSCore = {
 };
 
 module.exports = CSSCore;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 86 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14009,11 +15141,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _chrome = __webpack_require__(175);
+var _chrome = __webpack_require__(186);
 
 var _chrome2 = _interopRequireDefault(_chrome);
 
-var _button = __webpack_require__(41);
+var _button = __webpack_require__(42);
 
 var _index = __webpack_require__(1);
 
@@ -14221,6 +15353,7 @@ var Container = function (_React$Component) {
         disableSubmitButton = _props3.disableSubmitButton,
         disallowClose = _props3.disallowClose,
         error = _props3.error,
+        info = _props3.info,
         isMobile = _props3.isMobile,
         isModal = _props3.isModal,
         isSubmitting = _props3.isSubmitting,
@@ -14310,6 +15443,7 @@ var Container = function (_React$Component) {
               contentProps: contentProps,
               disableSubmitButton: disableSubmitButton,
               error: error,
+              info: info,
               isSubmitting: isSubmitting,
               logo: logo,
               screenName: screenName,
@@ -14347,6 +15481,7 @@ Container.propTypes = {
   contentProps: _propTypes2.default.object.isRequired,
   disableSubmitButton: _propTypes2.default.bool.isRequired,
   error: _propTypes2.default.node,
+  info: _propTypes2.default.node,
   isMobile: _propTypes2.default.bool.isRequired,
   isModal: _propTypes2.default.bool.isRequired,
   isSubmitting: _propTypes2.default.bool.isRequired,
@@ -14381,10 +15516,10 @@ var defaultProps = exports.defaultProps = Container.defaultProps = {
   scrollGlobalMessagesIntoView: true
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 87 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14401,7 +15536,7 @@ var defaultProps = exports.defaultProps = Container.defaultProps = {
 
 
 
-var emptyFunction = __webpack_require__(51);
+var emptyFunction = __webpack_require__(58);
 
 /**
  * Similar to invariant but only logs a warning if the condition is not met.
@@ -14445,10 +15580,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = warning;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 88 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14465,11 +15600,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(32);
+var _reactDom = __webpack_require__(35);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _PropTypes = __webpack_require__(89);
+var _PropTypes = __webpack_require__(100);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15009,10 +16144,10 @@ Transition.ENTERED = 3;
 Transition.EXITING = 4;
 
 exports.default = Transition;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 89 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15066,35 +16201,22 @@ var classNamesShape = exports.classNamesShape = _propTypes2.default.oneOfType([_
 })]);
 
 /***/ }),
-/* 90 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+var urljoin = __webpack_require__(12);
 
-
-exports.__esModule = true;
-exports.isSmallScreen = isSmallScreen;
-function isSmallScreen() {
-  return window.matchMedia && !window.matchMedia('(min-width: 380px)').matches;
-}
-
-
-/***/ }),
-/* 91 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var urljoin = __webpack_require__(9);
-
-var RequestBuilder = __webpack_require__(38);
-var qs = __webpack_require__(17);
+var RequestBuilder = __webpack_require__(40);
+var qs = __webpack_require__(23);
 var objectHelper = __webpack_require__(10);
-var assert = __webpack_require__(20);
-var responseHandler = __webpack_require__(27);
-var parametersWhitelist = __webpack_require__(195);
-var Warn = __webpack_require__(40);
+var assert = __webpack_require__(22);
+var ssodata = __webpack_require__(105);
+var responseHandler = __webpack_require__(26);
+var parametersWhitelist = __webpack_require__(210);
+var Warn = __webpack_require__(30);
 
-var PasswordlessAuthentication = __webpack_require__(196);
-var DBConnection = __webpack_require__(197);
+var PasswordlessAuthentication = __webpack_require__(211);
+var DBConnection = __webpack_require__(212);
 
 /**
  * Creates a new Auth0 Authentication API client
@@ -15109,7 +16231,16 @@ var DBConnection = __webpack_require__(197);
  * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
  * @see {@link https://auth0.com/docs/api/authentication}
  */
-function Authentication(options) {
+function Authentication(auth0, options) {
+  // If we have two arguments, the first one is a WebAuth instance, so we assign that
+  // if not, it's an options object and then we should use that as options instead
+  // this is here because we don't want to break people coming from v8
+  if (arguments.length === 2) {
+    this.auth0 = auth0;
+  } else {
+    options = auth0;
+  }
+
   /* eslint-disable */
   assert.check(
     options,
@@ -15142,7 +16273,6 @@ function Authentication(options) {
   /* eslint-enable */
 
   this.baseOptions = options;
-
   this.baseOptions._sendTelemetry = this.baseOptions._sendTelemetry === false
     ? this.baseOptions._sendTelemetry
     : true;
@@ -15223,6 +16353,13 @@ Authentication.prototype.buildAuthorizeUrl = function(options) {
     params.connection_scope = params.connection_scope.join(',');
   }
 
+  params = objectHelper.blacklist(params, [
+    'username',
+    'popupOptions',
+    'domain',
+    'tenant',
+    'timeout'
+  ]);
   params = objectHelper.toSnakeCase(params, ['auth0Client']);
   params = parametersWhitelist.oauthAuthorizeParams(this.warn, params);
 
@@ -15264,7 +16401,15 @@ Authentication.prototype.buildLogoutUrl = function(options) {
 
   params = objectHelper.toSnakeCase(params, ['auth0Client', 'returnTo']);
 
-  qString = qs.stringify(params);
+  qString = qs.stringify(objectHelper.blacklist(params, ['federated']));
+  if (
+    options &&
+    options.federated !== undefined &&
+    options.federated !== false &&
+    options.federated !== 'false'
+  ) {
+    qString += '&federated';
+  }
 
   return urljoin(this.baseOptions.rootUrl, 'v2', 'logout', '?' + qString);
 };
@@ -15380,8 +16525,6 @@ Authentication.prototype.oauthToken = function(options, cb) {
   body = objectHelper.toSnakeCase(body, ['auth0Client']);
   body = parametersWhitelist.oauthTokenParams(this.warn, body);
 
-  body.grant_type = body.grant_type;
-
   return this.request.post(url).send(body).end(responseHandler(cb));
 };
 
@@ -15431,40 +16574,62 @@ Authentication.prototype.loginWithResourceOwner = function(options, cb) {
 };
 
 /**
- * Makes a call to the `/ssodata` endpoint.
- * We recommend to avoid using this method and rely on your tenant hosted login page and using prompt=none via {@link renewAuth} method.
+ * Uses {@link checkSession} and localStorage to return data from the last successful authentication request.
  *
  * @method getSSOData
- * @param {Boolean} withActiveDirectories tells Auth0 to return AD data
+ * @param {Boolean} withActiveDirectories this parameter is not used anymore. It's here to be backward compatible
  * @param {Function} cb
  */
 Authentication.prototype.getSSOData = function(withActiveDirectories, cb) {
-  var url;
-  var params = '';
-
+  /* istanbul ignore if  */
+  if (!this.auth0) {
+    // we can't import this in the constructor because it'd be a ciclic dependency
+    var WebAuth = __webpack_require__(108); // eslint-disable-line
+    this.auth0 = new WebAuth(this.baseOptions);
+  }
   if (typeof withActiveDirectories === 'function') {
     cb = withActiveDirectories;
-    withActiveDirectories = false;
   }
-
-  assert.check(withActiveDirectories, {
-    type: 'boolean',
-    message: 'withActiveDirectories parameter is not valid'
-  });
   assert.check(cb, { type: 'function', message: 'cb parameter is not valid' });
+  var clientId = this.baseOptions.clientID;
+  var ssodataInformation = ssodata.get() || {};
 
-  if (withActiveDirectories) {
-    params =
-      '?' +
-      qs.stringify({
-        ldaps: 1,
-        client_id: this.baseOptions.clientID
+  this.auth0.checkSession(
+    {
+      responseType: 'token id_token',
+      scope: 'openid profile email',
+      connection: ssodataInformation.lastUsedConnection,
+      timeout: 5000
+    },
+    function(err, result) {
+      if (err) {
+        if (err.error === 'login_required') {
+          return cb(null, { sso: false });
+        }
+        if (err.error === 'consent_required') {
+          err.error_description =
+            'Consent required. When using `getSSOData`, the user has to be authenticated with the following scope: `openid profile email`.';
+        }
+        return cb(err, { sso: false });
+      }
+      if (
+        ssodataInformation.lastUsedSub &&
+        ssodataInformation.lastUsedSub !== result.idTokenPayload.sub
+      ) {
+        return cb(err, { sso: false });
+      }
+      return cb(null, {
+        lastUsedConnection: {
+          name: ssodataInformation.lastUsedConnection
+        },
+        lastUsedUserID: result.idTokenPayload.sub,
+        lastUsedUsername: result.idTokenPayload.email || result.idTokenPayload.name,
+        lastUsedClientID: clientId,
+        sessionClients: [clientId],
+        sso: true
       });
-  }
-
-  url = urljoin(this.baseOptions.rootUrl, 'user', 'ssodata', params);
-
-  return this.request.get(url, { noHeaders: true }).withCredentials().end(responseHandler(cb));
+    }
+  );
 };
 
 /**
@@ -15559,7 +16724,7 @@ module.exports = Authentication;
 
 
 /***/ }),
-/* 92 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15581,10 +16746,10 @@ module.exports = isObject;
 
 
 /***/ }),
-/* 93 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base64 = __webpack_require__(94);
+var base64 = __webpack_require__(104);
 
 function padding(str) {
   var mod = str.length % 4;
@@ -15635,7 +16800,7 @@ module.exports = {
 
 
 /***/ }),
-/* 94 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15758,7 +16923,63 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 95 */
+/* 105 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var storage = __webpack_require__(106);
+
+module.exports = {
+  set: function(connection, sub) {
+    var ssodata = {
+      lastUsedConnection: connection,
+      lastUsedSub: sub
+    };
+    storage.setItem('auth0.ssodata', JSON.stringify(ssodata));
+  },
+  get: function() {
+    var ssodata = storage.getItem('auth0.ssodata');
+    if (!ssodata) {
+      return;
+    }
+    return JSON.parse(ssodata);
+  }
+};
+
+
+/***/ }),
+/* 106 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var StorageHandler = __webpack_require__(206);
+var storage;
+
+function getStorage(force) {
+  if (!storage || force) {
+    storage = new StorageHandler();
+  }
+  return storage;
+}
+
+module.exports = {
+  getItem: function(key) {
+    var value = getStorage().getItem(key);
+    return value ? JSON.parse(value) : value;
+  },
+  removeItem: function(key) {
+    return getStorage().removeItem(key);
+  },
+  setItem: function(key, value) {
+    var json = JSON.stringify(value);
+    return getStorage().setItem(key, json);
+  },
+  reload: function() {
+    getStorage(true);
+  }
+};
+
+
+/***/ }),
+/* 107 */
 /***/ (function(module, exports) {
 
 function buildResponse(error, description) {
@@ -15779,264 +17000,706 @@ module.exports = {
 
 
 /***/ }),
-/* 96 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var RSAVerifier = __webpack_require__(200);
-var base64 = __webpack_require__(97);
-var jwks = __webpack_require__(204);
-var error = __webpack_require__(205);
-var DummyCache = __webpack_require__(206);
-var supportedAlgs = ['RS256'];
+var IdTokenVerifier = __webpack_require__(213);
+
+var assert = __webpack_require__(22);
+var error = __webpack_require__(107);
+var qs = __webpack_require__(23);
+var PluginHandler = __webpack_require__(221);
+var windowHelper = __webpack_require__(8);
+var objectHelper = __webpack_require__(10);
+var ssodata = __webpack_require__(105);
+var TransactionManager = __webpack_require__(65);
+var Authentication = __webpack_require__(101);
+var Redirect = __webpack_require__(223);
+var Popup = __webpack_require__(224);
+var SilentAuthenticationHandler = __webpack_require__(227);
+var CrossOriginAuthentication = __webpack_require__(66);
+var WebMessageHandler = __webpack_require__(110);
+var HostedPages = __webpack_require__(228);
 
 /**
- * Creates a new id_token verifier
+ * Handles all the browser's AuthN/AuthZ flows
  * @constructor
- * @param {Object} parameters
- * @param {String} parameters.issuer name of the issuer of the token
- * that should match the `iss` claim in the id_token
- * @param {String} parameters.audience identifies the recipients that the JWT is intended for
- * and should match the `aud` claim
- * @param {Object} [parameters.jwksCache] cache for JSON Web Token Keys. By default it has no cache
- * @param {String} [parameters.expectedAlg='RS256'] algorithm in which the id_token was signed
- * and will be used to validate
- * @param {number} [parameters.leeway=0] number of seconds that the clock can be out of sync
- * while validating expiration of the id_token
+ * @param {Object} options
+ * @param {String} options.domain your Auth0 domain
+ * @param {String} options.clientID your Auth0 client identifier obtained when creating the client in the Auth0 Dashboard
+ * @param {String} [options.redirectUri] url that the Auth0 will redirect after Auth with the Authorization Response
+ * @param {String} [options.responseType] type of the response used by OAuth 2.0 flow. It can be any space separated list of the values `code`, `token`, `id_token`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0}
+ * @param {String} [options.responseMode] how the Auth response is encoded and redirected back to the client. Supported values are `query`, `fragment` and `form_post`. The `query` value is only supported when `responseType` is `code`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html#ResponseModes}
+ * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`
+ * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
+ * @param {Array} [options.plugins]
+ * @param {Number} [options._timesToRetryFailedRequests] Number of times to retry a failed request, according to {@link https://github.com/visionmedia/superagent/blob/master/lib/should-retry.js}
+ * @see {@link https://auth0.com/docs/api/authentication}
  */
-function IdTokenVerifier(parameters) {
-  var options = parameters || {};
+function WebAuth(options) {
+  /* eslint-disable */
+  assert.check(
+    options,
+    { type: 'object', message: 'options parameter is not valid' },
+    {
+      domain: { type: 'string', message: 'domain option is required' },
+      clientID: { type: 'string', message: 'clientID option is required' },
+      responseType: { optional: true, type: 'string', message: 'responseType is not valid' },
+      responseMode: { optional: true, type: 'string', message: 'responseMode is not valid' },
+      redirectUri: { optional: true, type: 'string', message: 'redirectUri is not valid' },
+      scope: { optional: true, type: 'string', message: 'scope is not valid' },
+      audience: { optional: true, type: 'string', message: 'audience is not valid' },
+      popupOrigin: { optional: true, type: 'string', message: 'popupOrigin is not valid' },
+      leeway: { optional: true, type: 'number', message: 'leeway is not valid' },
+      plugins: { optional: true, type: 'array', message: 'plugins is not valid' },
+      _disableDeprecationWarnings: {
+        optional: true,
+        type: 'boolean',
+        message: '_disableDeprecationWarnings option is not valid'
+      },
+      _sendTelemetry: {
+        optional: true,
+        type: 'boolean',
+        message: '_sendTelemetry option is not valid'
+      },
+      _telemetryInfo: {
+        optional: true,
+        type: 'object',
+        message: '_telemetryInfo option is not valid'
+      },
+      _timesToRetryFailedRequests: {
+        optional: true,
+        type: 'number',
+        message: '_timesToRetryFailedRequests option is not valid'
+      }
+    }
+  );
 
-  this.jwksCache = options.jwksCache || new DummyCache();
-  this.expectedAlg = options.expectedAlg || 'RS256';
-  this.issuer = options.issuer;
-  this.audience = options.audience;
-  this.leeway = options.leeway || 0;
-  this.__disableExpirationCheck = options.__disableExpirationCheck || false;
-
-  if (this.leeway < 0 || this.leeway > 60) {
-    throw new error.ConfigurationError('The leeway should be positive and lower than a minute.');
+  if (options.overrides) {
+    assert.check(
+      options.overrides,
+      { type: 'object', message: 'overrides option is not valid' },
+      {
+        __tenant: { type: 'string', message: '__tenant option is required' },
+        __token_issuer: { type: 'string', message: '__token_issuer option is required' }
+      }
+    );
   }
+  /* eslint-enable */
 
-  if (supportedAlgs.indexOf(this.expectedAlg) === -1) {
-    throw new error.ConfigurationError('Algorithm ' + this.expectedAlg +
-      ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])');
-  }
+  this.baseOptions = options;
+  this.baseOptions.plugins = new PluginHandler(this, this.baseOptions.plugins || []);
+
+  this.baseOptions._sendTelemetry = this.baseOptions._sendTelemetry === false
+    ? this.baseOptions._sendTelemetry
+    : true;
+
+  this.baseOptions._timesToRetryFailedRequests = options._timesToRetryFailedRequests
+    ? parseInt(options._timesToRetryFailedRequests, 0)
+    : 0;
+
+  this.baseOptions.tenant =
+    (this.baseOptions.overrides && this.baseOptions.overrides.__tenant) ||
+    this.baseOptions.domain.split('.')[0];
+
+  this.baseOptions.token_issuer =
+    (this.baseOptions.overrides && this.baseOptions.overrides.__token_issuer) ||
+    'https://' + this.baseOptions.domain + '/';
+
+  this.transactionManager = new TransactionManager(this.baseOptions.transaction);
+
+  this.client = new Authentication(this.baseOptions);
+  this.redirect = new Redirect(this, this.baseOptions);
+  this.popup = new Popup(this, this.baseOptions);
+  this.crossOriginAuthentication = new CrossOriginAuthentication(this, this.baseOptions);
+  this.webMessageHandler = new WebMessageHandler(this);
+  this._universalLogin = new HostedPages(this, this.baseOptions);
 }
 
 /**
- * @callback verifyCallback
- * @param {Error} [err] error returned if the verify cannot be performed
- * @param {boolean} [status] if the token is valid or not
+ * Parse the url hash and extract the Auth response from a Auth flow started with {@link authorize}
+ *
+ * Only validates id_tokens signed by Auth0 using the RS256 algorithm using the public key exposed
+ * by the `/.well-known/jwks.json` endpoint of your account.
+ * Tokens signed with other algorithms, e.g. HS256 will not be accepted.
+ *
+ * @method parseHash
+ * @param {Object} options
+ * @param {String} options.hash the url hash. If not provided it will extract from window.location.hash
+ * @param {String} [options.state] value originally sent in `state` parameter to {@link authorize} to mitigate XSRF
+ * @param {String} [options.nonce] value originally sent in `nonce` parameter to {@link authorize} to prevent replay attacks
+ * @param {authorizeCallback} cb
  */
+WebAuth.prototype.parseHash = function(options, cb) {
+  var parsedQs;
+  var err;
+
+  if (!cb && typeof options === 'function') {
+    cb = options;
+    options = {};
+  } else {
+    options = options || {};
+  }
+
+  var _window = windowHelper.getWindow();
+
+  var hashStr = options.hash === undefined ? _window.location.hash : options.hash;
+  hashStr = hashStr.replace(/^#?\/?/, '');
+
+  parsedQs = qs.parse(hashStr);
+
+  if (parsedQs.hasOwnProperty('error')) {
+    err = error.buildResponse(parsedQs.error, parsedQs.error_description);
+
+    if (parsedQs.state) {
+      err.state = parsedQs.state;
+    }
+
+    return cb(err);
+  }
+
+  if (
+    !parsedQs.hasOwnProperty('access_token') &&
+    !parsedQs.hasOwnProperty('id_token') &&
+    !parsedQs.hasOwnProperty('refresh_token')
+  ) {
+    return cb(null, null);
+  }
+  return this.validateAuthenticationResponse(options, parsedQs, cb);
+};
 
 /**
- * Verifies an id_token
+ * Validates an Auth response from a Auth flow started with {@link authorize}
  *
- * It will validate:
- * - signature according to the algorithm configured in the verifier.
- * - if nonce is present and matches the one provided
- * - if `iss` and `aud` claims matches the configured issuer and audience
- * - if token is not expired and valid (if the `nbf` claim is in the past)
+ * Only validates id_tokens signed by Auth0 using the RS256 algorithm using the public key exposed
+ * by the `/.well-known/jwks.json` endpoint of your account.
+ * Tokens signed with other algorithms, e.g. HS256 will not be accepted.
  *
- * @method verify
- * @param {String} token id_token to verify
- * @param {String} [nonce] nonce value that should match the one in the id_token claims
- * @param {verifyCallback} cb callback used to notify the results of the validation
+ * @method validateAuthenticationResponse
+ * @param {Object} options
+ * @param {String} options.hash the url hash. If not provided it will extract from window.location.hash
+ * @param {String} [options.state] value originally sent in `state` parameter to {@link authorize} to mitigate XSRF
+ * @param {String} [options.nonce] value originally sent in `nonce` parameter to {@link authorize} to prevent replay attacks
+ * @param {authorizeCallback} cb
  */
-IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
-  var jwt = this.decode(token);
-
-  if (jwt instanceof Error) {
-    return cb(jwt, false);
+WebAuth.prototype.validateAuthenticationResponse = function(options, parsedHash, cb) {
+  var _this = this;
+  var state = parsedHash.state;
+  var transaction = this.transactionManager.getStoredTransaction(state);
+  var transactionState = options.state || (transaction && transaction.state) || null;
+  var transactionStateMatchesState = transactionState === state;
+  if (!state || !transactionStateMatchesState) {
+    return cb({
+      error: 'invalid_token',
+      errorDescription: '`state` does not match.'
+    });
   }
+  var transactionNonce = options.nonce || (transaction && transaction.nonce) || null;
 
-  /* eslint-disable vars-on-top */
-  var headAndPayload = jwt.encoded.header + '.' + jwt.encoded.payload;
-  var signature = base64.decodeToHEX(jwt.encoded.signature);
+  var appState = options.state || (transaction && transaction.appState) || null;
 
-  var alg = jwt.header.alg;
-  var kid = jwt.header.kid;
-
-  var aud = jwt.payload.aud;
-  var iss = jwt.payload.iss;
-  var exp = jwt.payload.exp;
-  var nbf = jwt.payload.nbf;
-  var tnonce = jwt.payload.nonce || null;
-  /* eslint-enable vars-on-top */
-
-  if (this.issuer !== iss) {
-    return cb(new error.TokenValidationError('Issuer ' + iss + ' is not valid.'), false);
-  }
-
-  if (this.audience !== aud) {
-    return cb(new error.TokenValidationError('Audience ' + aud + ' is not valid.'), false);
-  }
-
-  if (this.expectedAlg !== alg) {
-    return cb(new error.TokenValidationError('Algorithm ' + alg +
-      ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])'), false);
-  }
-
-  if (tnonce !== nonce) {
-    return cb(new error.TokenValidationError('Nonce does not match.'), false);
-  }
-
-  var expirationError = this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top
-
-  if (expirationError) {
-    return cb(expirationError, false);
-  }
-
-  return this.getRsaVerifier(iss, kid, function (err, rsaVerifier) {
+  var callback = function(err, payload) {
     if (err) {
       return cb(err);
     }
-    if (rsaVerifier.verify(headAndPayload, signature)) {
-      return cb(null, jwt.payload);
+    if (transaction && transaction.lastUsedConnection) {
+      var sub;
+      if (payload) {
+        sub = payload.sub;
+      }
+      ssodata.set(transaction.lastUsedConnection, sub);
     }
-    return cb(new error.TokenValidationError('Invalid signature.'));
+    return cb(null, buildParseHashResponse(parsedHash, appState, payload));
+  };
+
+  if (!parsedHash.id_token) {
+    return callback(null, null);
+  }
+  return this.validateToken(parsedHash.id_token, transactionNonce, function(
+    validationError,
+    payload
+  ) {
+    if (!validationError) {
+      return callback(null, payload);
+    }
+    if (validationError.error !== 'invalid_token') {
+      return callback(validationError);
+    }
+    // if it's an invalid_token error, decode the token
+    var decodedToken = new IdTokenVerifier().decode(parsedHash.id_token);
+    // if the alg is not HS256, return the raw error
+    if (decodedToken.header.alg !== 'HS256') {
+      return callback(validationError);
+    }
+    // if the alg is HS256, use the /userinfo endpoint to build the payload
+    return _this.client.userInfo(parsedHash.access_token, function(errUserInfo, profile) {
+      // if the /userinfo request fails, use the validationError instead
+      if (errUserInfo) {
+        return callback(validationError);
+      }
+      return callback(null, profile);
+    });
+  });
+};
+
+function buildParseHashResponse(qsParams, appState, token) {
+  return {
+    accessToken: qsParams.access_token || null,
+    idToken: qsParams.id_token || null,
+    idTokenPayload: token || null,
+    appState: appState || null,
+    refreshToken: qsParams.refresh_token || null,
+    state: qsParams.state || null,
+    expiresIn: qsParams.expires_in ? parseInt(qsParams.expires_in, 10) : null,
+    tokenType: qsParams.token_type || null,
+    scope: qsParams.scope || null
+  };
+}
+
+/**
+ * @callback validateTokenCallback
+ * @param {Error} [err] error returned by while validating the token
+ * @param {Object} [payload] claims stored in the token
+ */
+
+/**
+ * Decodes the a JWT and verifies its nonce value
+ *
+ * @method validateToken
+ * @private
+ * @param {String} token
+ * @param {String} nonce
+ * @param {validateTokenCallback} cb
+ */
+WebAuth.prototype.validateToken = function(token, nonce, cb) {
+  var verifier = new IdTokenVerifier({
+    issuer: this.baseOptions.token_issuer,
+    audience: this.baseOptions.clientID,
+    leeway: this.baseOptions.leeway || 0,
+    __disableExpirationCheck: this.baseOptions.__disableExpirationCheck
+  });
+
+  verifier.verify(token, nonce, function(err, payload) {
+    if (err) {
+      return cb(error.invalidJwt(err.message));
+    }
+
+    cb(null, payload);
   });
 };
 
 /**
- * Verifies that the `exp` and `nbf` claims are valid in the current moment.
+ * Executes a silent authentication transaction under the hood in order to fetch a new tokens for the current session.
+ * This method requires that all Auth is performed with {@link authorize}
+ * Watch out! If you're not using the hosted login page to do social logins, you have to use your own [social connection keys](https://manage.auth0.com/#/connections/social). If you use Auth0's dev keys, you'll always get `login_required` as an error when calling this method.
  *
- * @method verifyExpAndNbf
- * @param {String} exp value of `exp` claim
- * @param {String} nbf value of `nbf` claim
- * @return {boolean} if token is valid according to `exp` and `nbf`
+ * @method renewAuth
+ * @param {Object} options
+ * @param {String} [options.domain] your Auth0 domain
+ * @param {String} [options.clientID] your Auth0 client identifier obtained when creating the client in the Auth0 Dashboard
+ * @param {String} [options.redirectUri] url that the Auth0 will redirect after Auth with the Authorization Response
+ * @param {String} [options.responseType] type of the response used by OAuth 2.0 flow. It can be any space separated list of the values `code`, `token`, `id_token`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0}
+ * @param {String} [options.responseMode] how the Auth response is encoded and redirected back to the client. Supported values are `query`, `fragment` and `form_post`. The `query` value is only supported when `responseType` is `code`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html#ResponseModes}
+ * @param {String} [options.state] value used to mitigate XSRF attacks. {@link https://auth0.com/docs/protocols/oauth2/oauth-state}
+ * @param {String} [options.nonce] value used to mitigate replay attacks when using Implicit Grant. {@link https://auth0.com/docs/api-auth/tutorials/nonce}
+ * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`
+ * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
+ * @param {String} [options.postMessageDataType] identifier data type to look for in postMessage event data, where events are initiated from silent callback urls, before accepting a message event is the event expected. A value of false means any postMessage event will trigger a callback.
+ * @param {String} [options.postMessageOrigin] origin of redirectUri to expect postMessage response from.  Defaults to the origin of the receiving window. Only used if usePostMessage is truthy.
+ * @param {String} [options.timeout] value in milliseconds used to timeout when the `/authorize` call is failing as part of the silent authentication with postmessage enabled due to a configuration.
+ * @param {Boolean} [options.usePostMessage] use postMessage to comunicate between the silent callback and the SPA. When false the SDK will attempt to parse the url hash should ignore the url hash and no extra behaviour is needed
+ * @param {authorizeCallback} cb
+ * @see {@link https://auth0.com/docs/api/authentication#authorize-client}
  */
-IdTokenVerifier.prototype.verifyExpAndNbf = function (exp, nbf) {
-  var now = new Date();
-  var expDate = new Date(0);
-  var nbfDate = new Date(0);
-
-  if (this.__disableExpirationCheck) {
-    return null;
-  }
-
-  expDate.setUTCSeconds(exp + this.leeway);
-
-  if (now > expDate) {
-    return new error.TokenValidationError('Expired token.');
-  }
-
-  if (typeof nbf === 'undefined') {
-    return null;
-  }
-  nbfDate.setUTCSeconds(nbf - this.leeway);
-  if (now < nbfDate) {
-    return new error.TokenValidationError('The token is not valid until later in the future. ' +
-      'Please check your computed clock.');
-  }
-
-  return null;
-};
-
-/**
- * Verifies that the `exp` and `iat` claims are valid in the current moment.
- *
- * @method verifyExpAndIat
- * @param {String} exp value of `exp` claim
- * @param {String} iat value of `iat` claim
- * @return {boolean} if token is valid according to `exp` and `iat`
- */
-IdTokenVerifier.prototype.verifyExpAndIat = function (exp, iat) {
-  var now = new Date();
-  var expDate = new Date(0);
-  var iatDate = new Date(0);
-
-  if (this.__disableExpirationCheck) {
-    return null;
-  }
-
-  expDate.setUTCSeconds(exp + this.leeway);
-
-  if (now > expDate) {
-    return new error.TokenValidationError('Expired token.');
-  }
-
-  iatDate.setUTCSeconds(iat - this.leeway);
-
-  if (now < iatDate) {
-    return new error.TokenValidationError('The token was issued in the future. ' +
-      'Please check your computed clock.');
-  }
-  return null;
-};
-
-IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
+WebAuth.prototype.renewAuth = function(options, cb) {
+  var handler;
+  var usePostMessage = !!options.usePostMessage;
+  var postMessageDataType = options.postMessageDataType || false;
+  var postMessageOrigin = options.postMessageOrigin || windowHelper.getWindow().origin;
+  var timeout = options.timeout;
   var _this = this;
-  var cachekey = iss + kid;
 
-  if (!this.jwksCache.has(cachekey)) {
-    jwks.getJWKS({
-      iss: iss,
-      kid: kid
-    }, function (err, keyInfo) {
-      if (err) {
-        cb(err);
-      }
-      _this.jwksCache.set(cachekey, keyInfo);
-      cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
-    });
-  } else {
-    var keyInfo = this.jwksCache.get(cachekey); // eslint-disable-line vars-on-top
-    cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
-  }
-};
+  var params = objectHelper
+    .merge(this.baseOptions, [
+      'clientID',
+      'redirectUri',
+      'responseType',
+      'scope',
+      'audience',
+      '_csrf',
+      'state',
+      '_intstate',
+      'nonce'
+    ])
+    .with(options);
 
+  params.responseType = params.responseType || 'token';
+  params.responseMode = params.responseMode || 'fragment';
+  params = this.transactionManager.process(params);
 
-/**
- * @typedef DecodedToken
- * @type {Object}
- * @property {Object} header - content of the JWT header.
- * @property {Object} payload - token claims.
- * @property {Object} encoded - encoded parts of the token.
- */
+  assert.check(params, { type: 'object', message: 'options parameter is not valid' });
+  assert.check(cb, { type: 'function', message: 'cb parameter is not valid' });
 
-/**
- * Decodes a well formed JWT without any verification
- *
- * @method decode
- * @param {String} token decodes the token
- * @return {DecodedToken} if token is valid according to `exp` and `nbf`
- */
-IdTokenVerifier.prototype.decode = function (token) {
-  var parts = token.split('.');
-  var header;
-  var payload;
+  params.prompt = 'none';
 
-  if (parts.length !== 3) {
-    return new error.TokenValidationError('Cannot decode a malformed JWT');
-  }
+  params = objectHelper.blacklist(params, [
+    'usePostMessage',
+    'tenant',
+    'postMessageDataType',
+    'postMessageOrigin'
+  ]);
 
-  try {
-    header = JSON.parse(base64.decodeToString(parts[0]));
-    payload = JSON.parse(base64.decodeToString(parts[1]));
-  } catch (e) {
-    return new error.TokenValidationError('Token header or payload is not valid JSON');
-  }
+  handler = SilentAuthenticationHandler.create({
+    authenticationUrl: this.client.buildAuthorizeUrl(params),
+    postMessageDataType: postMessageDataType,
+    postMessageOrigin: postMessageOrigin,
+    timeout: timeout
+  });
 
-  return {
-    header: header,
-    payload: payload,
-    encoded: {
-      header: parts[0],
-      payload: parts[1],
-      signature: parts[2]
+  handler.login(usePostMessage, function(err, hash) {
+    if (typeof hash === 'object') {
+      // hash was already parsed, so we just return it.
+      // it's here to be backwards compatible and should be removed in the next major version.
+      return cb(err, hash);
     }
-  };
+    _this.parseHash({ hash: hash }, cb);
+  });
 };
 
-module.exports = IdTokenVerifier;
+/**
+ * Renews an existing session on Auth0's servers using `response_mode=web_message`
+ *
+ * @method checkSession
+ * @param {Object} options
+ * @param {String} [options.domain] your Auth0 domain
+ * @param {String} [options.clientID] your Auth0 client identifier obtained when creating the client in the Auth0 Dashboard
+ * @param {String} [options.responseType] type of the response used by OAuth 2.0 flow. It can be any space separated list of the values `code`, `token`, `id_token`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0}
+ * @param {String} [options.state] value used to mitigate XSRF attacks. {@link https://auth0.com/docs/protocols/oauth2/oauth-state}
+ * @param {String} [options.nonce] value used to mitigate replay attacks when using Implicit Grant. {@link https://auth0.com/docs/api-auth/tutorials/nonce}
+ * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`
+ * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
+ * @param {String} [options.timeout] value in milliseconds used to timeout when the `/authorize` call is failing as part of the silent authentication with postmessage enabled due to a configuration.
+ */
+WebAuth.prototype.checkSession = function(options, cb) {
+  var params = objectHelper
+    .merge(this.baseOptions, [
+      'clientID',
+      'responseType',
+      'redirectUri',
+      'scope',
+      'audience',
+      '_csrf',
+      'state',
+      '_intstate',
+      'nonce'
+    ])
+    .with(options);
+
+  if (params.responseType === 'code') {
+    return cb({ error: 'error', error_description: "responseType can't be `code`" });
+  }
+
+  if (!options.nonce) {
+    params = this.transactionManager.process(params);
+  }
+
+  assert.check(params, { type: 'object', message: 'options parameter is not valid' });
+  assert.check(cb, { type: 'function', message: 'cb parameter is not valid' });
+
+  params = objectHelper.blacklist(params, ['usePostMessage', 'tenant', 'postMessageDataType']);
+  this.webMessageHandler.run(params, cb);
+};
+
+/**
+ * Request an email with instruction to change a user's password
+ *
+ * @method changePassword
+ * @param {Object} options
+ * @param {String} options.email address where the user will receive the change password email. It should match the user's email in Auth0
+ * @param {String} options.connection name of the connection where the user was created
+ * @param {changePasswordCallback} cb
+ * @see   {@link https://auth0.com/docs/api/authentication#change-password}
+ */
+WebAuth.prototype.changePassword = function(options, cb) {
+  return this.client.dbConnection.changePassword(options, cb);
+};
+
+/**
+ * Starts a passwordless authentication transaction.
+ *
+ * @method passwordlessStart
+ * @param {Object} options
+ * @param {String} options.send what will be sent via email which could be `link` or `code`. For SMS `code` is the only one valud
+ * @param {String} [options.phoneNumber] phone number where to send the `code`. This parameter is mutually exclusive with `email`
+ * @param {String} [options.email] email where to send the `code` or `link`. This parameter is mutually exclusive with `phoneNumber`
+ * @param {String} options.connection name of the passwordless connection
+ * @param {Object} [options.authParams] additional Auth parameters when using `link`
+ * @param {Function} cb
+ * @see   {@link https://auth0.com/docs/api/authentication#passwordless}
+ */
+WebAuth.prototype.passwordlessStart = function(options, cb) {
+  var authParams = objectHelper
+    .merge(this.baseOptions, [
+      'responseType',
+      'responseMode',
+      'redirectUri',
+      'scope',
+      'audience',
+      '_csrf',
+      'state',
+      '_intstate',
+      'nonce'
+    ])
+    .with(options.authParams);
+
+  options.authParams = this.transactionManager.process(authParams);
+  return this.client.passwordless.start(options, cb);
+};
+
+/**
+ * Creates a new user in a Auth0 Database connection
+ *
+ * @method signup
+ * @param {Object} options
+ * @param {String} options.email user email address
+ * @param {String} options.password user password
+ * @param {String} options.connection name of the connection where the user will be created
+ * @param {signUpCallback} cb
+ * @see   {@link https://auth0.com/docs/api/authentication#signup}
+ */
+WebAuth.prototype.signup = function(options, cb) {
+  return this.client.dbConnection.signup(options, cb);
+};
+
+/**
+ * Redirects to the hosted login page (`/authorize`) in order to start a new authN/authZ transaction.
+ * After that, you'll have to use the {@link parseHash} function at the specified `redirectUri`.
+ *
+ * @method authorize
+ * @param {Object} options
+ * @param {String} [options.domain] your Auth0 domain
+ * @param {String} [options.clientID] your Auth0 client identifier obtained when creating the client in the Auth0 Dashboard
+ * @param {String} options.redirectUri url that the Auth0 will redirect after Auth with the Authorization Response
+ * @param {String} options.responseType type of the response used by OAuth 2.0 flow. It can be any space separated list of the values `code`, `token`, `id_token`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0}
+ * @param {String} [options.responseMode] how the Auth response is encoded and redirected back to the client. Supported values are `query`, `fragment` and `form_post`. The `query` value is only supported when `responseType` is `code`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html#ResponseModes}
+ * @param {String} [options.state] value used to mitigate XSRF attacks. {@link https://auth0.com/docs/protocols/oauth2/oauth-state}
+ * @param {String} [options.nonce] value used to mitigate replay attacks when using Implicit Grant. {@link https://auth0.com/docs/api-auth/tutorials/nonce}
+ * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`
+ * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
+ * @see {@link https://auth0.com/docs/api/authentication#authorize-client}
+ */
+WebAuth.prototype.authorize = function(options) {
+  var params = objectHelper
+    .merge(this.baseOptions, [
+      'clientID',
+      'responseType',
+      'responseMode',
+      'redirectUri',
+      'scope',
+      'audience',
+      '_csrf',
+      'state',
+      '_intstate',
+      'nonce'
+    ])
+    .with(options);
+
+  assert.check(
+    params,
+    { type: 'object', message: 'options parameter is not valid' },
+    {
+      responseType: { type: 'string', message: 'responseType option is required' }
+    }
+  );
+
+  params = this.transactionManager.process(params);
+  params.scope = params.scope || 'openid profile email';
+
+  windowHelper.redirect(this.client.buildAuthorizeUrl(params));
+};
+
+/**
+ * Signs up a new user, automatically logs the user in after the signup and returns the user token.
+ * The login will be done using /oauth/token with password-realm grant type.
+ *
+ * @method signupAndAuthorize
+ * @param {Object} options
+ * @param {String} options.email user email address
+ * @param {String} options.password user password
+ * @param {String} options.connection name of the connection where the user will be created
+ * @param {tokenCallback} cb
+ * @see   {@link https://auth0.com/docs/api/authentication#signup}
+ * @see   {@link https://auth0.com/docs/api-auth/grant/password}
+ */
+WebAuth.prototype.signupAndAuthorize = function(options, cb) {
+  var _this = this;
+
+  return this.client.dbConnection.signup(
+    objectHelper.blacklist(options, ['popupHandler']),
+    function(err) {
+      if (err) {
+        return cb(err);
+      }
+      options.realm = options.connection;
+      if (!options.username) {
+        options.username = options.email;
+      }
+      _this.client.login(options, cb);
+    }
+  );
+};
+
+/**
+ * @callback crossOriginLoginCallback
+ * @param {Error} [err] Authentication error returned by Auth0 with the reason why the request failed
+ */
+
+/**
+ * Logs in the user with username and password using the cross origin authentication (/co/authenticate) flow. You can use either `username` or `email` to identify the user, but `username` will take precedence over `email`.
+ * Some browsers might not be able to successfully authenticate if 3rd party cookies are disabled in your browser. [See here for more information.]{@link https://auth0.com/docs/cross-origin-authentication}.
+ * After the /co/authenticate call, you'll have to use the {@link parseHash} function at the `redirectUri` specified in the constructor.
+ *
+ * @method login
+ * @param {Object} options options used in the {@link authorize} call after the login_ticket is acquired
+ * @param {String} [options.username] Username (mutually exclusive with email)
+ * @param {String} [options.email] Email (mutually exclusive with username)
+ * @param {String} options.password Password
+ * @param {String} [options.realm] Realm used to authenticate the user, it can be a realm name or a database connection name
+ * @param {crossOriginLoginCallback} cb Callback function called only when an authentication error, like invalid username or password, occurs. For other types of errors, there will be a redirect to the `redirectUri`.
+ */
+WebAuth.prototype.login = function(options, cb) {
+  var isHostedLoginPage = windowHelper.getWindow().location.host === this.baseOptions.domain;
+  if (isHostedLoginPage) {
+    options.connection = options.realm;
+    delete options.realm;
+    this._universalLogin.login(options, cb);
+  } else {
+    this.crossOriginAuthentication.login(options, cb);
+  }
+};
+
+/**
+ * Logs in the user by verifying the verification code (OTP) using the cross origin authentication (/co/authenticate) flow. You can use either `phoneNumber` or `email` to identify the user.
+ * This only works when 3rd party cookies are enabled in the browser. After the /co/authenticate call, you'll have to use the {@link parseHash} function at the `redirectUri` specified in the constructor.
+ *
+ * @method login
+ * @param {Object} options options used in the {@link authorize} call after the login_ticket is acquired
+ * @param {String} [options.phoneNumber] Phone Number (mutually exclusive with email)
+ * @param {String} [options.email] Email (mutually exclusive with username)
+ * @param {String} options.verificationCode Verification Code (OTP)
+ * @param {String} options.connection Passwordless connection to use. It can either be 'sms' or 'email'.
+ * @param {crossOriginLoginCallback} cb Callback function called only when an authentication error, like invalid username or password, occurs. For other types of errors, there will be a redirect to the `redirectUri`.
+ */
+WebAuth.prototype.passwordlessLogin = function(options, cb) {
+  var isHostedLoginPage = windowHelper.getWindow().location.host === this.baseOptions.domain;
+  if (isHostedLoginPage) {
+    this.passwordlessVerify(options, cb);
+  } else {
+    var crossOriginOptions = objectHelper.extend(
+      {
+        credentialType: 'http://auth0.com/oauth/grant-type/passwordless/otp',
+        realm: options.connection,
+        username: options.email || options.phoneNumber,
+        otp: options.verificationCode
+      },
+      objectHelper.blacklist(options, ['connection', 'email', 'phoneNumber', 'verificationCode'])
+    );
+    this.crossOriginAuthentication.login(crossOriginOptions, cb);
+  }
+};
+
+/**
+ * Runs the callback code for the cross origin authentication call. This method is meant to be called by the cross origin authentication callback url.
+ *
+ * @method crossOriginAuthenticationCallback
+ * @deprecated Use {@link crossOriginVerification} instead.
+ */
+WebAuth.prototype.crossOriginAuthenticationCallback = function() {
+  this.crossOriginVerification();
+};
+
+/**
+ * Runs the callback code for the cross origin authentication call. This method is meant to be called by the cross origin authentication callback url.
+ *
+ * @method crossOriginVerification
+ */
+WebAuth.prototype.crossOriginVerification = function() {
+  this.crossOriginAuthentication.callback();
+};
+
+/**
+ * Redirects to the auth0 logout endpoint
+ *
+ * If you want to navigate the user to a specific URL after the logout, set that URL at the returnTo parameter. The URL should be included in any the appropriate Allowed Logout URLs list:
+ *
+ * - If the client_id parameter is included, the returnTo URL must be listed in the Allowed Logout URLs set at the client level (see Setting Allowed Logout URLs at the App Level).
+ * - If the client_id parameter is NOT included, the returnTo URL must be listed in the Allowed Logout URLs set at the account level (see Setting Allowed Logout URLs at the Account Level).
+ *
+ * @method logout
+ * @param {Object} options
+ * @param {String} [options.clientID] identifier of your client
+ * @param {String} [options.returnTo] URL to be redirected after the logout
+ * @param {Boolean} [options.federated] tells Auth0 if it should logout the user also from the IdP.
+ * @see   {@link https://auth0.com/docs/api/authentication#logout}
+ */
+WebAuth.prototype.logout = function(options) {
+  windowHelper.redirect(this.client.buildLogoutUrl(options));
+};
+
+/**
+ * Verifies the passwordless TOTP and redirects to finish the passwordless transaction
+ *
+ * @method passwordlessVerify
+ * @param {Object} options
+ * @param {String} options.type `sms` or `email`
+ * @param {String} options.phoneNumber only if type = sms
+ * @param {String} options.email only if type = email
+ * @param {String} options.connection the connection name
+ * @param {String} options.verificationCode the TOTP code
+ * @param {Function} cb
+ */
+WebAuth.prototype.passwordlessVerify = function(options, cb) {
+  var _this = this;
+  var params = objectHelper
+    .merge(this.baseOptions, [
+      'clientID',
+      'responseType',
+      'responseMode',
+      'redirectUri',
+      'scope',
+      'audience',
+      '_csrf',
+      'state',
+      '_intstate',
+      'nonce'
+    ])
+    .with(options);
+
+  assert.check(
+    params,
+    { type: 'object', message: 'options parameter is not valid' },
+    {
+      responseType: { type: 'string', message: 'responseType option is required' }
+    }
+  );
+
+  params = this.transactionManager.process(params);
+  return this.client.passwordless.verify(params, function(err) {
+    if (err) {
+      return cb(err);
+    }
+    return windowHelper.redirect(_this.client.passwordless.buildVerifyUrl(params));
+  });
+};
+
+module.exports = WebAuth;
 
 
 /***/ }),
-/* 97 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base64 = __webpack_require__(94);
+var base64 = __webpack_require__(104);
 
 function padding(str) {
   var mod = (str.length % 4);
@@ -16110,10 +17773,96 @@ module.exports = {
 
 
 /***/ }),
-/* 98 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var windowHelper = __webpack_require__(11);
+var IframeHandler = __webpack_require__(111);
+var objectHelper = __webpack_require__(10);
+var windowHelper = __webpack_require__(8);
+var Warn = __webpack_require__(30);
+
+function runWebMessageFlow(authorizeUrl, options, callback) {
+  var handler = new IframeHandler({
+    url: authorizeUrl,
+    eventListenerType: 'message',
+    callback: function(eventData) {
+      callback(null, eventData);
+    },
+    timeout: options.timeout,
+    eventValidator: {
+      isValid: function(eventData) {
+        return (
+          eventData.event.data.type === 'authorization_response' &&
+          options.state === eventData.event.data.response.state
+        );
+      }
+    },
+    timeoutCallback: function() {
+      callback({
+        error: 'timeout',
+        error_description: 'Timeout during executing web_message communication'
+      });
+    }
+  });
+  handler.init();
+}
+
+function WebMessageHandler(webAuth) {
+  this.webAuth = webAuth;
+  this.warn = new Warn(webAuth.baseOptions);
+}
+
+WebMessageHandler.prototype.run = function(options, cb) {
+  var _this = this;
+  options.responseMode = 'web_message';
+  options.prompt = 'none';
+
+  var currentOrigin = windowHelper.getOrigin();
+  var redirectUriOrigin = objectHelper.getOriginFromUrl(options.redirectUri);
+  if (redirectUriOrigin && currentOrigin !== redirectUriOrigin) {
+    return cb({
+      error: 'origin_mismatch',
+      error_description: "The redirectUri's origin (" +
+        redirectUriOrigin +
+        ") should match the window's origin (" +
+        currentOrigin +
+        ').'
+    });
+  }
+
+  runWebMessageFlow(this.webAuth.client.buildAuthorizeUrl(options), options, function(
+    err,
+    eventData
+  ) {
+    var error = err;
+    if (!err && eventData.event.data.response.error) {
+      error = objectHelper.pick(eventData.event.data.response, ['error', 'error_description']);
+    }
+    if (
+      error &&
+      error.error === 'consent_required' &&
+      windowHelper.getWindow().location.hostname === 'localhost'
+    ) {
+      _this.warn.warning(
+        "Consent Required. Consent can't be skipped on localhost. Read more here: https://auth0.com/docs/api-auth/user-consent#skipping-consent-for-first-party-clients"
+      );
+    }
+    if (error) {
+      return cb(error);
+    }
+    var parsedHash = eventData.event.data.response;
+    _this.webAuth.validateAuthenticationResponse(options, parsedHash, cb);
+  });
+};
+
+module.exports = WebMessageHandler;
+
+
+/***/ }),
+/* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var windowHelper = __webpack_require__(8);
 
 function IframeHandler(options) {
   this.url = options.url;
@@ -16164,8 +17913,9 @@ IframeHandler.prototype.init = function() {
   this.eventSourceObject.addEventListener(this.eventListenerType, this.proxyEventListener, false);
 
   _window.document.body.appendChild(this.iframe);
+  
   this.iframe.src = this.url;
-
+  
   this.timeoutHandle = setTimeout(function() {
     _this.timeoutHandler();
   }, this.timeout);
@@ -16209,7 +17959,326 @@ module.exports = IframeHandler;
 
 
 /***/ }),
-/* 99 */
+/* 112 */
+/***/ (function(module, exports) {
+
+var WinChan = (function() {
+  var RELAY_FRAME_NAME = "__winchan_relay_frame";
+  var CLOSE_CMD = "die";
+
+  // a portable addListener implementation
+  function addListener(w, event, cb) {
+    if(w.attachEvent) w.attachEvent('on' + event, cb);
+    else if (w.addEventListener) w.addEventListener(event, cb, false);
+  }
+
+  // a portable removeListener implementation
+  function removeListener(w, event, cb) {
+    if(w.detachEvent) w.detachEvent('on' + event, cb);
+    else if (w.removeEventListener) w.removeEventListener(event, cb, false);
+  }
+
+
+  // checking for IE8 or above
+  function isInternetExplorer() {
+    if (typeof navigator === 'undefined') {
+      return false;
+    }
+
+    var rv = -1; // Return value assumes failure.
+    var ua = navigator.userAgent;
+    if (navigator.appName === 'Microsoft Internet Explorer') {
+      var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+      if (re.exec(ua) != null)
+        rv = parseFloat(RegExp.$1);
+    }
+    // IE > 11
+    else if (ua.indexOf("Trident") > -1) {
+      var re = new RegExp("rv:([0-9]{2,2}[\.0-9]{0,})");
+      if (re.exec(ua) !== null) {
+        rv = parseFloat(RegExp.$1);
+      }
+    }
+
+    return rv >= 8;
+  }
+
+  // checking Mobile Firefox (Fennec)
+  function isFennec() {
+    try {
+      // We must check for both XUL and Java versions of Fennec.  Both have
+      // distinct UA strings.
+      var userAgent = navigator.userAgent;
+      return (userAgent.indexOf('Fennec/') != -1) ||  // XUL
+             (userAgent.indexOf('Firefox/') != -1 && userAgent.indexOf('Android') != -1);   // Java
+    } catch(e) {}
+    return false;
+  }
+
+  // feature checking to see if this platform is supported at all
+  function isSupported() {
+    return (typeof window !== 'undefined' && window.JSON && window.JSON.stringify &&
+            window.JSON.parse && window.postMessage);
+  }
+
+  // given a URL, extract the origin. Taken from: https://github.com/firebase/firebase-simple-login/blob/d2cb95b9f812d8488bdbfba51c3a7c153ba1a074/js/src/simple-login/transports/WinChan.js#L25-L30
+  function extractOrigin(url) {
+    if (!/^https?:\/\//.test(url)) url = window.location.href;
+    var m = /^(https?:\/\/[\-_a-zA-Z\.0-9:]+)/.exec(url);
+    if (m) return m[1];
+    return url;
+  }
+
+  // find the relay iframe in the opener
+  function findRelay() {
+    var loc = window.location;
+    var frames = window.opener.frames;
+    for (var i = frames.length - 1; i >= 0; i--) {
+      try {
+        if (frames[i].location.protocol === window.location.protocol &&
+            frames[i].location.host === window.location.host &&
+            frames[i].name === RELAY_FRAME_NAME)
+        {
+          return frames[i];
+        }
+      } catch(e) { }
+    }
+    return;
+  }
+
+  var isIE = isInternetExplorer();
+
+  if (isSupported()) {
+    /*  General flow:
+     *                  0. user clicks
+     *  (IE SPECIFIC)   1. caller adds relay iframe (served from trusted domain) to DOM
+     *                  2. caller opens window (with content from trusted domain)
+     *                  3. window on opening adds a listener to 'message'
+     *  (IE SPECIFIC)   4. window on opening finds iframe
+     *                  5. window checks if iframe is "loaded" - has a 'doPost' function yet
+     *  (IE SPECIFIC5)  5a. if iframe.doPost exists, window uses it to send ready event to caller
+     *  (IE SPECIFIC5)  5b. if iframe.doPost doesn't exist, window waits for frame ready
+     *  (IE SPECIFIC5)  5bi. once ready, window calls iframe.doPost to send ready event
+     *                  6. caller upon reciept of 'ready', sends args
+     */
+    return {
+      open: function(opts, cb) {
+        if (!cb) throw "missing required callback argument";
+
+        // test required options
+        var err;
+        if (!opts.url) err = "missing required 'url' parameter";
+        if (!opts.relay_url) err = "missing required 'relay_url' parameter";
+        if (err) setTimeout(function() { cb(err); }, 0);
+
+        // supply default options
+        if (!opts.window_name) opts.window_name = null;
+        if (!opts.window_features || isFennec()) opts.window_features = undefined;
+
+        // opts.params may be undefined
+
+        var iframe;
+
+        // sanity check, are url and relay_url the same origin?
+        var origin = opts.origin || extractOrigin(opts.url);
+        if (origin !== extractOrigin(opts.relay_url)) {
+          return setTimeout(function() {
+            cb('invalid arguments: origin of url and relay_url must match');
+          }, 0);
+        }
+
+        var messageTarget;
+
+        if (isIE) {
+          // first we need to add a "relay" iframe to the document that's served
+          // from the target domain.  We can postmessage into a iframe, but not a
+          // window
+          iframe = document.createElement("iframe");
+          // iframe.setAttribute('name', framename);
+          iframe.setAttribute('src', opts.relay_url);
+          iframe.style.display = "none";
+          iframe.setAttribute('name', RELAY_FRAME_NAME);
+          document.body.appendChild(iframe);
+          messageTarget = iframe.contentWindow;
+        }
+
+        var w = opts.popup || window.open(opts.url, opts.window_name, opts.window_features);
+        if (opts.popup) {
+          w.location.href = opts.url;
+        }
+
+        if (!messageTarget) messageTarget = w;
+
+        // lets listen in case the window blows up before telling us
+        var closeInterval = setInterval(function() {
+          if (w && w.closed) {
+            cleanup();
+            if (cb) {
+              cb('User closed the popup window');
+              cb = null;
+            }
+          }
+        }, 500);
+
+        var req = JSON.stringify({a: 'request', d: opts.params});
+
+        // cleanup on unload
+        function cleanup() {
+          if (iframe) document.body.removeChild(iframe);
+          iframe = undefined;
+          if (closeInterval) closeInterval = clearInterval(closeInterval);
+          removeListener(window, 'message', onMessage);
+          removeListener(window, 'unload', cleanup);
+          if (w) {
+            try {
+              w.close();
+            } catch (securityViolation) {
+              // This happens in Opera 12 sometimes
+              // see https://github.com/mozilla/browserid/issues/1844
+              messageTarget.postMessage(CLOSE_CMD, origin);
+            }
+          }
+          w = messageTarget = undefined;
+        }
+
+        addListener(window, 'unload', cleanup);
+
+        function onMessage(e) {
+          if (e.origin !== origin) { return; }
+          try {
+            var d = JSON.parse(e.data);
+          } catch(err) {
+            if (cb) {
+              cb(err);
+            } else {
+              throw err;
+            }
+          }
+
+          if (d.a === 'ready') {
+            messageTarget.postMessage(req, origin);
+          } else if (d.a === 'error') {
+            cleanup();
+            if (cb) {
+              cb(d.d);
+              cb = null;
+            }
+          } else if (d.a === 'response') {
+            cleanup();
+            if (cb) {
+              cb(null, d.d);
+              cb = null;
+            }
+          }
+        }
+
+        addListener(window, 'message', onMessage);
+
+        return {
+          close: cleanup,
+          focus: function() {
+            if (w) {
+              try {
+                w.focus();
+              } catch (e) {
+                // IE7 blows up here, do nothing
+              }
+            }
+          }
+        };
+      },
+      onOpen: function(cb) {
+        var o = "*";
+        var msgTarget = isIE ? findRelay() : window.opener;
+        if (!msgTarget) throw "can't find relay frame";
+        function doPost(msg) {
+          msg = JSON.stringify(msg);
+          if (isIE) msgTarget.doPost(msg, o);
+          else msgTarget.postMessage(msg, o);
+        }
+
+        function onMessage(e) {
+          // only one message gets through, but let's make sure it's actually
+          // the message we're looking for (other code may be using
+          // postmessage) - we do this by ensuring the payload can
+          // be parsed, and it's got an 'a' (action) value of 'request'.
+          var d;
+          try {
+            d = JSON.parse(e.data);
+          } catch(err) { }
+          if (!d || d.a !== 'request') return;
+          removeListener(window, 'message', onMessage);
+          o = e.origin;
+          if (cb) {
+            // this setTimeout is critically important for IE8 -
+            // in ie8 sometimes addListener for 'message' can synchronously
+            // cause your callback to be invoked.  awesome.
+            setTimeout(function() {
+              cb(o, d.d, function(r) {
+                cb = undefined;
+                doPost({a: 'response', d: r});
+              });
+            }, 0);
+          }
+        }
+
+        function onDie(e) {
+          if (e.data === CLOSE_CMD) {
+            try { window.close(); } catch (o_O) {}
+          }
+        }
+        addListener(isIE ? msgTarget : window, 'message', onMessage);
+        addListener(isIE ? msgTarget : window, 'message', onDie);
+
+        // we cannot post to our parent that we're ready before the iframe
+        // is loaded. (IE specific possible failure)
+        try {
+          doPost({a: "ready"});
+        } catch(e) {
+          // this code should never be exectued outside IE
+          addListener(msgTarget, 'load', function(e) {
+            doPost({a: "ready"});
+          });
+        }
+
+        // if window is unloaded and the client hasn't called cb, it's an error
+        var onUnload = function() {
+          try {
+            // IE8 doesn't like this...
+            removeListener(isIE ? msgTarget : window, 'message', onDie);
+          } catch (ohWell) { }
+          if (cb) doPost({ a: 'error', d: 'client closed window' });
+          cb = undefined;
+          // explicitly close the window, in case the client is trying to reload or nav
+          try { window.close(); } catch (e) { }
+        };
+        addListener(window, 'unload', onUnload);
+        return {
+          detach: function() {
+            removeListener(window, 'unload', onUnload);
+          }
+        };
+      }
+    };
+  } else {
+    return {
+      open: function(url, winopts, arg, cb) {
+        setTimeout(function() { cb("unsupported browser"); }, 0);
+      },
+      onOpen: function(cb) {
+        setTimeout(function() { cb("unsupported browser"); }, 0);
+      }
+    };
+  }
+})();
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = WinChan;
+}
+
+
+/***/ }),
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16223,7 +18292,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _input_wrap = __webpack_require__(24);
+var _input_wrap = __webpack_require__(18);
 
 var _input_wrap2 = _interopRequireDefault(_input_wrap);
 
@@ -16316,196 +18385,7 @@ exports.default = TextInput;
 
 
 /***/ }),
-/* 100 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-exports.changeField = changeField;
-exports.startOptionSelection = startOptionSelection;
-exports.selectOption = selectOption;
-exports.cancelOptionSelection = cancelOptionSelection;
-
-var _immutable = __webpack_require__(4);
-
-var _index = __webpack_require__(5);
-
-var _index2 = __webpack_require__(3);
-
-function changeField(id, name, value, validationFn) {
-  for (var _len = arguments.length, validationExtraArgs = Array(_len > 4 ? _len - 4 : 0), _key = 4; _key < _len; _key++) {
-    validationExtraArgs[_key - 4] = arguments[_key];
-  }
-
-  _index.swap.apply(undefined, [_index.updateEntity, 'lock', id, _index2.setField, name, value, validationFn].concat(validationExtraArgs));
-}
-
-function startOptionSelection(id, name, iconUrl, icon) {
-  // TODO: should be transient
-  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
-    return m.setIn(['field', 'selecting', 'name'], name).setIn(['field', 'selecting', 'iconUrl'], iconUrl).setIn(['field', 'selecting', 'icon'], icon);
-  });
-}
-
-function selectOption(id, name, option) {
-  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
-    return (0, _index2.setOptionField)(m.deleteIn(['field', 'selecting']), name, option);
-  });
-}
-
-function cancelOptionSelection(id) {
-  (0, _index.swap)(_index.updateEntity, 'lock', id, function (m) {
-    return m.deleteIn(['field', 'selecting']);
-  });
-}
-
-
-/***/ }),
-/* 101 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _propTypes = __webpack_require__(2);
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _auth_button = __webpack_require__(102);
-
-var _auth_button2 = _interopRequireDefault(_auth_button);
-
-var _index = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index);
-
-var _actions = __webpack_require__(43);
-
-var _index2 = __webpack_require__(28);
-
-var _event = __webpack_require__(242);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var SocialButtonsPane = function (_React$Component) {
-  _inherits(SocialButtonsPane, _React$Component);
-
-  function SocialButtonsPane() {
-    _classCallCheck(this, SocialButtonsPane);
-
-    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
-  }
-
-  SocialButtonsPane.prototype.handleSubmit = function handleSubmit(provider, isSignUp) {
-    (0, _event.emitFederatedLoginEvent)(this.props.lock, provider, isSignUp);
-    return (0, _actions.logIn)(l.id(this.props.lock), provider);
-  };
-
-  SocialButtonsPane.prototype.render = function render() {
-    var _this2 = this;
-
-    // TODO: i don't like that it receives the instructions tanslated
-    // but it also takes the t fn
-    var _props = this.props,
-        bigButtons = _props.bigButtons,
-        instructions = _props.instructions,
-        labelFn = _props.labelFn,
-        lock = _props.lock,
-        showLoading = _props.showLoading,
-        signUp = _props.signUp,
-        disabled = _props.disabled;
-
-
-    var headerText = instructions || null;
-    var header = headerText && _react2.default.createElement(
-      'p',
-      null,
-      headerText
-    );
-
-    var themes = (0, _index2.authButtonsTheme)(lock);
-
-    var buttons = (0, _index2.socialConnections)(lock).map(function (x) {
-      var buttonTheme = themes.get(x.get('name'));
-      var connectionName = buttonTheme && buttonTheme.get('displayName');
-      var primaryColor = buttonTheme && buttonTheme.get('primaryColor');
-      var foregroundColor = buttonTheme && buttonTheme.get('foregroundColor');
-      var icon = buttonTheme && buttonTheme.get('icon');
-
-      return _react2.default.createElement(_auth_button2.default, {
-        isBig: bigButtons,
-        key: x.get('name'),
-        label: labelFn(signUp ? 'signUpWithLabel' : 'loginWithLabel', connectionName || (0, _index2.displayName)(x)),
-        onClick: function onClick() {
-          return _this2.handleSubmit(x, signUp);
-        },
-        strategy: x.get('strategy'),
-        primaryColor: primaryColor,
-        foregroundColor: foregroundColor,
-        icon: icon,
-        disabled: disabled
-      });
-    });
-
-    var loading = showLoading && _react2.default.createElement(
-      'div',
-      { className: 'auth0-loading-container' },
-      _react2.default.createElement('div', { className: 'auth0-loading' })
-    );
-
-    return _react2.default.createElement(
-      'div',
-      { className: 'auth-lock-social-buttons-pane' },
-      header,
-      _react2.default.createElement(
-        'div',
-        { className: 'auth0-lock-social-buttons-container' },
-        buttons
-      ),
-      loading
-    );
-  };
-
-  return SocialButtonsPane;
-}(_react2.default.Component);
-
-exports.default = SocialButtonsPane;
-
-
-SocialButtonsPane.propTypes = {
-  bigButtons: _propTypes2.default.bool.isRequired,
-  instructions: _propTypes2.default.any,
-  labelFn: _propTypes2.default.func.isRequired,
-  lock: _propTypes2.default.object.isRequired,
-  showLoading: _propTypes2.default.bool.isRequired,
-  signUp: _propTypes2.default.bool.isRequired,
-  disabled: _propTypes2.default.bool
-};
-
-SocialButtonsPane.defaultProps = {
-  showLoading: false,
-  disabled: false
-};
-
-
-/***/ }),
-/* 102 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16580,220 +18460,7 @@ exports.default = AuthButton;
 
 
 /***/ }),
-/* 103 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-exports.skipQuickAuth = skipQuickAuth;
-exports.hasSkippedQuickAuth = hasSkippedQuickAuth;
-
-var _data_utils = __webpack_require__(13);
-
-var _dataFns = (0, _data_utils.dataFns)(['quickAuth']),
-    tget = _dataFns.tget,
-    tset = _dataFns.tset;
-
-function skipQuickAuth(m, b) {
-  return tset(m, 'skipped', b);
-}
-
-function hasSkippedQuickAuth(m) {
-  return tget(m, 'skipped', false);
-}
-
-
-/***/ }),
-/* 104 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var version = __webpack_require__(39);
-var windowHandler = __webpack_require__(11);
-var PluginHandler = __webpack_require__(234);
-
-function CordovaPlugin() {
-  this.webAuth = null;
-  this.version = version.raw;
-  this.extensibilityPoints = [
-    'popup.authorize',
-    'popup.getPopupHandler'
-  ];
-}
-
-CordovaPlugin.prototype.setWebAuth = function (webAuth) {
-  this.webAuth = webAuth;
-};
-
-CordovaPlugin.prototype.supports = function (extensibilityPoint) {
-  var _window = windowHandler.getWindow();
-  return (!!_window.cordova || !!_window.electron) &&
-          this.extensibilityPoints.indexOf(extensibilityPoint) > -1;
-};
-
-CordovaPlugin.prototype.init = function () {
-  return new PluginHandler(this.webAuth);
-};
-
-module.exports = CordovaPlugin;
-
-
-/***/ }),
-/* 105 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-exports.normalizeError = normalizeError;
-exports.loginCallback = loginCallback;
-exports.normalizeAuthParams = normalizeAuthParams;
-exports.webAuthOverrides = webAuthOverrides;
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-function normalizeError(error) {
-  if (!error) {
-    return error;
-  }
-
-  // TODO: clean this mess, the first checks are for social/popup,
-  // then we have some stuff for passwordless and the latter is for
-  // db.
-
-  // TODO: the following checks were copied from https://github.com/auth0/lock/blob/0a5abf1957c9bb746b0710b274d0feed9b399958/index.js#L1263-L1288
-  // Some of the checks are missing because I couldn't reproduce them and I'm
-  // affraid they'll break existent functionality if add them.
-  // We need a better errror handling story in auth0.js.
-
-  if (error.status === 'User closed the popup window') {
-    // {
-    //   status: "User closed the popup window",
-    //   name: undefined,
-    //   code: undefined,
-    //   details: {
-    //     description: "server error",
-    //     code: undefined
-    //   }
-    // }
-    return {
-      code: 'lock.popup_closed',
-      error: 'lock.popup_closed',
-      description: 'Popup window closed.'
-    };
-  }
-
-  if (error.code === 'unauthorized') {
-    // Custom rule error
-    //
-    // {
-    //   "code": "unauthorized",
-    //   "details": {
-    //     "code": "unauthorized",
-    //     "error_description": "user is blocked",
-    //     "error": "unauthorized"
-    //   },
-    //   "name": "unauthorized",
-    //   "status": 401
-    // }
-
-    // Default "user is blocked" rule error
-    //
-    // {
-    //   "code": "unauthorized",
-    //   "details": {
-    //     "code": "unauthorized",
-    //     "error_description": "user is blocked",
-    //     "error": "unauthorized"
-    //   },
-    //   "name": "unauthorized",
-    //   "status": 401
-    // }
-
-    // Social cancel permissions.
-    //
-    // {
-    //   code: "unauthorized",
-    //   details: {
-    //     code: "unauthorized"
-    //     error: "unauthorized"
-    //     error_description: "access_denied"
-    //   },
-    //   name: "unauthorized"
-    //   status: 401
-    // }
-
-    // Social cancel permissions or unknown error
-    if (!error.description || error.description === 'access_denied') {
-      return {
-        code: 'lock.unauthorized',
-        error: 'lock.unauthorized',
-        description: error.description || 'Permissions were not granted.'
-      };
-    }
-
-    // Special case for custom rule error
-    if (error.description === 'user is blocked') {
-      return {
-        code: 'blocked_user',
-        error: 'blocked_user',
-        description: error.description
-      };
-    }
-
-    // Custom Rule error
-    return {
-      code: 'rule_error',
-      error: 'rule_error',
-      description: error.description
-    };
-  }
-
-  var result = {
-    error: error.code ? error.code : error.statusCode || error.error,
-    description: error.description || error.code
-  };
-
-  // result is used for passwordless and error for database.
-  return result.error === undefined && result.description === undefined ? error : result;
-}
-
-function loginCallback(redirect, cb) {
-  return redirect ? function (error) {
-    return cb(normalizeError(error));
-  } : function (error, result) {
-    return cb(normalizeError(error), result);
-  };
-}
-
-function normalizeAuthParams(_ref) {
-  var popup = _ref.popup,
-      popupOptions = _ref.popupOptions,
-      authParams = _objectWithoutProperties(_ref, ['popup', 'popupOptions']);
-
-  return authParams;
-}
-
-function webAuthOverrides() {
-  var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      __tenant = _ref2.__tenant,
-      __token_issuer = _ref2.__token_issuer;
-
-  if (__tenant || __token_issuer) {
-    return {
-      __tenant: __tenant,
-      __token_issuer: __token_issuer
-    };
-  }
-
-  return null;
-}
-
-
-/***/ }),
-/* 106 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16814,11 +18481,11 @@ var _immutable = __webpack_require__(4);
 
 var _immutable2 = _interopRequireDefault(_immutable);
 
-var _data_utils = __webpack_require__(13);
+var _data_utils = __webpack_require__(14);
 
-var _index = __webpack_require__(28);
+var _index = __webpack_require__(19);
 
-var _enterprise = __webpack_require__(14);
+var _enterprise = __webpack_require__(16);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -16921,10 +18588,6 @@ function formatClientConnections(o) {
     var strategy = o.strategies[i];
     var connectionType = strategyNameToConnectionType(strategy.name);
 
-    if (connectionType === 'passwordless') {
-      return 'continue'; // disabled until lock supports passwordless connections within the same engine
-    }
-
     var connections = strategy.connections.map(function (connection) {
       return formatClientConnection(connectionType, strategy.name, connection);
     });
@@ -16932,9 +18595,7 @@ function formatClientConnections(o) {
   };
 
   for (var i = 0; i < (o.strategies || []).length; i++) {
-    var _ret = _loop();
-
-    if (_ret === 'continue') continue;
+    _loop();
   }
 
   return result;
@@ -16972,7 +18633,7 @@ function clientConnections(m) {
 
 
 /***/ }),
-/* 107 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16996,7 +18657,7 @@ function img(src) {
 
 
 /***/ }),
-/* 108 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17008,13 +18669,13 @@ exports.requestAvatar = requestAvatar;
 
 var _index = __webpack_require__(5);
 
-var _data_utils = __webpack_require__(13);
+var _data_utils = __webpack_require__(14);
 
-var _preload_utils = __webpack_require__(107);
+var _preload_utils = __webpack_require__(116);
 
 var preload = _interopRequireWildcard(_preload_utils);
 
-var _fn_utils = __webpack_require__(245);
+var _fn_utils = __webpack_require__(254);
 
 var f = _interopRequireWildcard(_fn_utils);
 
@@ -17092,18 +18753,18 @@ function handleError(id, src) {
 
 
 /***/ }),
-/* 109 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var charsets = __webpack_require__(64).charsets;
+var charsets = __webpack_require__(74).charsets;
 
 var upperCase         = charsets.upperCase;
 var lowerCase         = charsets.lowerCase;
 var numbers           = charsets.numbers;
 var specialCharacters = charsets.specialCharacters;
 
-var PasswordPolicy = __webpack_require__(248);
+var PasswordPolicy = __webpack_require__(257);
 
 var none =  new PasswordPolicy({
   length: { minLength: 1 }
@@ -17203,29 +18864,7 @@ module.exports.charsets = charsets;
 
 
 /***/ }),
-/* 110 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var PaneSeparator = function PaneSeparator() {
-  return _react2.default.createElement("div", { className: "auth0-lock-pane-separator" });
-};
-
-exports.default = PaneSeparator;
-
-
-/***/ }),
-/* 111 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17241,15 +18880,15 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _actions = __webpack_require__(29);
+var _actions = __webpack_require__(32);
 
 var _index = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index);
 
-var _index2 = __webpack_require__(6);
+var _index2 = __webpack_require__(7);
 
-var _actions2 = __webpack_require__(16);
+var _actions2 = __webpack_require__(15);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -17371,7 +19010,7 @@ var LoginSignUpTab = function (_React$Component2) {
 
 
 /***/ }),
-/* 112 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17383,7 +19022,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _password_input = __webpack_require__(63);
+var _password_input = __webpack_require__(73);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17405,29 +19044,399 @@ exports.default = function (_ref) {
 
 
 /***/ }),
-/* 113 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 exports.__esModule = true;
-exports.lastUsedConnection = lastUsedConnection;
-exports.lastUsedUsername = lastUsedUsername;
 
-var _immutable = __webpack_require__(4);
+var _react = __webpack_require__(0);
 
-function lastUsedConnection(m) {
-  return m.getIn(['sso', 'lastUsedConnection']);
-}
+var _react2 = _interopRequireDefault(_react);
 
-function lastUsedUsername(m) {
-  return m.getIn(['sso', 'lastUsedUsername'], '');
-}
+var _input_wrap = __webpack_require__(18);
+
+var _input_wrap2 = _interopRequireDefault(_input_wrap);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var arrowSvg = '<svg focusable="false" width="5px" height="10px" viewBox="0 0 5 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" class="auth0-lock-icon-arrow"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"><g id="Lock" transform="translate(-396.000000, -3521.000000)" fill="#000000" opacity="0.539999962"><g id="SMS" transform="translate(153.000000, 3207.000000)"><g transform="translate(35.000000, 299.000000)"><g transform="translate(210.000000, 20.000000) rotate(-90.000000) translate(-210.000000, -20.000000) translate(198.000000, 8.000000)"><path id="Shape" d="M7,10 L12,15 L17,10 L7,10 Z"></path></g></g></g></g></g></svg>';
+
+var SelectInput = function (_React$Component) {
+  _inherits(SelectInput, _React$Component);
+
+  function SelectInput(props) {
+    _classCallCheck(this, SelectInput);
+
+    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
+
+    _this.state = {};
+    return _this;
+  }
+
+  SelectInput.prototype.render = function render() {
+    var _props = this.props,
+        iconUrl = _props.iconUrl,
+        isValid = _props.isValid,
+        label = _props.label,
+        name = _props.name,
+        onClick = _props.onClick,
+        placeholder = _props.placeholder;
+    var icon = this.props.icon;
+    var focused = this.state.focused;
+
+
+    var limitedValue = label || placeholder;
+    if (limitedValue.length > 23) {
+      limitedValue = limitedValue.substr(0, 20) + '...';
+    }
+
+    if (!icon && typeof iconUrl === 'string' && iconUrl) {
+      icon = _react2.default.createElement('img', { className: 'auth0-lock-custom-icon', src: iconUrl });
+    }
+
+    var className = 'auth0-lock-input auth0-lock-input-location';
+    if (!label) className += ' auth0-lock-input-with-placeholder';
+
+    return _react2.default.createElement(
+      _input_wrap2.default,
+      { focused: focused, isValid: isValid, name: 'location', icon: icon },
+      _react2.default.createElement('input', {
+        type: 'button',
+        name: name,
+        className: className,
+        value: limitedValue,
+        onFocus: this.handleFocus.bind(this),
+        onBlur: this.handleBlur.bind(this),
+        onKeyDown: this.handleKeyDown.bind(this),
+        onClick: onClick
+      }),
+      _react2.default.createElement('span', { dangerouslySetInnerHTML: { __html: arrowSvg } })
+    );
+  };
+
+  SelectInput.prototype.handleFocus = function handleFocus() {
+    this.setState({ focused: true });
+  };
+
+  SelectInput.prototype.handleBlur = function handleBlur() {
+    this.setState({ focused: false });
+  };
+
+  SelectInput.prototype.handleKeyDown = function handleKeyDown(e) {
+    if (e.key !== 'Tab') {
+      e.preventDefault();
+    }
+
+    if (e.key === 'ArrowDown') {
+      return this.props.onClick();
+    }
+
+    if (e.keyCode >= 65 && e.keyCode <= 90) {
+      return this.props.onClick(String.fromCharCode(e.keyCode).toLowerCase());
+    }
+  };
+
+  return SelectInput;
+}(_react2.default.Component);
+
+// TODO: specify propTypes
+
+
+exports.default = SelectInput;
 
 
 /***/ }),
-/* 114 */
+/* 122 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _screen = __webpack_require__(11);
+
+var _screen2 = _interopRequireDefault(_screen);
+
+var _actions = __webpack_require__(15);
+
+var _index = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var LoadingScreen = function (_Screen) {
+  _inherits(LoadingScreen, _Screen);
+
+  function LoadingScreen() {
+    _classCallCheck(this, LoadingScreen);
+
+    return _possibleConstructorReturn(this, _Screen.call(this, 'loading'));
+  }
+
+  LoadingScreen.prototype.render = function render() {
+    return LoadingPane;
+  };
+
+  return LoadingScreen;
+}(_screen2.default);
+
+exports.default = LoadingScreen;
+
+var LoadingPane = function (_React$Component) {
+  _inherits(LoadingPane, _React$Component);
+
+  function LoadingPane() {
+    _classCallCheck(this, LoadingPane);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  LoadingPane.prototype.componentDidMount = function componentDidMount() {
+    var model = this.props.model;
+
+    (0, _actions.pinLoadingPane)(l.id(model));
+    setTimeout(function () {
+      return (0, _actions.unpinLoadingPane)(l.id(model));
+    }, 500);
+  };
+
+  LoadingPane.prototype.render = function render() {
+    return _react2.default.createElement(
+      'div',
+      { className: 'auth0-loading-screen' },
+      _react2.default.createElement(
+        'div',
+        { className: 'auth0-loading-container' },
+        _react2.default.createElement('div', { className: 'auth0-loading' })
+      )
+    );
+  };
+
+  return LoadingPane;
+}(_react2.default.Component);
+
+LoadingPane.propTypes = {
+  model: _propTypes2.default.object.isRequired
+};
+
+
+/***/ }),
+/* 123 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _screen = __webpack_require__(11);
+
+var _screen2 = _interopRequireDefault(_screen);
+
+var _index = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ErrorScreen = function (_Screen) {
+  _inherits(ErrorScreen, _Screen);
+
+  function ErrorScreen() {
+    _classCallCheck(this, ErrorScreen);
+
+    return _possibleConstructorReturn(this, _Screen.call(this, 'error'));
+  }
+
+  ErrorScreen.prototype.render = function render() {
+    return ErrorPane;
+  };
+
+  return ErrorScreen;
+}(_screen2.default);
+
+exports.default = ErrorScreen;
+
+
+var ErrorPane = function ErrorPane(_ref) {
+  var i18n = _ref.i18n;
+  return _react2.default.createElement(
+    'div',
+    { className: 'auth0-lock-error-pane' },
+    _react2.default.createElement(
+      'p',
+      null,
+      i18n.html('unrecoverableError')
+    )
+  );
+};
+
+ErrorPane.propTypes = {
+  i18n: _propTypes2.default.object.isRequired
+};
+
+
+/***/ }),
+/* 124 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _screen = __webpack_require__(11);
+
+var _screen2 = _interopRequireDefault(_screen);
+
+var _quick_auth_pane = __webpack_require__(77);
+
+var _quick_auth_pane2 = _interopRequireDefault(_quick_auth_pane);
+
+var _actions = __webpack_require__(45);
+
+var _index = __webpack_require__(76);
+
+var _index2 = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index2);
+
+var _signed_in_confirmation = __webpack_require__(17);
+
+var _index3 = __webpack_require__(19);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// TODO: handle this from CSS
+function icon(strategy) {
+  if (_index3.STRATEGIES[strategy]) return strategy;
+  if (strategy === 'google-apps') return strategy;
+  if (~['adfs', 'office365', 'waad'].indexOf(strategy)) return 'windows';
+  return 'auth0';
+}
+
+var Component = function Component(_ref) {
+  var i18n = _ref.i18n,
+      model = _ref.model;
+
+  var headerText = i18n.html('lastLoginInstructions') || null;
+  var header = headerText && _react2.default.createElement(
+    'p',
+    null,
+    headerText
+  );
+  var theme = (0, _index3.authButtonsTheme)(model);
+  var connectionName = (0, _index.lastUsedConnection)(model).get('name');
+  var buttonTheme = theme.get(connectionName);
+  var primaryColor = buttonTheme && buttonTheme.get('primaryColor');
+  var foregroundColor = buttonTheme && buttonTheme.get('foregroundColor');
+  var buttonIcon = buttonTheme && buttonTheme.get('icon');
+
+  var buttonClickHandler = function buttonClickHandler() {
+    var isUniversalLogin = window.location.host === l.domain(model);
+    if (isUniversalLogin) {
+      (0, _actions.logIn)(l.id(model), (0, _index.lastUsedConnection)(model), (0, _index.lastUsedUsername)(model));
+    } else {
+      (0, _actions.checkSession)(l.id(model), (0, _index.lastUsedConnection)(model), (0, _index.lastUsedUsername)(model));
+    }
+  };
+  var buttonLabel = (0, _index.lastUsedUsername)(model) || _index3.STRATEGIES[connectionName] || connectionName;
+
+  return _react2.default.createElement(_quick_auth_pane2.default, {
+    alternativeLabel: i18n.str('notYourAccountAction'),
+    alternativeClickHandler: function alternativeClickHandler() {
+      return (0, _actions.skipQuickAuth)(l.id(model));
+    },
+    buttonLabel: buttonLabel,
+    buttonClickHandler: buttonClickHandler,
+    header: header,
+    strategy: icon((0, _index.lastUsedConnection)(model).get('strategy') || connectionName),
+    buttonIcon: buttonIcon,
+    primaryColor: primaryColor,
+    foregroundColor: foregroundColor
+  });
+};
+
+var LastLoginScreen = function (_Screen) {
+  _inherits(LastLoginScreen, _Screen);
+
+  function LastLoginScreen() {
+    _classCallCheck(this, LastLoginScreen);
+
+    return _possibleConstructorReturn(this, _Screen.call(this, 'lastLogin'));
+  }
+
+  LastLoginScreen.prototype.renderAuxiliaryPane = function renderAuxiliaryPane(lock) {
+    return (0, _signed_in_confirmation.renderSignedInConfirmation)(lock);
+  };
+
+  LastLoginScreen.prototype.render = function render() {
+    return Component;
+  };
+
+  return LastLoginScreen;
+}(_screen2.default);
+
+exports.default = LastLoginScreen;
+
+
+/***/ }),
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17439,23 +19448,23 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _loglevel = __webpack_require__(279);
+var _loglevel = __webpack_require__(296);
 
 var _loglevel2 = _interopRequireDefault(_loglevel);
 
-var _moment = __webpack_require__(70);
+var _moment = __webpack_require__(80);
 
 var _moment2 = _interopRequireDefault(_moment);
 
-var _isEmpty = __webpack_require__(48);
+var _isEmpty = __webpack_require__(55);
 
 var _isEmpty2 = _interopRequireDefault(_isEmpty);
 
-var _isError = __webpack_require__(280);
+var _isError = __webpack_require__(297);
 
 var _isError2 = _interopRequireDefault(_isError);
 
-var _isString = __webpack_require__(81);
+var _isString = __webpack_require__(91);
 
 var _isString2 = _interopRequireDefault(_isString);
 
@@ -17579,20 +19588,20 @@ var Logger = function () {
 exports.default = Logger;
 
 /***/ }),
-/* 115 */
+/* 126 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_115__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_126__;
 
 /***/ }),
-/* 116 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(117);
+module.exports = __webpack_require__(128);
 
 
 /***/ }),
-/* 117 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17603,42 +19612,42 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.version = exports.configure = exports.AuthUtils = exports.AuthSagas = exports.AuthRoute = exports.AuthReducer = exports.AuthConstants = exports.AuthActionFactory = exports.Auth0 = undefined;
 
-var _AuthReducer = __webpack_require__(118);
+var _AuthReducer = __webpack_require__(129);
 
 var _AuthReducer2 = _interopRequireDefault(_AuthReducer);
 
-var _AuthRoute = __webpack_require__(163);
+var _AuthRoute = __webpack_require__(174);
 
 var _AuthRoute2 = _interopRequireDefault(_AuthRoute);
 
-var _Auth = __webpack_require__(35);
+var _Auth = __webpack_require__(37);
 
 var Auth0 = _interopRequireWildcard(_Auth);
 
-var _AuthActionFactory = __webpack_require__(34);
+var _AuthActionFactory = __webpack_require__(36);
 
 var AuthActionFactory = _interopRequireWildcard(_AuthActionFactory);
 
-var _AuthConstants = __webpack_require__(26);
+var _AuthConstants = __webpack_require__(29);
 
 var AuthConstants = _interopRequireWildcard(_AuthConstants);
 
-var _AuthSagas = __webpack_require__(283);
+var _AuthSagas = __webpack_require__(300);
 
 var AuthSagas = _interopRequireWildcard(_AuthSagas);
 
-var _AuthUtils = __webpack_require__(30);
+var _AuthUtils = __webpack_require__(33);
 
 var AuthUtils = _interopRequireWildcard(_AuthUtils);
 
-var _Configuration = __webpack_require__(68);
+var _Configuration = __webpack_require__(78);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // injected by Webpack.DefinePlugin
-var version = "v0.5.0";
+var version = "v0.6.0";
 
 exports.Auth0 = Auth0;
 exports.AuthActionFactory = AuthActionFactory;
@@ -17662,7 +19671,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 118 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17677,15 +19686,15 @@ var _immutable = __webpack_require__(4);
 
 var _immutable2 = _interopRequireDefault(_immutable);
 
-var _reactRouterRedux = __webpack_require__(69);
+var _reactRouterRedux = __webpack_require__(79);
 
-var _AuthUtils = __webpack_require__(30);
+var _AuthUtils = __webpack_require__(33);
 
 var AuthUtils = _interopRequireWildcard(_AuthUtils);
 
-var _AuthConstants = __webpack_require__(26);
+var _AuthConstants = __webpack_require__(29);
 
-var _AuthActionFactory = __webpack_require__(34);
+var _AuthActionFactory = __webpack_require__(36);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -17723,13 +19732,13 @@ function authReducer() {
 }
 
 /***/ }),
-/* 119 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var base64_url_decode = __webpack_require__(120);
+var base64_url_decode = __webpack_require__(131);
 
 function InvalidTokenError(message) {
   this.message = message;
@@ -17756,10 +19765,10 @@ module.exports.InvalidTokenError = InvalidTokenError;
 
 
 /***/ }),
-/* 120 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var atob = __webpack_require__(121);
+var atob = __webpack_require__(132);
 
 function b64DecodeUnicode(str) {
   return decodeURIComponent(atob(str).replace(/(.)/g, function (m, p) {
@@ -17795,7 +19804,7 @@ module.exports = function(str) {
 
 
 /***/ }),
-/* 121 */
+/* 132 */
 /***/ (function(module, exports) {
 
 /**
@@ -17839,14 +19848,14 @@ module.exports = typeof window !== 'undefined' && window.atob && window.atob.bin
 
 
 /***/ }),
-/* 122 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(71);
-var formats = __webpack_require__(72);
+var utils = __webpack_require__(81);
+var formats = __webpack_require__(82);
 
 var arrayPrefixGenerators = {
     brackets: function brackets(prefix) { // eslint-disable-line func-name-matching
@@ -18056,13 +20065,13 @@ module.exports = function (object, opts) {
 
 
 /***/ }),
-/* 123 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(71);
+var utils = __webpack_require__(81);
 
 var has = Object.prototype.hasOwnProperty;
 
@@ -18237,11 +20246,11 @@ module.exports = function (str, opts) {
 
 
 /***/ }),
-/* 124 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isPrototype = __webpack_require__(73),
-    nativeKeys = __webpack_require__(125);
+var isPrototype = __webpack_require__(83),
+    nativeKeys = __webpack_require__(136);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -18273,10 +20282,10 @@ module.exports = baseKeys;
 
 
 /***/ }),
-/* 125 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var overArg = __webpack_require__(74);
+var overArg = __webpack_require__(84);
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeKeys = overArg(Object.keys, Object);
@@ -18285,16 +20294,16 @@ module.exports = nativeKeys;
 
 
 /***/ }),
-/* 126 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var DataView = __webpack_require__(127),
-    Map = __webpack_require__(134),
-    Promise = __webpack_require__(135),
-    Set = __webpack_require__(136),
-    WeakMap = __webpack_require__(137),
-    baseGetTag = __webpack_require__(18),
-    toSource = __webpack_require__(78);
+var DataView = __webpack_require__(138),
+    Map = __webpack_require__(145),
+    Promise = __webpack_require__(146),
+    Set = __webpack_require__(147),
+    WeakMap = __webpack_require__(148),
+    baseGetTag = __webpack_require__(20),
+    toSource = __webpack_require__(88);
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]',
@@ -18349,11 +20358,11 @@ module.exports = getTag;
 
 
 /***/ }),
-/* 127 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getNative = __webpack_require__(31),
-    root = __webpack_require__(19);
+var getNative = __webpack_require__(34),
+    root = __webpack_require__(21);
 
 /* Built-in method references that are verified to be native. */
 var DataView = getNative(root, 'DataView');
@@ -18362,13 +20371,13 @@ module.exports = DataView;
 
 
 /***/ }),
-/* 128 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isFunction = __webpack_require__(75),
-    isMasked = __webpack_require__(131),
-    isObject = __webpack_require__(77),
-    toSource = __webpack_require__(78);
+var isFunction = __webpack_require__(85),
+    isMasked = __webpack_require__(142),
+    isObject = __webpack_require__(87),
+    toSource = __webpack_require__(88);
 
 /**
  * Used to match `RegExp`
@@ -18415,10 +20424,10 @@ module.exports = baseIsNative;
 
 
 /***/ }),
-/* 129 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(49);
+var Symbol = __webpack_require__(56);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -18467,7 +20476,7 @@ module.exports = getRawTag;
 
 
 /***/ }),
-/* 130 */
+/* 141 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -18495,10 +20504,10 @@ module.exports = objectToString;
 
 
 /***/ }),
-/* 131 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var coreJsData = __webpack_require__(132);
+var coreJsData = __webpack_require__(143);
 
 /** Used to detect methods masquerading as native. */
 var maskSrcKey = (function() {
@@ -18521,10 +20530,10 @@ module.exports = isMasked;
 
 
 /***/ }),
-/* 132 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(19);
+var root = __webpack_require__(21);
 
 /** Used to detect overreaching core-js shims. */
 var coreJsData = root['__core-js_shared__'];
@@ -18533,7 +20542,7 @@ module.exports = coreJsData;
 
 
 /***/ }),
-/* 133 */
+/* 144 */
 /***/ (function(module, exports) {
 
 /**
@@ -18552,11 +20561,11 @@ module.exports = getValue;
 
 
 /***/ }),
-/* 134 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getNative = __webpack_require__(31),
-    root = __webpack_require__(19);
+var getNative = __webpack_require__(34),
+    root = __webpack_require__(21);
 
 /* Built-in method references that are verified to be native. */
 var Map = getNative(root, 'Map');
@@ -18565,11 +20574,11 @@ module.exports = Map;
 
 
 /***/ }),
-/* 135 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getNative = __webpack_require__(31),
-    root = __webpack_require__(19);
+var getNative = __webpack_require__(34),
+    root = __webpack_require__(21);
 
 /* Built-in method references that are verified to be native. */
 var Promise = getNative(root, 'Promise');
@@ -18578,11 +20587,11 @@ module.exports = Promise;
 
 
 /***/ }),
-/* 136 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getNative = __webpack_require__(31),
-    root = __webpack_require__(19);
+var getNative = __webpack_require__(34),
+    root = __webpack_require__(21);
 
 /* Built-in method references that are verified to be native. */
 var Set = getNative(root, 'Set');
@@ -18591,11 +20600,11 @@ module.exports = Set;
 
 
 /***/ }),
-/* 137 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getNative = __webpack_require__(31),
-    root = __webpack_require__(19);
+var getNative = __webpack_require__(34),
+    root = __webpack_require__(21);
 
 /* Built-in method references that are verified to be native. */
 var WeakMap = getNative(root, 'WeakMap');
@@ -18604,11 +20613,11 @@ module.exports = WeakMap;
 
 
 /***/ }),
-/* 138 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIsArguments = __webpack_require__(139),
-    isObjectLike = __webpack_require__(21);
+var baseIsArguments = __webpack_require__(150),
+    isObjectLike = __webpack_require__(24);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -18646,11 +20655,11 @@ module.exports = isArguments;
 
 
 /***/ }),
-/* 139 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(18),
-    isObjectLike = __webpack_require__(21);
+var baseGetTag = __webpack_require__(20),
+    isObjectLike = __webpack_require__(24);
 
 /** `Object#toString` result references. */
 var argsTag = '[object Arguments]';
@@ -18670,11 +20679,11 @@ module.exports = baseIsArguments;
 
 
 /***/ }),
-/* 140 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isFunction = __webpack_require__(75),
-    isLength = __webpack_require__(79);
+var isFunction = __webpack_require__(85),
+    isLength = __webpack_require__(89);
 
 /**
  * Checks if `value` is array-like. A value is considered array-like if it's
@@ -18709,11 +20718,11 @@ module.exports = isArrayLike;
 
 
 /***/ }),
-/* 141 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(19),
-    stubFalse = __webpack_require__(142);
+/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(21),
+    stubFalse = __webpack_require__(153);
 
 /** Detect free variable `exports`. */
 var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -18751,10 +20760,10 @@ var isBuffer = nativeIsBuffer || stubFalse;
 
 module.exports = isBuffer;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(53)(module)))
 
 /***/ }),
-/* 142 */
+/* 153 */
 /***/ (function(module, exports) {
 
 /**
@@ -18778,12 +20787,12 @@ module.exports = stubFalse;
 
 
 /***/ }),
-/* 143 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIsTypedArray = __webpack_require__(144),
-    baseUnary = __webpack_require__(145),
-    nodeUtil = __webpack_require__(146);
+var baseIsTypedArray = __webpack_require__(155),
+    baseUnary = __webpack_require__(156),
+    nodeUtil = __webpack_require__(157);
 
 /* Node.js helper references. */
 var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
@@ -18811,12 +20820,12 @@ module.exports = isTypedArray;
 
 
 /***/ }),
-/* 144 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(18),
-    isLength = __webpack_require__(79),
-    isObjectLike = __webpack_require__(21);
+var baseGetTag = __webpack_require__(20),
+    isLength = __webpack_require__(89),
+    isObjectLike = __webpack_require__(24);
 
 /** `Object#toString` result references. */
 var argsTag = '[object Arguments]',
@@ -18877,7 +20886,7 @@ module.exports = baseIsTypedArray;
 
 
 /***/ }),
-/* 145 */
+/* 156 */
 /***/ (function(module, exports) {
 
 /**
@@ -18897,10 +20906,10 @@ module.exports = baseUnary;
 
 
 /***/ }),
-/* 146 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(76);
+/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(86);
 
 /** Detect free variable `exports`. */
 var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -18923,13 +20932,13 @@ var nodeUtil = (function() {
 
 module.exports = nodeUtil;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(53)(module)))
 
 /***/ }),
-/* 147 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var overArg = __webpack_require__(74);
+var overArg = __webpack_require__(84);
 
 /** Built-in value references. */
 var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -18938,15 +20947,15 @@ module.exports = getPrototype;
 
 
 /***/ }),
-/* 148 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseToString = __webpack_require__(82),
-    castSlice = __webpack_require__(151),
-    charsEndIndex = __webpack_require__(153),
-    charsStartIndex = __webpack_require__(157),
-    stringToArray = __webpack_require__(158),
-    toString = __webpack_require__(162);
+var baseToString = __webpack_require__(92),
+    castSlice = __webpack_require__(162),
+    charsEndIndex = __webpack_require__(164),
+    charsStartIndex = __webpack_require__(168),
+    stringToArray = __webpack_require__(169),
+    toString = __webpack_require__(173);
 
 /** Used to match leading and trailing whitespace. */
 var reTrim = /^\s+|\s+$/g;
@@ -18993,7 +21002,7 @@ module.exports = trim;
 
 
 /***/ }),
-/* 149 */
+/* 160 */
 /***/ (function(module, exports) {
 
 /**
@@ -19020,11 +21029,11 @@ module.exports = arrayMap;
 
 
 /***/ }),
-/* 150 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(18),
-    isObjectLike = __webpack_require__(21);
+var baseGetTag = __webpack_require__(20),
+    isObjectLike = __webpack_require__(24);
 
 /** `Object#toString` result references. */
 var symbolTag = '[object Symbol]';
@@ -19055,10 +21064,10 @@ module.exports = isSymbol;
 
 
 /***/ }),
-/* 151 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseSlice = __webpack_require__(152);
+var baseSlice = __webpack_require__(163);
 
 /**
  * Casts `array` to a slice if it's needed.
@@ -19079,7 +21088,7 @@ module.exports = castSlice;
 
 
 /***/ }),
-/* 152 */
+/* 163 */
 /***/ (function(module, exports) {
 
 /**
@@ -19116,10 +21125,10 @@ module.exports = baseSlice;
 
 
 /***/ }),
-/* 153 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIndexOf = __webpack_require__(83);
+var baseIndexOf = __webpack_require__(93);
 
 /**
  * Used by `_.trim` and `_.trimEnd` to get the index of the last string symbol
@@ -19141,7 +21150,7 @@ module.exports = charsEndIndex;
 
 
 /***/ }),
-/* 154 */
+/* 165 */
 /***/ (function(module, exports) {
 
 /**
@@ -19171,7 +21180,7 @@ module.exports = baseFindIndex;
 
 
 /***/ }),
-/* 155 */
+/* 166 */
 /***/ (function(module, exports) {
 
 /**
@@ -19189,7 +21198,7 @@ module.exports = baseIsNaN;
 
 
 /***/ }),
-/* 156 */
+/* 167 */
 /***/ (function(module, exports) {
 
 /**
@@ -19218,10 +21227,10 @@ module.exports = strictIndexOf;
 
 
 /***/ }),
-/* 157 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIndexOf = __webpack_require__(83);
+var baseIndexOf = __webpack_require__(93);
 
 /**
  * Used by `_.trim` and `_.trimStart` to get the index of the first string symbol
@@ -19244,12 +21253,12 @@ module.exports = charsStartIndex;
 
 
 /***/ }),
-/* 158 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var asciiToArray = __webpack_require__(159),
-    hasUnicode = __webpack_require__(160),
-    unicodeToArray = __webpack_require__(161);
+var asciiToArray = __webpack_require__(170),
+    hasUnicode = __webpack_require__(171),
+    unicodeToArray = __webpack_require__(172);
 
 /**
  * Converts `string` to an array.
@@ -19268,7 +21277,7 @@ module.exports = stringToArray;
 
 
 /***/ }),
-/* 159 */
+/* 170 */
 /***/ (function(module, exports) {
 
 /**
@@ -19286,7 +21295,7 @@ module.exports = asciiToArray;
 
 
 /***/ }),
-/* 160 */
+/* 171 */
 /***/ (function(module, exports) {
 
 /** Used to compose unicode character classes. */
@@ -19318,7 +21327,7 @@ module.exports = hasUnicode;
 
 
 /***/ }),
-/* 161 */
+/* 172 */
 /***/ (function(module, exports) {
 
 /** Used to compose unicode character classes. */
@@ -19364,10 +21373,10 @@ module.exports = unicodeToArray;
 
 
 /***/ }),
-/* 162 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseToString = __webpack_require__(82);
+var baseToString = __webpack_require__(92);
 
 /**
  * Converts `value` to a string. An empty string is returned for `null`
@@ -19398,7 +21407,7 @@ module.exports = toString;
 
 
 /***/ }),
-/* 163 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19414,23 +21423,23 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = __webpack_require__(164);
+var _reactRedux = __webpack_require__(175);
 
-var _reactRouter = __webpack_require__(165);
+var _reactRouter = __webpack_require__(176);
 
-var _redux = __webpack_require__(166);
+var _redux = __webpack_require__(177);
 
-var _Auth = __webpack_require__(35);
+var _Auth = __webpack_require__(37);
 
 var Auth0 = _interopRequireWildcard(_Auth);
 
-var _AuthUtils = __webpack_require__(30);
+var _AuthUtils = __webpack_require__(33);
 
 var AuthUtils = _interopRequireWildcard(_AuthUtils);
 
-var _AuthActionFactory = __webpack_require__(34);
+var _AuthActionFactory = __webpack_require__(36);
 
-var _AuthConstants = __webpack_require__(26);
+var _AuthConstants = __webpack_require__(29);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -19578,25 +21587,25 @@ function mapDispatchToProps(dispatch) {
 exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(AuthRoute));
 
 /***/ }),
-/* 164 */
+/* 175 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_164__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_175__;
 
 /***/ }),
-/* 165 */
+/* 176 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_165__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_176__;
 
 /***/ }),
-/* 166 */
+/* 177 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_166__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_177__;
 
 /***/ }),
-/* 167 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19604,39 +21613,13 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_166__;
 
 exports.__esModule = true;
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _core = __webpack_require__(95);
 
-var _events = __webpack_require__(168);
+var _core2 = _interopRequireDefault(_core);
 
-var _index = __webpack_require__(5);
+var _classic = __webpack_require__(43);
 
-var _box = __webpack_require__(170);
-
-var _web_api = __webpack_require__(44);
-
-var _web_api2 = _interopRequireDefault(_web_api);
-
-var _actions = __webpack_require__(16);
-
-var _index2 = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index2);
-
-var _index3 = __webpack_require__(3);
-
-var c = _interopRequireWildcard(_index3);
-
-var _id_utils = __webpack_require__(278);
-
-var idu = _interopRequireWildcard(_id_utils);
-
-var _i18n = __webpack_require__(8);
-
-var i18n = _interopRequireWildcard(_i18n);
-
-var _sync = __webpack_require__(33);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+var _classic2 = _interopRequireDefault(_classic);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19646,208 +21629,34 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Base = function (_EventEmitter) {
-  _inherits(Base, _EventEmitter);
+var Auth0Lock = function (_Core) {
+  _inherits(Auth0Lock, _Core);
 
-  function Base(clientID, domain) {
-    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    var engine = arguments[3];
+  function Auth0Lock(clientID, domain, options) {
+    _classCallCheck(this, Auth0Lock);
 
-    _classCallCheck(this, Base);
+    var _this = _possibleConstructorReturn(this, _Core.call(this, clientID, domain, options, _classic2.default));
 
-    if (typeof clientID != 'string') {
-      throw new Error('A `clientID` string must be provided as first argument.');
-    }
-    if (typeof domain != 'string') {
-      throw new Error('A `domain` string must be provided as second argument.');
-    }
-    if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) != 'object') {
-      throw new Error('When provided, the third argument must be an `options` object.');
-    }
-
-    var _this = _possibleConstructorReturn(this, _EventEmitter.call(this));
-
-    _this.validEvents = ['show', 'hide', 'unrecoverable_error', 'authenticated', 'authorization_error', 'hash_parsed', 'signin ready', 'signup ready', 'forgot_password ready', 'forgot_password submit', 'signin submit', 'signup submit', 'federated login'];
-
-    _this.id = idu.incremental();
-    _this.engine = engine;
-    var hookRunner = _this.runHook.bind(_this);
-    var emitEventFn = _this.emit.bind(_this);
-
-    (0, _sync.go)(_this.id);
-
-    var m = (0, _actions.setupLock)(_this.id, clientID, domain, options, hookRunner, emitEventFn);
-    _this.on('newListener', function (type) {
-      if (_this.validEvents.indexOf(type) === -1) {
-        l.emitUnrecoverableErrorEvent(m, 'Invalid event "' + type + '".');
-      }
-    });
-
-    if (l.auth.autoParseHash(m) && !Base.hasScheduledAuthCallback) {
-      Base.hasScheduledAuthCallback = true;
-      setTimeout(_actions.handleAuthCallback, 0);
-    }
-
-    (0, _index.observe)('render', _this.id, function (m) {
-      var partialApplyId = function partialApplyId(screen, handlerName) {
-        var handler = screen[handlerName](m);
-        return handler ? function () {
-          for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-          }
-
-          return handler.apply(undefined, [l.id(m)].concat(args));
-        } : handler;
-      };
-      var avatar = l.ui.avatar(m) && m.getIn(['avatar', 'transient', 'syncStatus']) === 'ok' || null;
-
-      if (l.rendering(m)) {
-        var screen = _this.engine.render(m);
-
-        var title = avatar ? i18n.str(m, 'welcome', m.getIn(['avatar', 'transient', 'displayName'])) : screen.getTitle(m);
-
-        var disableSubmitButton = screen.isSubmitDisabled(m);
-
-        var i18nProp = {
-          group: function group(keyPath) {
-            return i18n.group(m, keyPath);
-          },
-          html: function html(keyPath) {
-            for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-              args[_key2 - 1] = arguments[_key2];
-            }
-
-            return i18n.html.apply(i18n, [m, keyPath].concat(args));
-          },
-          str: function str(keyPath) {
-            for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-              args[_key3 - 1] = arguments[_key3];
-            }
-
-            return i18n.str.apply(i18n, [m, keyPath].concat(args));
-          }
-        };
-
-        var getScreenTitle = function getScreenTitle(m) {
-          // if it is the first screen and the flag is enabled, it should hide the title
-          return l.ui.hideMainScreenTitle(m) && screen.isFirstScreen(m) ? null : title;
-        };
-
-        var props = {
-          avatar: avatar && m.getIn(['avatar', 'transient', 'url']),
-          auxiliaryPane: screen.renderAuxiliaryPane(m),
-          autofocus: l.ui.autofocus(m),
-          backHandler: partialApplyId(screen, 'backHandler'),
-          badgeLink: 'https://auth0.com/?utm_source=lock&utm_campaign=badge&utm_medium=widget',
-          closeHandler: l.ui.closable(m) ? function () {
-            for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-              args[_key4] = arguments[_key4];
-            }
-
-            return _actions.closeLock.apply(undefined, [l.id(m)].concat(args));
-          } : undefined,
-          contentComponent: screen.render(),
-          contentProps: { i18n: i18nProp, model: m },
-          disableSubmitButton: disableSubmitButton,
-          error: l.globalError(m),
-          isMobile: l.ui.mobile(m),
-          isModal: l.ui.appendContainer(m),
-          isSubmitting: l.submitting(m),
-          logo: l.ui.logo(m),
-          primaryColor: l.ui.primaryColor(m),
-          screenName: screen.name,
-          showBadge: l.showBadge(m) === true,
-          success: l.globalSuccess(m),
-          submitButtonLabel: l.ui.labeledSubmitButton(m) ? screen.submitButtonLabel(m) : null,
-          submitHandler: partialApplyId(screen, 'submitHandler'),
-          tabs: screen.renderTabs(m),
-          terms: screen.renderTerms(m, i18nProp.html('signUpTerms')),
-          title: getScreenTitle(m),
-          classNames: screen.name === 'loading' ? 'fade' : 'horizontal-fade',
-          scrollGlobalMessagesIntoView: l.ui.scrollGlobalMessagesIntoView(m)
-        };
-        (0, _box.render)(l.ui.containerID(m), props);
-
-        // TODO: hack so we can start testing the beta
-        if (!_this.oldScreenName || _this.oldScreenName != screen.name) {
-          if (screen.name === 'main.login') {
-            l.emitEvent(m, 'signin ready');
-          } else if (screen.name === 'main.signUp') {
-            l.emitEvent(m, 'signup ready');
-          } else if (screen.name === 'forgotPassword') {
-            l.emitEvent(m, 'forgot_password ready');
-          }
-        }
-        _this.oldScreenName = screen.name;
-      } else {
-        (0, _box.remove)(l.ui.containerID(m));
-      }
-    });
+    (0, _core.injectStyles)();
     return _this;
   }
 
-  Base.prototype.resumeAuth = function resumeAuth(hash, callback) {
-    (0, _actions.resumeAuth)(hash, callback);
-  };
+  return Auth0Lock;
+}(_core2.default);
 
-  Base.prototype.show = function show() {
-    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+// telemetry
 
-    (0, _actions.openLock)(this.id, opts);
-  };
 
-  Base.prototype.hide = function hide() {
-    (0, _actions.closeLock)(this.id, true);
-  };
+exports.default = Auth0Lock;
+Auth0Lock.version = '11.3.0';
 
-  Base.prototype.destroy = function destroy() {
-    (0, _actions.removeLock)(this.id);
-  };
-
-  Base.prototype.getProfile = function getProfile(token, cb) {
-    return _web_api2.default.getProfile(this.id, token, cb);
-  };
-
-  Base.prototype.getUserInfo = function getUserInfo(token, cb) {
-    return _web_api2.default.getUserInfo(this.id, token, cb);
-  };
-
-  Base.prototype.logout = function logout() {
-    var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    _web_api2.default.logout(this.id, query);
-  };
-
-  Base.prototype.update = function update(f) {
-    return (0, _actions.updateLock)(this.id, f);
-  };
-
-  Base.prototype.setModel = function setModel(m) {
-    return this.update(function () {
-      return m;
-    });
-  };
-
-  Base.prototype.runHook = function runHook(str, m) {
-    var _engine;
-
-    if (typeof this.engine[str] != 'function') return m;
-
-    for (var _len5 = arguments.length, args = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
-      args[_key5 - 2] = arguments[_key5];
-    }
-
-    return (_engine = this.engine)[str].apply(_engine, [m].concat(args));
-  };
-
-  return Base;
-}(_events.EventEmitter);
-
-exports.default = Base;
+// TODO: should we have different telemetry for classic/passwordless?
+// TODO: should we set telemetry info before each request?
+// TODO: should we inject styles here?
 
 
 /***/ }),
-/* 168 */
+/* 179 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -20155,7 +21964,7 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 169 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20226,7 +22035,7 @@ function atom(state) {
 
 
 /***/ }),
-/* 170 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20239,15 +22048,15 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(32);
+var _reactDom = __webpack_require__(35);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _CSSCore = __webpack_require__(85);
+var _CSSCore = __webpack_require__(96);
 
 var _CSSCore2 = _interopRequireDefault(_CSSCore);
 
-var _container = __webpack_require__(86);
+var _container = __webpack_require__(97);
 
 var _container2 = _interopRequireDefault(_container);
 
@@ -20348,10 +22157,10 @@ var remove = exports.remove = function remove() {
   return renderer.remove.apply(renderer, arguments);
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 171 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20364,13 +22173,13 @@ var remove = exports.remove = function remove() {
 
 
 
-var emptyFunction = __webpack_require__(51);
-var invariant = __webpack_require__(36);
-var warning = __webpack_require__(87);
-var assign = __webpack_require__(172);
+var emptyFunction = __webpack_require__(58);
+var invariant = __webpack_require__(38);
+var warning = __webpack_require__(98);
+var assign = __webpack_require__(183);
 
-var ReactPropTypesSecret = __webpack_require__(52);
-var checkPropTypes = __webpack_require__(173);
+var ReactPropTypesSecret = __webpack_require__(59);
+var checkPropTypes = __webpack_require__(184);
 
 module.exports = function(isValidElement, throwOnDirectAccess) {
   /* global Symbol */
@@ -20898,10 +22707,10 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
   return ReactPropTypes;
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 172 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20998,7 +22807,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 
 /***/ }),
-/* 173 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21012,9 +22821,9 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 
 if (process.env.NODE_ENV !== 'production') {
-  var invariant = __webpack_require__(36);
-  var warning = __webpack_require__(87);
-  var ReactPropTypesSecret = __webpack_require__(52);
+  var invariant = __webpack_require__(38);
+  var warning = __webpack_require__(98);
+  var ReactPropTypesSecret = __webpack_require__(59);
   var loggedTypeFailures = {};
 }
 
@@ -21062,10 +22871,10 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 
 module.exports = checkPropTypes;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 174 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21078,9 +22887,9 @@ module.exports = checkPropTypes;
 
 
 
-var emptyFunction = __webpack_require__(51);
-var invariant = __webpack_require__(36);
-var ReactPropTypesSecret = __webpack_require__(52);
+var emptyFunction = __webpack_require__(58);
+var invariant = __webpack_require__(38);
+var ReactPropTypesSecret = __webpack_require__(59);
 
 module.exports = function() {
   function shim(props, propName, componentName, location, propFullName, secret) {
@@ -21130,7 +22939,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 175 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21148,17 +22957,17 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(32);
+var _reactDom = __webpack_require__(35);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactTransitionGroup = __webpack_require__(176);
+var _reactTransitionGroup = __webpack_require__(187);
 
-var _multisize_slide = __webpack_require__(183);
+var _multisize_slide = __webpack_require__(194);
 
 var _multisize_slide2 = _interopRequireDefault(_multisize_slide);
 
-var _global_message = __webpack_require__(184);
+var _global_message = __webpack_require__(195);
 
 var _global_message2 = _interopRequireDefault(_global_message);
 
@@ -21166,7 +22975,7 @@ var _index = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index);
 
-var _header = __webpack_require__(277);
+var _header = __webpack_require__(282);
 
 var _header2 = _interopRequireDefault(_header);
 
@@ -21205,6 +23014,12 @@ var SubmitButton = function (_React$Component) {
       l.emitEvent(model, 'signin submit');
     } else if (screenName === 'forgotPassword') {
       l.emitEvent(model, 'forgot_password submit');
+    } else if (screenName === 'socialOrEmail') {
+      l.emitEvent(model, 'socialOrEmail submit');
+    } else if (screenName === 'socialOrPhoneNumber') {
+      l.emitEvent(model, 'socialOrPhoneNumber submit');
+    } else if (screenName === 'vcode') {
+      l.emitEvent(model, 'vcode submit');
     }
 
     if (this.props.onSubmit) {
@@ -21401,6 +23216,7 @@ var Chrome = function (_React$Component2) {
         contentProps = _props5.contentProps,
         disableSubmitButton = _props5.disableSubmitButton,
         error = _props5.error,
+        info = _props5.info,
         isSubmitting = _props5.isSubmitting,
         logo = _props5.logo,
         primaryColor = _props5.primaryColor,
@@ -21454,6 +23270,12 @@ var Chrome = function (_React$Component2) {
       type: 'success',
       scrollIntoView: scrollGlobalMessagesIntoView
     }) : null;
+    var globalInfo = info ? _react2.default.createElement(_global_message2.default, {
+      key: 'global-info',
+      message: wrapGlobalMessage(info),
+      type: 'info',
+      scrollIntoView: scrollGlobalMessagesIntoView
+    }) : null;
 
     var Content = contentComponent;
 
@@ -21482,7 +23304,8 @@ var Chrome = function (_React$Component2) {
             'div',
             null,
             globalSuccess,
-            globalError
+            globalError,
+            globalInfo
           )
         )
       ),
@@ -21572,6 +23395,7 @@ Chrome.propTypes = {
   contentProps: _propTypes2.default.object.isRequired,
   disableSubmitButton: _propTypes2.default.bool.isRequired,
   error: _propTypes2.default.node,
+  info: _propTypes2.default.node,
   isSubmitting: _propTypes2.default.bool.isRequired,
   logo: _propTypes2.default.string.isRequired,
   primaryColor: _propTypes2.default.string.isRequired,
@@ -21592,24 +23416,24 @@ Chrome.defaultProps = {
   scrollGlobalMessagesIntoView: true
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 176 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _CSSTransition = __webpack_require__(177);
+var _CSSTransition = __webpack_require__(188);
 
 var _CSSTransition2 = _interopRequireDefault(_CSSTransition);
 
-var _TransitionGroup = __webpack_require__(181);
+var _TransitionGroup = __webpack_require__(192);
 
 var _TransitionGroup2 = _interopRequireDefault(_TransitionGroup);
 
-var _Transition = __webpack_require__(88);
+var _Transition = __webpack_require__(99);
 
 var _Transition2 = _interopRequireDefault(_Transition);
 
@@ -21622,7 +23446,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 177 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21636,11 +23460,11 @@ var _propTypes = __webpack_require__(2);
 
 var PropTypes = _interopRequireWildcard(_propTypes);
 
-var _addClass = __webpack_require__(178);
+var _addClass = __webpack_require__(189);
 
 var _addClass2 = _interopRequireDefault(_addClass);
 
-var _removeClass = __webpack_require__(180);
+var _removeClass = __webpack_require__(191);
 
 var _removeClass2 = _interopRequireDefault(_removeClass);
 
@@ -21648,11 +23472,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Transition = __webpack_require__(88);
+var _Transition = __webpack_require__(99);
 
 var _Transition2 = _interopRequireDefault(_Transition);
 
-var _PropTypes = __webpack_require__(89);
+var _PropTypes = __webpack_require__(100);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21937,10 +23761,10 @@ CSSTransition.propTypes = process.env.NODE_ENV !== "production" ? propTypes : {}
 
 exports.default = CSSTransition;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 178 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21951,7 +23775,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = addClass;
 
-var _hasClass = __webpack_require__(179);
+var _hasClass = __webpack_require__(190);
 
 var _hasClass2 = _interopRequireDefault(_hasClass);
 
@@ -21963,7 +23787,7 @@ function addClass(element, className) {
 module.exports = exports['default'];
 
 /***/ }),
-/* 179 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21979,7 +23803,7 @@ function hasClass(element, className) {
 module.exports = exports["default"];
 
 /***/ }),
-/* 180 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21994,7 +23818,7 @@ module.exports = function removeClass(element, className) {
 };
 
 /***/ }),
-/* 181 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22012,7 +23836,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _ChildMapping = __webpack_require__(182);
+var _ChildMapping = __webpack_require__(193);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22288,10 +24112,10 @@ TransitionGroup.defaultProps = defaultProps;
 
 exports.default = TransitionGroup;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 182 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22386,7 +24210,7 @@ function mergeChildMappings(prev, next) {
 }
 
 /***/ }),
-/* 183 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22402,11 +24226,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(32);
+var _reactDom = __webpack_require__(35);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _CSSCore = __webpack_require__(85);
+var _CSSCore = __webpack_require__(96);
 
 var _CSSCore2 = _interopRequireDefault(_CSSCore);
 
@@ -22654,7 +24478,7 @@ Child.propTypes = {
 
 
 /***/ }),
-/* 184 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22729,7 +24553,7 @@ exports.default = GlobalMessage;
 
 GlobalMessage.propTypes = {
   message: _propTypes2.default.node.isRequired,
-  type: _propTypes2.default.oneOf(['error', 'success']).isRequired,
+  type: _propTypes2.default.oneOf(['error', 'success', 'info']).isRequired,
   scrollIntoView: _propTypes2.default.bool
 };
 
@@ -22739,7 +24563,7 @@ GlobalMessage.defaultProps = {
 
 
 /***/ }),
-/* 185 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22753,10 +24577,10 @@ function parseUrl(str) {
   return parser;
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 186 */
+/* 197 */
 /***/ (function(module, exports) {
 
 module.exports = function isBuffer(arg) {
@@ -22767,7 +24591,7 @@ module.exports = function isBuffer(arg) {
 }
 
 /***/ }),
-/* 187 */
+/* 198 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -22796,7 +24620,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 188 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22921,7 +24745,7 @@ exports.default = {
 
 
 /***/ }),
-/* 189 */
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -23090,7 +24914,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
 /***/ }),
-/* 190 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23099,7 +24923,7 @@ Emitter.prototype.hasListeners = function(event){
 /**
  * Module of mixed-in functions shared between node and client code
  */
-var isObject = __webpack_require__(92);
+var isObject = __webpack_require__(102);
 
 /**
  * Expose `RequestBase`.
@@ -23791,7 +25615,7 @@ RequestBase.prototype._setTimeouts = function() {
 
 
 /***/ }),
-/* 191 */
+/* 202 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23801,7 +25625,7 @@ RequestBase.prototype._setTimeouts = function() {
  * Module dependencies.
  */
 
-var utils = __webpack_require__(192);
+var utils = __webpack_require__(203);
 
 /**
  * Expose `ResponseBase`.
@@ -23932,7 +25756,7 @@ ResponseBase.prototype._setStatusProperties = function(status){
 
 
 /***/ }),
-/* 192 */
+/* 203 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24010,7 +25834,7 @@ exports.cleanHeader = function(header, changesOrigin){
 
 
 /***/ }),
-/* 193 */
+/* 204 */
 /***/ (function(module, exports) {
 
 function Agent() {
@@ -24036,7 +25860,7 @@ module.exports = Agent;
 
 
 /***/ }),
-/* 194 */
+/* 205 */
 /***/ (function(module, exports) {
 
 /* eslint-disable no-continue */
@@ -24081,7 +25905,176 @@ module.exports = {
 
 
 /***/ }),
-/* 195 */
+/* 206 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var windowHandler = __webpack_require__(8);
+var DummyStorage = __webpack_require__(207);
+var CookieStorage = __webpack_require__(208);
+var Warn = __webpack_require__(30);
+
+function StorageHandler() {
+  this.warn = new Warn({});
+  this.storage = windowHandler.getWindow().localStorage || new CookieStorage();
+}
+
+StorageHandler.prototype.failover = function() {
+  if (this.storage instanceof DummyStorage) {
+    this.warn.warning('DummyStorage: ignore failover');
+    return;
+  } else if (this.storage instanceof CookieStorage) {
+    this.warn.warning('CookieStorage: failing over DummyStorage');
+    this.storage = new DummyStorage();
+  } else {
+    this.warn.warning('LocalStorage: failing over CookieStorage');
+    this.storage = new CookieStorage();
+  }
+};
+
+StorageHandler.prototype.getItem = function(key) {
+  try {
+    return this.storage.getItem(key);
+  } catch (e) {
+    this.warn.warning(e);
+    this.failover();
+    return this.getItem(key);
+  }
+};
+
+StorageHandler.prototype.removeItem = function(key) {
+  try {
+    return this.storage.removeItem(key);
+  } catch (e) {
+    this.warn.warning(e);
+    this.failover();
+    return this.removeItem(key);
+  }
+};
+
+StorageHandler.prototype.setItem = function(key, value) {
+  try {
+    return this.storage.setItem(key, value);
+  } catch (e) {
+    this.warn.warning(e);
+    this.failover();
+    return this.setItem(key, value);
+  }
+};
+
+module.exports = StorageHandler;
+
+
+/***/ }),
+/* 207 */
+/***/ (function(module, exports) {
+
+function DummyStorage() {}
+
+DummyStorage.prototype.getItem = function() {
+  return null;
+};
+
+DummyStorage.prototype.removeItem = function() {};
+
+DummyStorage.prototype.setItem = function() {};
+
+module.exports = DummyStorage;
+
+
+/***/ }),
+/* 208 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var cookies = __webpack_require__(209);
+
+function CookieStorage() {}
+
+CookieStorage.prototype.getItem = function(key) {
+  return cookies.read(key);
+};
+
+CookieStorage.prototype.removeItem = function(key) {
+  cookies.erase(key);
+};
+
+CookieStorage.prototype.setItem = function(key, value) {
+  cookies.create(key, value, 1);
+};
+
+module.exports = CookieStorage;
+
+
+/***/ }),
+/* 209 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var windowHandler = __webpack_require__(8);
+var base64Url = __webpack_require__(103);
+
+function create(name, value, days) {
+  var date;
+  var expires;
+
+  if (
+    windowHandler.getDocument().cookie === undefined ||
+    windowHandler.getDocument().cookie === null
+  ) {
+    throw new Error('cookie storage not available');
+  }
+
+  if (days) {
+    var timeToExpire = days * 24 * 60 * 60 * 1000;
+    date = new Date();
+    date.setTime(date.getTime() + timeToExpire);
+    expires = '; expires=' + date.toGMTString();
+  } else {
+    expires = '';
+  }
+
+  windowHandler.getDocument().cookie = name + '=' + base64Url.encode(value) + expires + '; path=/';
+}
+
+function read(name) {
+  var i;
+  var cookie;
+  var cookies;
+  var nameEQ = name + '=';
+
+  if (
+    windowHandler.getDocument().cookie === undefined ||
+    windowHandler.getDocument().cookie === null
+  ) {
+    throw new Error('cookie storage not available');
+  }
+
+  cookies = windowHandler.getDocument().cookie.split(';');
+
+  for (i = 0; i < cookies.length; i++) {
+    cookie = cookies[i];
+    while (cookie.charAt(0) === ' ') {
+      cookie = cookie.substring(1, cookie.length);
+    }
+    if (cookie.indexOf(nameEQ) === 0) {
+      return base64Url.decode(cookie.substring(nameEQ.length, cookie.length));
+    }
+  }
+
+  return null;
+}
+
+function erase(name) {
+  create(name, '', -1);
+}
+
+module.exports = {
+  create: create,
+  read: read,
+  erase: erase
+};
+
+
+/***/ }),
+/* 210 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var objectHelper = __webpack_require__(10);
@@ -24170,15 +26163,15 @@ module.exports = {
 
 
 /***/ }),
-/* 196 */
+/* 211 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var urljoin = __webpack_require__(9);
+var urljoin = __webpack_require__(12);
 
 var objectHelper = __webpack_require__(10);
-var assert = __webpack_require__(20);
-var qs = __webpack_require__(17);
-var responseHandler = __webpack_require__(27);
+var assert = __webpack_require__(22);
+var qs = __webpack_require__(23);
+var responseHandler = __webpack_require__(26);
 
 function PasswordlessAuthentication(request, options) {
   this.baseOptions = options;
@@ -24364,14 +26357,14 @@ module.exports = PasswordlessAuthentication;
 
 
 /***/ }),
-/* 197 */
+/* 212 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var urljoin = __webpack_require__(9);
+var urljoin = __webpack_require__(12);
 
 var objectHelper = __webpack_require__(10);
-var assert = __webpack_require__(20);
-var responseHandler = __webpack_require__(27);
+var assert = __webpack_require__(22);
+var responseHandler = __webpack_require__(26);
 
 function DBConnection(request, options) {
   this.baseOptions = options;
@@ -24441,7 +26434,7 @@ DBConnection.prototype.signup = function(options, cb) {
  *
  * @method changePassword
  * @param {Object} options
- * @param {String} options.email address where the user will recieve the change password email. It should match the user's email in Auth0
+ * @param {String} options.email address where the user will receive the change password email. It should match the user's email in Auth0
  * @param {String} options.connection name of the connection where the user was created
  * @param {changePasswordCallback} cb
  * @see   {@link https://auth0.com/docs/api/authentication#change-password}
@@ -24473,786 +26466,261 @@ module.exports = DBConnection;
 
 
 /***/ }),
-/* 198 */
+/* 213 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var urljoin = __webpack_require__(9);
-
-var RequestBuilder = __webpack_require__(38);
-var assert = __webpack_require__(20);
-var responseHandler = __webpack_require__(27);
+var RSAVerifier = __webpack_require__(214);
+var base64 = __webpack_require__(109);
+var jwks = __webpack_require__(218);
+var error = __webpack_require__(219);
+var DummyCache = __webpack_require__(220);
+var supportedAlgs = ['RS256'];
 
 /**
- * Auth0 Management API Client (methods allowed to be called from the browser only)
+ * Creates a new id_token verifier
  * @constructor
- * @param {Object} options
- * @param {Object} options.domain your Auth0 acount domain
- * @param {Object} options.token a valid API token
+ * @param {Object} parameters
+ * @param {String} parameters.issuer name of the issuer of the token
+ * that should match the `iss` claim in the id_token
+ * @param {String} parameters.audience identifies the recipients that the JWT is intended for
+ * and should match the `aud` claim
+ * @param {Object} [parameters.jwksCache] cache for JSON Web Token Keys. By default it has no cache
+ * @param {String} [parameters.expectedAlg='RS256'] algorithm in which the id_token was signed
+ * and will be used to validate
+ * @param {number} [parameters.leeway=0] number of seconds that the clock can be out of sync
+ * while validating expiration of the id_token
  */
-function Management(options) {
-  /* eslint-disable */
-  assert.check(
-    options,
-    { type: 'object', message: 'options parameter is not valid' },
-    {
-      domain: { type: 'string', message: 'domain option is required' },
-      token: { type: 'string', message: 'token option is required' },
-      _sendTelemetry: {
-        optional: true,
-        type: 'boolean',
-        message: '_sendTelemetry option is not valid'
-      },
-      _telemetryInfo: {
-        optional: true,
-        type: 'object',
-        message: '_telemetryInfo option is not valid'
-      }
-    }
-  );
-  /* eslint-enable */
+function IdTokenVerifier(parameters) {
+  var options = parameters || {};
 
-  this.baseOptions = options;
+  this.jwksCache = options.jwksCache || new DummyCache();
+  this.expectedAlg = options.expectedAlg || 'RS256';
+  this.issuer = options.issuer;
+  this.audience = options.audience;
+  this.leeway = options.leeway || 0;
+  this.__disableExpirationCheck = options.__disableExpirationCheck || false;
 
-  this.baseOptions.headers = { Authorization: 'Bearer ' + this.baseOptions.token };
+  if (this.leeway < 0 || this.leeway > 60) {
+    throw new error.ConfigurationError('The leeway should be positive and lower than a minute.');
+  }
 
-  this.request = new RequestBuilder(this.baseOptions);
-  this.baseOptions.rootUrl = urljoin('https://' + this.baseOptions.domain, 'api', 'v2');
+  if (supportedAlgs.indexOf(this.expectedAlg) === -1) {
+    throw new error.ConfigurationError('Algorithm ' + this.expectedAlg +
+      ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])');
+  }
 }
 
 /**
- * @callback userCallback
- * @param {Error} [err] failure reason for the failed request to Management API
- * @param {Object} [result] user profile
+ * @callback verifyCallback
+ * @param {Error} [err] error returned if the verify cannot be performed
+ * @param {boolean} [status] if the token is valid or not
  */
 
 /**
- * Returns the user profile
+ * Verifies an id_token
  *
- * @method getUser
- * @param {String} userId identifier of the user to retrieve
- * @param {userCallback} cb
- * @see https://auth0.com/docs/api/management/v2#!/Users/get_users_by_id
+ * It will validate:
+ * - signature according to the algorithm configured in the verifier.
+ * - if nonce is present and matches the one provided
+ * - if `iss` and `aud` claims matches the configured issuer and audience
+ * - if token is not expired and valid (if the `nbf` claim is in the past)
+ *
+ * @method verify
+ * @param {String} token id_token to verify
+ * @param {String} [nonce] nonce value that should match the one in the id_token claims
+ * @param {verifyCallback} cb callback used to notify the results of the validation
  */
-Management.prototype.getUser = function(userId, cb) {
-  var url;
+IdTokenVerifier.prototype.verify = function (token, nonce, cb) {
+  var jwt = this.decode(token);
 
-  assert.check(userId, { type: 'string', message: 'userId parameter is not valid' });
-  assert.check(cb, { type: 'function', message: 'cb parameter is not valid' });
-
-  url = urljoin(this.baseOptions.rootUrl, 'users', userId);
-
-  return this.request.get(url).end(responseHandler(cb, { ignoreCasing: true }));
-};
-
-/**
- * Updates the user metdata. It will patch the user metdata with the attributes sent.
- *
- *
- * @method patchUserMetadata
- * @param {String} userId
- * @param {Object} userMetadata
- * @param {userCallback} cb
- * @see   {@link https://auth0.com/docs/api/management/v2#!/Users/patch_users_by_id}
- */
-Management.prototype.patchUserMetadata = function(userId, userMetadata, cb) {
-  var url;
-
-  assert.check(userId, { type: 'string', message: 'userId parameter is not valid' });
-  assert.check(userMetadata, { type: 'object', message: 'userMetadata parameter is not valid' });
-  assert.check(cb, { type: 'function', message: 'cb parameter is not valid' });
-
-  url = urljoin(this.baseOptions.rootUrl, 'users', userId);
-
-  return this.request
-    .patch(url)
-    .send({ user_metadata: userMetadata })
-    .end(responseHandler(cb, { ignoreCasing: true }));
-};
-
-/**
- * Link two users
- *
- * @method linkUser
- * @param {String} userId
- * @param {String} secondaryUserToken
- * @param {userCallback} cb
- * @see   {@link https://auth0.com/docs/api/management/v2#!/Users/post_identities}
- */
-Management.prototype.linkUser = function(userId, secondaryUserToken, cb) {
-  var url;
-  /* eslint-disable */
-  assert.check(userId, { type: 'string', message: 'userId parameter is not valid' });
-  assert.check(secondaryUserToken, {
-    type: 'string',
-    message: 'secondaryUserToken parameter is not valid'
-  });
-  assert.check(cb, { type: 'function', message: 'cb parameter is not valid' });
-  /* eslint-enable */
-
-  url = urljoin(this.baseOptions.rootUrl, 'users', userId, 'identities');
-
-  return this.request
-    .post(url)
-    .send({ link_with: secondaryUserToken })
-    .end(responseHandler(cb, { ignoreCasing: true }));
-};
-
-module.exports = Management;
-
-
-/***/ }),
-/* 199 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var IdTokenVerifier = __webpack_require__(96);
-
-var assert = __webpack_require__(20);
-var error = __webpack_require__(95);
-var qs = __webpack_require__(17);
-var PluginHandler = __webpack_require__(207);
-var windowHelper = __webpack_require__(11);
-var objectHelper = __webpack_require__(10);
-var TransactionManager = __webpack_require__(57);
-var Authentication = __webpack_require__(91);
-var Redirect = __webpack_require__(214);
-var Popup = __webpack_require__(216);
-var SilentAuthenticationHandler = __webpack_require__(220);
-var CrossOriginAuthentication = __webpack_require__(221);
-var WebMessageHandler = __webpack_require__(222);
-
-/**
- * Handles all the browser's AuthN/AuthZ flows
- * @constructor
- * @param {Object} options
- * @param {String} options.domain your Auth0 domain
- * @param {String} options.clientID your Auth0 client identifier obtained when creating the client in the Auth0 Dashboard
- * @param {String} [options.redirectUri] url that the Auth0 will redirect after Auth with the Authorization Response
- * @param {String} [options.responseType] type of the response used by OAuth 2.0 flow. It can be any space separated list of the values `code`, `token`, `id_token`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0}
- * @param {String} [options.responseMode] how the Auth response is encoded and redirected back to the client. Supported values are `query`, `fragment` and `form_post`. The `query` value is only supported when `responseType` is `code`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html#ResponseModes}
- * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`
- * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
- * @param {Array} [options.plugins]
- * @param {Number} [options._timesToRetryFailedRequests] Number of times to retry a failed request, according to {@link https://github.com/visionmedia/superagent/blob/master/lib/should-retry.js}
- * @see {@link https://auth0.com/docs/api/authentication}
- */
-function WebAuth(options) {
-  /* eslint-disable */
-  assert.check(
-    options,
-    { type: 'object', message: 'options parameter is not valid' },
-    {
-      domain: { type: 'string', message: 'domain option is required' },
-      clientID: { type: 'string', message: 'clientID option is required' },
-      responseType: { optional: true, type: 'string', message: 'responseType is not valid' },
-      responseMode: { optional: true, type: 'string', message: 'responseMode is not valid' },
-      redirectUri: { optional: true, type: 'string', message: 'redirectUri is not valid' },
-      scope: { optional: true, type: 'string', message: 'scope is not valid' },
-      audience: { optional: true, type: 'string', message: 'audience is not valid' },
-      popupOrigin: { optional: true, type: 'string', message: 'popupOrigin is not valid' },
-      leeway: { optional: true, type: 'number', message: 'leeway is not valid' },
-      plugins: { optional: true, type: 'array', message: 'plugins is not valid' },
-      _disableDeprecationWarnings: {
-        optional: true,
-        type: 'boolean',
-        message: '_disableDeprecationWarnings option is not valid'
-      },
-      _sendTelemetry: {
-        optional: true,
-        type: 'boolean',
-        message: '_sendTelemetry option is not valid'
-      },
-      _telemetryInfo: {
-        optional: true,
-        type: 'object',
-        message: '_telemetryInfo option is not valid'
-      },
-      _timesToRetryFailedRequests: {
-        optional: true,
-        type: 'number',
-        message: '_timesToRetryFailedRequests option is not valid'
-      }
-    }
-  );
-
-  if (options.overrides) {
-    assert.check(
-      options.overrides,
-      { type: 'object', message: 'overrides option is not valid' },
-      {
-        __tenant: { type: 'string', message: '__tenant option is required' },
-        __token_issuer: { type: 'string', message: '__token_issuer option is required' }
-      }
-    );
-  }
-  /* eslint-enable */
-
-  this.baseOptions = options;
-  this.baseOptions.plugins = new PluginHandler(this, this.baseOptions.plugins || []);
-
-  this.baseOptions._sendTelemetry = this.baseOptions._sendTelemetry === false
-    ? this.baseOptions._sendTelemetry
-    : true;
-
-  this.baseOptions._timesToRetryFailedRequests = options._timesToRetryFailedRequests
-    ? parseInt(options._timesToRetryFailedRequests, 0)
-    : 0;
-
-  this.baseOptions.tenant =
-    (this.baseOptions.overrides && this.baseOptions.overrides.__tenant) ||
-    this.baseOptions.domain.split('.')[0];
-
-  this.baseOptions.token_issuer =
-    (this.baseOptions.overrides && this.baseOptions.overrides.__token_issuer) ||
-    'https://' + this.baseOptions.domain + '/';
-
-  this.transactionManager = new TransactionManager(this.baseOptions.transaction);
-
-  this.client = new Authentication(this.baseOptions);
-  this.redirect = new Redirect(this.client, this.baseOptions);
-  this.popup = new Popup(this, this.baseOptions);
-  this.crossOriginAuthentication = new CrossOriginAuthentication(this, this.baseOptions);
-  this.webMessageHandler = new WebMessageHandler(this);
-}
-
-/**
- * Parse the url hash and extract the Auth response from a Auth flow started with {@link authorize}
- *
- * Only validates id_tokens signed by Auth0 using the RS256 algorithm using the public key exposed
- * by the `/.well-known/jwks.json` endpoint of your account.
- * Tokens signed with other algorithms, e.g. HS256 will not be accepted.
- *
- * @method parseHash
- * @param {Object} options
- * @param {String} options.hash the url hash. If not provided it will extract from window.location.hash
- * @param {String} [options.state] value originally sent in `state` parameter to {@link authorize} to mitigate XSRF
- * @param {String} [options.nonce] value originally sent in `nonce` parameter to {@link authorize} to prevent replay attacks
- * @param {authorizeCallback} cb
- */
-WebAuth.prototype.parseHash = function(options, cb) {
-  var parsedQs;
-  var err;
-
-  if (!cb && typeof options === 'function') {
-    cb = options;
-    options = {};
-  } else {
-    options = options || {};
+  if (jwt instanceof Error) {
+    return cb(jwt, false);
   }
 
-  var _window = windowHelper.getWindow();
+  /* eslint-disable vars-on-top */
+  var headAndPayload = jwt.encoded.header + '.' + jwt.encoded.payload;
+  var signature = base64.decodeToHEX(jwt.encoded.signature);
 
-  var hashStr = options.hash === undefined ? _window.location.hash : options.hash;
-  hashStr = hashStr.replace(/^#?\/?/, '');
+  var alg = jwt.header.alg;
+  var kid = jwt.header.kid;
 
-  parsedQs = qs.parse(hashStr);
+  var aud = jwt.payload.aud;
+  var iss = jwt.payload.iss;
+  var exp = jwt.payload.exp;
+  var nbf = jwt.payload.nbf;
+  var tnonce = jwt.payload.nonce || null;
+  /* eslint-enable vars-on-top */
 
-  if (parsedQs.hasOwnProperty('error')) {
-    err = error.buildResponse(parsedQs.error, parsedQs.error_description);
-
-    if (parsedQs.state) {
-      err.state = parsedQs.state;
-    }
-
-    return cb(err);
+  if (this.issuer !== iss) {
+    return cb(new error.TokenValidationError('Issuer ' + iss + ' is not valid.'), false);
   }
 
-  if (
-    !parsedQs.hasOwnProperty('access_token') &&
-    !parsedQs.hasOwnProperty('id_token') &&
-    !parsedQs.hasOwnProperty('refresh_token')
-  ) {
-    return cb(null, null);
-  }
-  return this.validateAuthenticationResponse(options, parsedQs, cb);
-};
-
-/**
- * Validates an Auth response from a Auth flow started with {@link authorize}
- *
- * Only validates id_tokens signed by Auth0 using the RS256 algorithm using the public key exposed
- * by the `/.well-known/jwks.json` endpoint of your account.
- * Tokens signed with other algorithms, e.g. HS256 will not be accepted.
- *
- * @method validateAuthenticationResponse
- * @param {Object} options
- * @param {String} options.hash the url hash. If not provided it will extract from window.location.hash
- * @param {String} [options.state] value originally sent in `state` parameter to {@link authorize} to mitigate XSRF
- * @param {String} [options.nonce] value originally sent in `nonce` parameter to {@link authorize} to prevent replay attacks
- * @param {authorizeCallback} cb
- */
-WebAuth.prototype.validateAuthenticationResponse = function(options, parsedHash, cb) {
-  var _this = this;
-  var state = parsedHash.state;
-  var transaction = this.transactionManager.getStoredTransaction(state);
-  var transactionState = options.state || (transaction && transaction.state) || null;
-  var transactionStateMatchesState = transactionState === state;
-  if (state && !transactionStateMatchesState) {
-    return cb({
-      error: 'invalid_token',
-      errorDescription: '`state` does not match.'
-    });
-  }
-  var transactionNonce = options.nonce || (transaction && transaction.nonce) || null;
-
-  var appState = options.state || (transaction && transaction.appState) || null;
-
-  if (!parsedHash.id_token) {
-    return cb(null, buildParseHashResponse(parsedHash, appState, null));
-  }
-  return this.validateToken(parsedHash.id_token, transactionNonce, function(
-    validationError,
-    payload
-  ) {
-    if (!validationError) {
-      return cb(null, buildParseHashResponse(parsedHash, appState, payload));
-    }
-    if (validationError.error !== 'invalid_token') {
-      return cb(validationError);
-    }
-    // if it's an invalid_token error, decode the token
-    var decodedToken = new IdTokenVerifier().decode(parsedHash.id_token);
-    // if the alg is not HS256, return the raw error
-    if (decodedToken.header.alg !== 'HS256') {
-      return cb(validationError);
-    }
-    // if the alg is HS256, use the /userinfo endpoint to build the payload
-    return _this.client.userInfo(parsedHash.access_token, function(errUserInfo, profile) {
-      // if the /userinfo request fails, use the validationError instead
-      if (errUserInfo) {
-        return cb(validationError);
-      }
-      return cb(null, buildParseHashResponse(parsedHash, appState, profile));
-    });
-  });
-};
-
-function buildParseHashResponse(qsParams, appState, token) {
-  return {
-    accessToken: qsParams.access_token || null,
-    idToken: qsParams.id_token || null,
-    idTokenPayload: token || null,
-    appState: appState || null,
-    refreshToken: qsParams.refresh_token || null,
-    state: qsParams.state || null,
-    expiresIn: qsParams.expires_in ? parseInt(qsParams.expires_in, 10) : null,
-    tokenType: qsParams.token_type || null,
-    scope: qsParams.scope || null
-  };
-}
-
-/**
- * @callback validateTokenCallback
- * @param {Error} [err] error returned by while validating the token
- * @param {Object} [payload] claims stored in the token
- */
-
-/**
- * Decodes the a JWT and verifies its nonce value
- *
- * @method validateToken
- * @private
- * @param {String} token
- * @param {String} nonce
- * @param {validateTokenCallback} cb
- */
-WebAuth.prototype.validateToken = function(token, nonce, cb) {
-  var verifier = new IdTokenVerifier({
-    issuer: this.baseOptions.token_issuer,
-    audience: this.baseOptions.clientID,
-    leeway: this.baseOptions.leeway || 0,
-    __disableExpirationCheck: this.baseOptions.__disableExpirationCheck
-  });
-
-  verifier.verify(token, nonce, function(err, payload) {
-    if (err) {
-      return cb(error.invalidJwt(err.message));
-    }
-
-    cb(null, payload);
-  });
-};
-
-/**
- * Executes a silent authentication transaction under the hood in order to fetch a new tokens for the current session.
- * This method requires that all Auth is performed with {@link authorize}
- * Watch out! If you're not using the hosted login page to do social logins, you have to use your own [social connection keys](https://manage.auth0.com/#/connections/social). If you use Auth0's dev keys, you'll always get `login_required` as an error when calling this method.
- *
- * @method renewAuth
- * @param {Object} options
- * @param {String} [options.domain] your Auth0 domain
- * @param {String} [options.clientID] your Auth0 client identifier obtained when creating the client in the Auth0 Dashboard
- * @param {String} [options.redirectUri] url that the Auth0 will redirect after Auth with the Authorization Response
- * @param {String} [options.responseType] type of the response used by OAuth 2.0 flow. It can be any space separated list of the values `code`, `token`, `id_token`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0}
- * @param {String} [options.responseMode] how the Auth response is encoded and redirected back to the client. Supported values are `query`, `fragment` and `form_post`. The `query` value is only supported when `responseType` is `code`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html#ResponseModes}
- * @param {String} [options.state] value used to mitigate XSRF attacks. {@link https://auth0.com/docs/protocols/oauth2/oauth-state}
- * @param {String} [options.nonce] value used to mitigate replay attacks when using Implicit Grant. {@link https://auth0.com/docs/api-auth/tutorials/nonce}
- * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`
- * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
- * @param {String} [options.postMessageDataType] identifier data type to look for in postMessage event data, where events are initiated from silent callback urls, before accepting a message event is the event expected. A value of false means any postMessage event will trigger a callback.
- * @param {String} [options.postMessageOrigin] origin of redirectUri to expect postMessage response from.  Defaults to the origin of the receiving window. Only used if usePostMessage is truthy.
- * @param {String} [options.timeout] value in milliseconds used to timeout when the `/authorize` call is failing as part of the silent authentication with postmessage enabled due to a configuration.
- * @see {@link https://auth0.com/docs/api/authentication#authorize-client}
- */
-WebAuth.prototype.renewAuth = function(options, cb) {
-  var handler;
-  var usePostMessage = !!options.usePostMessage;
-  var postMessageDataType = options.postMessageDataType || false;
-  var postMessageOrigin = options.postMessageOrigin || windowHelper.getWindow().origin;
-  var timeout = options.timeout;
-  var _this = this;
-
-  var params = objectHelper
-    .merge(this.baseOptions, [
-      'clientID',
-      'redirectUri',
-      'responseType',
-      'scope',
-      'audience',
-      '_csrf',
-      'state',
-      '_intstate',
-      'nonce'
-    ])
-    .with(options);
-
-  params.responseType = params.responseType || 'token';
-  params.responseMode = params.responseMode || 'fragment';
-  params = this.transactionManager.process(params);
-
-  assert.check(params, { type: 'object', message: 'options parameter is not valid' });
-  assert.check(cb, { type: 'function', message: 'cb parameter is not valid' });
-
-  params.prompt = 'none';
-
-  params = objectHelper.blacklist(params, [
-    'usePostMessage',
-    'tenant',
-    'postMessageDataType',
-    'postMessageOrigin'
-  ]);
-
-  handler = SilentAuthenticationHandler.create({
-    authenticationUrl: this.client.buildAuthorizeUrl(params),
-    postMessageDataType: postMessageDataType,
-    postMessageOrigin: postMessageOrigin,
-    timeout: timeout
-  });
-
-  handler.login(usePostMessage, function(err, hash) {
-    if (typeof hash === 'object') {
-      // hash was already parsed, so we just return it.
-      // it's here to be backwards compatible and should be removed in the next major version.
-      return cb(err, hash);
-    }
-    _this.parseHash({ hash: hash }, cb);
-  });
-};
-
-/**
- * Renews an existing session on Auth0's servers using `response_mode=web_message`
- *
- * @method checkSession
- * @param {Object} options
- * @param {String} [options.domain] your Auth0 domain
- * @param {String} [options.clientID] your Auth0 client identifier obtained when creating the client in the Auth0 Dashboard
- * @param {String} [options.redirectUri] url that the Auth0 will redirect after Auth with the Authorization Response
- * @param {String} [options.responseType] type of the response used by OAuth 2.0 flow. It can be any space separated list of the values `code`, `token`, `id_token`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0}
- * @param {String} [options.state] value used to mitigate XSRF attacks. {@link https://auth0.com/docs/protocols/oauth2/oauth-state}
- * @param {String} [options.nonce] value used to mitigate replay attacks when using Implicit Grant. {@link https://auth0.com/docs/api-auth/tutorials/nonce}
- * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`
- * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
- * @param {String} [options.timeout] value in milliseconds used to timeout when the `/authorize` call is failing as part of the silent authentication with postmessage enabled due to a configuration.
- */
-WebAuth.prototype.checkSession = function(options, cb) {
-  var params = objectHelper
-    .merge(this.baseOptions, [
-      'clientID',
-      'redirectUri',
-      'responseType',
-      'scope',
-      'audience',
-      '_csrf',
-      'state',
-      '_intstate',
-      'nonce'
-    ])
-    .with(options);
-
-  if (!options.nonce) {
-    params = this.transactionManager.process(params);
+  if (this.audience !== aud) {
+    return cb(new error.TokenValidationError('Audience ' + aud + ' is not valid.'), false);
   }
 
-  assert.check(params, { type: 'object', message: 'options parameter is not valid' });
-  assert.check(cb, { type: 'function', message: 'cb parameter is not valid' });
+  if (this.expectedAlg !== alg) {
+    return cb(new error.TokenValidationError('Algorithm ' + alg +
+      ' is not supported. (Expected algs: [' + supportedAlgs.join(',') + '])'), false);
+  }
 
-  params = objectHelper.blacklist(params, ['usePostMessage', 'tenant', 'postMessageDataType']);
-  this.webMessageHandler.run(params, cb);
-};
+  if (tnonce !== nonce) {
+    return cb(new error.TokenValidationError('Nonce does not match.'), false);
+  }
 
-/**
- * Request an email with instruction to change a user's password
- *
- * @method changePassword
- * @param {Object} options
- * @param {String} options.email address where the user will recieve the change password email. It should match the user's email in Auth0
- * @param {String} options.connection name of the connection where the user was created
- * @param {changePasswordCallback} cb
- * @see   {@link https://auth0.com/docs/api/authentication#change-password}
- */
-WebAuth.prototype.changePassword = function(options, cb) {
-  return this.client.dbConnection.changePassword(options, cb);
-};
+  var expirationError = this.verifyExpAndNbf(exp, nbf); // eslint-disable-line vars-on-top
 
-/**
- * Starts a passwordless authentication transaction.
- *
- * @method passwordlessStart
- * @param {Object} options
- * @param {String} options.send what will be sent via email which could be `link` or `code`. For SMS `code` is the only one valud
- * @param {String} [options.phoneNumber] phone number where to send the `code`. This parameter is mutually exclusive with `email`
- * @param {String} [options.email] email where to send the `code` or `link`. This parameter is mutually exclusive with `phoneNumber`
- * @param {String} options.connection name of the passwordless connection
- * @param {Object} [options.authParams] additional Auth parameters when using `link`
- * @param {Function} cb
- * @see   {@link https://auth0.com/docs/api/authentication#passwordless}
- */
-WebAuth.prototype.passwordlessStart = function(options, cb) {
-  var authParams = objectHelper
-    .merge(this.baseOptions, [
-      'responseType',
-      'responseMode',
-      'redirectUri',
-      'scope',
-      'audience',
-      '_csrf',
-      'state',
-      '_intstate',
-      'nonce'
-    ])
-    .with(options.authParams);
+  if (expirationError) {
+    return cb(expirationError, false);
+  }
 
-  options.authParams = this.transactionManager.process(authParams);
-  return this.client.passwordless.start(options, cb);
-};
-
-/**
- * Creates a new user in a Auth0 Database connection
- *
- * @method signup
- * @param {Object} options
- * @param {String} options.email user email address
- * @param {String} options.password user password
- * @param {String} options.connection name of the connection where the user will be created
- * @param {signUpCallback} cb
- * @see   {@link https://auth0.com/docs/api/authentication#signup}
- */
-WebAuth.prototype.signup = function(options, cb) {
-  return this.client.dbConnection.signup(options, cb);
-};
-
-/**
- * Redirects to the hosted login page (`/authorize`) in order to start a new authN/authZ transaction.
- * After that, you'll have to use the {@link parseHash} function at the specified `redirectUri`.
- *
- * @method authorize
- * @param {Object} options
- * @param {String} [options.domain] your Auth0 domain
- * @param {String} [options.clientID] your Auth0 client identifier obtained when creating the client in the Auth0 Dashboard
- * @param {String} options.redirectUri url that the Auth0 will redirect after Auth with the Authorization Response
- * @param {String} options.responseType type of the response used by OAuth 2.0 flow. It can be any space separated list of the values `code`, `token`, `id_token`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0}
- * @param {String} [options.responseMode] how the Auth response is encoded and redirected back to the client. Supported values are `query`, `fragment` and `form_post`. The `query` value is only supported when `responseType` is `code`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html#ResponseModes}
- * @param {String} [options.state] value used to mitigate XSRF attacks. {@link https://auth0.com/docs/protocols/oauth2/oauth-state}
- * @param {String} [options.nonce] value used to mitigate replay attacks when using Implicit Grant. {@link https://auth0.com/docs/api-auth/tutorials/nonce}
- * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`
- * @param {String} [options.audience] identifier of the resource server who will consume the access token issued after Auth
- * @see {@link https://auth0.com/docs/api/authentication#authorize-client}
- */
-WebAuth.prototype.authorize = function(options) {
-  var params = objectHelper
-    .merge(this.baseOptions, [
-      'clientID',
-      'responseType',
-      'responseMode',
-      'redirectUri',
-      'scope',
-      'audience',
-      '_csrf',
-      'state',
-      '_intstate',
-      'nonce'
-    ])
-    .with(options);
-
-  assert.check(
-    params,
-    { type: 'object', message: 'options parameter is not valid' },
-    {
-      responseType: { type: 'string', message: 'responseType option is required' }
-    }
-  );
-
-  params = this.transactionManager.process(params);
-
-  windowHelper.redirect(this.client.buildAuthorizeUrl(params));
-};
-
-/**
- * Signs up a new user, automatically logs the user in after the signup and returns the user token.
- * The login will be done using /oauth/token with password-realm grant type.
- *
- * @method signupAndAuthorize
- * @param {Object} options
- * @param {String} options.email user email address
- * @param {String} options.password user password
- * @param {String} options.connection name of the connection where the user will be created
- * @param {tokenCallback} cb
- * @see   {@link https://auth0.com/docs/api/authentication#signup}
- * @see   {@link https://auth0.com/docs/api-auth/grant/password}
- */
-WebAuth.prototype.signupAndAuthorize = function(options, cb) {
-  var _this = this;
-
-  return this.client.dbConnection.signup(
-    objectHelper.blacklist(options, ['popupHandler']),
-    function(err) {
-      if (err) {
-        return cb(err);
-      }
-      options.realm = options.connection;
-      if (!options.username) {
-        options.username = options.email;
-      }
-      _this.client.login(options, cb);
-    }
-  );
-};
-
-/**
- * @callback crossOriginLoginCallback
- * @param {Error} [err] Authentication error returned by Auth0 with the reason why the request failed
- */
-
-/**
- * Logs in the user with username and password using the cross origin authentication (/co/authenticate) flow. You can use either `username` or `email` to identify the user, but `username` will take precedence over `email`.
- * Some browsers might not be able to successfully authenticate if 3rd party cookies are disabled in your browser. [See here for more information.]{@link https://auth0.com/docs/cross-origin-authentication}.
- * After the /co/authenticate call, you'll have to use the {@link parseHash} function at the `redirectUri` specified in the constructor.
- *
- * @method login
- * @param {Object} options options used in the {@link authorize} call after the login_ticket is acquired
- * @param {String} [options.username] Username (mutually exclusive with email)
- * @param {String} [options.email] Email (mutually exclusive with username)
- * @param {String} options.password Password
- * @param {String} [options.realm] Realm used to authenticate the user, it can be a realm name or a database connection name
- * @param {crossOriginLoginCallback} cb Callback function called only when an authentication error, like invalid username or password, occurs. For other types of errors, there will be a redirect to the `redirectUri`.
- */
-WebAuth.prototype.login = function(options, cb) {
-  this.crossOriginAuthentication.login(options, cb);
-};
-
-/**
- * Logs in the user by verifying the verification code (OTP) using the cross origin authentication (/co/authenticate) flow. You can use either `phoneNumber` or `email` to identify the user.
- * This only works when 3rd party cookies are enabled in the browser. After the /co/authenticate call, you'll have to use the {@link parseHash} function at the `redirectUri` specified in the constructor.
- *
- * @method login
- * @param {Object} options options used in the {@link authorize} call after the login_ticket is acquired
- * @param {String} [options.phoneNumber] Phone Number (mutually exclusive with email)
- * @param {String} [options.email] Email (mutually exclusive with username)
- * @param {String} options.verificationCode Verification Code (OTP)
- * @param {String} options.connection Passwordless connection to use. It can either be 'sms' or 'email'.
- * @param {crossOriginLoginCallback} cb Callback function called only when an authentication error, like invalid username or password, occurs. For other types of errors, there will be a redirect to the `redirectUri`.
- */
-WebAuth.prototype.passwordlessLogin = function(options, cb) {
-  var loginOptions = objectHelper.extend(
-    {
-      credentialType: 'http://auth0.com/oauth/grant-type/passwordless/otp',
-      realm: options.connection,
-      username: options.email || options.phoneNumber,
-      otp: options.verificationCode
-    },
-    objectHelper.blacklist(options, ['connection', 'email', 'phoneNumber', 'verificationCode'])
-  );
-  this.crossOriginAuthentication.login(loginOptions, cb);
-};
-
-/**
- * Runs the callback code for the cross origin authentication call. This method is meant to be called by the cross origin authentication callback url.
- *
- * @method crossOriginAuthenticationCallback
- */
-WebAuth.prototype.crossOriginAuthenticationCallback = function() {
-  this.crossOriginAuthentication.callback();
-};
-
-/**
- * Redirects to the auth0 logout endpoint
- *
- * If you want to navigate the user to a specific URL after the logout, set that URL at the returnTo parameter. The URL should be included in any the appropriate Allowed Logout URLs list:
- *
- * - If the client_id parameter is included, the returnTo URL must be listed in the Allowed Logout URLs set at the client level (see Setting Allowed Logout URLs at the App Level).
- * - If the client_id parameter is NOT included, the returnTo URL must be listed in the Allowed Logout URLs set at the account level (see Setting Allowed Logout URLs at the Account Level).
- *
- * @method logout
- * @param {Object} options
- * @param {String} [options.clientID] identifier of your client
- * @param {String} [options.returnTo] URL to be redirected after the logout
- * @param {Boolean} [options.federated] tells Auth0 if it should logout the user also from the IdP.
- * @see   {@link https://auth0.com/docs/api/authentication#logout}
- */
-WebAuth.prototype.logout = function(options) {
-  windowHelper.redirect(this.client.buildLogoutUrl(options));
-};
-
-/**
- * Verifies the passwordless TOTP and redirects to finish the passwordless transaction
- *
- * @method passwordlessVerify
- * @param {Object} options
- * @param {String} options.type `sms` or `email`
- * @param {String} options.phoneNumber only if type = sms
- * @param {String} options.email only if type = email
- * @param {String} options.connection the connection name
- * @param {String} options.verificationCode the TOTP code
- * @param {Function} cb
- */
-WebAuth.prototype.passwordlessVerify = function(options, cb) {
-  var _this = this;
-  var params = objectHelper
-    .merge(this.baseOptions, [
-      'clientID',
-      'responseType',
-      'responseMode',
-      'redirectUri',
-      'scope',
-      'audience',
-      '_csrf',
-      'state',
-      '_intstate',
-      'nonce'
-    ])
-    .with(options);
-
-  assert.check(
-    params,
-    { type: 'object', message: 'options parameter is not valid' },
-    {
-      responseType: { type: 'string', message: 'responseType option is required' }
-    }
-  );
-
-  params = this.transactionManager.process(params);
-  return this.client.passwordless.verify(params, function(err) {
+  return this.getRsaVerifier(iss, kid, function (err, rsaVerifier) {
     if (err) {
       return cb(err);
     }
-    return windowHelper.redirect(_this.client.passwordless.buildVerifyUrl(params));
+    if (rsaVerifier.verify(headAndPayload, signature)) {
+      return cb(null, jwt.payload);
+    }
+    return cb(new error.TokenValidationError('Invalid signature.'));
   });
 };
 
-module.exports = WebAuth;
+/**
+ * Verifies that the `exp` and `nbf` claims are valid in the current moment.
+ *
+ * @method verifyExpAndNbf
+ * @param {String} exp value of `exp` claim
+ * @param {String} nbf value of `nbf` claim
+ * @return {boolean} if token is valid according to `exp` and `nbf`
+ */
+IdTokenVerifier.prototype.verifyExpAndNbf = function (exp, nbf) {
+  var now = new Date();
+  var expDate = new Date(0);
+  var nbfDate = new Date(0);
+
+  if (this.__disableExpirationCheck) {
+    return null;
+  }
+
+  expDate.setUTCSeconds(exp + this.leeway);
+
+  if (now > expDate) {
+    return new error.TokenValidationError('Expired token.');
+  }
+
+  if (typeof nbf === 'undefined') {
+    return null;
+  }
+  nbfDate.setUTCSeconds(nbf - this.leeway);
+  if (now < nbfDate) {
+    return new error.TokenValidationError('The token is not valid until later in the future. ' +
+      'Please check your computed clock.');
+  }
+
+  return null;
+};
+
+/**
+ * Verifies that the `exp` and `iat` claims are valid in the current moment.
+ *
+ * @method verifyExpAndIat
+ * @param {String} exp value of `exp` claim
+ * @param {String} iat value of `iat` claim
+ * @return {boolean} if token is valid according to `exp` and `iat`
+ */
+IdTokenVerifier.prototype.verifyExpAndIat = function (exp, iat) {
+  var now = new Date();
+  var expDate = new Date(0);
+  var iatDate = new Date(0);
+
+  if (this.__disableExpirationCheck) {
+    return null;
+  }
+
+  expDate.setUTCSeconds(exp + this.leeway);
+
+  if (now > expDate) {
+    return new error.TokenValidationError('Expired token.');
+  }
+
+  iatDate.setUTCSeconds(iat - this.leeway);
+
+  if (now < iatDate) {
+    return new error.TokenValidationError('The token was issued in the future. ' +
+      'Please check your computed clock.');
+  }
+  return null;
+};
+
+IdTokenVerifier.prototype.getRsaVerifier = function (iss, kid, cb) {
+  var _this = this;
+  var cachekey = iss + kid;
+
+  if (!this.jwksCache.has(cachekey)) {
+    jwks.getJWKS({
+      iss: iss,
+      kid: kid
+    }, function (err, keyInfo) {
+      if (err) {
+        cb(err);
+      }
+      _this.jwksCache.set(cachekey, keyInfo);
+      cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+    });
+  } else {
+    var keyInfo = this.jwksCache.get(cachekey); // eslint-disable-line vars-on-top
+    cb(null, new RSAVerifier(keyInfo.modulus, keyInfo.exp));
+  }
+};
+
+
+/**
+ * @typedef DecodedToken
+ * @type {Object}
+ * @property {Object} header - content of the JWT header.
+ * @property {Object} payload - token claims.
+ * @property {Object} encoded - encoded parts of the token.
+ */
+
+/**
+ * Decodes a well formed JWT without any verification
+ *
+ * @method decode
+ * @param {String} token decodes the token
+ * @return {DecodedToken} if token is valid according to `exp` and `nbf`
+ */
+IdTokenVerifier.prototype.decode = function (token) {
+  var parts = token.split('.');
+  var header;
+  var payload;
+
+  if (parts.length !== 3) {
+    return new error.TokenValidationError('Cannot decode a malformed JWT');
+  }
+
+  try {
+    header = JSON.parse(base64.decodeToString(parts[0]));
+    payload = JSON.parse(base64.decodeToString(parts[1]));
+  } catch (e) {
+    return new error.TokenValidationError('Token header or payload is not valid JSON');
+  }
+
+  return {
+    header: header,
+    payload: payload,
+    encoded: {
+      header: parts[0],
+      payload: parts[1],
+      signature: parts[2]
+    }
+  };
+};
+
+module.exports = IdTokenVerifier;
 
 
 /***/ }),
-/* 200 */
+/* 214 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -25261,8 +26729,8 @@ http://www-cs-students.stanford.edu/~tjw/jsbn/
 http://www-cs-students.stanford.edu/~tjw/jsbn/LICENSE
 */
 
-var BigInteger = __webpack_require__(201).BigInteger;
-var SHA256 = __webpack_require__(202);
+var BigInteger = __webpack_require__(215).BigInteger;
+var SHA256 = __webpack_require__(216);
 
 var DigestInfoHead = {
   sha1: '3021300906052b0e03021a05000414',
@@ -25335,7 +26803,7 @@ module.exports = RSAVerifier;
 
 
 /***/ }),
-/* 201 */
+/* 215 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function(){
@@ -26698,13 +28166,13 @@ module.exports = RSAVerifier;
 
 
 /***/ }),
-/* 202 */
+/* 216 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory) {
 	if (true) {
 		// CommonJS
-		module.exports = exports = factory(__webpack_require__(203));
+		module.exports = exports = factory(__webpack_require__(217));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
@@ -26902,7 +28370,7 @@ module.exports = RSAVerifier;
 }));
 
 /***/ }),
-/* 203 */
+/* 217 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory) {
@@ -27667,12 +29135,12 @@ module.exports = RSAVerifier;
 }));
 
 /***/ }),
-/* 204 */
+/* 218 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var urljoin = __webpack_require__(9);
-var base64 = __webpack_require__(97);
-var request = __webpack_require__(56);
+var urljoin = __webpack_require__(12);
+var base64 = __webpack_require__(109);
+var request = __webpack_require__(64);
 
 function process(jwks) {
   var modulus = base64.decodeToHEX(jwks.n);
@@ -27717,7 +29185,7 @@ module.exports = {
 
 
 /***/ }),
-/* 205 */
+/* 219 */
 /***/ (function(module, exports) {
 
 function ConfigurationError(message) {
@@ -27739,7 +29207,7 @@ module.exports = {
 
 
 /***/ }),
-/* 206 */
+/* 220 */
 /***/ (function(module, exports) {
 
 function DummyCache() {}
@@ -27759,10 +29227,10 @@ module.exports = DummyCache;
 
 
 /***/ }),
-/* 207 */
+/* 221 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var version = __webpack_require__(39);
+var version = __webpack_require__(41);
 
 function PluginHandler(webAuth, plugins) {
   this.plugins = plugins;
@@ -27805,10 +29273,10 @@ module.exports = PluginHandler;
 
 
 /***/ }),
-/* 208 */
+/* 222 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var windowHelper = __webpack_require__(11);
+var windowHelper = __webpack_require__(8);
 
 function randomString(length) {
   // eslint-disable-next-line
@@ -27836,218 +29304,16 @@ module.exports = {
 
 
 /***/ }),
-/* 209 */
+/* 223 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var StorageHandler = __webpack_require__(210);
-var storage;
+var CrossOriginAuthentication = __webpack_require__(66);
+var Warn = __webpack_require__(30);
 
-function getStorage(force) {
-  if (!storage || force) {
-    storage = new StorageHandler();
-  }
-  return storage;
-}
-
-module.exports = {
-  getItem: function(key) {
-    var value = getStorage().getItem(key);
-    return value ? JSON.parse(value) : value;
-  },
-  removeItem: function(key) {
-    return getStorage().removeItem(key);
-  },
-  setItem: function(key, value) {
-    var json = JSON.stringify(value);
-    return getStorage().setItem(key, json);
-  },
-  reload: function() {
-    getStorage(true);
-  }
-};
-
-
-/***/ }),
-/* 210 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var windowHandler = __webpack_require__(11);
-var DummyStorage = __webpack_require__(211);
-var CookieStorage = __webpack_require__(212);
-var Warn = __webpack_require__(40);
-
-function StorageHandler() {
-  this.warn = new Warn({});
-  this.storage = windowHandler.getWindow().localStorage || new CookieStorage();
-}
-
-StorageHandler.prototype.failover = function() {
-  if (this.storage instanceof DummyStorage) {
-    this.warn.warning('DummyStorage: ignore failover');
-    return;
-  } else if (this.storage instanceof CookieStorage) {
-    this.warn.warning('CookieStorage: failing over DummyStorage');
-    this.storage = new DummyStorage();
-  } else {
-    this.warn.warning('LocalStorage: failing over CookieStorage');
-    this.storage = new CookieStorage();
-  }
-};
-
-StorageHandler.prototype.getItem = function(key) {
-  try {
-    return this.storage.getItem(key);
-  } catch (e) {
-    this.warn.warning(e);
-    this.failover();
-    return this.getItem(key);
-  }
-};
-
-StorageHandler.prototype.removeItem = function(key) {
-  try {
-    return this.storage.removeItem(key);
-  } catch (e) {
-    this.warn.warning(e);
-    this.failover();
-    return this.removeItem(key);
-  }
-};
-
-StorageHandler.prototype.setItem = function(key, value) {
-  try {
-    return this.storage.setItem(key, value);
-  } catch (e) {
-    this.warn.warning(e);
-    this.failover();
-    return this.setItem(key, value);
-  }
-};
-
-module.exports = StorageHandler;
-
-
-/***/ }),
-/* 211 */
-/***/ (function(module, exports) {
-
-function DummyStorage() {}
-
-DummyStorage.prototype.getItem = function() {
-  return null;
-};
-
-DummyStorage.prototype.removeItem = function() {};
-
-DummyStorage.prototype.setItem = function() {};
-
-module.exports = DummyStorage;
-
-
-/***/ }),
-/* 212 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var cookies = __webpack_require__(213);
-
-function CookieStorage() {}
-
-CookieStorage.prototype.getItem = function(key) {
-  return cookies.read(key);
-};
-
-CookieStorage.prototype.removeItem = function(key) {
-  cookies.erase(key);
-};
-
-CookieStorage.prototype.setItem = function(key, value) {
-  cookies.create(key, value, 1);
-};
-
-module.exports = CookieStorage;
-
-
-/***/ }),
-/* 213 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var windowHandler = __webpack_require__(11);
-var base64Url = __webpack_require__(93);
-
-function create(name, value, days) {
-  var date;
-  var expires;
-
-  if (
-    windowHandler.getDocument().cookie === undefined ||
-    windowHandler.getDocument().cookie === null
-  ) {
-    throw new Error('cookie storage not available');
-  }
-
-  if (days) {
-    var timeToExpire = days * 24 * 60 * 60 * 1000;
-    date = new Date();
-    date.setTime(date.getTime() + timeToExpire);
-    expires = '; expires=' + date.toGMTString();
-  } else {
-    expires = '';
-  }
-
-  windowHandler.getDocument().cookie = name + '=' + base64Url.encode(value) + expires + '; path=/';
-}
-
-function read(name) {
-  var i;
-  var cookie;
-  var cookies;
-  var nameEQ = name + '=';
-
-  if (
-    windowHandler.getDocument().cookie === undefined ||
-    windowHandler.getDocument().cookie === null
-  ) {
-    throw new Error('cookie storage not available');
-  }
-
-  cookies = windowHandler.getDocument().cookie.split(';');
-
-  for (i = 0; i < cookies.length; i++) {
-    cookie = cookies[i];
-    while (cookie.charAt(0) === ' ') {
-      cookie = cookie.substring(1, cookie.length);
-    }
-    if (cookie.indexOf(nameEQ) === 0) {
-      return base64Url.decode(cookie.substring(nameEQ.length, cookie.length));
-    }
-  }
-
-  return null;
-}
-
-function erase(name) {
-  create(name, '', -1);
-}
-
-module.exports = {
-  create: create,
-  read: read,
-  erase: erase
-};
-
-
-/***/ }),
-/* 214 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var UsernamePassword = __webpack_require__(215);
-var objectHelper = __webpack_require__(10);
-var Warn = __webpack_require__(40);
-var assert = __webpack_require__(20);
-
-function Redirect(client, options) {
+function Redirect(auth0, options) {
+  this.webAuth = auth0;
   this.baseOptions = options;
-  this.client = client;
+  this.crossOriginAuthentication = new CrossOriginAuthentication(auth0, this.baseOptions);
 
   this.warn = new Warn({
     disableWarnings: !!options._disableDeprecationWarnings
@@ -28055,62 +29321,23 @@ function Redirect(client, options) {
 }
 
 /**
- * @callback credentialsCallback
- * @param {Error} [err] error returned by Auth0 with the reason of the Auth failure
- * @param {Object} [result] result of the AuthN request
- * @param {String} result.accessToken token that can be used with {@link userinfo}
- * @param {String} [result.idToken] token that identifies the user
- * @param {String} [result.refreshToken] token that can be used to get new access tokens from Auth0. Note that not all clients can request them or the resource server might not allow them.
- */
-
-/**
- * Performs authentication with username/email and password with a database connection
- *
- * This method is not compatible with API Auth so if you need to fetch API tokens with audience
- * you should use {@link authorize} or {@link login}.
+ * Logs in the user with username and password using the cross origin authentication (/co/authenticate) flow. You can use either `username` or `email` to identify the user, but `username` will take precedence over `email`.
+ * Some browsers might not be able to successfully authenticate if 3rd party cookies are disabled in your browser. [See here for more information.]{@link https://auth0.com/docs/cross-origin-authentication}.
+ * After the /co/authenticate call, you'll have to use the {@link parseHash} function at the `redirectUri` specified in the constructor.
  *
  * @method loginWithCredentials
- * @param {Object} options
- * @param {String} [options.redirectUri] url that the Auth0 will redirect after Auth with the Authorization Response
- * @param {String} [options.responseType] type of the response used. It can be any of the values `code` and `token`
- * @param {String} [options.responseMode] how the AuthN response is encoded and redirected back to the client. Supported values are `query` and `fragment`
- * @param {String} [options.scope] scopes to be requested during AuthN. e.g. `openid email`
- * @param {credentialsCallback} cb
+ * @deprecated This method will be released in the next major version. Use `webAuth.login` instead.
+ * @param {Object} options options used in the {@link authorize} call after the login_ticket is acquired
+ * @param {String} [options.username] Username (mutually exclusive with email)
+ * @param {String} [options.email] Email (mutually exclusive with username)
+ * @param {String} options.password Password
+ * @param {String} [options.connection] Connection used to authenticate the user, it can be a realm name or a database connection name
+ * @param {crossOriginLoginCallback} cb Callback function called only when an authentication error, like invalid username or password, occurs. For other types of errors, there will be a redirect to the `redirectUri`.
  */
 Redirect.prototype.loginWithCredentials = function(options, cb) {
-  var usernamePassword;
-
-  var params = objectHelper
-    .merge(this.baseOptions, [
-      'clientID',
-      'redirectUri',
-      'tenant',
-      'responseType',
-      'responseMode',
-      'scope',
-      'audience',
-      '_csrf',
-      'state',
-      '_intstate',
-      'nonce'
-    ])
-    .with(options);
-
-  assert.check(
-    params,
-    { type: 'object', message: 'options parameter is not valid' },
-    {
-      responseType: { type: 'string', message: 'responseType option is required' }
-    }
-  );
-
-  usernamePassword = new UsernamePassword(this.baseOptions);
-  return usernamePassword.login(params, function(err, data) {
-    if (err) {
-      return cb(err);
-    }
-    return usernamePassword.callback(data);
-  });
+  options.realm = options.realm || options.connection;
+  delete options.connection;
+  this.crossOriginAuthentication.login(options, cb);
 };
 
 /**
@@ -28121,15 +29348,17 @@ Redirect.prototype.loginWithCredentials = function(options, cb) {
  * @param {String} options.email user email address
  * @param {String} options.password user password
  * @param {String} options.connection name of the connection where the user will be created
- * @param {credentialsCallback} cb
+ * @param {crossOriginLoginCallback} cb
  */
 Redirect.prototype.signupAndLogin = function(options, cb) {
   var _this = this;
-  return this.client.dbConnection.signup(options, function(err) {
+  return this.webAuth.client.dbConnection.signup(options, function(err) {
     if (err) {
       return cb(err);
     }
-    return _this.loginWithCredentials(options, cb);
+    options.realm = options.realm || options.connection;
+    delete options.connection;
+    return _this.webAuth.login(options, cb);
   });
 };
 
@@ -28137,80 +29366,21 @@ module.exports = Redirect;
 
 
 /***/ }),
-/* 215 */
+/* 224 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var urljoin = __webpack_require__(9);
+var urljoin = __webpack_require__(12);
+var WinChan = __webpack_require__(112);
 
+var urlHelper = __webpack_require__(225);
+var assert = __webpack_require__(22);
+var responseHandler = __webpack_require__(26);
+var PopupHandler = __webpack_require__(226);
 var objectHelper = __webpack_require__(10);
-var RequestBuilder = __webpack_require__(38);
-var responseHandler = __webpack_require__(27);
-var windowHelper = __webpack_require__(11);
-var TransactionManager = __webpack_require__(57);
-
-function UsernamePassword(options) {
-  this.baseOptions = options;
-  this.request = new RequestBuilder(options);
-  this.transactionManager = new TransactionManager(this.baseOptions.transaction);
-}
-
-UsernamePassword.prototype.login = function(options, cb) {
-  var url;
-  var body;
-
-  url = urljoin(this.baseOptions.rootUrl, 'usernamepassword', 'login');
-
-  options.username = options.username || options.email; // eslint-disable-line
-
-  options = objectHelper.blacklist(options, ['email']); // eslint-disable-line
-
-  body = objectHelper
-    .merge(this.baseOptions, [
-      'clientID',
-      'redirectUri',
-      'tenant',
-      'responseType',
-      'responseMode',
-      'scope',
-      'audience'
-    ])
-    .with(options);
-  body = this.transactionManager.process(body);
-
-  body = objectHelper.toSnakeCase(body, ['auth0Client']);
-
-  return this.request.post(url).send(body).end(responseHandler(cb));
-};
-
-UsernamePassword.prototype.callback = function(formHtml) {
-  var div;
-  var form;
-  var _document = windowHelper.getDocument();
-
-  div = _document.createElement('div');
-  div.innerHTML = formHtml;
-  form = _document.body.appendChild(div).children[0];
-
-  form.submit();
-};
-
-module.exports = UsernamePassword;
-
-
-/***/ }),
-/* 216 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var urljoin = __webpack_require__(9);
-
-var urlHelper = __webpack_require__(217);
-var assert = __webpack_require__(20);
-var responseHandler = __webpack_require__(27);
-var PopupHandler = __webpack_require__(218);
-var objectHelper = __webpack_require__(10);
-var windowHelper = __webpack_require__(11);
-var Warn = __webpack_require__(40);
-var TransactionManager = __webpack_require__(57);
+var windowHelper = __webpack_require__(8);
+var Warn = __webpack_require__(30);
+var TransactionManager = __webpack_require__(65);
+var CrossOriginAuthentication = __webpack_require__(66);
 
 function Popup(webAuth, options) {
   this.baseOptions = options;
@@ -28219,6 +29389,7 @@ function Popup(webAuth, options) {
   this.webAuth = webAuth;
 
   this.transactionManager = new TransactionManager(this.baseOptions.transaction);
+  this.crossOriginAuthentication = new CrossOriginAuthentication(webAuth, this.baseOptions);
   this.warn = new Warn({
     disableWarnings: !!options._disableDeprecationWarnings
   });
@@ -28281,22 +29452,45 @@ Popup.prototype.getPopupHandler = function(options, preload) {
  * @param {String} options.hash the url hash. If not provided it will extract from window.location.hash
  * @param {String} [options.state] value originally sent in `state` parameter to {@link authorize} to mitigate XSRF
  * @param {String} [options.nonce] value originally sent in `nonce` parameter to {@link authorize} to prevent replay attacks
- * @param {String} [options._idTokenVerification] makes parseHash perform or skip `id_token` verification. We **strongly** recommend validating the `id_token` yourself if you disable the verification.
  * @see   {@link parseHash}
  */
 Popup.prototype.callback = function(options) {
   var _this = this;
+  var theWindow = windowHelper.getWindow();
   options = options || {};
-  var originUrl =
-    options.popupOrigin || this.baseOptions.popupOrigin || windowHelper.getWindow().origin;
-  _this.webAuth.parseHash(options || {}, function(err, data) {
-    // {a, d} is WinChan's message format.
-    // We have to keep the same format because we're opening the popup with WinChan.
-    var response = { a: 'response', d: data };
-    if (err) {
-      response = { a: 'error', d: err };
+  var originUrl = options.popupOrigin || this.baseOptions.popupOrigin || windowHelper.getOrigin();
+
+  /*
+    in IE 11, there's a bug that makes window.opener return undefined.
+    The callback page will still call `popup.callback()` which will run this method
+    in the relay page. WinChan expects the relay page to have a global `doPost` function,
+    which will be called with the response.
+
+    IE11 Bug: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/110920/
+   */
+  if (!theWindow.opener) {
+    theWindow.doPost = function(msg) {
+      if (theWindow.parent) {
+        theWindow.parent.postMessage(msg, originUrl);
+      }
+    };
+    return;
+  }
+
+  WinChan.onOpen(function(popupOrigin, r, cb) {
+    if (popupOrigin !== originUrl) {
+      return cb({
+        error: 'origin_mismatch',
+        error_description: "The popup's origin (" +
+          popupOrigin +
+          ') should match the `popupOrigin` parameter (' +
+          originUrl +
+          ').'
+      });
     }
-    windowHelper.getWindow().opener.postMessage(JSON.stringify(response), originUrl);
+    _this.webAuth.parseHash(options || {}, function(err, data) {
+      return cb(err || data);
+    });
   });
 };
 
@@ -28309,7 +29503,7 @@ Popup.prototype.callback = function(options) {
  * @param {String} [options.clientID] your Auth0 client identifier obtained when creating the client in the Auth0 Dashboard
  * @param {String} options.redirectUri url that the Auth0 will redirect after Auth with the Authorization Response
  * @param {String} options.responseType type of the response used by OAuth 2.0 flow. It can be any space separated list of the values `code`, `token`, `id_token`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0}
- * @param {String} [options.responseMode] how the Auth response is encoded and redirected back to the client. Supported values are `query`, `fragment` and `form_post`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html#ResponseModes}
+ * @param {String} [options.responseMode] how the Auth response is encoded and redirected back to the client. Supported values are `query`, `fragment` and `form_post`. The `query` value is only supported when `responseType` is `code`. {@link https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html#ResponseModes}
  * @param {String} [options.state] value used to mitigate XSRF attacks. {@link https://auth0.com/docs/protocols/oauth2/oauth-state}
  * @param {String} [options.nonce] value used to mitigate replay attacks when using Implicit Grant. {@link https://auth0.com/docs/api-auth/tutorials/nonce}
  * @param {String} [options.scope] scopes to be requested during Auth. e.g. `openid email`
@@ -28350,8 +29544,8 @@ Popup.prototype.authorize = function(options, cb) {
     }
   );
 
-  // the relay page should not be necesary as long it happens in the same domain
-  // (a redirectUri shoul be provided). It is necesary when using OWP
+  // the relay page should not be necessary as long it happens in the same domain
+  // (a redirectUri shoul be provided). It is necessary when using OWP
   relayUrl = urljoin(this.baseOptions.rootUrl, 'relay.html');
 
   // if a owp is enabled, it should use the owp flag
@@ -28373,7 +29567,7 @@ Popup.prototype.authorize = function(options, cb) {
   }
 
   params = this.transactionManager.process(params);
-
+  params.scope = params.scope || 'openid profile email';
   delete params.domain;
 
   url = this.client.buildAuthorizeUrl(params);
@@ -28393,55 +29587,18 @@ Popup.prototype.authorize = function(options, cb) {
  * @param {Object} options
  * @param {String} [options.redirectUri] url that the Auth0 will redirect after Auth with the Authorization Response
  * @param {String} [options.responseType] type of the response used. It can be any of the values `code` and `token`
- * @param {String} [options.responseMode] how the AuthN response is encoded and redirected back to the client. Supported values are `query` and `fragment`
+ * @param {String} [options.responseMode] how the AuthN response is encoded and redirected back to the client. Supported values are `query` and `fragment`. The `query` value is only supported when `responseType` is `code`.
  * @param {String} [options.scope] scopes to be requested during AuthN. e.g. `openid email`
  * @param {credentialsCallback} cb
  */
 Popup.prototype.loginWithCredentials = function(options, cb) {
-  var params;
-  var popup;
-  var url;
-  var relayUrl;
-
-  /* eslint-disable */
-  assert.check(
-    options,
-    { type: 'object', message: 'options parameter is not valid' },
-    {
-      clientID: { optional: true, type: 'string', message: 'clientID option is required' },
-      redirectUri: { optional: true, type: 'string', message: 'redirectUri option is required' },
-      responseType: { optional: true, type: 'string', message: 'responseType option is required' },
-      scope: { optional: true, type: 'string', message: 'scope option is required' },
-      audience: { optional: true, type: 'string', message: 'audience option is required' }
-    }
-  );
-  /* eslint-enable */
-
-  popup = this.getPopupHandler(options);
-
+  options.realm = options.realm || options.connection;
+  options.popup = true;
   options = objectHelper
-    .merge(this.baseOptions, [
-      'clientID',
-      'scope',
-      'domain',
-      'audience',
-      '_csrf',
-      'state',
-      '_intstate',
-      'nonce'
-    ])
-    .with(objectHelper.blacklist(options, ['popupHandler']));
-
-  params = objectHelper.pick(options, ['clientID', 'domain']);
-  params.options = objectHelper.toSnakeCase(
-    objectHelper.pick(options, ['password', 'connection', 'state', 'scope', '_csrf', 'device'])
-  );
-  params.options.username = options.username || options.email;
-
-  url = urljoin(this.baseOptions.rootUrl, 'sso_dbconnection_popup', options.clientID);
-  relayUrl = urljoin(this.baseOptions.rootUrl, 'relay.html');
-
-  return popup.load(url, relayUrl, { params: params }, responseHandler(cb));
+    .merge(this.baseOptions, ['redirectUri', 'responseType', 'state', 'nonce'])
+    .with(objectHelper.blacklist(options, ['popupHandler', 'connection']));
+  options = this.transactionManager.process(options);
+  this.crossOriginAuthentication.login(options, cb);
 };
 
 /**
@@ -28516,7 +29673,7 @@ module.exports = Popup;
 
 
 /***/ }),
-/* 217 */
+/* 225 */
 /***/ (function(module, exports) {
 
 // given a URL, extract the origin. Taken from: https://github.com/firebase/firebase-simple-login/blob/d2cb95b9f812d8488bdbfba51c3a7c153ba1a074/js/src/simple-login/transports/WinChan.js#L25-L30
@@ -28533,16 +29690,16 @@ module.exports = {
 
 
 /***/ }),
-/* 218 */
+/* 226 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
-var WinChan = __webpack_require__(219);
+var WinChan = __webpack_require__(112);
 
-var windowHandler = __webpack_require__(11);
+var windowHandler = __webpack_require__(8);
 var objectHelper = __webpack_require__(10);
-var qs = __webpack_require__(17);
+var qs = __webpack_require__(23);
 
 function PopupHandler() {
   this._current_popup = null;
@@ -28626,330 +29783,11 @@ module.exports = PopupHandler;
 
 
 /***/ }),
-/* 219 */
-/***/ (function(module, exports) {
-
-var WinChan = (function() {
-  var RELAY_FRAME_NAME = "__winchan_relay_frame";
-  var CLOSE_CMD = "die";
-
-  // a portable addListener implementation
-  function addListener(w, event, cb) {
-    if(w.attachEvent) w.attachEvent('on' + event, cb);
-    else if (w.addEventListener) w.addEventListener(event, cb, false);
-  }
-
-  // a portable removeListener implementation
-  function removeListener(w, event, cb) {
-    if(w.detachEvent) w.detachEvent('on' + event, cb);
-    else if (w.removeEventListener) w.removeEventListener(event, cb, false);
-  }
-
-
-  // checking for IE8 or above
-  function isInternetExplorer() {
-    if (typeof navigator === 'undefined') {
-      return false;
-    }
-
-    var rv = -1; // Return value assumes failure.
-    var ua = navigator.userAgent;
-    if (navigator.appName === 'Microsoft Internet Explorer') {
-      var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
-      if (re.exec(ua) != null)
-        rv = parseFloat(RegExp.$1);
-    }
-    // IE > 11
-    else if (ua.indexOf("Trident") > -1) {
-      var re = new RegExp("rv:([0-9]{2,2}[\.0-9]{0,})");
-      if (re.exec(ua) !== null) {
-        rv = parseFloat(RegExp.$1);
-      }
-    }
-
-    return rv >= 8;
-  }
-
-  // checking Mobile Firefox (Fennec)
-  function isFennec() {
-    try {
-      // We must check for both XUL and Java versions of Fennec.  Both have
-      // distinct UA strings.
-      var userAgent = navigator.userAgent;
-      return (userAgent.indexOf('Fennec/') != -1) ||  // XUL
-             (userAgent.indexOf('Firefox/') != -1 && userAgent.indexOf('Android') != -1);   // Java
-    } catch(e) {}
-    return false;
-  }
-
-  // feature checking to see if this platform is supported at all
-  function isSupported() {
-    return (typeof window !== 'undefined' && window.JSON && window.JSON.stringify &&
-            window.JSON.parse && window.postMessage);
-  }
-
-  // given a URL, extract the origin. Taken from: https://github.com/firebase/firebase-simple-login/blob/d2cb95b9f812d8488bdbfba51c3a7c153ba1a074/js/src/simple-login/transports/WinChan.js#L25-L30
-  function extractOrigin(url) {
-    if (!/^https?:\/\//.test(url)) url = window.location.href;
-    var m = /^(https?:\/\/[\-_a-zA-Z\.0-9:]+)/.exec(url);
-    if (m) return m[1];
-    return url;
-  }
-
-  // find the relay iframe in the opener
-  function findRelay() {
-    var loc = window.location;
-    var frames = window.opener.frames;
-    for (var i = frames.length - 1; i >= 0; i--) {
-      try {
-        if (frames[i].location.protocol === window.location.protocol &&
-            frames[i].location.host === window.location.host &&
-            frames[i].name === RELAY_FRAME_NAME)
-        {
-          return frames[i];
-        }
-      } catch(e) { }
-    }
-    return;
-  }
-
-  var isIE = isInternetExplorer();
-
-  if (isSupported()) {
-    /*  General flow:
-     *                  0. user clicks
-     *  (IE SPECIFIC)   1. caller adds relay iframe (served from trusted domain) to DOM
-     *                  2. caller opens window (with content from trusted domain)
-     *                  3. window on opening adds a listener to 'message'
-     *  (IE SPECIFIC)   4. window on opening finds iframe
-     *                  5. window checks if iframe is "loaded" - has a 'doPost' function yet
-     *  (IE SPECIFIC5)  5a. if iframe.doPost exists, window uses it to send ready event to caller
-     *  (IE SPECIFIC5)  5b. if iframe.doPost doesn't exist, window waits for frame ready
-     *  (IE SPECIFIC5)  5bi. once ready, window calls iframe.doPost to send ready event
-     *                  6. caller upon reciept of 'ready', sends args
-     */
-    return {
-      open: function(opts, cb) {
-        if (!cb) throw "missing required callback argument";
-
-        // test required options
-        var err;
-        if (!opts.url) err = "missing required 'url' parameter";
-        if (!opts.relay_url) err = "missing required 'relay_url' parameter";
-        if (err) setTimeout(function() { cb(err); }, 0);
-
-        // supply default options
-        if (!opts.window_name) opts.window_name = null;
-        if (!opts.window_features || isFennec()) opts.window_features = undefined;
-
-        // opts.params may be undefined
-
-        var iframe;
-
-        // sanity check, are url and relay_url the same origin?
-        var origin = opts.origin || extractOrigin(opts.url);
-        if (origin !== extractOrigin(opts.relay_url)) {
-          return setTimeout(function() {
-            cb('invalid arguments: origin of url and relay_url must match');
-          }, 0);
-        }
-
-        var messageTarget;
-
-        if (isIE) {
-          // first we need to add a "relay" iframe to the document that's served
-          // from the target domain.  We can postmessage into a iframe, but not a
-          // window
-          iframe = document.createElement("iframe");
-          // iframe.setAttribute('name', framename);
-          iframe.setAttribute('src', opts.relay_url);
-          iframe.style.display = "none";
-          iframe.setAttribute('name', RELAY_FRAME_NAME);
-          document.body.appendChild(iframe);
-          messageTarget = iframe.contentWindow;
-        }
-
-        var w = opts.popup || window.open(opts.url, opts.window_name, opts.window_features);
-        if (opts.popup) {
-          w.location.href = opts.url;
-        }
-
-        if (!messageTarget) messageTarget = w;
-
-        // lets listen in case the window blows up before telling us
-        var closeInterval = setInterval(function() {
-          if (w && w.closed) {
-            cleanup();
-            if (cb) {
-              cb('User closed the popup window');
-              cb = null;
-            }
-          }
-        }, 500);
-
-        var req = JSON.stringify({a: 'request', d: opts.params});
-
-        // cleanup on unload
-        function cleanup() {
-          if (iframe) document.body.removeChild(iframe);
-          iframe = undefined;
-          if (closeInterval) closeInterval = clearInterval(closeInterval);
-          removeListener(window, 'message', onMessage);
-          removeListener(window, 'unload', cleanup);
-          if (w) {
-            try {
-              w.close();
-            } catch (securityViolation) {
-              // This happens in Opera 12 sometimes
-              // see https://github.com/mozilla/browserid/issues/1844
-              messageTarget.postMessage(CLOSE_CMD, origin);
-            }
-          }
-          w = messageTarget = undefined;
-        }
-
-        addListener(window, 'unload', cleanup);
-
-        function onMessage(e) {
-          if (e.origin !== origin) { return; }
-          try {
-            var d = JSON.parse(e.data);
-          } catch(err) {
-            if (cb) {
-              cb(err);
-            } else {
-              throw err;
-            }
-          }
-
-          if (d.a === 'ready') {
-            messageTarget.postMessage(req, origin);
-          } else if (d.a === 'error') {
-            cleanup();
-            if (cb) {
-              cb(d.d);
-              cb = null;
-            }
-          } else if (d.a === 'response') {
-            cleanup();
-            if (cb) {
-              cb(null, d.d);
-              cb = null;
-            }
-          }
-        }
-
-        addListener(window, 'message', onMessage);
-
-        return {
-          close: cleanup,
-          focus: function() {
-            if (w) {
-              try {
-                w.focus();
-              } catch (e) {
-                // IE7 blows up here, do nothing
-              }
-            }
-          }
-        };
-      },
-      onOpen: function(cb) {
-        var o = "*";
-        var msgTarget = isIE ? findRelay() : window.opener;
-        if (!msgTarget) throw "can't find relay frame";
-        function doPost(msg) {
-          msg = JSON.stringify(msg);
-          if (isIE) msgTarget.doPost(msg, o);
-          else msgTarget.postMessage(msg, o);
-        }
-
-        function onMessage(e) {
-          // only one message gets through, but let's make sure it's actually
-          // the message we're looking for (other code may be using
-          // postmessage) - we do this by ensuring the payload can
-          // be parsed, and it's got an 'a' (action) value of 'request'.
-          var d;
-          try {
-            d = JSON.parse(e.data);
-          } catch(err) { }
-          if (!d || d.a !== 'request') return;
-          removeListener(window, 'message', onMessage);
-          o = e.origin;
-          if (cb) {
-            // this setTimeout is critically important for IE8 -
-            // in ie8 sometimes addListener for 'message' can synchronously
-            // cause your callback to be invoked.  awesome.
-            setTimeout(function() {
-              cb(o, d.d, function(r) {
-                cb = undefined;
-                doPost({a: 'response', d: r});
-              });
-            }, 0);
-          }
-        }
-
-        function onDie(e) {
-          if (e.data === CLOSE_CMD) {
-            try { window.close(); } catch (o_O) {}
-          }
-        }
-        addListener(isIE ? msgTarget : window, 'message', onMessage);
-        addListener(isIE ? msgTarget : window, 'message', onDie);
-
-        // we cannot post to our parent that we're ready before the iframe
-        // is loaded. (IE specific possible failure)
-        try {
-          doPost({a: "ready"});
-        } catch(e) {
-          // this code should never be exectued outside IE
-          addListener(msgTarget, 'load', function(e) {
-            doPost({a: "ready"});
-          });
-        }
-
-        // if window is unloaded and the client hasn't called cb, it's an error
-        var onUnload = function() {
-          try {
-            // IE8 doesn't like this...
-            removeListener(isIE ? msgTarget : window, 'message', onDie);
-          } catch (ohWell) { }
-          if (cb) doPost({ a: 'error', d: 'client closed window' });
-          cb = undefined;
-          // explicitly close the window, in case the client is trying to reload or nav
-          try { window.close(); } catch (e) { }
-        };
-        addListener(window, 'unload', onUnload);
-        return {
-          detach: function() {
-            removeListener(window, 'unload', onUnload);
-          }
-        };
-      }
-    };
-  } else {
-    return {
-      open: function(url, winopts, arg, cb) {
-        setTimeout(function() { cb("unsupported browser"); }, 0);
-      },
-      onOpen: function(cb) {
-        setTimeout(function() { cb("unsupported browser"); }, 0);
-      }
-    };
-  }
-})();
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = WinChan;
-}
-
-
-/***/ }),
-/* 220 */
+/* 227 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var IframeHandler = __webpack_require__(98);
-var windowHelper = __webpack_require__(11);
+var IframeHandler = __webpack_require__(111);
+var windowHelper = __webpack_require__(8);
 
 function SilentAuthenticationHandler(options) {
   this.authenticationUrl = options.authenticationUrl;
@@ -29040,192 +29878,300 @@ module.exports = SilentAuthenticationHandler;
 
 
 /***/ }),
-/* 221 */
+/* 228 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var urljoin = __webpack_require__(9);
-
-var windowHelper = __webpack_require__(11);
+var UsernamePassword = __webpack_require__(229);
 var objectHelper = __webpack_require__(10);
-var RequestBuilder = __webpack_require__(38);
+var windowHelper = __webpack_require__(8);
+var Warn = __webpack_require__(30);
+var assert = __webpack_require__(22);
 
-function CrossOriginAuthentication(webAuth, options) {
-  this.webAuth = webAuth;
+function HostedPages(client, options) {
+  this.baseOptions = options;
+  this.client = client;
+
+  this.warn = new Warn({
+    disableWarnings: !!options._disableDeprecationWarnings
+  });
+}
+
+/**
+ * @callback credentialsCallback
+ * @param {Error} [err] error returned by Auth0 with the reason of the Auth failure
+ * @param {Object} [result] result of the AuthN request
+ * @param {String} result.accessToken token that can be used with {@link userinfo}
+ * @param {String} [result.idToken] token that identifies the user
+ * @param {String} [result.refreshToken] token that can be used to get new access tokens from Auth0. Note that not all clients can request them or the resource server might not allow them.
+ */
+
+/**
+ * Performs authentication with username/email and password with a database connection
+ *
+ * This method is not compatible with API Auth so if you need to fetch API tokens with audience
+ * you should use {@link authorize} or {@link login}.
+ *
+ * @method loginWithCredentials
+ * @param {Object} options
+ * @param {String} [options.redirectUri] url that the Auth0 will redirect after Auth with the Authorization Response
+ * @param {String} [options.responseType] type of the response used. It can be any of the values `code` and `token`
+ * @param {String} [options.responseMode] how the AuthN response is encoded and redirected back to the client. Supported values are `query` and `fragment`
+ * @param {String} [options.scope] scopes to be requested during AuthN. e.g. `openid email`
+ * @param {credentialsCallback} cb
+ */
+HostedPages.prototype.login = function(options, cb) {
+  if (windowHelper.getWindow().location.host !== this.baseOptions.domain) {
+    throw new Error('This method is meant to be used only inside the Universal Login Page.');
+  }
+  var usernamePassword;
+
+  var params = objectHelper
+    .merge(this.baseOptions, [
+      'clientID',
+      'redirectUri',
+      'tenant',
+      'responseType',
+      'responseMode',
+      'scope',
+      'audience',
+      '_csrf',
+      'state',
+      '_intstate',
+      'nonce'
+    ])
+    .with(options);
+
+  assert.check(
+    params,
+    { type: 'object', message: 'options parameter is not valid' },
+    {
+      responseType: { type: 'string', message: 'responseType option is required' }
+    }
+  );
+
+  usernamePassword = new UsernamePassword(this.baseOptions);
+  return usernamePassword.login(params, function(err, data) {
+    if (err) {
+      return cb(err);
+    }
+    return usernamePassword.callback(data);
+  });
+};
+
+/**
+ * Signs up a new user and automatically logs the user in after the signup.
+ *
+ * @method signupAndLogin
+ * @param {Object} options
+ * @param {String} options.email user email address
+ * @param {String} options.password user password
+ * @param {String} options.connection name of the connection where the user will be created
+ * @param {credentialsCallback} cb
+ */
+HostedPages.prototype.signupAndLogin = function(options, cb) {
+  var _this = this;
+  return _this.client.client.dbConnection.signup(options, function(err) {
+    if (err) {
+      return cb(err);
+    }
+    return _this.login(options, cb);
+  });
+};
+
+module.exports = HostedPages;
+
+
+/***/ }),
+/* 229 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var urljoin = __webpack_require__(12);
+
+var objectHelper = __webpack_require__(10);
+var RequestBuilder = __webpack_require__(40);
+var responseHandler = __webpack_require__(26);
+var windowHelper = __webpack_require__(8);
+var TransactionManager = __webpack_require__(65);
+
+function UsernamePassword(options) {
   this.baseOptions = options;
   this.request = new RequestBuilder(options);
+  this.transactionManager = new TransactionManager(this.baseOptions.transaction);
 }
 
-function getFragment(name) {
-  var theWindow = windowHelper.getWindow();
-  var value = '&' + theWindow.location.hash.substring(1);
-  var parts = value.split('&' + name + '=');
-  if (parts.length === 2) {
-    return parts.pop().split('&').shift();
-  }
-}
+UsernamePassword.prototype.login = function(options, cb) {
+  var url;
+  var body;
 
-function createKey(origin, coId) {
-  return ['co/verifier', encodeURIComponent(origin), encodeURIComponent(coId)].join('/');
-}
+  url = urljoin(this.baseOptions.rootUrl, 'usernamepassword', 'login');
 
-/**
- * Logs in the user with username and password using the cross origin authentication (/co/authenticate) flow. You can use either `username` or `email` to identify the user, but `username` will take precedence over `email`.
- * This only works when 3rd party cookies are enabled in the browser. After the /co/authenticate call, you'll have to use the {@link parseHash} function at the `redirectUri` specified in the constructor.
- *
- * @method login
- * @param {Object} options options used in the {@link authorize} call after the login_ticket is acquired
- * @param {String} [options.username] Username (mutually exclusive with email)
- * @param {String} [options.email] Email  (mutually exclusive with username)
- * @param {String} options.password Password
- * @param {String} [options.realm] Realm used to authenticate the user, it can be a realm name or a database connection name
- * @param {crossOriginLoginCallback} cb Callback function called only when an authentication error, like invalid username or password, occurs. For other types of errors, there will be a redirect to the `redirectUri`.
- */
-CrossOriginAuthentication.prototype.login = function(options, cb) {
-  var _this = this;
-  var theWindow = windowHelper.getWindow();
-  var url = urljoin(this.baseOptions.rootUrl, '/co/authenticate');
-  var authenticateBody = {
-    client_id: options.clientID || this.baseOptions.clientID,
-    username: options.username || options.email
-  };
-  if (options.password) {
-    authenticateBody.password = options.password;
-  }
-  if (options.otp) {
-    authenticateBody.otp = options.otp;
-  }
-  var realm = options.realm || this.baseOptions.realm;
+  options.username = options.username || options.email; // eslint-disable-line
 
-  if (realm) {
-    var credentialType =
-      options.credentialType ||
-      this.baseOptions.credentialType ||
-      'http://auth0.com/oauth/grant-type/password-realm';
-    authenticateBody.realm = realm;
-    authenticateBody.credential_type = credentialType;
-  } else {
-    authenticateBody.credential_type = 'password';
-  }
-  this.request.post(url).withCredentials().send(authenticateBody).end(function(err, data) {
-    if (err) {
-      var errorObject = (err.response && err.response.body) || {
-        error: 'request_error',
-        error_description: JSON.stringify(err)
-      };
-      return cb(errorObject);
-    }
-    options = objectHelper.blacklist(options, ['username', 'password', 'credentialType', 'otp']);
-    var authorizeOptions = objectHelper
-      .merge(options)
-      .with({ loginTicket: data.body.login_ticket });
-    var key = createKey(_this.baseOptions.rootUrl, data.body.co_id);
-    theWindow.sessionStorage[key] = data.body.co_verifier;
-    _this.webAuth.authorize(authorizeOptions);
-  });
+  options = objectHelper.blacklist(options, ['email']); // eslint-disable-line
+
+  body = objectHelper
+    .merge(this.baseOptions, [
+      'clientID',
+      'redirectUri',
+      'tenant',
+      'responseType',
+      'responseMode',
+      'scope',
+      'audience'
+    ])
+    .with(options);
+  body = this.transactionManager.process(body);
+
+  body = objectHelper.toSnakeCase(body, ['auth0Client']);
+
+  return this.request.post(url).send(body).end(responseHandler(cb));
 };
 
-function tryGetVerifier(theWindow, key) {
-  try {
-    var verifier = theWindow.sessionStorage[key];
-    theWindow.sessionStorage.removeItem(key);
-    return verifier;
-  } catch (e) {
-    return '';
-  }
-}
+UsernamePassword.prototype.callback = function(formHtml) {
+  var div;
+  var form;
+  var _document = windowHelper.getDocument();
 
-/**
- * Runs the callback code for the cross origin authentication call. This method is meant to be called by the cross origin authentication callback url.
- *
- * @method callback
- */
-CrossOriginAuthentication.prototype.callback = function() {
-  var targetOrigin = decodeURIComponent(getFragment('origin'));
-  var theWindow = windowHelper.getWindow();
+  div = _document.createElement('div');
+  div.innerHTML = formHtml;
+  form = _document.body.appendChild(div).children[0];
 
-  theWindow.addEventListener('message', function(evt) {
-    if (evt.data.type !== 'co_verifier_request') {
-      return;
-    }
-    var key = createKey(evt.origin, evt.data.request.id);
-    var verifier = tryGetVerifier(theWindow, key);
-
-    evt.source.postMessage(
-      {
-        type: 'co_verifier_response',
-        response: {
-          verifier: verifier
-        }
-      },
-      evt.origin
-    );
-  });
-
-  theWindow.parent.postMessage({ type: 'ready' }, targetOrigin);
+  form.submit();
 };
 
-module.exports = CrossOriginAuthentication;
+module.exports = UsernamePassword;
 
 
 /***/ }),
-/* 222 */
+/* 230 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var IframeHandler = __webpack_require__(98);
-var objectHelper = __webpack_require__(10);
+var urljoin = __webpack_require__(12);
 
-function runWebMessageFlow(authorizeUrl, options, callback) {
-  var handler = new IframeHandler({
-    url: authorizeUrl,
-    eventListenerType: 'message',
-    callback: function(eventData) {
-      callback(null, eventData);
-    },
-    timeout: options.timeout,
-    eventValidator: {
-      isValid: function(eventData) {
-        return eventData.event.data.type === 'authorization_response';
+var RequestBuilder = __webpack_require__(40);
+var assert = __webpack_require__(22);
+var responseHandler = __webpack_require__(26);
+
+/**
+ * Auth0 Management API Client (methods allowed to be called from the browser only)
+ * @constructor
+ * @param {Object} options
+ * @param {Object} options.domain your Auth0 acount domain
+ * @param {Object} options.token a valid API token
+ */
+function Management(options) {
+  /* eslint-disable */
+  assert.check(
+    options,
+    { type: 'object', message: 'options parameter is not valid' },
+    {
+      domain: { type: 'string', message: 'domain option is required' },
+      token: { type: 'string', message: 'token option is required' },
+      _sendTelemetry: {
+        optional: true,
+        type: 'boolean',
+        message: '_sendTelemetry option is not valid'
+      },
+      _telemetryInfo: {
+        optional: true,
+        type: 'object',
+        message: '_telemetryInfo option is not valid'
       }
-    },
-    timeoutCallback: function() {
-      callback({
-        error: 'timeout',
-        error_description: 'Timeout during executing web_message communication'
-      });
     }
-  });
-  handler.init();
+  );
+  /* eslint-enable */
+
+  this.baseOptions = options;
+
+  this.baseOptions.headers = { Authorization: 'Bearer ' + this.baseOptions.token };
+
+  this.request = new RequestBuilder(this.baseOptions);
+  this.baseOptions.rootUrl = urljoin('https://' + this.baseOptions.domain, 'api', 'v2');
 }
 
-function WebMessageHandler(webAuth) {
-  this.webAuth = webAuth;
-}
+/**
+ * @callback userCallback
+ * @param {Error} [err] failure reason for the failed request to Management API
+ * @param {Object} [result] user profile
+ */
 
-WebMessageHandler.prototype.run = function(options, cb) {
-  var _this = this;
-  options.responseMode = 'web_message';
-  options.prompt = 'none';
-  runWebMessageFlow(this.webAuth.client.buildAuthorizeUrl(options), options, function(
-    err,
-    eventData
-  ) {
-    var error = err;
-    if (!err && eventData.event.data.response.error) {
-      error = objectHelper.pick(eventData.event.data.response, ['error', 'error_description']);
-    }
-    if (error) {
-      return cb(error);
-    }
-    var parsedHash = eventData.event.data.response;
-    _this.webAuth.validateAuthenticationResponse(options, parsedHash, cb);
-  });
+/**
+ * Returns the user profile
+ *
+ * @method getUser
+ * @param {String} userId identifier of the user to retrieve
+ * @param {userCallback} cb
+ * @see https://auth0.com/docs/api/management/v2#!/Users/get_users_by_id
+ */
+Management.prototype.getUser = function(userId, cb) {
+  var url;
+
+  assert.check(userId, { type: 'string', message: 'userId parameter is not valid' });
+  assert.check(cb, { type: 'function', message: 'cb parameter is not valid' });
+
+  url = urljoin(this.baseOptions.rootUrl, 'users', userId);
+
+  return this.request.get(url).end(responseHandler(cb, { ignoreCasing: true }));
 };
 
-module.exports = WebMessageHandler;
+/**
+ * Updates the user metdata. It will patch the user metdata with the attributes sent.
+ *
+ *
+ * @method patchUserMetadata
+ * @param {String} userId
+ * @param {Object} userMetadata
+ * @param {userCallback} cb
+ * @see   {@link https://auth0.com/docs/api/management/v2#!/Users/patch_users_by_id}
+ */
+Management.prototype.patchUserMetadata = function(userId, userMetadata, cb) {
+  var url;
+
+  assert.check(userId, { type: 'string', message: 'userId parameter is not valid' });
+  assert.check(userMetadata, { type: 'object', message: 'userMetadata parameter is not valid' });
+  assert.check(cb, { type: 'function', message: 'cb parameter is not valid' });
+
+  url = urljoin(this.baseOptions.rootUrl, 'users', userId);
+
+  return this.request
+    .patch(url)
+    .send({ user_metadata: userMetadata })
+    .end(responseHandler(cb, { ignoreCasing: true }));
+};
+
+/**
+ * Link two users
+ *
+ * @method linkUser
+ * @param {String} userId
+ * @param {String} secondaryUserToken
+ * @param {userCallback} cb
+ * @see   {@link https://auth0.com/docs/api/management/v2#!/Users/post_identities}
+ */
+Management.prototype.linkUser = function(userId, secondaryUserToken, cb) {
+  var url;
+  /* eslint-disable */
+  assert.check(userId, { type: 'string', message: 'userId parameter is not valid' });
+  assert.check(secondaryUserToken, {
+    type: 'string',
+    message: 'secondaryUserToken parameter is not valid'
+  });
+  assert.check(cb, { type: 'function', message: 'cb parameter is not valid' });
+  /* eslint-enable */
+
+  url = urljoin(this.baseOptions.rootUrl, 'users', userId, 'identities');
+
+  return this.request
+    .post(url)
+    .send({ link_with: secondaryUserToken })
+    .end(responseHandler(cb, { ignoreCasing: true }));
+};
+
+module.exports = Management;
 
 
 /***/ }),
-/* 223 */
+/* 231 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29235,19 +30181,19 @@ exports.__esModule = true;
 exports.displayName = displayName;
 exports.url = url;
 
-var _blueimpMd = __webpack_require__(224);
+var _blueimpMd = __webpack_require__(232);
 
 var _blueimpMd2 = _interopRequireDefault(_blueimpMd);
 
-var _trim = __webpack_require__(22);
+var _trim = __webpack_require__(27);
 
 var _trim2 = _interopRequireDefault(_trim);
 
-var _jsonp_utils = __webpack_require__(225);
+var _jsonp_utils = __webpack_require__(233);
 
 var _jsonp_utils2 = _interopRequireDefault(_jsonp_utils);
 
-var _email = __webpack_require__(23);
+var _email = __webpack_require__(28);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29280,7 +30226,7 @@ function url(email, cb) {
 
 
 /***/ }),
-/* 224 */
+/* 232 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -29568,7 +30514,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*
 
 
 /***/ }),
-/* 225 */
+/* 233 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29576,7 +30522,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*
 
 exports.__esModule = true;
 
-var _jsonp = __webpack_require__(226);
+var _jsonp = __webpack_require__(234);
 
 var _jsonp2 = _interopRequireDefault(_jsonp);
 
@@ -29600,14 +30546,14 @@ exports.default = new JSONPUtils();
 
 
 /***/ }),
-/* 226 */
+/* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * Module dependencies
  */
 
-var debug = __webpack_require__(227)('jsonp');
+var debug = __webpack_require__(235)('jsonp');
 
 /**
  * Module exports.
@@ -29703,7 +30649,7 @@ function jsonp(url, opts, fn){
 
 
 /***/ }),
-/* 227 */
+/* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {/**
@@ -29712,7 +30658,7 @@ function jsonp(url, opts, fn){
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(228);
+exports = module.exports = __webpack_require__(236);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -29902,10 +30848,10 @@ function localstorage() {
   } catch (e) {}
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 228 */
+/* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -29921,7 +30867,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(229);
+exports.humanize = __webpack_require__(237);
 
 /**
  * Active `debug` instances.
@@ -30136,7 +31082,7 @@ function coerce(val) {
 
 
 /***/ }),
-/* 229 */
+/* 237 */
 /***/ (function(module, exports) {
 
 /**
@@ -30294,7 +31240,7 @@ function plural(ms, n, name) {
 
 
 /***/ }),
-/* 230 */
+/* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30306,11 +31252,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _list = __webpack_require__(231);
+var _list = __webpack_require__(239);
 
 var _list2 = _interopRequireDefault(_list);
 
-var _actions = __webpack_require__(100);
+var _actions = __webpack_require__(67);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30337,7 +31283,7 @@ exports.default = function (_ref) {
 
 
 /***/ }),
-/* 231 */
+/* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30355,19 +31301,19 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(32);
+var _reactDom = __webpack_require__(35);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _button = __webpack_require__(41);
+var _button = __webpack_require__(42);
 
-var _text_input = __webpack_require__(99);
+var _text_input = __webpack_require__(113);
 
 var _text_input2 = _interopRequireDefault(_text_input);
 
-var _media_utils = __webpack_require__(90);
+var _media_utils = __webpack_require__(39);
 
-var _string_utils = __webpack_require__(53);
+var _string_utils = __webpack_require__(60);
 
 var su = _interopRequireWildcard(_string_utils);
 
@@ -30617,7 +31563,7 @@ Item.propTypes = {
 
 
 /***/ }),
-/* 232 */
+/* 240 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30629,29 +31575,29 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _screen = __webpack_require__(15);
+var _screen = __webpack_require__(11);
 
 var _screen2 = _interopRequireDefault(_screen);
 
-var _social_buttons_pane = __webpack_require__(101);
+var _social_buttons_pane = __webpack_require__(44);
 
 var _social_buttons_pane2 = _interopRequireDefault(_social_buttons_pane);
 
-var _login_pane = __webpack_require__(243);
+var _login_pane = __webpack_require__(252);
 
 var _login_pane2 = _interopRequireDefault(_login_pane);
 
-var _pane_separator = __webpack_require__(110);
+var _pane_separator = __webpack_require__(48);
 
 var _pane_separator2 = _interopRequireDefault(_pane_separator);
 
-var _index = __webpack_require__(6);
+var _index = __webpack_require__(7);
 
-var _actions = __webpack_require__(29);
+var _actions = __webpack_require__(32);
 
-var _signed_in_confirmation = __webpack_require__(25);
+var _signed_in_confirmation = __webpack_require__(17);
 
-var _login_sign_up_tabs = __webpack_require__(111);
+var _login_sign_up_tabs = __webpack_require__(119);
 
 var _login_sign_up_tabs2 = _interopRequireDefault(_login_sign_up_tabs);
 
@@ -30659,17 +31605,17 @@ var _index2 = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index2);
 
-var _actions2 = __webpack_require__(66);
+var _actions2 = __webpack_require__(75);
 
-var _enterprise = __webpack_require__(14);
+var _enterprise = __webpack_require__(16);
 
-var _single_sign_on_notice = __webpack_require__(112);
+var _single_sign_on_notice = __webpack_require__(120);
 
 var _single_sign_on_notice2 = _interopRequireDefault(_single_sign_on_notice);
 
-var _classic = __webpack_require__(42);
+var _classic = __webpack_require__(43);
 
-var _i18n = __webpack_require__(8);
+var _i18n = __webpack_require__(6);
 
 var i18n = _interopRequireWildcard(_i18n);
 
@@ -30790,7 +31736,7 @@ var Login = function (_Screen) {
       return null;
     }
 
-    if ((0, _enterprise.isHRDDomain)(model, (0, _index.databaseUsernameValue)(model)) && !l.oidcConformant(model)) {
+    if ((0, _enterprise.isHRDDomain)(model, (0, _index.databaseUsernameValue)(model))) {
       return function (id) {
         return (0, _actions2.startHRD)(id, (0, _index.databaseUsernameValue)(model));
       };
@@ -30812,7 +31758,7 @@ exports.default = Login;
 
 
 /***/ }),
-/* 233 */
+/* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30822,98 +31768,98 @@ exports.__esModule = true;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _idtokenVerifier = __webpack_require__(96);
-
-var _idtokenVerifier2 = _interopRequireDefault(_idtokenVerifier);
-
-var _auth0Js = __webpack_require__(37);
+var _auth0Js = __webpack_require__(63);
 
 var _auth0Js2 = _interopRequireDefault(_auth0Js);
 
-var _cordova = __webpack_require__(104);
+var _cordova = __webpack_require__(242);
 
 var _cordova2 = _interopRequireDefault(_cordova);
 
-var _superagent = __webpack_require__(56);
+var _superagent = __webpack_require__(64);
 
 var _superagent2 = _interopRequireDefault(_superagent);
 
-var _helper = __webpack_require__(105);
+var _index = __webpack_require__(1);
 
-var _qs = __webpack_require__(17);
+var l = _interopRequireWildcard(_index);
 
-var _qs2 = _interopRequireDefault(_qs);
+var _index2 = __webpack_require__(5);
+
+var _helper = __webpack_require__(245);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Auth0LegacyAPIClient = function () {
-  function Auth0LegacyAPIClient(clientID, domain, opts) {
-    _classCallCheck(this, Auth0LegacyAPIClient);
+var Auth0APIClient = function () {
+  function Auth0APIClient(lockID, clientID, domain, opts) {
+    _classCallCheck(this, Auth0APIClient);
 
+    this.lockID = lockID;
     this.client = null;
     this.authOpt = null;
-
     this.domain = domain;
-    this.clientID = clientID;
-    this.tokenIssuer = opts.overrides && opts.overrides.__token_issuer || 'https://' + domain + '/';
+    this.isUniversalLogin = window.location.host === domain;
 
     var default_telemetry = {
       name: 'lock.js',
-      version: '10.24.3',
+      version: '11.3.0',
       lib_version: _auth0Js2.default.version
     };
 
     this.client = new _auth0Js2.default.WebAuth({
       clientID: clientID,
       domain: domain,
+      audience: opts.audience,
       redirectUri: opts.redirectUrl,
       responseMode: opts.responseMode,
       responseType: opts.responseType,
-      plugins: [new _cordova2.default()],
+      leeway: opts.leeway || 1,
+      plugins: opts.plugins || [new _cordova2.default()],
       overrides: (0, _helper.webAuthOverrides)(opts.overrides),
       _sendTelemetry: opts._sendTelemetry === false ? false : true,
-      _telemetryInfo: opts._telemetryInfo || default_telemetry,
-      _disableDeprecationWarnings: true
+      _telemetryInfo: opts._telemetryInfo || default_telemetry
     });
 
     this.authOpt = {
       popup: !opts.redirect,
       popupOptions: opts.popupOptions,
-      sso: opts.sso,
       nonce: opts.nonce,
       state: opts.state
     };
+    if (this.isUniversalLogin && opts.sso !== undefined) {
+      this.authOpt.sso = opts.sso;
+    }
   }
 
-  Auth0LegacyAPIClient.prototype.logIn = function logIn(options, authParams, cb) {
+  Auth0APIClient.prototype.logIn = function logIn(options, authParams, cb) {
     // TODO: for passwordless only, try to clean in auth0.js
     // client._shouldRedirect = redirect || responseType === "code" || !!redirectUrl;
-    var f = (0, _helper.loginCallback)(!this.authOpt.popup, cb);
-    var auth0Client = this.client;
-
+    var f = (0, _helper.loginCallback)(false, cb);
     var loginOptions = (0, _helper.normalizeAuthParams)(_extends({}, options, this.authOpt, authParams));
+
     if (!options.username && !options.email) {
       if (this.authOpt.popup) {
-        auth0Client.popup.authorize(_extends({}, loginOptions, { owp: true }), f);
+        this.client.popup.authorize(_extends({}, loginOptions, { owp: true }), f);
       } else {
-        auth0Client.authorize(loginOptions, f);
+        this.client.authorize(loginOptions, f);
       }
-    } else if (!this.authOpt.sso && this.authOpt.popup) {
-      auth0Client.client.loginWithResourceOwner(loginOptions, f);
     } else if (this.authOpt.popup) {
-      auth0Client.popup.loginWithCredentials(_extends({}, loginOptions, { owp: true }), f);
+      this.client.popup.loginWithCredentials(loginOptions, f);
     } else {
-      auth0Client.redirect.loginWithCredentials(loginOptions, f);
+      loginOptions.realm = options.connection;
+      this.client.login(loginOptions, f);
     }
   };
 
-  Auth0LegacyAPIClient.prototype.logout = function logout(query) {
+  Auth0APIClient.prototype.logout = function logout(query) {
     this.client.logout(query);
   };
 
-  Auth0LegacyAPIClient.prototype.signUp = function signUp(options, cb) {
+  Auth0APIClient.prototype.signUp = function signUp(options, cb) {
     var _authOpt = this.authOpt,
         popup = _authOpt.popup,
         sso = _authOpt.sso;
@@ -30922,129 +31868,111 @@ var Auth0LegacyAPIClient = function () {
 
     delete options.autoLogin;
 
-    var popupHandler = autoLogin && popup && sso ? this.client.popup.preload() : null;
-
     this.client.signup(options, function (err, result) {
-      return cb(err, result, popupHandler);
+      return cb(err, result);
     });
   };
 
-  Auth0LegacyAPIClient.prototype.resetPassword = function resetPassword(options, cb) {
+  Auth0APIClient.prototype.resetPassword = function resetPassword(options, cb) {
     this.client.changePassword(options, cb);
   };
 
-  Auth0LegacyAPIClient.prototype.startPasswordless = function startPasswordless(options, cb) {
-    this.client.startPasswordless(options, function (err) {
+  Auth0APIClient.prototype.passwordlessStart = function passwordlessStart(options, cb) {
+    this.client.passwordlessStart(options, function (err) {
       return cb((0, _helper.normalizeError)(err));
     });
   };
 
-  // for legacy, we should not verify the id_token so we reimplemented it here
-  // to avoid adding dirt into auth0.js. At some point we will get rid of this.
+  Auth0APIClient.prototype.passwordlessVerify = function passwordlessVerify(options, cb) {
+    var verifyOptions = _extends({}, options, { popup: this.authOpt.popup });
+    this.client.passwordlessLogin(verifyOptions, function (err, result) {
+      return cb((0, _helper.normalizeError)(err), result);
+    });
+  };
 
-
-  Auth0LegacyAPIClient.prototype.parseHash = function parseHash() {
+  Auth0APIClient.prototype.parseHash = function parseHash() {
     var hash = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
     var cb = arguments[1];
 
-    var parsed_qs = _qs2.default.parse(hash.replace(/^#?\/?/, ''));
-    var state = this.authOpt.state || parsed_qs.state;
-
-    this.client.transactionManager.getStoredTransaction(state);
-
-    if (parsed_qs.hasOwnProperty('error')) {
-      var err = {
-        error: parsed_qs.error,
-        error_description: parsed_qs.error_description
-      };
-
-      if (parsed_qs.state) {
-        err.state = parsed_qs.state;
-      }
-
-      return cb(err);
-    }
-
-    if (!parsed_qs.hasOwnProperty('access_token') && !parsed_qs.hasOwnProperty('id_token') && !parsed_qs.hasOwnProperty('refresh_token')) {
-      return cb(null, null);
-    }
-
-    var prof;
-
-    if (parsed_qs.hasOwnProperty('id_token')) {
-      var invalidJwt = function invalidJwt(error) {
-        var err = {
-          error: 'invalid_token',
-          error_description: error
-        };
-        return err;
-      };
-
-      var verifier = new _idtokenVerifier2.default({});
-      prof = verifier.decode(parsed_qs.id_token).payload;
-
-      if (prof.aud !== this.clientID) {
-        return cb(invalidJwt('The clientID configured (' + this.clientID + ') does not match with the clientID set in the token (' + prof.aud + ').'));
-      }
-
-      // iss should be the Auth0 domain (i.e.: https://contoso.auth0.com/)
-      if (prof.iss !== this.tokenIssuer) {
-        return cb(invalidJwt('The domain configured (' + this.tokenIssuer + ') does not match with the domain set in the token (' + prof.iss + ').'));
-      }
-    }
-
-    cb(null, {
-      accessToken: parsed_qs.access_token,
-      idToken: parsed_qs.id_token,
-      idTokenPayload: prof,
-      refreshToken: parsed_qs.refresh_token,
-      state: parsed_qs.state
-    });
+    return this.client.parseHash({
+      hash: hash,
+      nonce: this.authOpt.nonce,
+      state: this.authOpt.state
+    }, cb);
   };
 
-  Auth0LegacyAPIClient.prototype.getUserInfo = function getUserInfo(token, callback) {
+  Auth0APIClient.prototype.getUserInfo = function getUserInfo(token, callback) {
     return this.client.client.userInfo(token, callback);
   };
 
-  // auth0.js does not supports this endpoint because it is deprecated for oidcConformat clients
-  // we implemented it here to provide BC support, we will loose it in lock 11.
-
-
-  Auth0LegacyAPIClient.prototype.getProfile = function getProfile(token, callback) {
-    _superagent2.default.get('https://' + this.domain + '/tokeninfo?id_token=' + token).end(function (err, res) {
-      if (err) {
-        return callback({
-          error: err.message,
-          error_description: res.text || res.body
-        });
-      }
-
-      return callback(null, res.body);
-    });
+  Auth0APIClient.prototype.getProfile = function getProfile(token, callback) {
+    this.getUserInfo(token, callback);
   };
 
-  Auth0LegacyAPIClient.prototype.getSSOData = function getSSOData() {
-    var _client$client;
-
-    return (_client$client = this.client.client).getSSOData.apply(_client$client, arguments);
+  Auth0APIClient.prototype.getSSOData = function getSSOData(cb) {
+    if (this.isUniversalLogin) {
+      _superagent2.default.get('https://' + this.domain + '/user/ssodata').withCredentials().end(function (err, res) {
+        cb(err, res.body);
+      });
+    } else {
+      return this.client.client.getSSOData(cb);
+    }
   };
 
-  Auth0LegacyAPIClient.prototype.getUserCountry = function getUserCountry(cb) {
-    return this.client.getUserCountry(cb);
+  Auth0APIClient.prototype.getUserCountry = function getUserCountry(cb) {
+    return this.client.client.getUserCountry(cb);
   };
 
-  return Auth0LegacyAPIClient;
+  Auth0APIClient.prototype.checkSession = function checkSession(options, cb) {
+    return this.client.checkSession(options, cb);
+  };
+
+  return Auth0APIClient;
 }();
 
-exports.default = Auth0LegacyAPIClient;
+exports.default = Auth0APIClient;
 
 
 /***/ }),
-/* 234 */
+/* 242 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var urljoin = __webpack_require__(9);
-var PopupHandler = __webpack_require__(235);
+var version = __webpack_require__(41);
+var windowHandler = __webpack_require__(8);
+var PluginHandler = __webpack_require__(243);
+
+function CordovaPlugin() {
+  this.webAuth = null;
+  this.version = version.raw;
+  this.extensibilityPoints = [
+    'popup.authorize',
+    'popup.getPopupHandler'
+  ];
+}
+
+CordovaPlugin.prototype.setWebAuth = function (webAuth) {
+  this.webAuth = webAuth;
+};
+
+CordovaPlugin.prototype.supports = function (extensibilityPoint) {
+  var _window = windowHandler.getWindow();
+  return (!!_window.cordova || !!_window.electron) &&
+          this.extensibilityPoints.indexOf(extensibilityPoint) > -1;
+};
+
+CordovaPlugin.prototype.init = function () {
+  return new PluginHandler(this.webAuth);
+};
+
+module.exports = CordovaPlugin;
+
+
+/***/ }),
+/* 243 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var urljoin = __webpack_require__(12);
+var PopupHandler = __webpack_require__(244);
 
 function PluginHandler(webAuth) {
   this.webAuth = webAuth;
@@ -31064,12 +31992,12 @@ module.exports = PluginHandler;
 
 
 /***/ }),
-/* 235 */
+/* 244 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var windowHandler = __webpack_require__(11);
-var qs = __webpack_require__(17);
-var urljoin = __webpack_require__(9);
+var windowHandler = __webpack_require__(8);
+var qs = __webpack_require__(23);
+var urljoin = __webpack_require__(12);
 
 function PopupHandler(webAuth) {
   this.webAuth = webAuth;
@@ -31077,7 +32005,7 @@ function PopupHandler(webAuth) {
   this.options = null;
 }
 
-PopupHandler.prototype.preload = function (options) {
+PopupHandler.prototype.preload = function(options) {
   var _this = this;
   var _window = windowHandler.getWindow();
 
@@ -31099,7 +32027,7 @@ PopupHandler.prototype.preload = function (options) {
 
   this._current_popup = _window.open(url, '_blank', windowFeatures);
 
-  this._current_popup.kill = function (success) {
+  this._current_popup.kill = function(success) {
     _this._current_popup.success = success;
     this.close();
     _this._current_popup = null;
@@ -31108,7 +32036,7 @@ PopupHandler.prototype.preload = function (options) {
   return this._current_popup;
 };
 
-PopupHandler.prototype.load = function (url, _, options, cb) {
+PopupHandler.prototype.load = function(url, _, options, cb) {
   var _this = this;
   this.url = url;
   this.options = options;
@@ -31119,15 +32047,15 @@ PopupHandler.prototype.load = function (url, _, options, cb) {
     this._current_popup.location.href = url;
   }
 
-  this.transientErrorHandler = function (event) {
+  this.transientErrorHandler = function(event) {
     _this.errorHandler(event, cb);
   };
 
-  this.transientStartHandler = function (event) {
+  this.transientStartHandler = function(event) {
     _this.startHandler(event, cb);
   };
 
-  this.transientExitHandler = function () {
+  this.transientExitHandler = function() {
     _this.exitHandler(cb);
   };
 
@@ -31136,7 +32064,7 @@ PopupHandler.prototype.load = function (url, _, options, cb) {
   this._current_popup.addEventListener('exit', this.transientExitHandler);
 };
 
-PopupHandler.prototype.errorHandler = function (event, cb) {
+PopupHandler.prototype.errorHandler = function(event, cb) {
   if (!this._current_popup) {
     return;
   }
@@ -31146,13 +32074,13 @@ PopupHandler.prototype.errorHandler = function (event, cb) {
   cb({ error: 'window_error', errorDescription: event.message });
 };
 
-PopupHandler.prototype.unhook = function () {
+PopupHandler.prototype.unhook = function() {
   this._current_popup.removeEventListener('loaderror', this.transientErrorHandler);
   this._current_popup.removeEventListener('loadstart', this.transientStartHandler);
   this._current_popup.removeEventListener('exit', this.transientExitHandler);
 };
 
-PopupHandler.prototype.exitHandler = function (cb) {
+PopupHandler.prototype.exitHandler = function(cb) {
   if (!this._current_popup) {
     return;
   }
@@ -31167,7 +32095,7 @@ PopupHandler.prototype.exitHandler = function (cb) {
   }
 };
 
-PopupHandler.prototype.startHandler = function (event, cb) {
+PopupHandler.prototype.startHandler = function(event, cb) {
   var _this = this;
 
   if (!this._current_popup) {
@@ -31176,7 +32104,9 @@ PopupHandler.prototype.startHandler = function (event, cb) {
 
   var callbackUrl = urljoin('https:', this.webAuth.baseOptions.domain, '/mobile');
 
-  if (event.url && !(event.url.indexOf(callbackUrl + '#') === 0)) { return; }
+  if (event.url && !(event.url.indexOf(callbackUrl + '#') === 0)) {
+    return;
+  }
 
   var parts = event.url.split('#');
 
@@ -31184,179 +32114,185 @@ PopupHandler.prototype.startHandler = function (event, cb) {
     return;
   }
 
-  var opts = { hash: parts.pop(), _idTokenVerification: false };
+  var opts = { hash: parts.pop() };
 
   if (this.options.nonce) {
     opts.nonce = this.options.nonce;
   }
 
-  this.webAuth.parseHash(
-    opts,
-    function (error, result) {
-      if (error || result) {
-        _this._current_popup.kill(true);
-        cb(error, result);
-      }
+  this.webAuth.parseHash(opts, function(error, result) {
+    if (error || result) {
+      _this._current_popup.kill(true);
+      cb(error, result);
     }
-  );
+  });
 };
 
 module.exports = PopupHandler;
 
 
 /***/ }),
-/* 236 */
+/* 245 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 exports.__esModule = true;
+exports.normalizeError = normalizeError;
+exports.loginCallback = loginCallback;
+exports.normalizeAuthParams = normalizeAuthParams;
+exports.webAuthOverrides = webAuthOverrides;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
-var _auth0Js = __webpack_require__(37);
+function normalizeError(error) {
+  if (!error) {
+    return error;
+  }
 
-var _auth0Js2 = _interopRequireDefault(_auth0Js);
+  // TODO: clean this mess, the first checks are for social/popup,
+  // then we have some stuff for passwordless and the latter is for
+  // db.
 
-var _cordova = __webpack_require__(104);
+  // TODO: the following checks were copied from https://github.com/auth0/lock/blob/0a5abf1957c9bb746b0710b274d0feed9b399958/index.js#L1263-L1288
+  // Some of the checks are missing because I couldn't reproduce them and I'm
+  // affraid they'll break existent functionality if add them.
+  // We need a better errror handling story in auth0.js.
 
-var _cordova2 = _interopRequireDefault(_cordova);
-
-var _index = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index);
-
-var _index2 = __webpack_require__(5);
-
-var _helper = __webpack_require__(105);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Auth0APIClient = function () {
-  function Auth0APIClient(lockID, clientID, domain, opts) {
-    _classCallCheck(this, Auth0APIClient);
-
-    this.lockID = lockID;
-    this.client = null;
-    this.authOpt = null;
-
-    var default_telemetry = {
-      name: 'lock.js',
-      version: '10.24.3',
-      lib_version: _auth0Js2.default.version
-    };
-
-    this.client = new _auth0Js2.default.WebAuth({
-      clientID: clientID,
-      domain: domain,
-      audience: opts.audience,
-      redirectUri: opts.redirectUrl,
-      responseMode: opts.responseMode,
-      responseType: opts.responseType,
-      leeway: opts.leeway || 1,
-      plugins: [new _cordova2.default()],
-      overrides: (0, _helper.webAuthOverrides)(opts.overrides),
-      _sendTelemetry: opts._sendTelemetry === false ? false : true,
-      _telemetryInfo: opts._telemetryInfo || default_telemetry
-    });
-
-    this.authOpt = {
-      popup: !opts.redirect,
-      popupOptions: opts.popupOptions,
-      nonce: opts.nonce,
-      state: opts.state
+  if (error.status === 'User closed the popup window') {
+    // {
+    //   status: "User closed the popup window",
+    //   name: undefined,
+    //   code: undefined,
+    //   details: {
+    //     description: "server error",
+    //     code: undefined
+    //   }
+    // }
+    return {
+      code: 'lock.popup_closed',
+      error: 'lock.popup_closed',
+      description: 'Popup window closed.'
     };
   }
 
-  Auth0APIClient.prototype.logIn = function logIn(options, authParams, cb) {
-    // TODO: for passwordless only, try to clean in auth0.js
-    // client._shouldRedirect = redirect || responseType === "code" || !!redirectUrl;
-    var f = (0, _helper.loginCallback)(false, cb);
-    var loginOptions = (0, _helper.normalizeAuthParams)(_extends({}, options, this.authOpt, authParams));
+  if (error.code === 'unauthorized') {
+    // Custom rule error
+    //
+    // {
+    //   "code": "unauthorized",
+    //   "details": {
+    //     "code": "unauthorized",
+    //     "error_description": "user is blocked",
+    //     "error": "unauthorized"
+    //   },
+    //   "name": "unauthorized",
+    //   "status": 401
+    // }
 
-    if (!options.username && !options.email) {
-      if (this.authOpt.popup) {
-        this.client.popup.authorize(loginOptions, f);
-      } else {
-        this.client.authorize(loginOptions, f);
-      }
-    } else {
-      if (this.authOpt.popup) {
-        throw new Error('Cross origin login is not supported in popup mode');
-      }
-      loginOptions.realm = options.connection;
-      this.client.login(loginOptions, f);
+    // Default "user is blocked" rule error
+    //
+    // {
+    //   "code": "unauthorized",
+    //   "details": {
+    //     "code": "unauthorized",
+    //     "error_description": "user is blocked",
+    //     "error": "unauthorized"
+    //   },
+    //   "name": "unauthorized",
+    //   "status": 401
+    // }
+
+    // Social cancel permissions.
+    //
+    // {
+    //   code: "unauthorized",
+    //   details: {
+    //     code: "unauthorized"
+    //     error: "unauthorized"
+    //     error_description: "access_denied"
+    //   },
+    //   name: "unauthorized"
+    //   status: 401
+    // }
+
+    // Social cancel permissions or unknown error
+    if (!error.description || error.description === 'access_denied') {
+      return {
+        code: 'lock.unauthorized',
+        error: 'lock.unauthorized',
+        description: error.description || 'Permissions were not granted.'
+      };
     }
+
+    // Special case for custom rule error
+    if (error.description === 'user is blocked') {
+      return {
+        code: 'blocked_user',
+        error: 'blocked_user',
+        description: error.description
+      };
+    }
+
+    // Custom Rule error
+    return {
+      code: 'rule_error',
+      error: 'rule_error',
+      description: error.description
+    };
+  }
+  if (error.error === 'access_denied' || error.code === 'access_denied') {
+    return {
+      code: 'invalid_user_password',
+      error: 'invalid_user_password',
+      description: error.description
+    };
+  }
+
+  var result = {
+    error: error.code ? error.code : error.statusCode || error.error,
+    description: error.description || error.code
   };
 
-  Auth0APIClient.prototype.logout = function logout(query) {
-    this.client.logout(query);
+  // result is used for passwordless and error for database.
+  return result.error === undefined && result.description === undefined ? error : result;
+}
+
+function loginCallback(redirect, cb) {
+  return redirect ? function (error) {
+    return cb(normalizeError(error));
+  } : function (error, result) {
+    return cb(normalizeError(error), result);
   };
+}
 
-  Auth0APIClient.prototype.signUp = function signUp(options, cb) {
-    var autoLogin = options.autoLogin;
+function normalizeAuthParams(_ref) {
+  var popup = _ref.popup,
+      popupOptions = _ref.popupOptions,
+      authParams = _objectWithoutProperties(_ref, ['popup', 'popupOptions']);
 
+  return authParams;
+}
 
-    delete options.autoLogin;
+function webAuthOverrides() {
+  var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      __tenant = _ref2.__tenant,
+      __token_issuer = _ref2.__token_issuer;
 
-    this.client.signup(options, function (err, result) {
-      return cb(err, result);
-    });
-  };
+  if (__tenant || __token_issuer) {
+    return {
+      __tenant: __tenant,
+      __token_issuer: __token_issuer
+    };
+  }
 
-  Auth0APIClient.prototype.resetPassword = function resetPassword(options, cb) {
-    this.client.changePassword(options, cb);
-  };
-
-  Auth0APIClient.prototype.startPasswordless = function startPasswordless(options, cb) {
-    this.client.startPasswordless(options, function (err) {
-      return cb((0, _helper.normalizeError)(err));
-    });
-  };
-
-  Auth0APIClient.prototype.parseHash = function parseHash() {
-    var hash = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    var cb = arguments[1];
-
-    return this.client.parseHash({
-      hash: hash,
-      nonce: this.authOpt.nonce,
-      state: this.authOpt.state
-    }, cb);
-  };
-
-  Auth0APIClient.prototype.getUserInfo = function getUserInfo(token, callback) {
-    return this.client.client.userInfo(token, callback);
-  };
-
-  Auth0APIClient.prototype.getProfile = function getProfile(token, callback) {
-    var m = (0, _index2.read)(_index2.getEntity, 'lock', this.lockID);
-    l.emitUnrecoverableErrorEvent(m, '`getProfile` is deprecated for oidcConformant clients');
-  };
-
-  Auth0APIClient.prototype.getSSOData = function getSSOData() {
-    var _client$client;
-
-    return (_client$client = this.client.client).getSSOData.apply(_client$client, arguments);
-  };
-
-  Auth0APIClient.prototype.getUserCountry = function getUserCountry(cb) {
-    return this.client.getUserCountry(cb);
-  };
-
-  return Auth0APIClient;
-}();
-
-exports.default = Auth0APIClient;
+  return null;
+}
 
 
 /***/ }),
-/* 237 */
+/* 246 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31369,19 +32305,19 @@ var _immutable = __webpack_require__(4);
 
 var _immutable2 = _interopRequireDefault(_immutable);
 
-var _settings = __webpack_require__(238);
+var _settings = __webpack_require__(247);
 
-var _settings2 = __webpack_require__(239);
+var _settings2 = __webpack_require__(248);
 
-var _data = __webpack_require__(240);
+var _data = __webpack_require__(249);
 
 var _index = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index);
 
-var _enterprise = __webpack_require__(14);
+var _enterprise = __webpack_require__(16);
 
-var _sync = __webpack_require__(33);
+var _sync = __webpack_require__(25);
 
 var _sync2 = _interopRequireDefault(_sync);
 
@@ -31410,27 +32346,31 @@ function syncRemoteData(m) {
 
   m = (0, _sync2.default)(m, 'sso', {
     conditionFn: function conditionFn(m) {
-      return l.auth.sso(m) && !l.oidcConformant(m);
+      return l.auth.sso(m) && l.ui.rememberLastLogin(m);
     },
     waitFn: function waitFn(m) {
       return (0, _sync.isSuccess)(m, 'client');
     },
     syncFn: function syncFn(m, cb) {
-      return (0, _data.fetchSSOData)(l.id(m), (0, _enterprise.isADEnabled)(m), cb);
+      return (0, _data.fetchSSOData)(l.id(m), cb);
     },
     successFn: function successFn(m, result) {
       return m.mergeIn(['sso'], _immutable2.default.fromJS(result));
     },
     errorFn: function errorFn(m, error) {
-      // location.origin is not supported in all browsers
-      var origin = location.protocol + '//' + location.hostname;
-      if (location.port) {
-        origin += ':' + location.port;
+      if (error.error === 'consent_required') {
+        l.warn(m, error.error_description);
+      } else {
+        // location.origin is not supported in all browsers
+        var origin = location.protocol + '//' + location.hostname;
+        if (location.port) {
+          origin += ':' + location.port;
+        }
+
+        var appSettingsUrl = 'https://manage.auth0.com/#/clients/' + l.clientID(m) + '/settings';
+
+        l.warn(m, 'There was an error fetching the SSO data. This could simply mean that there was a problem with the network. But, if a "Origin" error has been logged before this warning, please add "' + origin + '" to the "Allowed Web Origins" list in the Auth0 dashboard: ' + appSettingsUrl);
       }
-
-      var appSettingsUrl = 'https://manage.auth0.com/#/applications/' + l.clientID(m) + '/settings';
-
-      l.warn(m, 'There was an error fetching the SSO data. This could simply mean that there was a problem with the network. But, if a "Origin" error has been logged before this warning, please add "' + origin + '" to the "Allowed Origins (CORS)" list in the Auth0 dashboard: ' + appSettingsUrl);
     }
   });
 
@@ -31439,7 +32379,7 @@ function syncRemoteData(m) {
 
 
 /***/ }),
-/* 238 */
+/* 247 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31449,17 +32389,17 @@ exports.__esModule = true;
 exports.fetchClientSettings = fetchClientSettings;
 exports.syncClientSettingsSuccess = syncClientSettingsSuccess;
 
-var _urlJoin = __webpack_require__(9);
+var _urlJoin = __webpack_require__(12);
 
 var _urlJoin2 = _interopRequireDefault(_urlJoin);
 
-var _cdn_utils = __webpack_require__(55);
+var _cdn_utils = __webpack_require__(62);
 
 var _index = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index);
 
-var _index2 = __webpack_require__(106);
+var _index2 = __webpack_require__(115);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -31485,7 +32425,7 @@ function syncClientSettingsSuccess(m, result) {
 
 
 /***/ }),
-/* 239 */
+/* 248 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31495,13 +32435,13 @@ exports.__esModule = true;
 exports.fetchTenantSettings = fetchTenantSettings;
 exports.syncTenantSettingsSuccess = syncTenantSettingsSuccess;
 
-var _cdn_utils = __webpack_require__(55);
+var _cdn_utils = __webpack_require__(62);
 
 var _index = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index);
 
-var _index2 = __webpack_require__(59);
+var _index2 = __webpack_require__(69);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -31525,7 +32465,7 @@ function syncTenantSettingsSuccess(m, client_id, result) {
 
 
 /***/ }),
-/* 240 */
+/* 249 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31534,11 +32474,11 @@ function syncTenantSettingsSuccess(m, client_id, result) {
 exports.__esModule = true;
 exports.fetchSSOData = fetchSSOData;
 
-var _web_api = __webpack_require__(44);
+var _web_api = __webpack_require__(31);
 
 var _web_api2 = _interopRequireDefault(_web_api);
 
-var _cache = __webpack_require__(241);
+var _cache = __webpack_require__(250);
 
 var _cache2 = _interopRequireDefault(_cache);
 
@@ -31548,13 +32488,13 @@ var cache = new _cache2.default(function () {
   return _web_api2.default.getSSOData.apply(_web_api2.default, arguments);
 });
 
-function fetchSSOData(id, withAD, cb) {
-  cache.get(id, withAD, cb);
+function fetchSSOData(id, cb) {
+  cache.get(id, cb);
 }
 
 
 /***/ }),
-/* 241 */
+/* 250 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31618,7 +32558,7 @@ exports.default = Cache;
 
 
 /***/ }),
-/* 242 */
+/* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31651,7 +32591,7 @@ function emitFederatedLoginEvent(lock, provider, isSignUp) {
 
 
 /***/ }),
-/* 243 */
+/* 252 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31667,21 +32607,21 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _email_pane = __webpack_require__(60);
+var _email_pane = __webpack_require__(46);
 
 var _email_pane2 = _interopRequireDefault(_email_pane);
 
-var _username_pane = __webpack_require__(61);
+var _username_pane = __webpack_require__(71);
 
 var _username_pane2 = _interopRequireDefault(_username_pane);
 
-var _password_pane = __webpack_require__(62);
+var _password_pane = __webpack_require__(72);
 
 var _password_pane2 = _interopRequireDefault(_password_pane);
 
-var _actions = __webpack_require__(29);
+var _actions = __webpack_require__(32);
 
-var _index = __webpack_require__(6);
+var _index = __webpack_require__(7);
 
 var _index2 = __webpack_require__(1);
 
@@ -31793,7 +32733,7 @@ LoginPane.propTypes = {
 
 
 /***/ }),
-/* 244 */
+/* 253 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31807,7 +32747,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _input_wrap = __webpack_require__(24);
+var _input_wrap = __webpack_require__(18);
 
 var _input_wrap2 = _interopRequireDefault(_input_wrap);
 
@@ -31905,7 +32845,7 @@ exports.default = EmailInput;
 
 
 /***/ }),
-/* 245 */
+/* 254 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31931,7 +32871,7 @@ function debounce(f, delay) {
 
 
 /***/ }),
-/* 246 */
+/* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31945,7 +32885,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _input_wrap = __webpack_require__(24);
+var _input_wrap = __webpack_require__(18);
 
 var _input_wrap2 = _interopRequireDefault(_input_wrap);
 
@@ -32046,7 +32986,7 @@ exports.default = UsernameInput;
 
 
 /***/ }),
-/* 247 */
+/* 256 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32064,11 +33004,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _passwordSheriff = __webpack_require__(109);
+var _passwordSheriff = __webpack_require__(118);
 
 var _passwordSheriff2 = _interopRequireDefault(_passwordSheriff);
 
-var _util = __webpack_require__(54);
+var _util = __webpack_require__(61);
 
 var _util2 = _interopRequireDefault(_util);
 
@@ -32207,22 +33147,22 @@ Item.propTypes = {
 
 
 /***/ }),
-/* 248 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var format = __webpack_require__(54).format;
+var format = __webpack_require__(61).format;
 
-var PasswordPolicyError = __webpack_require__(249);
+var PasswordPolicyError = __webpack_require__(258);
 
 function isString(value) {
   return typeof value === 'string' || value instanceof String;
 }
 
 var defaultRuleset = {
-  length:           __webpack_require__(250),
-  contains:         __webpack_require__(64),
-  containsAtLeast:  __webpack_require__(251),
-  identicalChars:   __webpack_require__(252),
+  length:           __webpack_require__(259),
+  contains:         __webpack_require__(74),
+  containsAtLeast:  __webpack_require__(260),
+  identicalChars:   __webpack_require__(261),
 };
 
 function flatDescriptions (descriptions, index) {
@@ -32342,7 +33282,7 @@ module.exports = PasswordPolicy;
 
 
 /***/ }),
-/* 249 */
+/* 258 */
 /***/ (function(module, exports) {
 
 /**
@@ -32363,10 +33303,10 @@ module.exports = PasswordPolicyError;
 
 
 /***/ }),
-/* 250 */
+/* 259 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _ = __webpack_require__(45);
+var _ = __webpack_require__(47);
 
 /* A rule should contain explain and rule methods */
 // TODO explain explain
@@ -32415,12 +33355,12 @@ module.exports = {
 
 
 /***/ }),
-/* 251 */
+/* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _ = __webpack_require__(45);
+var _ = __webpack_require__(47);
 
-var contains = __webpack_require__(64);
+var contains = __webpack_require__(74);
 
 function createIntroMessage() {
   return 'Contain at least %d of the following %d types of characters:';
@@ -32497,10 +33437,10 @@ module.exports = {
 
 
 /***/ }),
-/* 252 */
+/* 261 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _ = __webpack_require__(45);
+var _ = __webpack_require__(47);
 
 function assert(options, password) {
   if (!password) {
@@ -32558,7 +33498,7 @@ module.exports = {
 
 
 /***/ }),
-/* 253 */
+/* 262 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32569,7 +33509,7 @@ exports.validatePassword = validatePassword;
 exports.setPassword = setPassword;
 exports.setShowPassword = setShowPassword;
 
-var _passwordSheriff = __webpack_require__(109);
+var _passwordSheriff = __webpack_require__(118);
 
 var _passwordSheriff2 = _interopRequireDefault(_passwordSheriff);
 
@@ -32593,7 +33533,7 @@ function setShowPassword(m, checked) {
 
 
 /***/ }),
-/* 254 */
+/* 263 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32609,7 +33549,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _button = __webpack_require__(41);
+var _button = __webpack_require__(42);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32643,7 +33583,7 @@ exports.default = ConfirmationPane;
 
 
 /***/ }),
-/* 255 */
+/* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32655,53 +33595,53 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _screen = __webpack_require__(15);
+var _screen = __webpack_require__(11);
 
 var _screen2 = _interopRequireDefault(_screen);
 
-var _index = __webpack_require__(6);
+var _index = __webpack_require__(7);
 
-var _actions = __webpack_require__(29);
+var _actions = __webpack_require__(32);
 
-var _classic = __webpack_require__(42);
+var _classic = __webpack_require__(43);
 
-var _signed_in_confirmation = __webpack_require__(25);
+var _signed_in_confirmation = __webpack_require__(17);
 
-var _signed_up_confirmation = __webpack_require__(256);
+var _signed_up_confirmation = __webpack_require__(265);
 
 var _index2 = __webpack_require__(3);
 
-var _actions2 = __webpack_require__(66);
+var _actions2 = __webpack_require__(75);
 
 var _index3 = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index3);
 
-var _i18n = __webpack_require__(8);
+var _i18n = __webpack_require__(6);
 
 var i18n = _interopRequireWildcard(_i18n);
 
-var _sign_up_pane = __webpack_require__(257);
+var _sign_up_pane = __webpack_require__(266);
 
 var _sign_up_pane2 = _interopRequireDefault(_sign_up_pane);
 
-var _pane_separator = __webpack_require__(110);
+var _pane_separator = __webpack_require__(48);
 
 var _pane_separator2 = _interopRequireDefault(_pane_separator);
 
-var _sign_up_terms = __webpack_require__(261);
+var _sign_up_terms = __webpack_require__(269);
 
 var _sign_up_terms2 = _interopRequireDefault(_sign_up_terms);
 
-var _social_buttons_pane = __webpack_require__(101);
+var _social_buttons_pane = __webpack_require__(44);
 
 var _social_buttons_pane2 = _interopRequireDefault(_social_buttons_pane);
 
-var _login_sign_up_tabs = __webpack_require__(111);
+var _login_sign_up_tabs = __webpack_require__(119);
 
 var _login_sign_up_tabs2 = _interopRequireDefault(_login_sign_up_tabs);
 
-var _single_sign_on_notice = __webpack_require__(112);
+var _single_sign_on_notice = __webpack_require__(120);
 
 var _single_sign_on_notice2 = _interopRequireDefault(_single_sign_on_notice);
 
@@ -32825,7 +33765,7 @@ exports.default = SignUp;
 
 
 /***/ }),
-/* 256 */
+/* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32842,19 +33782,19 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _success_pane = __webpack_require__(65);
+var _success_pane = __webpack_require__(49);
 
 var _success_pane2 = _interopRequireDefault(_success_pane);
 
-var _actions = __webpack_require__(16);
+var _actions = __webpack_require__(15);
 
 var _index = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index);
 
-var _index2 = __webpack_require__(6);
+var _index2 = __webpack_require__(7);
 
-var _i18n = __webpack_require__(8);
+var _i18n = __webpack_require__(6);
 
 var i18n = _interopRequireWildcard(_i18n);
 
@@ -32926,7 +33866,7 @@ function renderSignedUpConfirmation(m) {
 
 
 /***/ }),
-/* 257 */
+/* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32938,23 +33878,23 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _email_pane = __webpack_require__(60);
+var _email_pane = __webpack_require__(46);
 
 var _email_pane2 = _interopRequireDefault(_email_pane);
 
-var _password_pane = __webpack_require__(62);
+var _password_pane = __webpack_require__(72);
 
 var _password_pane2 = _interopRequireDefault(_password_pane);
 
-var _username_pane = __webpack_require__(61);
+var _username_pane = __webpack_require__(71);
 
 var _username_pane2 = _interopRequireDefault(_username_pane);
 
-var _custom_input = __webpack_require__(258);
+var _custom_input = __webpack_require__(267);
 
 var _custom_input2 = _interopRequireDefault(_custom_input);
 
-var _index = __webpack_require__(6);
+var _index = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33038,7 +33978,7 @@ exports.default = SignUpPane;
 
 
 /***/ }),
-/* 258 */
+/* 267 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33052,19 +33992,19 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _actions = __webpack_require__(100);
+var _actions = __webpack_require__(67);
 
 var _index = __webpack_require__(3);
 
-var _text_input = __webpack_require__(99);
+var _text_input = __webpack_require__(113);
 
 var _text_input2 = _interopRequireDefault(_text_input);
 
-var _select_input = __webpack_require__(259);
+var _select_input = __webpack_require__(121);
 
 var _select_input2 = _interopRequireDefault(_select_input);
 
-var _checkbox_input = __webpack_require__(260);
+var _checkbox_input = __webpack_require__(268);
 
 var _checkbox_input2 = _interopRequireDefault(_checkbox_input);
 
@@ -33121,7 +34061,7 @@ exports.default = CustomInput;
 
 
 /***/ }),
-/* 259 */
+/* 268 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33133,118 +34073,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _input_wrap = __webpack_require__(24);
-
-var _input_wrap2 = _interopRequireDefault(_input_wrap);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var arrowSvg = '<svg focusable="false" width="5px" height="10px" viewBox="0 0 5 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" class="auth0-lock-icon-arrow"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"><g id="Lock" transform="translate(-396.000000, -3521.000000)" fill="#000000" opacity="0.539999962"><g id="SMS" transform="translate(153.000000, 3207.000000)"><g transform="translate(35.000000, 299.000000)"><g transform="translate(210.000000, 20.000000) rotate(-90.000000) translate(-210.000000, -20.000000) translate(198.000000, 8.000000)"><path id="Shape" d="M7,10 L12,15 L17,10 L7,10 Z"></path></g></g></g></g></g></svg>';
-
-var SelectInput = function (_React$Component) {
-  _inherits(SelectInput, _React$Component);
-
-  function SelectInput(props) {
-    _classCallCheck(this, SelectInput);
-
-    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
-
-    _this.state = {};
-    return _this;
-  }
-
-  SelectInput.prototype.render = function render() {
-    var _props = this.props,
-        iconUrl = _props.iconUrl,
-        isValid = _props.isValid,
-        label = _props.label,
-        name = _props.name,
-        onClick = _props.onClick,
-        placeholder = _props.placeholder;
-    var icon = this.props.icon;
-    var focused = this.state.focused;
-
-
-    var limitedValue = label || placeholder;
-    if (limitedValue.length > 23) {
-      limitedValue = limitedValue.substr(0, 20) + '...';
-    }
-
-    if (!icon && typeof iconUrl === 'string' && iconUrl) {
-      icon = _react2.default.createElement('img', { className: 'auth0-lock-custom-icon', src: iconUrl });
-    }
-
-    var className = 'auth0-lock-input auth0-lock-input-location';
-    if (!label) className += ' auth0-lock-input-with-placeholder';
-
-    return _react2.default.createElement(
-      _input_wrap2.default,
-      { focused: focused, isValid: isValid, name: 'location', icon: icon },
-      _react2.default.createElement('input', {
-        type: 'button',
-        name: name,
-        className: className,
-        value: limitedValue,
-        onFocus: this.handleFocus.bind(this),
-        onBlur: this.handleBlur.bind(this),
-        onKeyDown: this.handleKeyDown.bind(this),
-        onClick: onClick
-      }),
-      _react2.default.createElement('span', { dangerouslySetInnerHTML: { __html: arrowSvg } })
-    );
-  };
-
-  SelectInput.prototype.handleFocus = function handleFocus() {
-    this.setState({ focused: true });
-  };
-
-  SelectInput.prototype.handleBlur = function handleBlur() {
-    this.setState({ focused: false });
-  };
-
-  SelectInput.prototype.handleKeyDown = function handleKeyDown(e) {
-    if (e.key !== 'Tab') {
-      e.preventDefault();
-    }
-
-    if (e.key === 'ArrowDown') {
-      return this.props.onClick();
-    }
-
-    if (e.keyCode >= 65 && e.keyCode <= 90) {
-      return this.props.onClick(String.fromCharCode(e.keyCode).toLowerCase());
-    }
-  };
-
-  return SelectInput;
-}(_react2.default.Component);
-
-// TODO: specify propTypes
-
-
-exports.default = SelectInput;
-
-
-/***/ }),
-/* 260 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _input_wrap = __webpack_require__(24);
+var _input_wrap = __webpack_require__(18);
 
 var _input_wrap2 = _interopRequireDefault(_input_wrap);
 
@@ -33301,7 +34130,7 @@ exports.default = CheckboxInput;
 
 
 /***/ }),
-/* 261 */
+/* 269 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33336,7 +34165,7 @@ exports.default = SignUpTerms;
 
 
 /***/ }),
-/* 262 */
+/* 270 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33348,23 +34177,23 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _screen = __webpack_require__(15);
+var _screen = __webpack_require__(11);
 
 var _screen2 = _interopRequireDefault(_screen);
 
-var _mfa_pane = __webpack_require__(263);
+var _mfa_pane = __webpack_require__(271);
 
 var _mfa_pane2 = _interopRequireDefault(_mfa_pane);
 
-var _i18n = __webpack_require__(8);
+var _i18n = __webpack_require__(6);
 
 var i18n = _interopRequireWildcard(_i18n);
 
-var _actions = __webpack_require__(29);
+var _actions = __webpack_require__(32);
 
-var _index = __webpack_require__(6);
+var _index = __webpack_require__(7);
 
-var _signed_in_confirmation = __webpack_require__(25);
+var _signed_in_confirmation = __webpack_require__(17);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -33427,7 +34256,7 @@ exports.default = MFALoginScreen;
 
 
 /***/ }),
-/* 263 */
+/* 271 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33443,7 +34272,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _mfa_code_pane = __webpack_require__(264);
+var _mfa_code_pane = __webpack_require__(272);
 
 var _mfa_code_pane2 = _interopRequireDefault(_mfa_code_pane);
 
@@ -33513,7 +34342,7 @@ MFAPane.propTypes = {
 
 
 /***/ }),
-/* 264 */
+/* 272 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33529,7 +34358,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _mfa_code_input = __webpack_require__(265);
+var _mfa_code_input = __webpack_require__(273);
 
 var _mfa_code_input2 = _interopRequireDefault(_mfa_code_input);
 
@@ -33543,7 +34372,7 @@ var _index3 = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index3);
 
-var _mfa_code = __webpack_require__(266);
+var _mfa_code = __webpack_require__(274);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -33600,7 +34429,7 @@ MFACodePane.propTypes = {
 
 
 /***/ }),
-/* 265 */
+/* 273 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33618,11 +34447,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _input_wrap = __webpack_require__(24);
+var _input_wrap = __webpack_require__(18);
 
 var _input_wrap2 = _interopRequireDefault(_input_wrap);
 
-var _password_input = __webpack_require__(63);
+var _password_input = __webpack_require__(73);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33717,7 +34546,7 @@ exports.default = MFACodeInput;
 
 
 /***/ }),
-/* 266 */
+/* 274 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33729,11 +34558,11 @@ exports.getMFACodeValidation = getMFACodeValidation;
 
 var _index = __webpack_require__(3);
 
-var _email = __webpack_require__(23);
+var _email = __webpack_require__(28);
 
-var _database = __webpack_require__(6);
+var _database = __webpack_require__(7);
 
-var _trim = __webpack_require__(22);
+var _trim = __webpack_require__(27);
 
 var _trim2 = _interopRequireDefault(_trim);
 
@@ -33772,7 +34601,7 @@ function getMFACodeValidation(m) {
 
 
 /***/ }),
-/* 267 */
+/* 275 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33784,21 +34613,21 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _screen = __webpack_require__(15);
+var _screen = __webpack_require__(11);
 
 var _screen2 = _interopRequireDefault(_screen);
 
-var _reset_password_pane = __webpack_require__(268);
+var _reset_password_pane = __webpack_require__(276);
 
 var _reset_password_pane2 = _interopRequireDefault(_reset_password_pane);
 
-var _index = __webpack_require__(6);
+var _index = __webpack_require__(7);
 
-var _actions = __webpack_require__(29);
+var _actions = __webpack_require__(32);
 
-var _password_reset_confirmation = __webpack_require__(269);
+var _password_reset_confirmation = __webpack_require__(277);
 
-var _i18n = __webpack_require__(8);
+var _i18n = __webpack_require__(6);
 
 var i18n = _interopRequireWildcard(_i18n);
 
@@ -33871,7 +34700,7 @@ exports.default = ResetPassword;
 
 
 /***/ }),
-/* 268 */
+/* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33887,7 +34716,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _email_pane = __webpack_require__(60);
+var _email_pane = __webpack_require__(46);
 
 var _email_pane2 = _interopRequireDefault(_email_pane);
 
@@ -33941,7 +34770,7 @@ exports.default = ResetPasswordPane;
 
 
 /***/ }),
-/* 269 */
+/* 277 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33958,17 +34787,17 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _success_pane = __webpack_require__(65);
+var _success_pane = __webpack_require__(49);
 
 var _success_pane2 = _interopRequireDefault(_success_pane);
 
-var _actions = __webpack_require__(16);
+var _actions = __webpack_require__(15);
 
 var _index = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index);
 
-var _i18n = __webpack_require__(8);
+var _i18n = __webpack_require__(6);
 
 var i18n = _interopRequireWildcard(_i18n);
 
@@ -34040,7 +34869,7 @@ function renderPasswordResetConfirmation(m) {
 
 
 /***/ }),
-/* 270 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34052,23 +34881,23 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _screen = __webpack_require__(15);
+var _screen = __webpack_require__(11);
 
 var _screen2 = _interopRequireDefault(_screen);
 
-var _quick_auth_pane = __webpack_require__(67);
+var _quick_auth_pane = __webpack_require__(77);
 
 var _quick_auth_pane2 = _interopRequireDefault(_quick_auth_pane);
 
-var _actions = __webpack_require__(43);
+var _actions = __webpack_require__(45);
 
-var _signed_in_confirmation = __webpack_require__(25);
+var _signed_in_confirmation = __webpack_require__(17);
 
 var _index = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index);
 
-var _enterprise = __webpack_require__(14);
+var _enterprise = __webpack_require__(16);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -34129,7 +34958,7 @@ exports.default = KerberosScreen;
 
 
 /***/ }),
-/* 271 */
+/* 279 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34141,21 +34970,21 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _screen = __webpack_require__(15);
+var _screen = __webpack_require__(11);
 
 var _screen2 = _interopRequireDefault(_screen);
 
-var _signed_in_confirmation = __webpack_require__(25);
+var _signed_in_confirmation = __webpack_require__(17);
 
-var _hrd_pane = __webpack_require__(272);
+var _hrd_pane = __webpack_require__(280);
 
 var _hrd_pane2 = _interopRequireDefault(_hrd_pane);
 
-var _actions = __webpack_require__(66);
+var _actions = __webpack_require__(75);
 
-var _enterprise = __webpack_require__(14);
+var _enterprise = __webpack_require__(16);
 
-var _i18n = __webpack_require__(8);
+var _i18n = __webpack_require__(6);
 
 var i18n = _interopRequireWildcard(_i18n);
 
@@ -34236,7 +35065,7 @@ exports.default = HRDScreen;
 
 
 /***/ }),
-/* 272 */
+/* 280 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34252,11 +35081,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _username_pane = __webpack_require__(61);
+var _username_pane = __webpack_require__(71);
 
 var _username_pane2 = _interopRequireDefault(_username_pane);
 
-var _password_pane = __webpack_require__(62);
+var _password_pane = __webpack_require__(72);
 
 var _password_pane2 = _interopRequireDefault(_password_pane);
 
@@ -34322,7 +35151,7 @@ HRDPane.propTypes = {
 
 
 /***/ }),
-/* 273 */
+/* 281 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34334,25 +35163,25 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _screen = __webpack_require__(15);
+var _screen = __webpack_require__(11);
 
 var _screen2 = _interopRequireDefault(_screen);
 
-var _quick_auth_pane = __webpack_require__(67);
+var _quick_auth_pane = __webpack_require__(77);
 
 var _quick_auth_pane2 = _interopRequireDefault(_quick_auth_pane);
 
-var _actions = __webpack_require__(43);
+var _actions = __webpack_require__(45);
 
-var _signed_in_confirmation = __webpack_require__(25);
+var _signed_in_confirmation = __webpack_require__(17);
 
 var _index = __webpack_require__(1);
 
 var l = _interopRequireWildcard(_index);
 
-var _enterprise = __webpack_require__(14);
+var _enterprise = __webpack_require__(16);
 
-var _index2 = __webpack_require__(28);
+var _index2 = __webpack_require__(19);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -34433,282 +35262,7 @@ exports.default = QuickAuthScreen;
 
 
 /***/ }),
-/* 274 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _propTypes = __webpack_require__(2);
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _screen = __webpack_require__(15);
-
-var _screen2 = _interopRequireDefault(_screen);
-
-var _actions = __webpack_require__(16);
-
-var _index = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var LoadingScreen = function (_Screen) {
-  _inherits(LoadingScreen, _Screen);
-
-  function LoadingScreen() {
-    _classCallCheck(this, LoadingScreen);
-
-    return _possibleConstructorReturn(this, _Screen.call(this, 'loading'));
-  }
-
-  LoadingScreen.prototype.render = function render() {
-    return LoadingPane;
-  };
-
-  return LoadingScreen;
-}(_screen2.default);
-
-exports.default = LoadingScreen;
-
-var LoadingPane = function (_React$Component) {
-  _inherits(LoadingPane, _React$Component);
-
-  function LoadingPane() {
-    _classCallCheck(this, LoadingPane);
-
-    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
-  }
-
-  LoadingPane.prototype.componentDidMount = function componentDidMount() {
-    var model = this.props.model;
-
-    (0, _actions.pinLoadingPane)(l.id(model));
-    setTimeout(function () {
-      return (0, _actions.unpinLoadingPane)(l.id(model));
-    }, 500);
-  };
-
-  LoadingPane.prototype.render = function render() {
-    return _react2.default.createElement(
-      'div',
-      { className: 'auth0-loading-screen' },
-      _react2.default.createElement(
-        'div',
-        { className: 'auth0-loading-container' },
-        _react2.default.createElement('div', { className: 'auth0-loading' })
-      )
-    );
-  };
-
-  return LoadingPane;
-}(_react2.default.Component);
-
-LoadingPane.propTypes = {
-  model: _propTypes2.default.object.isRequired
-};
-
-
-/***/ }),
-/* 275 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _propTypes = __webpack_require__(2);
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _screen = __webpack_require__(15);
-
-var _screen2 = _interopRequireDefault(_screen);
-
-var _index = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var ErrorScreen = function (_Screen) {
-  _inherits(ErrorScreen, _Screen);
-
-  function ErrorScreen() {
-    _classCallCheck(this, ErrorScreen);
-
-    return _possibleConstructorReturn(this, _Screen.call(this, 'error'));
-  }
-
-  ErrorScreen.prototype.render = function render() {
-    return ErrorPane;
-  };
-
-  return ErrorScreen;
-}(_screen2.default);
-
-exports.default = ErrorScreen;
-
-
-var ErrorPane = function ErrorPane(_ref) {
-  var i18n = _ref.i18n;
-  return _react2.default.createElement(
-    'div',
-    { className: 'auth0-lock-error-pane' },
-    _react2.default.createElement(
-      'p',
-      null,
-      i18n.html('unrecoverableError')
-    )
-  );
-};
-
-ErrorPane.propTypes = {
-  i18n: _propTypes2.default.object.isRequired
-};
-
-
-/***/ }),
-/* 276 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _screen = __webpack_require__(15);
-
-var _screen2 = _interopRequireDefault(_screen);
-
-var _quick_auth_pane = __webpack_require__(67);
-
-var _quick_auth_pane2 = _interopRequireDefault(_quick_auth_pane);
-
-var _actions = __webpack_require__(43);
-
-var _index = __webpack_require__(113);
-
-var _index2 = __webpack_require__(1);
-
-var l = _interopRequireWildcard(_index2);
-
-var _signed_in_confirmation = __webpack_require__(25);
-
-var _index3 = __webpack_require__(28);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-// TODO: handle this from CSS
-function icon(strategy) {
-  if (_index3.STRATEGIES[strategy]) return strategy;
-  if (strategy === 'google-apps') return strategy;
-  if (~['adfs', 'office365', 'waad'].indexOf(strategy)) return 'windows';
-  return 'auth0';
-}
-
-var Component = function Component(_ref) {
-  var i18n = _ref.i18n,
-      model = _ref.model;
-
-  var headerText = i18n.html('lastLoginInstructions') || null;
-  var header = headerText && _react2.default.createElement(
-    'p',
-    null,
-    headerText
-  );
-  var theme = (0, _index3.authButtonsTheme)(model);
-  var connectionName = (0, _index.lastUsedConnection)(model).get('name');
-  var buttonTheme = theme.get(connectionName);
-  var primaryColor = buttonTheme && buttonTheme.get('primaryColor');
-  var foregroundColor = buttonTheme && buttonTheme.get('foregroundColor');
-  var buttonIcon = buttonTheme && buttonTheme.get('icon');
-
-  var buttonClickHandler = function buttonClickHandler() {
-    (0, _actions.logIn)(l.id(model), (0, _index.lastUsedConnection)(model), (0, _index.lastUsedUsername)(model));
-  };
-
-  return _react2.default.createElement(_quick_auth_pane2.default, {
-    alternativeLabel: i18n.str('notYourAccountAction'),
-    alternativeClickHandler: function alternativeClickHandler() {
-      return (0, _actions.skipQuickAuth)(l.id(model));
-    },
-    buttonLabel: (0, _index.lastUsedUsername)(model),
-    buttonClickHandler: buttonClickHandler,
-    header: header,
-    strategy: icon((0, _index.lastUsedConnection)(model).get('strategy')),
-    buttonIcon: buttonIcon,
-    primaryColor: primaryColor,
-    foregroundColor: foregroundColor
-  });
-};
-
-var LastLoginScreen = function (_Screen) {
-  _inherits(LastLoginScreen, _Screen);
-
-  function LastLoginScreen() {
-    _classCallCheck(this, LastLoginScreen);
-
-    return _possibleConstructorReturn(this, _Screen.call(this, 'lastLogin'));
-  }
-
-  LastLoginScreen.prototype.renderAuxiliaryPane = function renderAuxiliaryPane(lock) {
-    return (0, _signed_in_confirmation.renderSignedInConfirmation)(lock);
-  };
-
-  LastLoginScreen.prototype.render = function render() {
-    return Component;
-  };
-
-  return LastLoginScreen;
-}(_screen2.default);
-
-exports.default = LastLoginScreen;
-
-
-/***/ }),
-/* 277 */
+/* 282 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34724,7 +35278,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _button = __webpack_require__(41);
+var _button = __webpack_require__(42);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34915,10 +35469,10 @@ Background.propTypes = {
   imageUrl: _propTypes2.default.string
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 278 */
+/* 283 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34938,7 +35492,1155 @@ function incremental() {
 
 
 /***/ }),
-/* 279 */
+/* 284 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _core = __webpack_require__(95);
+
+var _core2 = _interopRequireDefault(_core);
+
+var _passwordless = __webpack_require__(285);
+
+var _passwordless2 = _interopRequireDefault(_passwordless);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Auth0LockPasswordless = function (_Core) {
+  _inherits(Auth0LockPasswordless, _Core);
+
+  function Auth0LockPasswordless(clientID, domain, options) {
+    _classCallCheck(this, Auth0LockPasswordless);
+
+    var _this = _possibleConstructorReturn(this, _Core.call(this, clientID, domain, options, _passwordless2.default));
+
+    (0, _core.injectStyles)();
+    return _this;
+  }
+
+  return Auth0LockPasswordless;
+}(_core2.default);
+
+exports.default = Auth0LockPasswordless;
+
+
+Auth0LockPasswordless.version = '11.3.0';
+
+
+/***/ }),
+/* 285 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _index = __webpack_require__(5);
+
+var _error_screen = __webpack_require__(123);
+
+var _error_screen2 = _interopRequireDefault(_error_screen);
+
+var _loading_screen = __webpack_require__(122);
+
+var _loading_screen2 = _interopRequireDefault(_loading_screen);
+
+var _social_or_email_login_screen = __webpack_require__(286);
+
+var _social_or_email_login_screen2 = _interopRequireDefault(_social_or_email_login_screen);
+
+var _social_or_phone_number_login_screen = __webpack_require__(289);
+
+var _social_or_phone_number_login_screen2 = _interopRequireDefault(_social_or_phone_number_login_screen);
+
+var _ask_vcode = __webpack_require__(292);
+
+var _ask_vcode2 = _interopRequireDefault(_ask_vcode);
+
+var _last_login_screen = __webpack_require__(124);
+
+var _last_login_screen2 = _interopRequireDefault(_last_login_screen);
+
+var _index2 = __webpack_require__(51);
+
+var _index3 = __webpack_require__(19);
+
+var _sync = __webpack_require__(25);
+
+var _index4 = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index4);
+
+var _quick_auth = __webpack_require__(70);
+
+var _index5 = __webpack_require__(76);
+
+var sso = _interopRequireWildcard(_index5);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Passwordless = function () {
+  function Passwordless() {
+    _classCallCheck(this, Passwordless);
+  }
+
+  Passwordless.prototype.didInitialize = function didInitialize(m, opts) {
+    m = (0, _index3.initSocial)(m, opts);
+    m = (0, _index2.initPasswordless)(m, opts);
+
+    return m;
+  };
+
+  Passwordless.prototype.didReceiveClientSettings = function didReceiveClientSettings(m) {
+    var anySocialConnection = l.hasSomeConnections(m, 'social');
+    var anyPasswordlessConnection = l.hasSomeConnections(m, 'passwordless');
+
+    if (!anySocialConnection && !anyPasswordlessConnection) {
+      var error = new Error('At least one email, sms or social connection needs to be available.');
+      error.code = 'no_connection';
+      m = l.stop(m, error);
+    }
+
+    return m;
+  };
+
+  Passwordless.prototype.render = function render(m) {
+    //if there's an error, we should show the error screen no matter what.
+    if (l.hasStopped(m)) {
+      return new _error_screen2.default();
+    }
+
+    // TODO: remove the detail about the loading pane being pinned,
+    // sticky screens should be handled at the box module.
+    if (!(0, _sync.isDone)(m) || m.get('isLoadingPanePinned')) {
+      return new _loading_screen2.default();
+    }
+
+    if (!(0, _quick_auth.hasSkippedQuickAuth)(m)) {
+      if (l.ui.rememberLastLogin(m)) {
+        var lastUsedConnection = sso.lastUsedConnection(m);
+        var lastUsedUsername = sso.lastUsedUsername(m);
+        if (lastUsedConnection && (0, _sync.isSuccess)(m, 'sso') && l.hasConnection(m, lastUsedConnection.get('name')) && ['passwordless', 'social'].indexOf(l.findConnection(m, lastUsedConnection.get('name')).get('type')) >= 0 //if connection.type is either passwordless or social
+        ) {
+            var conn = l.findConnection(m, lastUsedConnection.get('name'));
+            var connectionType = conn.get('type');
+            if (connectionType === 'passwordless' || connectionType === 'social') {
+              return new _last_login_screen2.default();
+            }
+          }
+      }
+    }
+
+    if ((0, _index2.isEmail)(m)) {
+      return (0, _index2.isSendLink)(m) || !(0, _index2.passwordlessStarted)(m) ? new _social_or_email_login_screen2.default() : new _ask_vcode2.default();
+    } else {
+      return (0, _index2.passwordlessStarted)(m) ? new _ask_vcode2.default() : new _social_or_phone_number_login_screen2.default();
+    }
+
+    setTimeout(function () {
+      var stopError = new Error('Internal error');
+      stopError.code = 'internal_error';
+      stopError.description = "Couldn't find a screen to render";
+      (0, _index.swap)(_index.updateEntity, 'lock', l.id(m), l.stop, stopError);
+    }, 0);
+
+    return new _error_screen2.default();
+  };
+
+  return Passwordless;
+}();
+
+exports.default = new Passwordless();
+
+
+/***/ }),
+/* 286 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _screen = __webpack_require__(11);
+
+var _screen2 = _interopRequireDefault(_screen);
+
+var _email_pane = __webpack_require__(46);
+
+var _email_pane2 = _interopRequireDefault(_email_pane);
+
+var _social_buttons_pane = __webpack_require__(44);
+
+var _social_buttons_pane2 = _interopRequireDefault(_social_buttons_pane);
+
+var _pane_separator = __webpack_require__(48);
+
+var _pane_separator2 = _interopRequireDefault(_pane_separator);
+
+var _actions = __webpack_require__(50);
+
+var _email_sent_confirmation = __webpack_require__(288);
+
+var _signed_in_confirmation = __webpack_require__(17);
+
+var _index = __webpack_require__(19);
+
+var _index2 = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index2);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var useSocialBigButtons = function useSocialBigButtons(m) {
+  var limit = l.connections(m, 'passwordless', 'email').count() === 0 ? 5 : 3;
+  return (0, _index.useBigButtons)(m, limit);
+};
+
+var Component = function Component(_ref) {
+  var i18n = _ref.i18n,
+      model = _ref.model;
+
+  var social = l.hasSomeConnections(model, 'social') ? _react2.default.createElement(_social_buttons_pane2.default, {
+    bigButtons: useSocialBigButtons(model),
+    instructions: i18n.html('socialLoginInstructions'),
+    labelFn: i18n.str,
+    lock: model,
+    signUp: false
+  }) : null;
+
+  var email = l.hasSomeConnections(model, 'passwordless', 'email') ? _react2.default.createElement(_email_pane2.default, { i18n: i18n, lock: model, placeholder: i18n.str('emailInputPlaceholder') }) : null;
+
+  // TODO: instructions can't be on EmailPane beacuse it breaks the CSS,
+  // all input fields needs to share a parent so the last one doesn't have
+  // a bottom margin.
+  //
+  // Maybe we can make new PasswordlessEmailPane component.
+  var emailInstructionsI18nKey = social ? 'passwordlessEmailAlternativeInstructions' : 'passwordlessEmailInstructions';
+
+  var headerText = i18n.html(emailInstructionsI18nKey) || null;
+  var header = email && headerText && _react2.default.createElement(
+    'p',
+    null,
+    headerText
+  );
+
+  var separator = social && email ? _react2.default.createElement(_pane_separator2.default, null) : null;
+
+  return _react2.default.createElement(
+    'div',
+    null,
+    social,
+    separator,
+    header,
+    email
+  );
+};
+
+var SocialOrEmailLoginScreen = function (_Screen) {
+  _inherits(SocialOrEmailLoginScreen, _Screen);
+
+  function SocialOrEmailLoginScreen() {
+    _classCallCheck(this, SocialOrEmailLoginScreen);
+
+    return _possibleConstructorReturn(this, _Screen.call(this, 'socialOrEmail'));
+  }
+
+  SocialOrEmailLoginScreen.prototype.submitHandler = function submitHandler(m) {
+    return l.hasSomeConnections(m, 'passwordless', 'email') ? _actions.requestPasswordlessEmail : null;
+  };
+
+  SocialOrEmailLoginScreen.prototype.renderAuxiliaryPane = function renderAuxiliaryPane(lock) {
+    return (0, _email_sent_confirmation.renderEmailSentConfirmation)(lock) || (0, _signed_in_confirmation.renderSignedInConfirmation)(lock);
+  };
+
+  SocialOrEmailLoginScreen.prototype.render = function render() {
+    return Component;
+  };
+
+  return SocialOrEmailLoginScreen;
+}(_screen2.default);
+
+exports.default = SocialOrEmailLoginScreen;
+
+
+/***/ }),
+/* 287 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.default = [['Afghanistan', 'AF', '+93'], ['Albania', 'AL', '+355'], ['Algeria', 'DZ', '+213'], ['American Samoa', 'AS', '+1684'], ['Andorra', 'AD', '+376'], ['Angola', 'AO', '+244'], ['Anguilla', 'AI', '+1264'], ['Antarctica', 'AQ', '+672'], ['Antigua and Barbuda', 'AG', '+1268'], ['Argentina', 'AR', '+54 9'], ['Armenia', 'AM', '+374'], ['Aruba', 'AW', '+297'], ['Australia', 'AU', '+61'], ['Austria', 'AT', '+43'], ['Azerbaijan', 'AZ', '+994'], ['Bahamas', 'BS', '+1242'], ['Bahrain', 'BH', '+973'], ['Bangladesh', 'BD', '+880'], ['Barbados', 'BB', '+1246'], ['Belarus', 'BY', '+375'], ['Belgium', 'BE', '+32'], ['Belize', 'BZ', '+501'], ['Benin', 'BJ', '+229'], ['Bermuda', 'BM', '+1441'], ['Bhutan', 'BT', '+975'], ['Bolivia, Plurinational State of', 'BO', '+591'], ['Bonaire, Sint Eustatius and Saba', 'BQ', '+599'], ['Bosnia and Herzegovina', 'BA', '+387'], ['Botswana', 'BW', '+267'], ['Bouvet Island', 'BV', '+47'], ['Brazil', 'BR', '+55'], ['British Indian Ocean Territory', 'IO', '+246'], ['Brunei Darussalam', 'BN', '+673'], ['Bulgaria', 'BG', '+359'], ['Burkina Faso', 'BF', '+226'], ['Burundi', 'BI', '+257'], ['Cambodia', 'KH', '+855'], ['Cameroon', 'CM', '+237'], ['Canada', 'CA', '+1'], ['Cape Verde', 'CV', '+238'], ['Cayman Islands', 'KY', '+1345'], ['Central African Republic', 'CF', '+236'], ['Chad', 'TD', '+235'], ['Chile', 'CL', '+56'], ['China', 'CN', '+86'], ['Christmas Island', 'CX', '+61'], ['Cocos (Keeling) Islands', 'CC', '+61'], ['Colombia', 'CO', '+57'], ['Comoros', 'KM', '+269'], ['Congo', 'CG', '+242'], ['Congo, the Democratic Republic of the', 'CD', '+243'], ['Cook Islands', 'CK', '+682'], ['Costa Rica', 'CR', '+506'], ['Croatia', 'HR', '+385'], ['Cuba', 'CU', '+53'], ['Curaçao', 'CW', '+599'], ['Cyprus', 'CY', '+357'], ['Czech Republic', 'CZ', '+420'], ["Côte d'Ivoire", 'CI', '+225'], ['Denmark', 'DK', '+45'], ['Djibouti', 'DJ', '+253'], ['Dominica', 'DM', '+1767'], ['Dominican Republic', 'DO', '+1809'], ['Dominican Republic', 'DO', '+1829'], ['Dominican Republic', 'DO', '+1849'], ['Ecuador', 'EC', '+593'], ['Egypt', 'EG', '+20'], ['El Salvador', 'SV', '+503'], ['Equatorial Guinea', 'GQ', '+240'], ['Eritrea', 'ER', '+291'], ['Estonia', 'EE', '+372'], ['Ethiopia', 'ET', '+251'], ['Falkland Islands (Malvinas)', 'FK', '+500'], ['Faroe Islands', 'FO', '+298'], ['Fiji', 'FJ', '+679'], ['Finland', 'FI', '+358'], ['France', 'FR', '+33'], ['French Guiana', 'GF', '+594'], ['French Polynesia', 'PF', '+689'], ['French Southern Territories', 'TF', '+262'], ['Gabon', 'GA', '+241'], ['Gambia', 'GM', '+220'], ['Georgia', 'GE', '+995'], ['Germany', 'DE', '+49'], ['Ghana', 'GH', '+233'], ['Gibraltar', 'GI', '+350'], ['Greece', 'GR', '+30'], ['Greenland', 'GL', '+299'], ['Grenada', 'GD', '+1473'], ['Guadeloupe', 'GP', '+590'], ['Guam', 'GU', '+1671'], ['Guatemala', 'GT', '+502'], ['Guernsey', 'GG', '+44'], ['Guinea', 'GN', '+224'], ['Guinea-Bissau', 'GW', '+245'], ['Guyana', 'GY', '+592'], ['Haiti', 'HT', '+509'], ['Heard Island and McDonald Mcdonald Islands', 'HM', '+672'], ['Holy See (Vatican City State)', 'VA', '+3906'], ['Honduras', 'HN', '+504'], ['Hong Kong', 'HK', '+852'], ['Hungary', 'HU', '+36'], ['Iceland', 'IS', '+354'], ['India', 'IN', '+91'], ['Indonesia', 'ID', '+62'], ['Iran, Islamic Republic of', 'IR', '+98'], ['Iraq', 'IQ', '+964'], ['Ireland', 'IE', '+353'], ['Isle of Man', 'IM', '+44'], ['Israel', 'IL', '+972'], ['Italy', 'IT', '+39'], ['Jamaica', 'JM', '+1876'], ['Japan', 'JP', '+81'], ['Jersey', 'JE', '+44'], ['Jordan', 'JO', '+962'], ['Kazakhstan', 'KZ', '+7'], ['Kenya', 'KE', '+254'], ['Kiribati', 'KI', '+686'], ["Korea, Democratic People's Republic of", 'KP', '+850'], ['Korea, Republic of', 'KR', '+82'], ['Kuwait', 'KW', '+965'], ['Kyrgyzstan', 'KG', '+996'], ["Lao People's Democratic Republic", 'LA', '+856'], ['Latvia', 'LV', '+371'], ['Lebanon', 'LB', '+961'], ['Lesotho', 'LS', '+266'], ['Liberia', 'LR', '+231'], ['Libya', 'LY', '+218'], ['Liechtenstein', 'LI', '+423'], ['Lithuania', 'LT', '+370'], ['Luxembourg', 'LU', '+352'], ['Macao', 'MO', '+853'], ['Macedonia, the Former Yugoslav Republic of', 'MK', '+389'], ['Madagascar', 'MG', '+261'], ['Malawi', 'MW', '+265'], ['Malaysia', 'MY', '+60'], ['Maldives', 'MV', '+960'], ['Mali', 'ML', '+223'], ['Malta', 'MT', '+356'], ['Marshall Islands', 'MH', '+692'], ['Martinique', 'MQ', '+596'], ['Mauritania', 'MR', '+222'], ['Mauritius', 'MU', '+230'], ['Mayotte', 'YT', '+262'], ['Mexico', 'MX', '+52'], ['Micronesia, Federated States of', 'FM', '+691'], ['Moldova, Republic of', 'MD', '+373'], ['Monaco', 'MC', '+377'], ['Mongolia', 'MN', '+976'], ['Montenegro', 'ME', '+382'], ['Montserrat', 'MS', '+1664'], ['Morocco', 'MA', '+212'], ['Mozambique', 'MZ', '+258'], ['Myanmar', 'MM', '+95'], ['Namibia', 'NA', '+264'], ['Nauru', 'NR', '+674'], ['Nepal', 'NP', '+977'], ['Netherlands', 'NL', '+31'], ['New Caledonia', 'NC', '+687'], ['New Zealand', 'NZ', '+64'], ['Nicaragua', 'NI', '+505'], ['Niger', 'NE', '+227'], ['Nigeria', 'NG', '+234'], ['Niue', 'NU', '+683'], ['Norfolk Island', 'NF', '+672'], ['Northern Mariana Islands', 'MP', '+1670'], ['Norway', 'NO', '+47'], ['Oman', 'OM', '+968'], ['Pakistan', 'PK', '+92'], ['Palau', 'PW', '+680'], ['Palestine, State of', 'PS', '+970'], ['Panama', 'PA', '+507'], ['Papua New Guinea', 'PG', '+675'], ['Paraguay', 'PY', '+595'], ['Peru', 'PE', '+51'], ['Philippines', 'PH', '+63'], ['Pitcairn', 'PN', '+870'], ['Poland', 'PL', '+48'], ['Portugal', 'PT', '+351'], ['Puerto Rico', 'PR', '+1'], ['Qatar', 'QA', '+974'], ['Romania', 'RO', '+40'], ['Russian Federation', 'RU', '+7'], ['Rwanda', 'RW', '+250'], ['Réunion', 'RE', '+262'], ['Saint Barthélemy', 'BL', '+590'], ['Saint Helena, Ascension and Tristan da Cunha', 'SH', '+290'], ['Saint Kitts and Nevis', 'KN', '+1869'], ['Saint Lucia', 'LC', '+1758'], ['Saint Martin (French part)', 'MF', '+590'], ['Saint Pierre and Miquelon', 'PM', '+508'], ['Saint Vincent and the Grenadines', 'VC', '+1784'], ['Samoa', 'WS', '+685'], ['San Marino', 'SM', '+378'], ['Sao Tome and Principe', 'ST', '+239'], ['Saudi Arabia', 'SA', '+966'], ['Senegal', 'SN', '+221'], ['Serbia', 'RS', '+381'], ['Seychelles', 'SC', '+248'], ['Sierra Leone', 'SL', '+232'], ['Singapore', 'SG', '+65'], ['Sint Maarten (Dutch part)', 'SX', '+1721'], ['Slovakia', 'SK', '+421'], ['Slovenia', 'SI', '+386'], ['Solomon Islands', 'SB', '+677'], ['Somalia', 'SO', '+252'], ['South Africa', 'ZA', '+27'], ['South Georgia and the South Sandwich Islands', 'GS', '+500'], ['South Sudan', 'SS', '+211'], ['Spain', 'ES', '+34'], ['Sri Lanka', 'LK', '+94'], ['Sudan', 'SD', '+249'], ['Suriname', 'SR', '+597'], ['Svalbard and Jan Mayen', 'SJ', '+47'], ['Swaziland', 'SZ', '+268'], ['Sweden', 'SE', '+46'], ['Switzerland', 'CH', '+41'], ['Syrian Arab Republic', 'SY', '+963'], ['Taiwan, Province of China', 'TW', '+886'], ['Tajikistan', 'TJ', '+992'], ['Tanzania, United Republic of', 'TZ', '+255'], ['Thailand', 'TH', '+66'], ['Timor-Leste', 'TL', '+670'], ['Togo', 'TG', '+228'], ['Tokelau', 'TK', '+690'], ['Tonga', 'TO', '+676'], ['Trinidad and Tobago', 'TT', '+1868'], ['Tunisia', 'TN', '+216'], ['Turkey', 'TR', '+90'], ['Turkmenistan', 'TM', '+993'], ['Turks and Caicos Islands', 'TC', '+1649'], ['Tuvalu', 'TV', '+688'], ['Uganda', 'UG', '+256'], ['Ukraine', 'UA', '+380'], ['United Arab Emirates', 'AE', '+971'], ['United Kingdom', 'GB', '+44'], ['United States', 'US', '+1'], ['Uruguay', 'UY', '+598'], ['Uzbekistan', 'UZ', '+998'], ['Vanuatu', 'VU', '+678'], ['Venezuela, Bolivarian Republic of', 'VE', '+58'], ['Viet Nam', 'VN', '+84'], ['Virgin Islands, British', 'VG', '+1284'], ['Virgin Islands, U.S.', 'VI', '+1340'], ['Wallis and Futuna', 'WF', '+681'], ['Western Sahara', 'EH', '+212'], ['Yemen', 'YE', '+967'], ['Zambia', 'ZM', '+260'], ['Zimbabwe', 'ZW', '+263'], ['Åland Islands', 'AX', '+358']];
+
+
+/***/ }),
+/* 288 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.renderEmailSentConfirmation = renderEmailSentConfirmation;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _success_pane = __webpack_require__(49);
+
+var _success_pane2 = _interopRequireDefault(_success_pane);
+
+var _actions = __webpack_require__(15);
+
+var _index = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index);
+
+var _index2 = __webpack_require__(3);
+
+var c = _interopRequireWildcard(_index2);
+
+var _actions2 = __webpack_require__(50);
+
+var _index3 = __webpack_require__(51);
+
+var m = _interopRequireWildcard(_index3);
+
+var _i18n = __webpack_require__(6);
+
+var i18n = _interopRequireWildcard(_i18n);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// TODO: can't we get this from pops?
+
+var retrySvg = '<svg focusable="false" height="32px" style="enable-background:new 0 0 32 32;" version="1.1" viewBox="0 0 32 32" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <path d="M27.877,19.662c0.385-1.23,0.607-2.531,0.607-3.884c0-7.222-5.83-13.101-13.029-13.194v4.238    c4.863,0.093,8.793,4.071,8.793,8.956c0,0.678-0.088,1.332-0.232,1.966l-3.963-1.966l2.76,8.199l8.197-2.762L27.877,19.662z"></path> <path d="M7.752,16.222c0-0.678,0.088-1.332,0.232-1.967l3.963,1.967l-2.76-8.199L0.99,10.785l3.133,1.553    c-0.384,1.23-0.607,2.531-0.607,3.885c0,7.223,5.83,13.1,13.03,13.194v-4.238C11.682,25.086,7.752,21.107,7.752,16.222z"></path> </svg>';
+
+var ResendLink = function (_React$Component) {
+  _inherits(ResendLink, _React$Component);
+
+  function ResendLink() {
+    _classCallCheck(this, ResendLink);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  ResendLink.prototype.render = function render() {
+    var _props = this.props,
+        label = _props.label,
+        onClick = _props.onClick;
+
+    return _react2.default.createElement(
+      'a',
+      { className: 'auth0-lock-resend-link', href: 'javascript:void(0)', onClick: onClick },
+      label,
+      ' ',
+      _react2.default.createElement('span', { dangerouslySetInnerHTML: { __html: retrySvg } })
+    );
+  };
+
+  return ResendLink;
+}(_react2.default.Component);
+
+var Resend = function (_React$Component2) {
+  _inherits(Resend, _React$Component2);
+
+  function Resend() {
+    _classCallCheck(this, Resend);
+
+    return _possibleConstructorReturn(this, _React$Component2.apply(this, arguments));
+  }
+
+  Resend.prototype.render = function render() {
+    var _props2 = this.props,
+        labels = _props2.labels,
+        lock = _props2.lock;
+
+
+    var resendLink = m.resendAvailable(lock) && _react2.default.createElement(ResendLink, {
+      onClick: this.handleClick.bind(this),
+      label: m.resendFailed(lock) ? labels.retry : labels.resend
+    });
+
+    var resendingLabel = m.resendOngoing(lock) && _react2.default.createElement(
+      'a',
+      { className: 'auth0-lock-resend-link' },
+      labels.resending
+    );
+
+    var resendSuccessLabel = m.resendSuccess(lock) && _react2.default.createElement(
+      'span',
+      { className: 'auth0-lock-sent-label' },
+      labels.sent
+    );
+
+    var resendFailedLabel = m.resendFailed(lock) && _react2.default.createElement(
+      'span',
+      { className: 'auth0-lock-sent-failed-label' },
+      labels.failed
+    );
+
+    return _react2.default.createElement(
+      'span',
+      null,
+      resendLink,
+      resendingLabel,
+      resendSuccessLabel,
+      resendFailedLabel
+    );
+  };
+
+  Resend.prototype.handleClick = function handleClick(e) {
+    e.preventDefault();
+    (0, _actions2.resendEmail)(l.id(this.props.lock));
+  };
+
+  return Resend;
+}(_react2.default.Component);
+
+var EmailSentConfirmation = function (_React$Component3) {
+  _inherits(EmailSentConfirmation, _React$Component3);
+
+  function EmailSentConfirmation() {
+    _classCallCheck(this, EmailSentConfirmation);
+
+    return _possibleConstructorReturn(this, _React$Component3.apply(this, arguments));
+  }
+
+  EmailSentConfirmation.prototype.render = function render() {
+    var lock = this.props.lock;
+
+    var closeHandler = l.ui.closable(lock) ? this.handleClose.bind(this) : undefined;
+    var labels = {
+      failed: i18n.str(lock, 'failedLabel'),
+      resend: i18n.str(lock, 'resendLabel'),
+      resending: i18n.str(lock, 'resendingLabel'),
+      retry: i18n.str(lock, 'retryLabel'),
+      sent: i18n.str(lock, 'sentLabel')
+    };
+
+    return _react2.default.createElement(
+      _success_pane2.default,
+      { backHandler: this.handleBack.bind(this), closeHandler: closeHandler },
+      _react2.default.createElement(
+        'p',
+        null,
+        i18n.html(lock, ['success', 'magicLink'], c.email(lock))
+      ),
+      _react2.default.createElement(Resend, { labels: labels, lock: lock })
+    );
+  };
+
+  EmailSentConfirmation.prototype.handleBack = function handleBack() {
+    (0, _actions2.restart)(l.id(this.props.lock));
+  };
+
+  EmailSentConfirmation.prototype.handleClose = function handleClose() {
+    (0, _actions.closeLock)(l.id(this.props.lock));
+  };
+
+  return EmailSentConfirmation;
+}(_react2.default.Component);
+
+exports.default = EmailSentConfirmation;
+function renderEmailSentConfirmation(lock) {
+  var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  props.key = 'auxiliarypane';
+  props.lock = lock;
+
+  return m.passwordlessStarted(lock) ? _react2.default.createElement(EmailSentConfirmation, props) : null;
+}
+
+
+/***/ }),
+/* 289 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _screen = __webpack_require__(11);
+
+var _screen2 = _interopRequireDefault(_screen);
+
+var _actions = __webpack_require__(50);
+
+var _phone_number_pane = __webpack_require__(290);
+
+var _phone_number_pane2 = _interopRequireDefault(_phone_number_pane);
+
+var _social_buttons_pane = __webpack_require__(44);
+
+var _social_buttons_pane2 = _interopRequireDefault(_social_buttons_pane);
+
+var _signed_in_confirmation = __webpack_require__(17);
+
+var _pane_separator = __webpack_require__(48);
+
+var _pane_separator2 = _interopRequireDefault(_pane_separator);
+
+var _index = __webpack_require__(19);
+
+var _index2 = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index2);
+
+var _index3 = __webpack_require__(3);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var useSocialBigButtons = function useSocialBigButtons(m) {
+  var limit = l.connections(m, 'passwordless', 'sms').count() === 0 ? 5 : 3;
+  return (0, _index.useBigButtons)(m, limit);
+};
+
+var Component = function Component(_ref) {
+  var i18n = _ref.i18n,
+      model = _ref.model;
+
+  var social = l.hasSomeConnections(model, 'social') ? _react2.default.createElement(_social_buttons_pane2.default, {
+    bigButtons: useSocialBigButtons(model),
+    instructions: i18n.html('socialLoginInstructions'),
+    labelFn: i18n.str,
+    lock: model,
+    signUp: false
+  }) : null;
+
+  var phoneNumberInstructionsI18nKey = social ? 'passwordlessSMSAlternativeInstructions' : 'passwordlessSMSInstructions';
+
+  var phoneNumber = l.hasSomeConnections(model, 'passwordless', 'sms') ? _react2.default.createElement(_phone_number_pane2.default, {
+    instructions: i18n.html(phoneNumberInstructionsI18nKey),
+    lock: model,
+    placeholder: i18n.str('phoneNumberInputPlaceholder')
+  }) : null;
+
+  var separator = social && phoneNumber ? _react2.default.createElement(_pane_separator2.default, null) : null;
+
+  return _react2.default.createElement(
+    'div',
+    null,
+    social,
+    separator,
+    phoneNumber
+  );
+};
+
+var AskSocialNetworkOrPhoneNumber = function (_Screen) {
+  _inherits(AskSocialNetworkOrPhoneNumber, _Screen);
+
+  function AskSocialNetworkOrPhoneNumber() {
+    _classCallCheck(this, AskSocialNetworkOrPhoneNumber);
+
+    return _possibleConstructorReturn(this, _Screen.call(this, 'socialOrPhoneNumber'));
+  }
+
+  AskSocialNetworkOrPhoneNumber.prototype.submitHandler = function submitHandler(m) {
+    return l.hasSomeConnections(m, 'passwordless', 'sms') ? _actions.sendSMS : null;
+  };
+
+  AskSocialNetworkOrPhoneNumber.prototype.renderAuxiliaryPane = function renderAuxiliaryPane(lock) {
+    return (0, _signed_in_confirmation.renderSignedInConfirmation)(lock) || (0, _index3.renderOptionSelection)(lock);
+  };
+
+  AskSocialNetworkOrPhoneNumber.prototype.render = function render() {
+    return Component;
+  };
+
+  return AskSocialNetworkOrPhoneNumber;
+}(_screen2.default);
+
+exports.default = AskSocialNetworkOrPhoneNumber;
+
+
+/***/ }),
+/* 290 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.icon = undefined;
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _phone_number_input = __webpack_require__(291);
+
+var _phone_number_input2 = _interopRequireDefault(_phone_number_input);
+
+var _select_input = __webpack_require__(121);
+
+var _select_input2 = _interopRequireDefault(_select_input);
+
+var _actions = __webpack_require__(67);
+
+var _index = __webpack_require__(3);
+
+var c = _interopRequireWildcard(_index);
+
+var _index2 = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index2);
+
+var _index3 = __webpack_require__(5);
+
+var _phone_number = __webpack_require__(52);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// import LocationInput from '../../ui/input/location_input';
+
+
+var icon = exports.icon = '<svg focusable="false" width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" class="auth0-lock-icon auth0-lock-icon-box auth0-lock-icon-location"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"><g id="Lock" transform="translate(-201.000000, -3519.000000)" fill="#919191"><g id="SMS" transform="translate(153.000000, 3207.000000)"><g transform="translate(35.000000, 299.000000)"><path id="Fill-349-Copy" d="M22.4023125,22.8 C22.543625,21.9425 22.625,20.9975 22.625,20 L26.125,20 C26.125,21.316875 25.69275,22.52 24.9853125,23.5175 C24.3255625,23.2025 23.4383125,22.953125 22.4023125,22.8 L22.4023125,22.8 Z M21.372875,25.954375 C21.72725,25.3725 22.0234375,24.5675 22.2404375,23.6225 C22.8975625,23.696875 23.483375,23.80625 23.9624375,23.9375 L24.67075,23.9375 C23.829875,24.92625 22.6849375,25.6525 21.372875,25.954375 L21.372875,25.954375 Z M20,26.125 C19.412875,26.125 18.896625,25.105625 18.579,23.5525 C19.034,23.521875 19.503875,23.5 20,23.5 C20.4956875,23.5 20.966,23.521875 21.421,23.5525 C21.1029375,25.105625 20.5866875,26.125 20,26.125 L20,26.125 Z M15.3288125,23.9375 L16.0375625,23.9375 C16.5161875,23.80625 17.1024375,23.696875 17.759125,23.6225 C17.976125,24.5675 18.2723125,25.3725 18.6266875,25.954375 C17.3150625,25.6525 16.170125,24.92625 15.3288125,23.9375 L15.3288125,23.9375 Z M15.0146875,23.5175 C14.3068125,22.52 13.875,21.316875 13.875,20 L17.375,20 C17.375,20.9975 17.4559375,21.9425 17.59725,22.8 C16.56125,22.953125 15.6744375,23.2025 15.0146875,23.5175 L15.0146875,23.5175 Z M15.030875,16.45625 C15.6796875,16.78 16.5634375,17.03375 17.60075,17.195625 C17.501,17.799375 17.428375,18.4425 17.3964375,19.125 L13.951125,19.125 C14.0933125,18.13625 14.477,17.230625 15.030875,16.45625 L15.030875,16.45625 Z M18.6266875,14.04125 C18.27275,14.623125 17.977,15.42375 17.760875,16.373125 C17.1265,16.294375 16.558625,16.189375 16.0944375,16.0625 L15.34325,16.0625 C16.180625,15.069375 17.3168125,14.343125 18.6266875,14.04125 L18.6266875,14.04125 Z M20,13.875 C20.585375,13.875 21.0959375,14.894375 21.4118125,16.443125 C20.959875,16.478125 20.492625,16.5 20,16.5 C19.5069375,16.5 19.0396875,16.478125 18.58775,16.443125 C18.903625,14.894375 19.4141875,13.875 20,13.875 L20,13.875 Z M18.2749375,19.125 C18.3020625,18.473125 18.362,17.865 18.441625,17.29625 C18.9408125,17.344375 19.4596875,17.375 20,17.375 C20.5403125,17.375 21.0591875,17.344375 21.5579375,17.29625 C21.638,17.865 21.6979375,18.473125 21.724625,19.125 L18.2749375,19.125 L18.2749375,19.125 Z M21.75,20 C21.75,20.97125 21.6786875,21.88125 21.5631875,22.699375 C21.06225,22.65125 20.5420625,22.625 20,22.625 C19.4579375,22.625 18.9373125,22.65125 18.436375,22.699375 C18.320875,21.88125 18.25,20.97125 18.25,20 L21.75,20 L21.75,20 Z M24.6563125,16.0625 L23.905125,16.0625 C23.441375,16.189375 22.8730625,16.294375 22.2386875,16.373125 C22.0225625,15.42375 21.7268125,14.623125 21.372875,14.04125 C22.68275,14.343125 23.8189375,15.069375 24.6563125,16.0625 L24.6563125,16.0625 Z M24.9686875,16.45625 C25.5225625,17.230625 25.90625,18.13625 26.048875,19.125 L22.603125,19.125 C22.5711875,18.4425 22.499,17.799375 22.39925,17.195625 C23.4365625,17.03375 24.3203125,16.78 24.9686875,16.45625 L24.9686875,16.45625 Z M20,13 C16.1338125,13 13,16.1325 13,20 C13,23.863125 16.1338125,27 20,27 C23.86575,27 27,23.863125 27,20 C27,16.1325 23.86575,13 20,13 L20,13 Z"></path></g></g></g></g></svg>';
+
+var PhoneNumberPane = function (_React$Component) {
+  _inherits(PhoneNumberPane, _React$Component);
+
+  function PhoneNumberPane() {
+    _classCallCheck(this, PhoneNumberPane);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  PhoneNumberPane.prototype.handlePhoneNumberChange = function handlePhoneNumberChange(e) {
+    (0, _index3.swap)(_index3.updateEntity, 'lock', l.id(this.props.lock), _phone_number.setPhoneNumber, e.target.value);
+  };
+
+  PhoneNumberPane.prototype.render = function render() {
+    var _props = this.props,
+        instructions = _props.instructions,
+        lock = _props.lock,
+        placeholder = _props.placeholder;
+
+    var headerText = instructions || null;
+    var header = headerText && _react2.default.createElement(
+      'p',
+      null,
+      headerText
+    );
+
+    return _react2.default.createElement(
+      'div',
+      null,
+      header,
+      _react2.default.createElement(_select_input2.default, {
+        icon: icon,
+        isValid: !c.isFieldVisiblyInvalid(lock, 'location'),
+        name: 'location',
+        placeholder: '',
+        label: (0, _phone_number.humanLocation)(lock),
+        onClick: function onClick() {
+          return (0, _actions.startOptionSelection)(l.id(lock), 'location', '', icon);
+        }
+      }),
+      _react2.default.createElement(_phone_number_input2.default, {
+        value: c.phoneNumber(lock),
+        isValid: !c.isFieldVisiblyInvalid(lock, 'phoneNumber'),
+        onChange: this.handlePhoneNumberChange.bind(this),
+        placeholder: placeholder,
+        disabled: l.submitting(lock)
+      })
+    );
+  };
+
+  return PhoneNumberPane;
+}(_react2.default.Component);
+
+exports.default = PhoneNumberPane;
+
+
+PhoneNumberPane.propTypes = {
+  instructions: _propTypes2.default.element,
+  lock: _propTypes2.default.object.isRequired,
+  placeholder: _propTypes2.default.string.isRequired
+};
+
+
+/***/ }),
+/* 291 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _input_wrap = __webpack_require__(18);
+
+var _input_wrap2 = _interopRequireDefault(_input_wrap);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var svg = '<svg focusable="false" width="9px" height="14px" viewBox="0 0 9 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" class="auth0-lock-icon auth0-lock-icon-mobile"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"><g id="Lock" transform="translate(-204.000000, -3459.000000)" fill="#888888"><g id="SMS" transform="translate(153.000000, 3207.000000)"><g transform="translate(35.000000, 239.000000)"><path d="M24.1,15.625 L16.9,15.625 L16.9,14.75 C16.9,14.264375 17.30275,13.875 17.8,13.875 L23.2,13.875 C23.6968,13.875 24.1,14.264375 24.1,14.75 L24.1,15.625 L24.1,15.625 Z M16.9,16.5 L24.1,16.5 L24.1,21.75 L16.9,21.75 L16.9,16.5 Z M24.1,25.25 C24.1,25.73125 23.6968,26.125 23.2,26.125 L17.8,26.125 C17.30275,26.125 16.9,25.73125 16.9,25.25 L16.9,22.625 L24.1,22.625 L24.1,25.25 L24.1,25.25 Z M23.2,13 L17.8,13 C16.80595,13 16,13.783125 16,14.75 L16,25.25 C16,26.216875 16.80595,27 17.8,27 L23.2,27 C24.19405,27 25,26.216875 25,25.25 L25,14.75 C25,13.783125 24.19405,13 23.2,13 L23.2,13 Z M20.5,25.25 C20.9968,25.25 21.4,24.85625 21.4,24.375 C21.4,23.889375 20.9968,23.5 20.5,23.5 C20.00275,23.5 19.6,23.889375 19.6,24.375 C19.6,24.85625 20.00275,25.25 20.5,25.25 L20.5,25.25 Z"></path></g></g></g></g></svg>';
+
+var PhoneNumberInput = function (_React$Component) {
+  _inherits(PhoneNumberInput, _React$Component);
+
+  function PhoneNumberInput(props) {
+    _classCallCheck(this, PhoneNumberInput);
+
+    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
+
+    _this.state = {};
+    return _this;
+  }
+
+  PhoneNumberInput.prototype.render = function render() {
+    var _props = this.props,
+        isValid = _props.isValid,
+        props = _objectWithoutProperties(_props, ['isValid']);
+
+    var focused = this.state.focused;
+
+
+    return _react2.default.createElement(
+      _input_wrap2.default,
+      { focused: focused, isValid: isValid, name: 'phone-number', icon: svg },
+      _react2.default.createElement('input', _extends({
+        ref: 'input',
+        type: 'tel',
+        name: 'phoneNumber',
+        className: 'auth0-lock-input auth0-lock-input-number',
+        autoComplete: 'off',
+        onFocus: this.handleFocus.bind(this),
+        onBlur: this.handleBlur.bind(this)
+      }, props))
+    );
+  };
+
+  PhoneNumberInput.prototype.focus = function focus() {
+    if (!this.refs.input) return;
+
+    this.refs.input.focus();
+    this.handleFocus();
+  };
+
+  PhoneNumberInput.prototype.handleFocus = function handleFocus() {
+    this.setState({ focused: true });
+  };
+
+  PhoneNumberInput.prototype.handleBlur = function handleBlur() {
+    this.setState({ focused: false });
+  };
+
+  return PhoneNumberInput;
+}(_react2.default.Component);
+
+// TODO: specify propTypes
+
+
+exports.default = PhoneNumberInput;
+
+
+/***/ }),
+/* 292 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _screen = __webpack_require__(11);
+
+var _screen2 = _interopRequireDefault(_screen);
+
+var _vcode_pane = __webpack_require__(293);
+
+var _vcode_pane2 = _interopRequireDefault(_vcode_pane);
+
+var _index = __webpack_require__(51);
+
+var _actions = __webpack_require__(50);
+
+var _signed_in_confirmation = __webpack_require__(17);
+
+var _index2 = __webpack_require__(3);
+
+var _phone_number = __webpack_require__(52);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Component = function Component(_ref) {
+  var i18n = _ref.i18n,
+      model = _ref.model;
+
+  var instructions = (0, _index.isEmail)(model) ? i18n.html('passwordlessEmailCodeInstructions', (0, _index2.getFieldValue)(model, 'email')) : i18n.html('passwordlessSMSCodeInstructions', (0, _phone_number.humanPhoneNumberWithDiallingCode)(model));
+
+  return _react2.default.createElement(_vcode_pane2.default, {
+    instructions: instructions,
+    lock: model,
+    placeholder: i18n.str('codeInputPlaceholder'),
+    resendLabel: i18n.str('resendCodeAction'),
+    onRestart: _actions.restart
+  });
+};
+
+var VcodeScreen = function (_Screen) {
+  _inherits(VcodeScreen, _Screen);
+
+  function VcodeScreen() {
+    _classCallCheck(this, VcodeScreen);
+
+    return _possibleConstructorReturn(this, _Screen.call(this, 'vcode'));
+  }
+
+  VcodeScreen.prototype.backHandler = function backHandler() {
+    return _actions.restart;
+  };
+
+  VcodeScreen.prototype.submitHandler = function submitHandler() {
+    return _actions.logIn;
+  };
+
+  VcodeScreen.prototype.renderAuxiliaryPane = function renderAuxiliaryPane(lock) {
+    return (0, _signed_in_confirmation.renderSignedInConfirmation)(lock);
+  };
+
+  VcodeScreen.prototype.render = function render() {
+    return Component;
+  };
+
+  return VcodeScreen;
+}(_screen2.default);
+
+exports.default = VcodeScreen;
+
+
+/***/ }),
+/* 293 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _vcode_input = __webpack_require__(294);
+
+var _vcode_input2 = _interopRequireDefault(_vcode_input);
+
+var _index = __webpack_require__(1);
+
+var l = _interopRequireWildcard(_index);
+
+var _index2 = __webpack_require__(3);
+
+var c = _interopRequireWildcard(_index2);
+
+var _media_utils = __webpack_require__(39);
+
+var _index3 = __webpack_require__(5);
+
+var _vcode = __webpack_require__(295);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var VcodePane = function (_React$Component) {
+  _inherits(VcodePane, _React$Component);
+
+  function VcodePane() {
+    _classCallCheck(this, VcodePane);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  VcodePane.prototype.handleVcodeChange = function handleVcodeChange(e) {
+    e.preventDefault();
+    (0, _index3.swap)(_index3.updateEntity, 'lock', l.id(this.props.lock), _vcode.setVcode, e.target.value);
+  };
+
+  VcodePane.prototype.handleResendClick = function handleResendClick(e) {
+    e.preventDefault();
+    var _props = this.props,
+        lock = _props.lock,
+        onRestart = _props.onRestart;
+
+    onRestart(l.id(lock));
+  };
+
+  VcodePane.prototype.render = function render() {
+    var _props2 = this.props,
+        instructions = _props2.instructions,
+        lock = _props2.lock,
+        placeholder = _props2.placeholder,
+        resendLabel = _props2.resendLabel;
+
+    var headerText = instructions || null;
+    var header = headerText && _react2.default.createElement(
+      'p',
+      null,
+      headerText
+    );
+
+    return _react2.default.createElement(
+      'div',
+      null,
+      header,
+      _react2.default.createElement(_vcode_input2.default, {
+        value: c.vcode(lock),
+        isValid: !c.isFieldVisiblyInvalid(lock, 'vcode') && !l.globalError(lock),
+        onChange: this.handleVcodeChange.bind(this),
+        autoFocus: !(0, _media_utils.isSmallScreen)(),
+        placeholder: placeholder,
+        disabled: l.submitting(lock)
+      }),
+      _react2.default.createElement(
+        'p',
+        { className: 'auth0-lock-alternative' },
+        _react2.default.createElement(
+          'a',
+          {
+            className: 'auth0-lock-alternative-link',
+            href: 'javascript:void(0)',
+            onClick: this.handleResendClick.bind(this)
+          },
+          resendLabel
+        )
+      )
+    );
+  };
+
+  return VcodePane;
+}(_react2.default.Component);
+
+exports.default = VcodePane;
+
+
+VcodePane.propTypes = {
+  instructions: _propTypes2.default.element,
+  lock: _propTypes2.default.object.isRequired,
+  placeholder: _propTypes2.default.string.isRequired,
+  resendLabel: _propTypes2.default.string.isRequired,
+  onRestart: _propTypes2.default.func.isRequired
+};
+
+
+/***/ }),
+/* 294 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _input_wrap = __webpack_require__(18);
+
+var _input_wrap2 = _interopRequireDefault(_input_wrap);
+
+var _media_utils = __webpack_require__(39);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var svg = '<svg focusable="false" width="12px" height="14px" viewBox="0 0 12 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" class="auth0-lock-icon auth0-lock-icon-box"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"><g transform="translate(-964.000000, -3509.000000)" fill="#888888"><g transform="translate(915.000000, 3207.000000)"><g transform="translate(35.000000, 289.000000)"><path id="Fill-42" d="M25.0523108,22.8115806 L20.455448,26.0692401 L20.455448,20.6336024 L25.0523108,17.6924012 L25.0523108,22.8115806 L25.0523108,22.8115806 Z M20.1658456,19.763342 C20.1060864,19.786611 20.050924,19.8145338 19.9957617,19.8471103 C19.9451962,19.8191876 19.8946307,19.786611 19.8394683,19.7679958 L14.9392126,16.7616414 L19.986568,13.8949009 L25.0523108,16.7616414 L25.043117,16.7662952 L20.1658456,19.763342 L20.1658456,19.763342 Z M19.5360754,20.6336024 L19.5360754,26.0692401 L14.9392126,22.8115806 L14.9392126,17.6924012 L19.5360754,20.6336024 L19.5360754,20.6336024 Z M25.9716833,17.6924012 C25.9716833,17.5574411 25.9395053,17.4317885 25.8889398,17.3154435 C26.0728143,16.9664085 26.0314425,16.5242976 25.7418402,16.2311082 L20.4002856,13.2340614 C19.7980966,12.9408721 20.2393954,12.9036417 19.5590597,13.2340614 L14.2634738,16.2311082 C13.9692745,16.5242976 13.9279028,16.9571009 14.1071804,17.3107897 C14.0520181,17.4271347 14.01984,17.5527873 14.01984,17.6924012 L14.01984,22.8115806 C14.01984,23.3234985 14.4335577,23.7423404 14.9392126,23.7423404 L19.5360754,27 C19.7061593,27 19.8578558,26.9395006 19.9957617,26.8557322 C20.1336676,26.9395006 20.285364,27 20.455448,27 L25.511997,23.7423404 C26.017652,23.7423404 25.9716833,23.3234985 25.9716833,22.8115806 L25.9716833,17.6924012 L25.9716833,17.6924012 Z"></path></g></g></g></g></svg>';
+
+var VcodeInput = function (_React$Component) {
+  _inherits(VcodeInput, _React$Component);
+
+  function VcodeInput(props) {
+    _classCallCheck(this, VcodeInput);
+
+    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
+
+    _this.state = {};
+    return _this;
+  }
+
+  VcodeInput.prototype.componentDidMount = function componentDidMount() {
+    var _this2 = this;
+
+    if (!(0, _media_utils.isSmallScreen)()) {
+      // TODO: We can't set the focus immediately because we have to wait for
+      // the input to be visible. Use a more robust solution (Placeholder should
+      // notify it children when they are being shown).
+      setTimeout(function () {
+        return _this2.refs.input && _this2.refs.input.focus();
+      }, 1200);
+    }
+  };
+
+  VcodeInput.prototype.render = function render() {
+    var _props = this.props,
+        isValid = _props.isValid,
+        props = _objectWithoutProperties(_props, ['isValid']);
+
+    var focused = this.state.focused;
+
+
+    return _react2.default.createElement(
+      _input_wrap2.default,
+      { focused: focused, isValid: isValid, name: 'vcode', icon: svg },
+      _react2.default.createElement('input', _extends({
+        ref: 'input',
+        type: 'tel',
+        name: 'vcode',
+        className: 'auth0-lock-input auth0-lock-input-code',
+        autoComplete: 'off',
+        autoCapitalize: 'off',
+        onFocus: this.handleFocus.bind(this),
+        onBlur: this.handleBlur.bind(this)
+      }, props))
+    );
+  };
+
+  VcodeInput.prototype.handleFocus = function handleFocus() {
+    this.setState({ focused: true });
+  };
+
+  VcodeInput.prototype.handleBlur = function handleBlur() {
+    this.setState({ focused: false });
+  };
+
+  return VcodeInput;
+}(_react2.default.Component);
+
+// TODO: specify propTypes
+
+
+exports.default = VcodeInput;
+
+
+/***/ }),
+/* 295 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.setVcode = setVcode;
+
+var _index = __webpack_require__(3);
+
+function setVcode(m, str) {
+  return (0, _index.setField)(m, 'vcode', str);
+}
+
+
+/***/ }),
+/* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -35198,12 +36900,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
 
 
 /***/ }),
-/* 280 */
+/* 297 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(18),
-    isObjectLike = __webpack_require__(21),
-    isPlainObject = __webpack_require__(80);
+var baseGetTag = __webpack_require__(20),
+    isObjectLike = __webpack_require__(24),
+    isPlainObject = __webpack_require__(90);
 
 /** `Object#toString` result references. */
 var domExcTag = '[object DOMException]',
@@ -35240,13 +36942,13 @@ module.exports = isError;
 
 
 /***/ }),
-/* 281 */
+/* 298 */
 /***/ (function(module, exports) {
 
 module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAADsJJREFUeNrkXWt0FcUdn02w/VBbbx+2p196tO0p6tHjBVvfQq4PQBSIGIooyK6PCiWIkZgoCUl4JASRJLwOKuouykMEShB8AMINEQStlHuU+mj1iJ/80A+9H9ov/cB0/jOze2d3ZpObZO5l92bOmRNOwr27+/vN//2fWYR0jfVfmmiYjD8+06PtWcs03tdsQoJd6uBPW9RjG/CsmsYIzfdnEhIS5KeFqkdmSwn4qQ1HEwbGtoFRZRnGPVGUAHdUkpnmRJTEqCTgwzMRsCrLEEYwo0wAjGSpkFDZ0JswAHyMk2UEd5iGxu8vK+C9x56EyY29dOUTwJMGBYutfkJGLAiINQmTGtnKNxCsfAa6wWcZRrEhIJYk3L34fbbyMfLUDp3InThWBMSKhIkcfAJM0lM5gupxyYgbAbEg4U4CPlU7mKkdQwA8N8nvYygBkSdhQtMxz+ACKIagbmAa4s+YSkBkSRjPwadqB7uqRjS83P0UpCAuBGSjTsK4puMMfOx6OwGVQ55BsgUoPhKwhkwnqiTc3nzcW/lBlcPVjVOO8RqZlDjZgOqRVhRJuI2A7/r5hsLPJ+rG2dZ+q+UC7iMGx80IR4yEW1s+yPn5SPTv2YSVv709BfdMja7oDRmxdUMjQkIKwMc45+fj4ETO6ysY+BQgD/icJxQnGxApEsbylS97O16SzdmxosLyA4Rz0hFDLygyJIxZcsILsgye0TQ8f58Z3J1tfvBzEhBwTVGcCciPhG+M9V8mdV3u5iUn2HciV+cHfX3k7FKAzwjwu58wy2MeiIkk1Kj+RIBKkAdPX7D28yGTcNPSE0mez0946sZncFHN7raxVtjnqZR4xjfnLcWfAEZCF4LypeKhyY0lyglwP1jz2aBJuHHpSQY+ECr6+bmVb+1pHdvVJ0DYFxd4KYrSIICR4IgkGMinc6kkXNR5ZsAkXL/sZJK7mglleoFcs7t1jNM/QFhKxpWVjAQoSDACARGZCaJz0z/r+DSZP/gfgqH11A4HXJzW3uX9g+8Z4YANKC0JEEggN2MFAiJ3Ukn45XOf9EvCtQR8hHBA7Qj6m1xjX57gu4FYcPUbJScBfJwDEjC2pKQYtwlkFaZ/tSoTSsIfYOVTgxtUO57BtfYvu8UZEEABN9SIdSCWx/jf45dzSQhWoiiQBFiU/s3K0xIJv1/+EdP5RFpckMQEG4l+rbcGCD7yYgQhZoh9IJbH+O+CK7gkIJUBpJIwsv2UR8JoDj6VEiF1IBrcdwYBflggphO0ESiiI1tzpXNxx6ewAu1gLt41zFe2fZy6AJ9DosF1ARL8fOudpTc7g16hge9z7UlJS4A7/vXkVQ5ZwZYbCBn+1DCJE3Cagh9mcImff2AI4CvcYs+mDAsCYHxXe7VDgLbEXLxbJgQfn0fNinwNsg4uvckZMkCC4TUE72zYEADj26eSDlE5liogcgEyBGMJMcWhJUMHHwlZUNGmDCsJcMdX9aOId+RKQlAnCy0jRGUd1gR+qA0YbhLgjnKMMwTorN8jyRlnUDtHNIKPAjal5AOxvsYVK06x9AKibqi0+mHlp1tudHRfN1i0oenoGAViU3QUVy5rP1UB6QUwuMHUsGtwewoA/vJ5b4KRnxLsjDaGU3f0yPa/mczP93s7rtEFg3u0+QYJ/KkNR5NVi3oqB3vdZQR8FGhT9Jq0IioBGd0k/A7A9wIxyfBmyd9S7yvAryTgk4+AxOy575m0OdDrLq3eJzToygaYEJGJHgHVI6G65fRFQtkASPjtSgAf2YbC7SQgEPBR6ljTDT2Szmvshc+dLkNeZGzPqj+SNwktIviKAAy6JuZuqqqJpgrqo9ZrsAdKf2/t54n+wT/NwPdVojwpyJJ/po43XS+twsmNvZWEMFvOpGL7obr3+iWhef4+YTsSlvYFQOF+7qZ7LRRRFdQnCXwVJYkrmb6w67NQEn5NwCc/bDkRRz0d6DVNnVCAz0k+C9IR0tNvP1Z7KJSEpvn7fduRRMPLdb8z70W94BfOCAdIcMN4PskD4vSPO89ckn/uha5+qnZOLr4uVP/uXT6GxAk4xWIFoZs5R4hdvfCARELj/P2XIFZHSCpKl3Btp/rFqVYhoCqcF8RJYF0FEqDg05++WFFm/Fod8RK1g1Mf9gG+O3a1VVASDC4JitZCu6bmXY+EhsffSnKboW5TxLhr/guFAR8hvTsu1Qyv+8IkgYtNVA9STIhqU9/VXi0Be1Xbxyb5O1FFOEs+n/pr47UD8jxm1R9OQsqafEfCux4Sr42sC86dy5TxlpURivuDwtATz9/jFBKfghMA4/trP6dgCg/vI4HM1Ld1SQng0a0fQQyQOTVA8N1BDC+1OeW0fqBeAD6CyBzB741IjvVkgcEvGgEwiOHNkYBUQKDUV/WjMrqvO6f2EPW+gkCXI4RCSAEVaS0sAvhFzQX954krcro9mF9hUW76MqHMqGs8/9wdRM0Qw0xtgly0Cfr5kNYoFvhFT8b9u+ZKhzykFXTzvAoXIYHofu0krF89HrKoqTJmcwKZVJ+fb9VurHSKiUnRs6H+1kCvsuVVuEASeJFd6+jsnJCB1IXB3Fmv51MkpFxjki2SBPxi9SemHKliSRLAM7mONljpHau6JmbKaZyQkwTfIiDe2trH/mKWJAE/X/0pTS8oOhxUm6GpJEBns+77aF17F7cJKOtr2M1Jpr3x0d1mSRFAAi7yQHDYEVbtOs9KpCDeHU38+FTLB4Mm4Ymad5Ni0OWOJesm8YgZZ+VzIFju6KVHdpolQcBPO8600NwO8vd78ig1a1DjKBbcsdQdPa7p+IBJePzJd2mbIri+dQveltMPGyZnwPX1ckdy1tPe/NAbLbGOA37ScQZUjhkWgIEq+OLpa6jvf83yj1jki/wBkRgxv73slkx+4B+g+aac70+/yyLqR/JwOubsoXHCCFWwxu7Fud++z4qdBCQ6z8DhdqaylQTRgsalLvgwSLTLekLFXYk5Q0klYUpjb7+SUL3wQBJ5Dbq+69ot8/dJkkCi3QwJyi6Fewps0nbv29w5e7sdKwIu6vw7A1/2cOCCAHrqH0+Plo4xOLn4OtYT6vPNhe5oQkLVop5QEuYtPBgo3Af8/BAvc/4LU4kqJC4qRplcB57PQzO7H9xqx4KAH3UB+NgM1lH5pOD/s3506ImKx5pvEFrUJb0MBRNlGvvPBHxWuMcJ9Y4WbDWvnxQaZM3dVEVzUp4kyPdu7p+5xY40AT8E8DFXO36vgqodyOd/VT+q3+Msob2EGmb/d0AN2NrZVtEt53sO+tSO4SOfdU0Qz6ffCPfhl6dleT0ho1CbVBIOPPCaHUkCLuz6rNOndvwrl678r/MA3x3Q1ylIAvWWdrVVSCA+VnuoQtkvlFNhBPy7804vzH5lepbnjjIh3XfmkRmbOyNHQO5wu0AZkRnc1Dd1owZ8kCtsqCDg3gOf3902VvKA/lR7yDQC+wIEtQUpB2vZAMB3B/F6sjx3lPF333kEawsQte0PcM/TDHgSYNRSZ+uSgz5Fd2/rmG7V7x956pCJaFpDaehp7Xg5iXoHe91pm2dku2dthcoaLVUa/v7T6Kkgv+HyGpj2fjsE8EN19VPveWkNA0nGkpYv24YAvjsqX3sA6hR7peNsomgDVIbXKEB2EdpLDGXXhKd2Uis0gO9bWCgGO2QMdaFF67DqDvNsKlae4cDyR1hrAk+1RwxFVgLE1ah5O6cJ4AfbFNX5I2XEO+iFJe85iygBSNypgrVu53yw/jAAavs6o5HSO3GJsVvnvWnqAqgQ+wL0qyBpc7WeY96hrzNYRxAMb5ZPVY3XfnbuXnPoku0L6KJLQHnQBcXhuZd8x8ynjzC1oyzasE45t8JlYP8+Me4S2x1z9phDloACZi0LJwF4aBJwP4DvlS8llUPB7+ickFm5ZiJkM1mFK7hxg0vCuiGUGQtheAvohgYPux4s+GmvO9pvU7ifTwCHIrv7/yHg8ipcCKncRvv5R3eZg11YhSyaaA7EfB0Og5IAvqHCVnRGswoaAX9NxwTJz29ZPwlyN3LrSe477JcfHniZsdAlQ60SYAxRAqY/08PUjrqOQBNyazvGhwZZDRsme93RqpNwwSa8+tAOE0VoaA7E5FWb74B3c3l+vpzUI2oHp9b1Ab476jZWsq4H1zDLh67a26zXzZIjQLGNKO8vr1rU4/PzA0k9qnY2rB6fd3qhBsqMrNifVTQCUJuwc/Z2s7QICAZEeQZi9y46KvcL5RJ6dDvShtXjBpzbqX5xqicJIb1HdvesrWZJSYAUEPXzmakNR1v68/M3DgJ8d8zZVMUlIbT3yH5r5paWkpIAMRjqSwIqG46CymkO8fPPAvjQ2Tzk7OnL07gkoLMhuaPmgw+8apeEBEiH24W4oVMae6FRy1RtpuOF+1EvaADfyyW9Mh28o1G0wqWSBIzM9IzNdqwJMLAyKSaNyQR88n/NQFMsn6xwv2nVHdqLODOc+8Ag+1tP/JJgHptu2zFWQSpPyD/uBvDpylc1xbLC/Uurbi/YS0CrNs/wtZ4Ec0dwb8eLTIJGFeQ/PClYObpr8ftM7WCln58BP/+VZ28v+BtYp7Ayo9B6IhVaikqCVgkwkD8Icx9qIgEf1I4qWed2TdhFAN8dE7fM5P0/udaTQL6naCRol4DgyYV3Nh3z1E4wIIJDL0DnO8/eVvR3D4/b9mCW544yIRF7UUjQm4pA0ia4BWzlB95UwQr4dOVvXnnbeXvxc2r77Czb1B160gsEagvimYrA7nHDUoui2x2deu08gu+Om3dYNL2NwklIxIMAMQBD8lsqAn5+akv7rZF55flN/ZMQLwkwFJ3RZYKfvzVC4J9vEjQHYkh5xKN7yhTk87e1pyIH/vkkQXMgpuzp94Ks7REG/3yRoNkNVbQncoO7Y0X0wT8fJOiVAOn1UEznv7GiIjbgF5sErRJg+N/XQlf+zrb4gV9MEjRLgGcLqMHdHWPwi0WC5sYsagdgQwXsaIk9+AoSunV/9widTMLLMLtbx1ioBAcn4R6eH7okcjc4qbHXRMNkEBK0Pev/BRgArivLhsgUfDsAAAAASUVORK5CYII="
 
 /***/ }),
-/* 282 */
+/* 299 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35265,7 +36967,7 @@ var ERR_A0L_ON_HASH__AUTH_INFO_MISSING = exports.ERR_A0L_ON_HASH__AUTH_INFO_MISS
 var ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED = exports.ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED = 'Auth0Lock : on("hash_parsed") - auth token expired';
 
 /***/ }),
-/* 283 */
+/* 300 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35281,27 +36983,27 @@ exports.watchAuthFailure = watchAuthFailure;
 exports.watchLogin = watchLogin;
 exports.watchLogout = watchLogout;
 
-var _lattice = __webpack_require__(115);
+var _lattice = __webpack_require__(126);
 
 var _lattice2 = _interopRequireDefault(_lattice);
 
-var _reactRouterRedux = __webpack_require__(69);
+var _reactRouterRedux = __webpack_require__(79);
 
-var _effects = __webpack_require__(284);
+var _effects = __webpack_require__(301);
 
-var _Auth = __webpack_require__(35);
+var _Auth = __webpack_require__(37);
 
 var Auth0 = _interopRequireWildcard(_Auth);
 
-var _AuthUtils = __webpack_require__(30);
+var _AuthUtils = __webpack_require__(33);
 
 var AuthUtils = _interopRequireWildcard(_AuthUtils);
 
-var _Configuration = __webpack_require__(68);
+var _Configuration = __webpack_require__(78);
 
-var _AuthConstants = __webpack_require__(26);
+var _AuthConstants = __webpack_require__(29);
 
-var _AuthActionFactory = __webpack_require__(34);
+var _AuthActionFactory = __webpack_require__(36);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -35536,10 +37238,10 @@ function watchLogout() {
 }
 
 /***/ }),
-/* 284 */
+/* 301 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_284__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_301__;
 
 /***/ })
 /******/ ]);
