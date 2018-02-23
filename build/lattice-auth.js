@@ -1,6 +1,6 @@
 /*!
  * 
- * lattice-auth - v0.4.2
+ * lattice-auth - v0.5.0
  * JavaScript helpers for OpenLattice auth
  * https://github.com/openlattice/lattice-auth
  * 
@@ -4474,13 +4474,13 @@ var _AuthUtils = __webpack_require__(30);
 
 var AuthUtils = _interopRequireWildcard(_AuthUtils);
 
+var _AuthConstants = __webpack_require__(26);
+
 var _Configuration = __webpack_require__(68);
 
 var _LangUtils = __webpack_require__(47);
 
 var _Errors = __webpack_require__(282);
-
-var _AuthConstants = __webpack_require__(26);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -4579,6 +4579,7 @@ function initialize() {
     languageDictionary: {
       title: (0, _Configuration.getConfig)().getIn(['auth0Lock', 'title'], '')
     },
+    rememberLastLogin: false,
     theme: {
       logo: (0, _Configuration.getConfig)().getIn(['auth0Lock', 'logo'], '')
     }
@@ -15654,6 +15655,8 @@ for (var i = 0, len = code.length; i < len; ++i) {
   revLookup[code.charCodeAt(i)] = i
 }
 
+// Support decoding URL-safe base64 strings, as Node.js does.
+// See: https://en.wikipedia.org/wiki/Base64#URL_applications
 revLookup['-'.charCodeAt(0)] = 62
 revLookup['_'.charCodeAt(0)] = 63
 
@@ -15715,7 +15718,7 @@ function encodeChunk (uint8, start, end) {
   var tmp
   var output = []
   for (var i = start; i < end; i += 3) {
-    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+    tmp = ((uint8[i] << 16) & 0xFF0000) + ((uint8[i + 1] << 8) & 0xFF00) + (uint8[i + 2] & 0xFF)
     output.push(tripletToBase64(tmp))
   }
   return output.join('')
@@ -17635,7 +17638,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // injected by Webpack.DefinePlugin
-var version = "v0.4.2";
+var version = "v0.5.0";
 
 exports.Auth0 = Auth0;
 exports.AuthActionFactory = AuthActionFactory;
