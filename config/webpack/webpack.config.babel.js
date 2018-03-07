@@ -1,6 +1,5 @@
 /* eslint-disable import/extensions */
 
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import Webpack from 'webpack';
 // import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
@@ -65,8 +64,6 @@ export default function webpackConfig() {
     __VERSION__: JSON.stringify(`v${PACKAGE.version}`)
   });
 
-  const UGLIFY_PLUGIN = new UglifyJsPlugin();
-
   // https://github.com/moment/moment/issues/2373
   // https://stackoverflow.com/a/25426019/196921
   // https://github.com/facebookincubator/create-react-app/pull/2187
@@ -96,11 +93,15 @@ export default function webpackConfig() {
         'redux-saga/effects': 'redux-saga/effects'
       }
     ),
+    mode: ifDev('development', 'production'),
     module: {
       rules: [
         BABEL_LOADER,
         URL_LOADER
       ]
+    },
+    optimization: {
+      minimize: ifMin(true, false)
     },
     output: {
       library: LIB_CONFIG.LIB_NAMESPACE,
@@ -118,8 +119,7 @@ export default function webpackConfig() {
     plugins: [
       DEFINE_PLUGIN,
       BANNER_PLUGIN,
-      IGNORE_MOMENT_LOCALES,
-      ...ifMin([UGLIFY_PLUGIN], [])
+      IGNORE_MOMENT_LOCALES
     ],
     resolve: {
       extensions: ['.js'],
