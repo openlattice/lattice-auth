@@ -78,7 +78,7 @@
     "url-loader": "^1.0.0",
     "webpack": "^3.8.0",
     "webpack-bundle-analyzer": "^2.9.2",
-    "webpack-dev-server": "^2.10.0"
+    "webpack-dev-server": "^3.1.0"
   },
   "peerDependencies": {
     "immutable": "4.0.0-rc.9",
