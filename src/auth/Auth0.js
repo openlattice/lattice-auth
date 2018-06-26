@@ -5,14 +5,15 @@
 import Auth0Lock from 'auth0-lock';
 import isEmpty from 'lodash/isEmpty';
 import qs from 'qs';
+import { Map } from 'immutable';
 
 import Logger from '../utils/Logger';
 import * as AuthUtils from './AuthUtils';
 import { LOGIN_PATH } from './AuthConstants';
-import { getConfig } from '../config/Configuration';
 import { isNonEmptyString } from '../utils/LangUtils';
 
 import {
+  ERR_INVALID_CONFIG,
   ERR_A0L_FRAGMENT_NOT_PARSED,
   ERR_A0L_NOT_INITIALIZED,
   ERR_A0L_ON_AUTHORIZATION_ERROR,
@@ -96,13 +97,19 @@ export function parseUrl(location :Object) :Object {
   return parsedUrl;
 }
 
-export function initialize() :void {
+export function initialize(config :Map<string, *>) :void {
+
+  // TODO: need better validation on the configuration object
+  if (!config || config.isEmpty()) {
+    LOG.error(ERR_INVALID_CONFIG, config);
+    throw new Error(ERR_INVALID_CONFIG);
+  }
 
   parsedUrl = parseUrl(window.location);
 
   auth0Lock = new Auth0Lock(
-    getConfig().get('auth0ClientId'),
-    getConfig().get('auth0Domain'),
+    config.get('auth0ClientId'),
+    config.get('auth0Domain'),
     {
       auth: {
         autoParseHash: false,
@@ -115,11 +122,11 @@ export function initialize() :void {
       closable: false,
       hashCleanup: false,
       languageDictionary: {
-        title: getConfig().getIn(['auth0Lock', 'title'], '')
+        title: config.getIn(['auth0Lock', 'title'], '')
       },
       rememberLastLogin: false,
       theme: {
-        logo: getConfig().getIn(['auth0Lock', 'logo'], '')
+        logo: config.getIn(['auth0Lock', 'logo'], '')
       }
     }
   );

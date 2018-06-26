@@ -2,8 +2,8 @@
  * @flow
  */
 
-import Immutable from 'immutable';
 import Lattice from 'lattice';
+import { fromJS } from 'immutable';
 
 import * as Auth0 from '../auth/Auth0';
 import * as Config from './Configuration';
@@ -17,7 +17,7 @@ import {
 declare var __AUTH0_CLIENT_ID__ :string;
 declare var __AUTH0_DOMAIN__ :string;
 
-const MOCK_AUTH0_LOCK = Immutable.fromJS({
+const MOCK_AUTH0_LOCK = fromJS({
   logo: '/static/assets/images/logo.abc123.png',
   title: 'OpenLattice, Inc.'
 });

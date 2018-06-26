@@ -2,8 +2,8 @@
  * @flow
  */
 
-import Immutable from 'immutable';
 import Lattice from 'lattice';
+import { Map, fromJS } from 'immutable';
 
 import OpenLatticeLogo from '../assets/images/logo.png';
 import Logger from '../utils/Logger';
@@ -16,13 +16,13 @@ declare var __AUTH0_DOMAIN__ :string;
 
 const LOG = new Logger('Configuration');
 
-const ENV_URLS :Map<string, string> = Immutable.fromJS({
+const ENV_URLS :Map<string, string> = fromJS({
   LOCAL: 'http://localhost:8080',
   STAGING: 'https://api.staging.openlattice.com',
   PRODUCTION: 'https://api.openlattice.com'
 });
 
-let configuration :Map<*, *> = Immutable.fromJS({
+let configuration :Map<string, *> = fromJS({
   auth0ClientId: __AUTH0_CLIENT_ID__,
   auth0Domain: __AUTH0_DOMAIN__,
   auth0Lock: {
@@ -32,6 +32,11 @@ let configuration :Map<*, *> = Immutable.fromJS({
   authToken: '',
   baseUrl: ''
 });
+
+function getConfig() :Map<string, *> {
+
+  return configuration;
+}
 
 function setAuth0ClientId(config :LatticeAuthConfig) :void {
 
@@ -72,7 +77,7 @@ function setAuth0Lock(config :LatticeAuthConfig) :void {
     LOG.warn('auth0Lock has not been configured, using default configuration');
     return;
   }
-  else if (!isNonEmptyObject(config.auth0Lock)) {
+  if (!isNonEmptyObject(config.auth0Lock)) {
     const errorMsg = 'invalid parameter - auth0Lock must be a non-empty object';
     LOG.error(errorMsg, config.auth0Lock.title);
     throw new Error(errorMsg);
@@ -167,16 +172,12 @@ function configure(config :LatticeAuthConfig) :void {
   setAuthToken(config);
   setBaseUrl(config);
 
-  Auth0.initialize();
   Lattice.configure({
     authToken: config.authToken,
     baseUrl: config.baseUrl
   });
-}
 
-function getConfig() :Map<*, *> {
-
-  return configuration;
+  Auth0.initialize(getConfig());
 }
 
 export {
