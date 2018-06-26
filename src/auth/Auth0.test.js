@@ -4,8 +4,11 @@
 
 /* eslint-disable global-require */
 
+import { fromJS } from 'immutable';
+
 import { LOGIN_PATH } from './AuthConstants';
 import { randomId } from '../utils/Utils';
+import { INVALID_PARAMS } from '../utils/testing/Invalid';
 
 import {
   ERR_A0L_FRAGMENT_NOT_PARSED,
@@ -25,6 +28,11 @@ const MOCK_AUTH_TOKEN :string = `${randomId()}.${randomId()}.${randomId()}`;
 const MOCK_URL :string = 'https://openlattice.com';
 const MOCK_AUTH0_URL :string = `${MOCK_URL}/#access_token=${randomId()}&id_token=${randomId()}`;
 const MOCK_LOGIN_URL :string = `${MOCK_URL}/#${LOGIN_PATH}`;
+
+const MOCK_CONFIG :Map<string, *> = fromJS({
+  auth0ClientId: __AUTH0_CLIENT_ID__,
+  auth0Domain: __AUTH0_DOMAIN__
+});
 
 // TODO: improve perf - not every test needs to do require('./Auth0'), I think
 // TODO: mock Auth0Lock, and test for given options, test getConfig().getIn(['auth0Lock', 'logo'], '')
@@ -51,18 +59,27 @@ describe('Auth0', () => {
       expect(Auth0.initialize).toBeInstanceOf(Function);
     });
 
-    test('should not throw', () => {
+    test('should throw if configuration object is missing', () => {
       expect(() => {
         const Auth0 = require('./Auth0');
         Auth0.initialize();
-      }).not.toThrow();
+      }).toThrow();
+    });
+
+    test('should throw if configuration object is invalid', () => {
+      INVALID_PARAMS.forEach((invalid) => {
+        expect(() => {
+          const Auth0 = require('./Auth0');
+          Auth0.initialize(invalid);
+        }).toThrow();
+      });
     });
 
     // TODO: test against the config object
     test('should create a new Auth0Lock instance', () => {
       const Auth0 = require('./Auth0');
       const Auth0Lock = require('auth0-lock');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       expect(Auth0Lock).toHaveBeenCalledTimes(1);
       expect(Auth0Lock).toHaveBeenCalledWith(
         __AUTH0_CLIENT_ID__,
@@ -77,14 +94,14 @@ describe('Auth0', () => {
     test('should call AuthUtils.getAuthToken()', () => {
       const Auth0 = require('./Auth0');
       const AuthUtils = require('./AuthUtils');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       expect(AuthUtils.getAuthToken).toHaveBeenCalledTimes(1);
     });
 
     test('should call AuthUtils.hasAuthTokenExpired()', () => {
       const Auth0 = require('./Auth0');
       const AuthUtils = require('./AuthUtils');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       expect(AuthUtils.hasAuthTokenExpired).toHaveBeenCalledTimes(1);
       expect(AuthUtils.hasAuthTokenExpired).toHaveBeenCalledWith(MOCK_AUTH_TOKEN);
     });
@@ -114,7 +131,7 @@ describe('Auth0', () => {
       jest.doMock('auth0-lock', () => jest.fn(() => mockAuth0LockInstance));
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       const auth0LockInstance = Auth0.getAuth0LockInstance();
       expect(auth0LockInstance).toBeDefined();
       expect(auth0LockInstance).toBe(mockAuth0LockInstance);
@@ -240,7 +257,7 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url: MOCK_AUTH0_URL });
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
         .then(() => done.fail())
         .catch((e :Error) => {
@@ -263,7 +280,7 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url: MOCK_AUTH0_URL });
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
         .then(() => done.fail())
         .catch((e :Error) => {
@@ -286,7 +303,7 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url: MOCK_AUTH0_URL });
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
         .then(() => done.fail())
         .catch((e :Error) => {
@@ -309,7 +326,7 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url: MOCK_AUTH0_URL });
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
         .then(() => done.fail())
         .catch((e :Error) => {
@@ -332,7 +349,7 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url: MOCK_AUTH0_URL });
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
         .then(() => done.fail())
         .catch((e :Error) => {
@@ -355,7 +372,7 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url: MOCK_AUTH0_URL });
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
         .then(() => done.fail())
         .catch((e :Error) => {
@@ -378,7 +395,7 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url: MOCK_AUTH0_URL });
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
         .then(() => done.fail())
         .catch((e :Error) => {
@@ -401,7 +418,7 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url: MOCK_AUTH0_URL });
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
         .then(() => done.fail())
         .catch((e :Error) => {
@@ -424,7 +441,7 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url: MOCK_AUTH0_URL });
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
         .then(() => done.fail())
         .catch((e :Error) => {
@@ -447,7 +464,7 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url: MOCK_AUTH0_URL });
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
         .then(() => done.fail())
         .catch((e :Error) => {
@@ -481,7 +498,7 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url: MOCK_AUTH0_URL });
 
       const Auth0 = require('./Auth0');
-      Auth0.initialize();
+      Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
         .then((authInfo :Object) => {
           expect(authInfo).toBeDefined();

@@ -110,7 +110,7 @@ export function hasAuthTokenExpired(idTokenOrExpiration :?string | number) :bool
       // idTokenOrExpiration is the expiration
       return moment().isAfter(idTokenOrExpiration);
     }
-    else if (typeof idTokenOrExpiration === 'string' && idTokenOrExpiration.length) {
+    if (typeof idTokenOrExpiration === 'string' && idTokenOrExpiration.length) {
       // idTokenOrExpiration is the id token
       const idTokenDecoded = decode(idTokenOrExpiration);
       const expiration = moment.unix(idTokenDecoded.exp);

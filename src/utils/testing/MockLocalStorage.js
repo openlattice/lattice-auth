@@ -2,9 +2,9 @@
  * @flow
  */
 
-import Immutable from 'immutable';
+import { Map } from 'immutable';
 
-let storage :Map<*, *> = Immutable.Map();
+let storage :Map<*, *> = Map();
 
 function clear() :void {
   storage = storage.clear();
