@@ -5,14 +5,14 @@ module.exports = {
   collectCoverageFrom: [
     '**/src/index.js',
     '**/src/auth/*.js',
-    '**/src/config/*.js'
+    '**/src/config/*.js',
   ],
   coveragePathIgnorePatterns: [
     '<rootDir>/build/',
     '<rootDir>/config/',
     '<rootDir>/flow-typed/',
     '<rootDir>/src/utils/testing/Invalid.js',
-    '<rootDir>/src/utils/testing/MockLocalStorage.js'
+    '<rootDir>/src/utils/testing/MockLocalStorage.js',
   ],
   coverageDirectory: '<rootDir>/coverage',
   globals: {
@@ -22,15 +22,16 @@ module.exports = {
     __ENV_PROD__: false,
     __ENV_TEST__: true,
     __PACKAGE__: PACKAGE.name,
-    __VERSION__: PACKAGE.version
+    __VERSION__: PACKAGE.version,
   },
   moduleNameMapper: {
-    '\\.(png)$': '<rootDir>/__mocks__/assetMocks.js'
+    '\\.(png)$': '<rootDir>/__mocks__/assetMocks.js',
   },
   rootDir: '../..',
   setupFiles: [
     '<rootDir>/config/jest/enzyme.config.js',
-    '<rootDir>/src/utils/testing/MockLocalStorage.js'
+    '<rootDir>/src/utils/testing/MockLocalStorage.js',
   ],
-  testEnvironment: '<rootDir>/config/jest/jsdom.config.js'
+  testEnvironment: '<rootDir>/config/jest/jsdom.config.js',
+  testURL: 'http://localhost/',
 };
