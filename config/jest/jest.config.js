@@ -30,8 +30,7 @@ module.exports = {
   rootDir: '../..',
   setupFiles: [
     '<rootDir>/config/jest/enzyme.config.js',
-    '<rootDir>/src/utils/testing/MockLocalStorage.js',
   ],
   testEnvironment: '<rootDir>/config/jest/jsdom.config.js',
-  testURL: 'http://localhost/',
+  testURL: 'http://localhost',
 };
