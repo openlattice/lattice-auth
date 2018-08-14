@@ -5,7 +5,6 @@
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
 
-import MockLocalStorage from '../utils/testing/MockLocalStorage';
 import * as AuthUtils from './AuthUtils';
 import { randomId } from '../utils/Utils';
 
@@ -22,10 +21,19 @@ import {
   AUTH_TOKEN_EXPIRED
 } from './AuthConstants';
 
+const MOCK_SECRET :string = 'secret';
+const MOCK_AUTH_TOKEN :string = jwt.sign(
+  {
+    data: randomId(),
+    exp: moment().add(1, 'h').unix() // 1 hour ahead
+  },
+  MOCK_SECRET
+);
+
 describe('AuthUtils', () => {
 
   beforeEach(() => {
-    MockLocalStorage.clear();
+    localStorage.clear();
   });
 
   describe('getAuthToken()', () => {
@@ -36,15 +44,14 @@ describe('AuthUtils', () => {
 
     test('should return null if the stored auth token is invalid', () => {
       INVALID_PARAMS.forEach((invalid :any) => {
-        MockLocalStorage.setItem(AUTH0_ID_TOKEN, invalid);
+        localStorage.setItem(AUTH0_ID_TOKEN, invalid);
         expect(AuthUtils.getAuthToken()).toBeNull();
       });
     });
 
     test('should return the stored auth token', () => {
-      const mockAuthToken :string = randomId();
-      MockLocalStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
-      expect(AuthUtils.getAuthToken()).toEqual(mockAuthToken);
+      localStorage.setItem(AUTH0_ID_TOKEN, MOCK_AUTH_TOKEN);
+      expect(AuthUtils.getAuthToken()).toEqual(MOCK_AUTH_TOKEN);
     });
 
   });
@@ -57,7 +64,7 @@ describe('AuthUtils', () => {
 
     test('should return -1 if localStorage holds an invalid value', () => {
       INVALID_SS_PARAMS.forEach((invalid :any) => {
-        MockLocalStorage.setItem(AUTH0_ID_TOKEN, invalid);
+        localStorage.setItem(AUTH0_ID_TOKEN, invalid);
         expect(AuthUtils.getAuthTokenExpiration()).toEqual(AUTH_TOKEN_EXPIRED);
       });
     });
@@ -69,11 +76,7 @@ describe('AuthUtils', () => {
     });
 
     test('should return -1 if given an invalid defined value even if localStorage holds a valid value', () => {
-
-      const expInSecondsSinceEpoch :number = moment().add(1, 'h').unix(); // 1 hour ahead
-      const mockAuthToken :string = jwt.sign({ data: randomId(), exp: expInSecondsSinceEpoch }, 'secret');
-      MockLocalStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
-
+      localStorage.setItem(AUTH0_ID_TOKEN, MOCK_AUTH_TOKEN);
       INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
         expect(AuthUtils.getAuthTokenExpiration(invalid)).toEqual(AUTH_TOKEN_EXPIRED);
       });
@@ -85,7 +88,7 @@ describe('AuthUtils', () => {
       const expInMillisSinceEpoch :number = expInSecondsSinceEpoch * 1000;
 
       const mockAuthToken :string = jwt.sign({ data: randomId(), exp: expInSecondsSinceEpoch }, 'secret');
-      MockLocalStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
+      localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
       expect(AuthUtils.getAuthTokenExpiration()).toEqual(expInMillisSinceEpoch);
     });
 
@@ -127,17 +130,17 @@ describe('AuthUtils', () => {
   describe('clearAuthInfo()', () => {
 
     test(`should remove ${AUTH0_ID_TOKEN} from localStorage`, () => {
-      MockLocalStorage.setItem(AUTH0_ID_TOKEN, randomId());
+      localStorage.setItem(AUTH0_ID_TOKEN, randomId());
       AuthUtils.clearAuthInfo();
-      expect(MockLocalStorage.size()).toEqual(0);
-      expect(MockLocalStorage.getItem(AUTH0_ID_TOKEN)).toEqual(null);
+      expect(localStorage).toHaveLength(0);
+      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(null);
     });
 
     test(`should remove ${AUTH0_USER_INFO} from localStorage`, () => {
-      MockLocalStorage.setItem(AUTH0_USER_INFO, randomId());
+      localStorage.setItem(AUTH0_USER_INFO, randomId());
       AuthUtils.clearAuthInfo();
-      expect(MockLocalStorage.size()).toEqual(0);
-      expect(MockLocalStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
+      expect(localStorage).toHaveLength(0);
+      expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
     });
 
   });
@@ -147,36 +150,35 @@ describe('AuthUtils', () => {
     test('should not update localStorage when given invalid auth info', () => {
       INVALID_PARAMS.forEach((invalid :any) => {
         AuthUtils.storeAuthInfo(invalid);
-        expect(MockLocalStorage.size()).toEqual(0);
+        expect(localStorage).toHaveLength(0);
       });
     });
 
     test('should update localStorage with the correct auth token even if user info is missing', () => {
 
-      const mockAuthToken :string = randomId();
-      MockLocalStorage.clear();
+      localStorage.clear();
       AuthUtils.storeAuthInfo({
-        idToken: mockAuthToken,
+        idToken: MOCK_AUTH_TOKEN,
         idTokenPayload: null
       });
-      expect(MockLocalStorage.size()).toEqual(1);
-      expect(MockLocalStorage.getItem(AUTH0_ID_TOKEN)).toEqual(mockAuthToken);
-      expect(MockLocalStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
+      expect(localStorage).toHaveLength(1);
+      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
+      expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
 
-      MockLocalStorage.clear();
+      localStorage.clear();
       AuthUtils.storeAuthInfo({
-        idToken: mockAuthToken,
+        idToken: MOCK_AUTH_TOKEN,
         idTokenPayload: undefined
       });
-      expect(MockLocalStorage.size()).toEqual(1);
-      expect(MockLocalStorage.getItem(AUTH0_ID_TOKEN)).toEqual(mockAuthToken);
-      expect(MockLocalStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
+      expect(localStorage).toHaveLength(1);
+      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
+      expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
     });
 
     test('should update localStorage with the correct auth token and user info', () => {
 
       const mockAuthInfo :Object = {
-        idToken: randomId(),
+        idToken: MOCK_AUTH_TOKEN,
         idTokenPayload: {
           email: randomId(),
           picture: randomId(),
@@ -193,9 +195,9 @@ describe('AuthUtils', () => {
       };
 
       AuthUtils.storeAuthInfo(mockAuthInfo);
-      expect(MockLocalStorage.size()).toEqual(2);
-      expect(MockLocalStorage.getItem(AUTH0_ID_TOKEN)).toEqual(mockAuthInfo.idToken);
-      expect(MockLocalStorage.getItem(AUTH0_USER_INFO)).toEqual(JSON.stringify(mockUserInfo));
+      expect(localStorage).toHaveLength(2);
+      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
+      expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(JSON.stringify(mockUserInfo));
     });
 
   });
@@ -208,7 +210,7 @@ describe('AuthUtils', () => {
 
     test('should return null if the stored user info is invalid', () => {
       INVALID_SS_PARAMS.forEach((invalid :any) => {
-        MockLocalStorage.setItem(AUTH0_USER_INFO, invalid);
+        localStorage.setItem(AUTH0_USER_INFO, invalid);
         expect(AuthUtils.getUserInfo()).toBeNull();
       });
     });
@@ -222,7 +224,7 @@ describe('AuthUtils', () => {
         roles: [randomId()]
       };
 
-      MockLocalStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
+      localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
       expect(AuthUtils.getUserInfo()).toEqual(mockUserInfo);
     });
 
@@ -236,7 +238,7 @@ describe('AuthUtils', () => {
 
     test('should return false if localStorage holds an invalid auth token', () => {
       INVALID_SS_PARAMS.forEach((invalid :any) => {
-        MockLocalStorage.setItem(AUTH0_ID_TOKEN, invalid);
+        localStorage.setItem(AUTH0_ID_TOKEN, invalid);
         expect(AuthUtils.isAuthenticated()).toEqual(false);
       });
     });
@@ -245,7 +247,7 @@ describe('AuthUtils', () => {
       ['s', 'm', 'h', 'd', 'w', 'M', 'y'].forEach((unit :string) => {
         const expInSecondsSinceEpoch :number = moment().subtract(1, unit).unix();
         const mockAuthToken :string = jwt.sign({ data: randomId(), exp: expInSecondsSinceEpoch }, 'secret');
-        MockLocalStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
+        localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
         expect(AuthUtils.isAuthenticated()).toEqual(false);
       });
     });
@@ -254,7 +256,7 @@ describe('AuthUtils', () => {
       ['s', 'm', 'h', 'd', 'w', 'M', 'y'].forEach((unit :string) => {
         const expInSecondsSinceEpoch :number = moment().add(1, unit).unix();
         const mockAuthToken :string = jwt.sign({ data: randomId(), exp: expInSecondsSinceEpoch }, 'secret');
-        MockLocalStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
+        localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
         expect(AuthUtils.isAuthenticated()).toEqual(true);
       });
     });
@@ -269,7 +271,7 @@ describe('AuthUtils', () => {
 
     test('should return false if the stored user info is invalid', () => {
       INVALID_SS_PARAMS.forEach((invalid :any) => {
-        MockLocalStorage.setItem(AUTH0_USER_INFO, invalid);
+        localStorage.setItem(AUTH0_USER_INFO, invalid);
         expect(AuthUtils.isAdmin()).toEqual(false);
       });
     });
@@ -277,15 +279,15 @@ describe('AuthUtils', () => {
     test(`should return false if the stored user info does not have the "${ADMIN_ROLE}" role`, () => {
 
       const mockUserInfo :UserInfo = {};
-      MockLocalStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
+      localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
       expect(AuthUtils.isAdmin()).toEqual(false);
 
       INVALID_SS_PARAMS.forEach((invalid :any) => {
         mockUserInfo.roles = [invalid];
-        MockLocalStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
+        localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
         expect(AuthUtils.isAdmin()).toEqual(false);
         mockUserInfo.roles = [invalid, invalid];
-        MockLocalStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
+        localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
         expect(AuthUtils.isAdmin()).toEqual(false);
       });
     });
@@ -293,18 +295,18 @@ describe('AuthUtils', () => {
     test(`should return false because the "${ADMIN_ROLE}" role is case sensitive`, () => {
 
       const mockUserInfo :UserInfo = { roles: ['ADMIN', 'Admin'] };
-      MockLocalStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
+      localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
       expect(AuthUtils.isAdmin()).toEqual(false);
     });
 
     test(`should return true if the stored user info contains the "${ADMIN_ROLE}" role`, () => {
 
       const mockUserInfo :UserInfo = { roles: [ADMIN_ROLE] };
-      MockLocalStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
+      localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
       expect(AuthUtils.isAdmin()).toEqual(true);
 
       mockUserInfo.roles = [randomId(), ADMIN_ROLE];
-      MockLocalStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
+      localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
       expect(AuthUtils.isAdmin()).toEqual(true);
     });
 
