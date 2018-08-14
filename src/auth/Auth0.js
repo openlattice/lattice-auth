@@ -114,20 +114,21 @@ export function initialize(config :Map<string, *>) :void {
       auth: {
         autoParseHash: false,
         params: {
-          scope: 'openid email user_id user_metadata app_metadata nickname roles'
+          scope: 'openid email user_id user_metadata app_metadata nickname roles',
         },
         redirectUrl: parsedUrl.redirectUrl,
-        responseType: 'token'
+        responseType: 'token',
+        sso: false,
       },
       closable: false,
       hashCleanup: false,
       languageDictionary: {
-        title: config.getIn(['auth0Lock', 'title'], '')
+        title: config.getIn(['auth0Lock', 'title'], ''),
       },
       rememberLastLogin: false,
       theme: {
-        logo: config.getIn(['auth0Lock', 'logo'], '')
-      }
+        logo: config.getIn(['auth0Lock', 'logo'], ''),
+      },
     }
   );
 
