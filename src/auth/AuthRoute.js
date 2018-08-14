@@ -5,8 +5,13 @@
 import React from 'react';
 
 import { connect } from 'react-redux';
-import { Redirect, Route, Switch, withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
+import {
+  Redirect,
+  Route,
+  Switch,
+  withRouter
+} from 'react-router';
 
 import * as Auth0 from './Auth0';
 import * as AuthUtils from './AuthUtils';
@@ -48,8 +53,10 @@ class AuthRoute extends React.Component<Props> {
 
   componentWillMount() {
 
-    if (!AuthUtils.hasAuthTokenExpired(this.props.authTokenExpiration)) {
-      this.props.actions.authSuccess(AuthUtils.getAuthToken());
+    const { actions, authTokenExpiration, redirectToLogin } = this.props;
+
+    if (!AuthUtils.hasAuthTokenExpired(authTokenExpiration)) {
+      actions.authSuccess(AuthUtils.getAuthToken());
     }
     /*
      * 1. if we don't want to redirect, it's safe to attempt authentication
@@ -57,8 +64,8 @@ class AuthRoute extends React.Component<Props> {
      *    just returned here from a previous redirect and the URL already contains authentication info, in which case
      *    we might not need to redirect
      */
-    else if (!this.props.redirectToLogin || Auth0.urlAuthInfoAvailable()) {
-      this.props.actions.authAttempt();
+    else if (!redirectToLogin || Auth0.urlAuthInfoAvailable()) {
+      actions.authAttempt();
     }
   }
 
@@ -72,14 +79,16 @@ class AuthRoute extends React.Component<Props> {
 
   componentWillReceiveProps(nextProps :Props) {
 
+    const { actions, redirectToLogin } = this.props;
+
     // TODO: need to spend more time thinking about how to handle this case
     if (AuthUtils.hasAuthTokenExpired(nextProps.authTokenExpiration)) {
       // if nextProps.authTokenExpiration === -1, we've already dispatched AUTH_EXPIRED or LOGOUT
       if (nextProps.authTokenExpiration !== AUTH_TOKEN_EXPIRED) {
-        this.props.actions.authExpired();
+        actions.authExpired();
       }
       // do not show the lock if we're in redirect mode
-      if (!this.props.redirectToLogin) {
+      if (!redirectToLogin) {
         Auth0.getAuth0LockInstance().show();
       }
     }
@@ -93,12 +102,13 @@ class AuthRoute extends React.Component<Props> {
 
     const {
       component: WrappedComponent,
+      authTokenExpiration,
       isAuthenticating,
       redirectToLogin,
       ...wrappedComponentProps
     } = this.props;
 
-    if (!AuthUtils.hasAuthTokenExpired(this.props.authTokenExpiration)) {
+    if (!AuthUtils.hasAuthTokenExpired(authTokenExpiration)) {
       // TODO: is there a way to definitively check if a prop is a Component?
       if (WrappedComponent !== null && WrappedComponent !== undefined && typeof WrappedComponent === 'function') {
         return (

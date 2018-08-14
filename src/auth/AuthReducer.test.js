@@ -2,7 +2,7 @@
  * @flow
  */
 
-import Immutable from 'immutable';
+import { Map, fromJS } from 'immutable';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
 import authReducer from './AuthReducer';
@@ -27,7 +27,7 @@ jest.mock('./AuthUtils', () => ({
   getAuthTokenExpiration: jest.fn()
 }));
 
-const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
+const INITIAL_STATE :Map<*, *> = fromJS({
   authTokenExpiration: AUTH_TOKEN_EXPIRATION_NOT_SET,
   isAuthenticating: false
 });

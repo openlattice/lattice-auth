@@ -6,7 +6,7 @@ import decode from 'jwt-decode';
 import moment from 'moment';
 import qs from 'qs';
 
-import { isNonEmptyString } from '../utils/LangUtils';
+import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
 
 import {
   ADMIN_ROLE,
@@ -25,11 +25,19 @@ export function getAuthToken() :?string {
 
   const idToken :?string = localStorage.getItem(AUTH0_ID_TOKEN);
 
-  // TODO: validate token, verify its signature
-  // https://auth0.com/docs/tokens/id-token#verify-the-signature
-  // https://auth0.com/docs/api-auth/tutorials/verify-access-token
   if (typeof idToken === 'string' && idToken.trim().length) {
-    return idToken;
+    try {
+      // this is not sufficient validation, only confirms the token is well formed
+      // TODO:
+      //   validate token, verify its signature
+      //   https://auth0.com/docs/tokens/id-token#verify-the-signature
+      //   https://auth0.com/docs/api-auth/tutorials/verify-access-token
+      decode(idToken);
+      return idToken;
+    }
+    catch (e) {
+      return null;
+    }
   }
 
   return null;
@@ -44,7 +52,8 @@ export function getUserInfo() :?UserInfo {
   }
 
   try {
-    return JSON.parse(userInfoStr);
+    const userInfoObj = JSON.parse(userInfoStr);
+    return isNonEmptyObject(userInfoObj) ? userInfoObj : null;
   }
   catch (error) {
     return null;
@@ -57,8 +66,18 @@ export function storeAuthInfo(authInfo :?Object) :void {
     return;
   }
 
-  // TODO: id token validation
-  localStorage.setItem(AUTH0_ID_TOKEN, authInfo.idToken);
+  try {
+    // this is not sufficient validation, only confirms the token is well formed
+    // TODO:
+    //   validate token, verify its signature
+    //   https://auth0.com/docs/tokens/id-token#verify-the-signature
+    //   https://auth0.com/docs/api-auth/tutorials/verify-access-token
+    decode(authInfo.idToken);
+    localStorage.setItem(AUTH0_ID_TOKEN, authInfo.idToken);
+  }
+  catch (e) {
+    return;
+  }
 
   if (!authInfo.idTokenPayload) {
     return;
@@ -110,7 +129,7 @@ export function hasAuthTokenExpired(idTokenOrExpiration :?string | number) :bool
       // idTokenOrExpiration is the expiration
       return moment().isAfter(idTokenOrExpiration);
     }
-    else if (typeof idTokenOrExpiration === 'string' && idTokenOrExpiration.length) {
+    if (typeof idTokenOrExpiration === 'string' && idTokenOrExpiration.length) {
       // idTokenOrExpiration is the id token
       const idTokenDecoded = decode(idTokenOrExpiration);
       const expiration = moment.unix(idTokenDecoded.exp);
