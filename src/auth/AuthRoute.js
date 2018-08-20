@@ -4,6 +4,7 @@
 
 import React from 'react';
 
+import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
