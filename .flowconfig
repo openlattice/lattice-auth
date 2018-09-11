@@ -1,6 +1,7 @@
 [ignore]
-.*/build/.*
+./build/.*
 .*/node_modules/.*
+.*\.test\.js
 
 [libs]
 ./config/flow
