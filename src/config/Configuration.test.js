@@ -23,6 +23,9 @@ const MOCK_AUTH0_LOCK = fromJS({
 });
 const MOCK_AUTH_TOKEN :string = `${randomId()}.${randomId()}.${randomId()}`;
 
+jest.mock('lattice', () => ({
+  configure: jest.fn(),
+}));
 jest.mock('../auth/Auth0');
 
 describe('Configuration', () => {
