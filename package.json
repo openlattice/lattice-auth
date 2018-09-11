@@ -112,6 +112,7 @@
     "version": "npm-run-all clean build && git add -A package.json build/",
     "postversion": "git push && git push --tags",
     "test": "jest --config config/jest/jest.config.js",
+    "test:travis": "jest --maxWorkers=4 --config config/jest/jest.config.js",
     "test:watch": "jest --config config/jest/jest.config.js --watch --coverage=false"
   }
 }
