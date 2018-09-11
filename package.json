@@ -24,8 +24,6 @@
   "license": "Apache-2.0",
   "main": "build/lattice-auth.js",
   "dependencies": {
-    "@babel/polyfill": "^7.0.0",
-    "@babel/runtime": "^7.0.0",
     "auth0-lock": "^11.3.0",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.10",
@@ -39,10 +37,12 @@
     "@babel/plugin-proposal-class-properties": "^7.0.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.0.0",
+    "@babel/runtime": "^7.0.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^9.0.0",
     "babel-jest": "^23.4.2",
@@ -85,6 +85,7 @@
     "webpack-dev-server": "^3.1.0"
   },
   "peerDependencies": {
+    "@babel/polyfill": "^7.0.0",
     "immutable": "4.0.0-rc.9",
     "lattice": ">=0.38.0",
     "react": ">=16.4.0",
