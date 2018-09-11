@@ -84,7 +84,6 @@ module.exports = (env) => {
   const externals = {
     lattice: 'lattice',
     immutable: 'immutable',
-    // moment: 'moment',
     react: 'react',
     'react-dom': 'react-dom',
     'react-redux': 'react-redux',
