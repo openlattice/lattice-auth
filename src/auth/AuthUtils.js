@@ -3,8 +3,8 @@
  */
 
 import decode from 'jwt-decode';
-import moment from 'moment';
 import qs from 'qs';
+import { isAfter } from 'date-fns';
 
 import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
 
@@ -112,10 +112,11 @@ export function getAuthTokenExpiration(maybeIdToken :?string) :number {
   }
 
   try {
-    // it looks like Auth0 JWT tokens set the expiration date as seconds since the Unix Epoch, not milliseconds
+    // Auth0 JWT tokens set the expiration date as seconds since the Unix Epoch, not milliseconds
     // https://auth0.com/docs/tokens/id-token#id-token-payload
     const idTokenDecoded :Object = decode(idToken);
-    return moment.unix(idTokenDecoded.exp).valueOf();
+    const expirationInMillis :number = idTokenDecoded.exp * 1000;
+    return expirationInMillis;
   }
   catch (e) {
     return AUTH_TOKEN_EXPIRED;
@@ -127,13 +128,17 @@ export function hasAuthTokenExpired(idTokenOrExpiration :?string | number) :bool
   try {
     if (typeof idTokenOrExpiration === 'number' && Number.isFinite(idTokenOrExpiration)) {
       // idTokenOrExpiration is the expiration
-      return moment().isAfter(idTokenOrExpiration);
+      // if the expiration is in milliseconds, isAfter() will return correctly. if the expiration is in seconds,
+      // isAfter() will convert it to a Date in 1970 since Date expects milliseconds, and thus always return true.
+      return isAfter(Date.now(), idTokenOrExpiration);
     }
     if (typeof idTokenOrExpiration === 'string' && idTokenOrExpiration.length) {
       // idTokenOrExpiration is the id token
       const idTokenDecoded = decode(idTokenOrExpiration);
-      const expiration = moment.unix(idTokenDecoded.exp);
-      return moment().isAfter(expiration);
+      // Auth0 JWT tokens set the expiration date as seconds since the Unix Epoch, not milliseconds
+      // https://auth0.com/docs/tokens/id-token#id-token-payload
+      const expirationInMillis :number = idTokenDecoded.exp * 1000;
+      return isAfter(Date.now(), new Date(expirationInMillis));
     }
     return true;
   }
