@@ -180,6 +180,8 @@ describe('AuthUtils', () => {
       const mockAuthInfo :Object = {
         idToken: MOCK_AUTH_TOKEN,
         idTokenPayload: {
+          family_name: randomId(),
+          given_name: randomId(),
           email: randomId(),
           picture: randomId(),
           roles: [randomId()],
@@ -188,6 +190,65 @@ describe('AuthUtils', () => {
       };
 
       const mockUserInfo :UserInfo = {
+        familyName: mockAuthInfo.idTokenPayload.family_name,
+        givenName: mockAuthInfo.idTokenPayload.given_name,
+        email: mockAuthInfo.idTokenPayload.email,
+        id: mockAuthInfo.idTokenPayload.user_id,
+        picture: mockAuthInfo.idTokenPayload.picture,
+        roles: mockAuthInfo.idTokenPayload.roles
+      };
+
+      AuthUtils.storeAuthInfo(mockAuthInfo);
+      expect(localStorage).toHaveLength(2);
+      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
+      expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(JSON.stringify(mockUserInfo));
+    });
+
+    test('should store user info with the first and last name, or the correct fallback if unavailable', () => {
+
+      let mockAuthInfo :Object = {};
+      let mockUserInfo :UserInfo = {};
+
+      mockAuthInfo = {
+        idToken: MOCK_AUTH_TOKEN,
+        idTokenPayload: {
+          name: randomId(),
+          email: randomId(),
+          picture: randomId(),
+          roles: [randomId()],
+          user_id: randomId()
+        }
+      };
+
+      mockUserInfo = {
+        familyName: mockAuthInfo.idTokenPayload.name, // no family_name is supplied in mockAuthInfo
+        givenName: mockAuthInfo.idTokenPayload.name, // no given_name is supplied in mockAuthInfo
+        email: mockAuthInfo.idTokenPayload.email,
+        id: mockAuthInfo.idTokenPayload.user_id,
+        picture: mockAuthInfo.idTokenPayload.picture,
+        roles: mockAuthInfo.idTokenPayload.roles
+      };
+
+      AuthUtils.storeAuthInfo(mockAuthInfo);
+      expect(localStorage).toHaveLength(2);
+      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
+      expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(JSON.stringify(mockUserInfo));
+
+      localStorage.clear();
+
+      mockAuthInfo = {
+        idToken: MOCK_AUTH_TOKEN,
+        idTokenPayload: {
+          email: randomId(),
+          picture: randomId(),
+          roles: [randomId()],
+          user_id: randomId()
+        }
+      };
+
+      mockUserInfo = {
+        familyName: mockAuthInfo.idTokenPayload.email, // no family_name or name is supplied in mockAuthInfo
+        givenName: mockAuthInfo.idTokenPayload.email, // no given_name or name is supplied in mockAuthInfo
         email: mockAuthInfo.idTokenPayload.email,
         id: mockAuthInfo.idTokenPayload.user_id,
         picture: mockAuthInfo.idTokenPayload.picture,
