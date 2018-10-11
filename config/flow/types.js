@@ -15,6 +15,8 @@ declare type LatticeAuthConfig = {
 };
 
 declare type UserInfo = {
+  firstName ? :string;
+  givenName ? :string;
   email ? :string;
   id ? :string;
   picture ? :string;

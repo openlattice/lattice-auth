@@ -83,11 +83,31 @@ export function storeAuthInfo(authInfo :?Object) :void {
     return;
   }
 
+  // try to use "family_name", or else just "name", or else fall back to "email"
+  let familyName :string = authInfo.idTokenPayload.family_name;
+  if (!isNonEmptyString(familyName)) {
+    familyName = authInfo.idTokenPayload.name;
+  }
+  if (!isNonEmptyString(familyName)) {
+    familyName = authInfo.idTokenPayload.email;
+  }
+
+  // try to use "given_name", or else just "name", or else fall back to "email"
+  let givenName :string = authInfo.idTokenPayload.given_name;
+  if (!isNonEmptyString(givenName)) {
+    givenName = authInfo.idTokenPayload.name;
+  }
+  if (!isNonEmptyString(givenName)) {
+    givenName = authInfo.idTokenPayload.email;
+  }
+
   const userInfo :UserInfo = {
+    familyName,
+    givenName,
     email: authInfo.idTokenPayload.email,
     id: authInfo.idTokenPayload.user_id,
     picture: authInfo.idTokenPayload.picture,
-    roles: authInfo.idTokenPayload.roles
+    roles: authInfo.idTokenPayload.roles,
   };
 
   localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(userInfo));
