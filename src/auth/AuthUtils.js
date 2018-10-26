@@ -158,7 +158,7 @@ export function hasAuthTokenExpired(idTokenOrExpiration :?string | number) :bool
       // Auth0 JWT tokens set the expiration date as seconds since the Unix Epoch, not milliseconds
       // https://auth0.com/docs/tokens/id-token#id-token-payload
       const expirationInMillis :number = idTokenDecoded.exp * 1000;
-      return isAfter(Date.now(), new Date(expirationInMillis));
+      return isAfter(Date.now(), expirationInMillis);
     }
     return true;
   }
