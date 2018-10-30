@@ -60,7 +60,7 @@
     "eslint-plugin-react": "^7.11.0",
     "file-loader": "^2.0.0",
     "flow-bin": "^0.84.0",
-    "immutable": "4.0.0-rc.9",
+    "immutable": "4.0.0-rc.12",
     "jest": "^23.5.0",
     "jsonwebtoken": "^8.3.0",
     "lattice": "^0.44.0",
