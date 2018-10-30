@@ -5,19 +5,8 @@
 import * as AccountUtils from './AccountUtils';
 import { randomId } from '../utils/Utils';
 
-import {
-  INVALID_PARAMS,
-  INVALID_PARAMS_NOT_DEFINED_ALLOWED,
-  INVALID_SS_PARAMS
-} from '../utils/testing/Invalid';
-
 import { STORED_ORG_ID } from './AccountConstants';
-import {
-  ADMIN_ROLE,
-  AUTH0_ID_TOKEN,
-  AUTH0_USER_INFO,
-  AUTH_TOKEN_EXPIRED
-} from '../auth/AuthConstants';
+import { AUTH0_USER_INFO } from '../auth/AuthConstants';
 
 const MOCK_USER_ID = randomId();
 const MOCK_ORG_ID = randomId();
@@ -56,7 +45,7 @@ describe('AccountUtils', () => {
       localStorage.setItem(AUTH0_USER_INFO, MOCK_USER_INFO);
       localStorage.setItem(STORED_ORG_ID, MOCK_STORED_ORGS);
       expect(AccountUtils.retrieveOrganizationId()).toEqual(MOCK_ORG_ID);
-    })
+    });
   });
 
   describe('storeOrganizationId()', () => {
