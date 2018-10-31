@@ -8,7 +8,7 @@ import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
 
 function getStoredValues() {
   let storedValues = {};
-  const storedValuesStr = localStorage.getItem(STORED_ORG_ID);
+  const storedValuesStr = localStorage.getItem(STORED_ORG_ID) || '';
 
   if (isNonEmptyString(storedValuesStr)) {
     const maybeStoredValues = JSON.parse(storedValuesStr);
