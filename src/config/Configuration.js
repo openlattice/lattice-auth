@@ -111,10 +111,8 @@ function setAuth0Lock(config :LatticeAuthConfig) :void {
 
   // auth0Lock.primaryÇolor is optional, so null and undefined are allowed
   if (config.auth0Lock.primaryColor === null || config.auth0Lock.primaryColor === undefined) {
-    LOG.warn(`auth0Lock.primaryColor has not been configured, defaulting to ${configuration.getIn([
-      'auth0Lock',
-      'primaryColor'
-    ])}`);
+    const color = configuration.getIn(['auth0Lock', 'primaryColor']);
+    LOG.warn(`auth0Lock.primaryColor has not been configured, defaulting to ${color}`);
   }
   else if (isNonEmptyString(config.auth0Lock.primaryColor)) {
     configuration = configuration.setIn(['auth0Lock', 'primaryColor'], config.auth0Lock.primaryColor);

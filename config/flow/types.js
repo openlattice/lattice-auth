@@ -2,11 +2,14 @@
  * @flow
  */
 
+declare type UUID = string;
+
 declare type LatticeAuthConfig = {
   auth0ClientId ? :string;
   auth0Domain ? :string;
   auth0Lock ? :{
     logo ? :string;
+    primaryColor ? :string;
     redirectUrl ? :string;
     title ? :string;
   };

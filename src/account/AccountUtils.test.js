@@ -5,7 +5,7 @@
 import * as AccountUtils from './AccountUtils';
 import { randomId } from '../utils/Utils';
 
-import { STORED_ORG_ID } from './AccountConstants';
+import { ORGANIZATION_ID } from './AccountConstants';
 import { AUTH0_USER_INFO } from '../auth/AuthConstants';
 
 const MOCK_USER_ID = randomId();
@@ -43,7 +43,7 @@ describe('AccountUtils', () => {
 
     test('should correctly return stored organization id for user', () => {
       localStorage.setItem(AUTH0_USER_INFO, MOCK_USER_INFO);
-      localStorage.setItem(STORED_ORG_ID, MOCK_STORED_ORGS);
+      localStorage.setItem(ORGANIZATION_ID, MOCK_STORED_ORGS);
       expect(AccountUtils.retrieveOrganizationId()).toEqual(MOCK_ORG_ID);
     });
   });
@@ -62,7 +62,7 @@ describe('AccountUtils', () => {
     test('should store organization id for current user', () => {
       localStorage.setItem(AUTH0_USER_INFO, MOCK_USER_INFO);
       AccountUtils.storeOrganizationId(MOCK_ORG_ID);
-      expect(JSON.parse(localStorage.getItem(STORED_ORG_ID))[MOCK_USER_ID]).toEqual(MOCK_ORG_ID);
+      expect(JSON.parse(localStorage.getItem(ORGANIZATION_ID))[MOCK_USER_ID]).toEqual(MOCK_ORG_ID);
     });
 
   });
@@ -77,7 +77,7 @@ describe('AccountUtils', () => {
       localStorage.setItem(AUTH0_USER_INFO, MOCK_USER_INFO);
       AccountUtils.storeOrganizationId(MOCK_ORG_ID);
       AccountUtils.clearOrganization();
-      expect(JSON.parse(localStorage.getItem(STORED_ORG_ID))[MOCK_USER_ID]).toBeUndefined();
+      expect(JSON.parse(localStorage.getItem(ORGANIZATION_ID))[MOCK_USER_ID]).toBeUndefined();
     });
 
   });

@@ -3,13 +3,13 @@
  */
 
 import {
-  STORED_ORG_ID
+  ORGANIZATION_ID
 } from './AccountConstants';
 
 describe('AccountConstants', () => {
 
-  test('STORED_ORG_ID', () => {
-    expect(STORED_ORG_ID).toEqual('stored_organization_id');
+  test('ORGANIZATION_ID', () => {
+    expect(ORGANIZATION_ID).toEqual('organization_id');
   });
 
 });
