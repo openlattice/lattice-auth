@@ -2,9 +2,12 @@
  * @flow
  */
 
+import Logger from '../utils/Logger';
 import { ORGANIZATION_ID } from './AccountConstants';
 import { getUserInfo } from '../auth/AuthUtils';
 import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
+
+const LOG = new Logger('AccountUtils');
 
 function getStoredValues() :Object {
 
@@ -12,9 +15,14 @@ function getStoredValues() :Object {
   const storedValuesStr :string = localStorage.getItem(ORGANIZATION_ID) || '';
 
   if (isNonEmptyString(storedValuesStr)) {
-    const maybeStoredValues = JSON.parse(storedValuesStr);
-    if (isNonEmptyObject(maybeStoredValues)) {
-      storedValues = maybeStoredValues;
+    try {
+      const maybeStoredValues = JSON.parse(storedValuesStr);
+      if (isNonEmptyObject(maybeStoredValues)) {
+        storedValues = maybeStoredValues;
+      }
+    }
+    catch (error) {
+      LOG.warn(`Unable to parse JSON from value ${storedValuesStr}`);
     }
   }
 
