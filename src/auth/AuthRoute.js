@@ -169,4 +169,7 @@ function mapDispatchToProps(dispatch :Function) :Object {
   };
 }
 
+// Missing type annotation for `P`. `P` is a type parameter declared in function type [1] and was implicitly
+// instantiated at call of `withRouter` [2].
+// $FlowFixMe
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AuthRoute));
