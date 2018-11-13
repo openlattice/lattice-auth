@@ -19,7 +19,8 @@ declare var __AUTH0_DOMAIN__ :string;
 
 const MOCK_AUTH0_LOCK = fromJS({
   logo: '/static/assets/images/logo.abc123.png',
-  title: 'OpenLattice, Inc.'
+  title: 'OpenLattice, Inc.',
+  primaryColor: '#6124e2'
 });
 const MOCK_AUTH_TOKEN :string = `${randomId()}.${randomId()}.${randomId()}`;
 

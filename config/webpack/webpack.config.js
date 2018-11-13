@@ -49,7 +49,7 @@ module.exports = (env) => {
     use: [{
       loader: 'url-loader',
       options: {
-        limit: 8 * 1024, // 8 KB
+        limit: 12 * 1024, // 12 KB
       },
     }],
   };
