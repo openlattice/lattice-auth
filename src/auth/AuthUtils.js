@@ -200,8 +200,9 @@ export function redirectToLogin(redirectUrl :?string) :void {
     );
   }
   else {
+    const { origin, pathname, hash } = window.location;
     queryString = qs.stringify(
-      { redirectUrl: `${window.location.origin}${window.location.pathname}` },
+      { redirectUrl: `${origin}${pathname}${hash}` },
       { addQueryPrefix: true }
     );
   }

@@ -5,7 +5,7 @@
 import Lattice from 'lattice';
 import { Map, fromJS } from 'immutable';
 
-import OpenLatticeLogo from '../assets/images/logo.png';
+import OpenLatticeLogo from '../assets/images/logo-vertical-primary.png';
 import Logger from '../utils/Logger';
 import * as Auth0 from '../auth/Auth0';
 import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
@@ -27,7 +27,7 @@ let configuration :Map<string, *> = fromJS({
   auth0Domain: __AUTH0_DOMAIN__,
   auth0Lock: {
     logo: OpenLatticeLogo,
-    title: 'OpenLattice'
+    primaryColor: '#6124e2'
   },
   authToken: '',
   baseUrl: ''
@@ -106,6 +106,20 @@ function setAuth0Lock(config :LatticeAuthConfig) :void {
   else {
     const errorMsg = 'invalid parameter - auth0Lock.title must be a non-empty string';
     LOG.error(errorMsg, config.auth0Lock.title);
+    throw new Error(errorMsg);
+  }
+
+  // auth0Lock.primaryÇolor is optional, so null and undefined are allowed
+  if (config.auth0Lock.primaryColor === null || config.auth0Lock.primaryColor === undefined) {
+    const color = configuration.getIn(['auth0Lock', 'primaryColor']);
+    LOG.warn(`auth0Lock.primaryColor has not been configured, defaulting to ${color}`);
+  }
+  else if (isNonEmptyString(config.auth0Lock.primaryColor)) {
+    configuration = configuration.setIn(['auth0Lock', 'primaryColor'], config.auth0Lock.primaryColor);
+  }
+  else {
+    const errorMsg = 'invalid parameter - auth0Lock.primaryColor must be a non-empty string';
+    LOG.error(errorMsg, config.auth0Lock.primaryColor);
     throw new Error(errorMsg);
   }
 }

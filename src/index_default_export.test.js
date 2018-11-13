@@ -8,6 +8,11 @@ import LatticeAuth from './index';
 
 describe('lattice-auth default export', () => {
 
+  test('should export AccountUtils', () => {
+    expect(Object.prototype.toString.call(LatticeAuth.AccountUtils)).toEqual(OBJECT_TAG);
+    expect(Object.keys(LatticeAuth.AccountUtils)).toHaveLength(3);
+  });
+
   test('should export Auth0', () => {
     expect(Object.prototype.toString.call(LatticeAuth.Auth0)).toEqual(OBJECT_TAG);
     expect(Object.keys(LatticeAuth.Auth0)).toHaveLength(5);
