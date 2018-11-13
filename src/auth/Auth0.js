@@ -111,6 +111,7 @@ export function initialize(config :Map<string, *>) :void {
     config.get('auth0ClientId'),
     config.get('auth0Domain'),
     {
+      _enableIdPInitiatedLogin: true,
       auth: {
         autoParseHash: false,
         params: {
