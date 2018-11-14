@@ -1,6 +1,6 @@
 {
   "name": "lattice-auth",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "homepage": "https://github.com/openlattice/lattice-auth",
   "description": "JavaScript helpers for OpenLattice auth",
   "author": {
