@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import moment from 'moment';
 
 import * as AuthUtils from './AuthUtils';
-import { randomId } from '../utils/Utils';
+import { randomStringId } from '../utils/Utils';
 
 import {
   INVALID_PARAMS,
@@ -24,7 +24,7 @@ import {
 const MOCK_SECRET :string = 'secret';
 const MOCK_AUTH_TOKEN :string = jwt.sign(
   {
-    data: randomId(),
+    data: randomStringId(),
     exp: moment().add(1, 'h').unix() // 1 hour ahead
   },
   MOCK_SECRET
@@ -87,7 +87,7 @@ describe('AuthUtils', () => {
       const expInSecondsSinceEpoch :number = moment().add(1, 'h').unix(); // 1 hour ahead
       const expInMillisSinceEpoch :number = expInSecondsSinceEpoch * 1000;
 
-      const mockAuthToken :string = jwt.sign({ data: randomId(), exp: expInSecondsSinceEpoch }, 'secret');
+      const mockAuthToken :string = jwt.sign({ data: randomStringId(), exp: expInSecondsSinceEpoch }, 'secret');
       localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
       expect(AuthUtils.getAuthTokenExpiration()).toEqual(expInMillisSinceEpoch);
     });
@@ -112,7 +112,7 @@ describe('AuthUtils', () => {
     test('should return true when given an expired auth token', () => {
       ['s', 'm', 'h', 'd', 'w', 'M', 'y'].forEach((unit :string) => {
         const expInSecondsSinceEpoch :number = moment().subtract(1, unit).unix();
-        const mockAuthToken :string = jwt.sign({ data: randomId(), exp: expInSecondsSinceEpoch }, 'secret');
+        const mockAuthToken :string = jwt.sign({ data: randomStringId(), exp: expInSecondsSinceEpoch }, 'secret');
         expect(AuthUtils.hasAuthTokenExpired(mockAuthToken)).toEqual(true);
       });
     });
@@ -120,7 +120,7 @@ describe('AuthUtils', () => {
     test('should return false when given an auth token with an expiration in the future', () => {
       ['s', 'm', 'h', 'd', 'w', 'M', 'y'].forEach((unit :string) => {
         const expInSecondsSinceEpoch :number = moment().add(1, unit).unix();
-        const mockAuthToken :string = jwt.sign({ data: randomId(), exp: expInSecondsSinceEpoch }, 'secret');
+        const mockAuthToken :string = jwt.sign({ data: randomStringId(), exp: expInSecondsSinceEpoch }, 'secret');
         expect(AuthUtils.hasAuthTokenExpired(mockAuthToken)).toEqual(false);
       });
     });
@@ -130,14 +130,14 @@ describe('AuthUtils', () => {
   describe('clearAuthInfo()', () => {
 
     test(`should remove ${AUTH0_ID_TOKEN} from localStorage`, () => {
-      localStorage.setItem(AUTH0_ID_TOKEN, randomId());
+      localStorage.setItem(AUTH0_ID_TOKEN, randomStringId());
       AuthUtils.clearAuthInfo();
       expect(localStorage).toHaveLength(0);
       expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(null);
     });
 
     test(`should remove ${AUTH0_USER_INFO} from localStorage`, () => {
-      localStorage.setItem(AUTH0_USER_INFO, randomId());
+      localStorage.setItem(AUTH0_USER_INFO, randomStringId());
       AuthUtils.clearAuthInfo();
       expect(localStorage).toHaveLength(0);
       expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
@@ -180,12 +180,12 @@ describe('AuthUtils', () => {
       const mockAuthInfo :Object = {
         idToken: MOCK_AUTH_TOKEN,
         idTokenPayload: {
-          family_name: randomId(),
-          given_name: randomId(),
-          email: randomId(),
-          picture: randomId(),
-          roles: [randomId()],
-          user_id: randomId()
+          family_name: randomStringId(),
+          given_name: randomStringId(),
+          email: randomStringId(),
+          picture: randomStringId(),
+          roles: [randomStringId()],
+          user_id: randomStringId()
         }
       };
 
@@ -212,11 +212,11 @@ describe('AuthUtils', () => {
       mockAuthInfo = {
         idToken: MOCK_AUTH_TOKEN,
         idTokenPayload: {
-          name: randomId(),
-          email: randomId(),
-          picture: randomId(),
-          roles: [randomId()],
-          user_id: randomId()
+          name: randomStringId(),
+          email: randomStringId(),
+          picture: randomStringId(),
+          roles: [randomStringId()],
+          user_id: randomStringId()
         }
       };
 
@@ -239,10 +239,10 @@ describe('AuthUtils', () => {
       mockAuthInfo = {
         idToken: MOCK_AUTH_TOKEN,
         idTokenPayload: {
-          email: randomId(),
-          picture: randomId(),
-          roles: [randomId()],
-          user_id: randomId()
+          email: randomStringId(),
+          picture: randomStringId(),
+          roles: [randomStringId()],
+          user_id: randomStringId()
         }
       };
 
@@ -279,10 +279,10 @@ describe('AuthUtils', () => {
     test('should return the stored user info', () => {
 
       const mockUserInfo :UserInfo = {
-        email: randomId(),
-        id: randomId(),
-        picture: randomId(),
-        roles: [randomId()]
+        email: randomStringId(),
+        id: randomStringId(),
+        picture: randomStringId(),
+        roles: [randomStringId()]
       };
 
       localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
@@ -307,7 +307,7 @@ describe('AuthUtils', () => {
     test('should return false if localStorage holds an expired auth token', () => {
       ['s', 'm', 'h', 'd', 'w', 'M', 'y'].forEach((unit :string) => {
         const expInSecondsSinceEpoch :number = moment().subtract(1, unit).unix();
-        const mockAuthToken :string = jwt.sign({ data: randomId(), exp: expInSecondsSinceEpoch }, 'secret');
+        const mockAuthToken :string = jwt.sign({ data: randomStringId(), exp: expInSecondsSinceEpoch }, 'secret');
         localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
         expect(AuthUtils.isAuthenticated()).toEqual(false);
       });
@@ -316,7 +316,7 @@ describe('AuthUtils', () => {
     test('should return true if localStorage holds an auth token with an expiration in the future', () => {
       ['s', 'm', 'h', 'd', 'w', 'M', 'y'].forEach((unit :string) => {
         const expInSecondsSinceEpoch :number = moment().add(1, unit).unix();
-        const mockAuthToken :string = jwt.sign({ data: randomId(), exp: expInSecondsSinceEpoch }, 'secret');
+        const mockAuthToken :string = jwt.sign({ data: randomStringId(), exp: expInSecondsSinceEpoch }, 'secret');
         localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
         expect(AuthUtils.isAuthenticated()).toEqual(true);
       });
@@ -366,7 +366,7 @@ describe('AuthUtils', () => {
       localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
       expect(AuthUtils.isAdmin()).toEqual(true);
 
-      mockUserInfo.roles = [randomId(), ADMIN_ROLE];
+      mockUserInfo.roles = [randomStringId(), ADMIN_ROLE];
       localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
       expect(AuthUtils.isAdmin()).toEqual(true);
     });

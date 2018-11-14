@@ -28,7 +28,8 @@ const LOG = new Logger('Auth0');
 
 let parsedUrl :Object = {
   fragment: '',
-  redirectUrl: ''
+  redirectUrl: '',
+  state: '',
 };
 
 /*
@@ -69,7 +70,8 @@ export function parseUrl(location :Object) :Object {
   if (isEmpty(location)) {
     return {
       fragment: '',
-      redirectUrl: ''
+      redirectUrl: '',
+      state: '',
     };
   }
 
@@ -78,6 +80,11 @@ export function parseUrl(location :Object) :Object {
   const { redirectUrl } = qs.parse(search, { ignoreQueryPrefix: true });
   if (isNonEmptyString(redirectUrl)) {
     parsedUrl.redirectUrl = redirectUrl;
+  }
+
+  const { state } = qs.parse(href);
+  if (isNonEmptyString(state)) {
+    parsedUrl.state = state;
   }
 
   const hashIndex :number = href.lastIndexOf('#');
@@ -119,7 +126,8 @@ export function initialize(config :Map<string, *>) :void {
         },
         redirectUrl: parsedUrl.redirectUrl,
         responseType: 'token',
-        sso: false
+        sso: false,
+        state: parsedUrl.state,
       },
       closable: false,
       hashCleanup: false,
