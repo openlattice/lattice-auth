@@ -2,7 +2,7 @@
  * @flow
  */
 
-import { randomId } from '../utils/Utils';
+import { randomStringId } from '../utils/Utils';
 
 import {
   AUTH_ATTEMPT,
@@ -68,7 +68,7 @@ describe('AuthActionFactory', () => {
 
     test('authFailure()', () => {
 
-      const error :string = randomId();
+      const error :string = randomStringId();
       expect(authFailure(error)).toEqual({
         error,
         type: AUTH_FAILURE_ACTION_TYPE
@@ -77,7 +77,7 @@ describe('AuthActionFactory', () => {
 
     test('authSuccess()', () => {
 
-      const authToken :string = randomId();
+      const authToken :string = randomStringId();
       expect(authSuccess(authToken)).toEqual({
         authToken,
         type: AUTH_SUCCESS_ACTION_TYPE

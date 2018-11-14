@@ -7,7 +7,7 @@
 import { fromJS } from 'immutable';
 
 import { LOGIN_PATH } from './AuthConstants';
-import { randomId } from '../utils/Utils';
+import { randomStringId } from '../utils/Utils';
 import { INVALID_PARAMS } from '../utils/testing/Invalid';
 
 import {
@@ -24,9 +24,9 @@ import {
 declare var __AUTH0_CLIENT_ID__ :string;
 declare var __AUTH0_DOMAIN__ :string;
 
-const MOCK_AUTH_TOKEN :string = `${randomId()}.${randomId()}.${randomId()}`;
+const MOCK_AUTH_TOKEN :string = `${randomStringId()}.${randomStringId()}.${randomStringId()}`;
 const MOCK_URL :string = 'https://openlattice.com';
-const MOCK_AUTH0_URL :string = `${MOCK_URL}/#access_token=${randomId()}&id_token=${randomId()}`;
+const MOCK_AUTH0_URL :string = `${MOCK_URL}/#access_token=${randomStringId()}&id_token=${randomStringId()}`;
 const MOCK_LOGIN_URL :string = `${MOCK_URL}/#${LOGIN_PATH}`;
 
 const MOCK_CONFIG :Map<string, *> = fromJS({
@@ -125,7 +125,7 @@ describe('Auth0', () => {
     test('should return the Auth0Lock instance', () => {
 
       const mockAuth0LockInstance = {
-        test: randomId()
+        test: randomStringId()
       };
 
       jest.doMock('auth0-lock', () => jest.fn(() => mockAuth0LockInstance));
@@ -150,19 +150,21 @@ describe('Auth0', () => {
       const Auth0 = require('./Auth0');
       expect(Auth0.parseUrl({})).toEqual({
         fragment: '',
-        redirectUrl: ''
+        redirectUrl: '',
+        state: '',
       });
     });
 
     test('should not replace url if "access_token" is missing', () => {
       const Auth0 = require('./Auth0');
       const replaceSpy = jest.spyOn(window.location, 'replace');
-      const fragment :string = `/id_token=${randomId()}`;
+      const fragment :string = `/id_token=${randomStringId()}`;
       const url :string = `${MOCK_URL}/#${fragment}`;
       global.jsdom.reconfigure({ url });
       expect(Auth0.parseUrl({ href: url })).toEqual({
         fragment,
-        redirectUrl: ''
+        redirectUrl: '',
+        state: '',
       });
       expect(replaceSpy).not.toHaveBeenCalled();
     });
@@ -170,12 +172,13 @@ describe('Auth0', () => {
     test('should not replace url if "id_token" is missing', () => {
       const Auth0 = require('./Auth0');
       const replaceSpy = jest.spyOn(window.location, 'replace');
-      const fragment :string = `/access_token=${randomId()}`;
+      const fragment :string = `/access_token=${randomStringId()}`;
       const url :string = `${MOCK_URL}/#${fragment}`;
       global.jsdom.reconfigure({ url });
       expect(Auth0.parseUrl({ href: url })).toEqual({
         fragment,
-        redirectUrl: ''
+        redirectUrl: '',
+        state: '',
       });
       expect(replaceSpy).not.toHaveBeenCalled();
     });
@@ -185,12 +188,14 @@ describe('Auth0', () => {
       const Auth0 = require('./Auth0');
       const replaceSpy = jest.spyOn(window.location, 'replace');
 
-      const fragment = `access_token=${randomId()}&id_token=${randomId()}`;
+      const state = randomStringId();
+      const fragment = `access_token=${randomStringId()}&id_token=${randomStringId()}&state=${state}`;
       let url :string = `${MOCK_URL}#${fragment}`;
       global.jsdom.reconfigure({ url });
       expect(Auth0.parseUrl({ href: url })).toEqual({
         fragment,
-        redirectUrl: ''
+        state,
+        redirectUrl: '',
       });
       expect(window.location.href).toEqual(MOCK_LOGIN_URL);
 
@@ -198,15 +203,17 @@ describe('Auth0', () => {
       global.jsdom.reconfigure({ url });
       expect(Auth0.parseUrl({ href: url })).toEqual({
         fragment,
-        redirectUrl: ''
+        state,
+        redirectUrl: '',
       });
       expect(window.location.href).toEqual(MOCK_LOGIN_URL);
 
       url = `${MOCK_URL}/#/${fragment}`;
       global.jsdom.reconfigure({ url });
       expect(Auth0.parseUrl({ href: url })).toEqual({
+        state,
         fragment: `/${fragment}`,
-        redirectUrl: ''
+        redirectUrl: '',
       });
       expect(window.location.href).toEqual(MOCK_LOGIN_URL);
 
@@ -318,7 +325,7 @@ describe('Auth0', () => {
       jest.doMock('auth0-lock', () => jest.fn(() => ({
         on: jest.fn((event :string, callback :Function) => {
           if (event === 'authenticated') {
-            callback({ idToken: randomId() });
+            callback({ idToken: randomStringId() });
           }
         }),
         resumeAuth: jest.fn()
@@ -341,7 +348,7 @@ describe('Auth0', () => {
       jest.doMock('auth0-lock', () => jest.fn(() => ({
         on: jest.fn((event :string, callback :Function) => {
           if (event === 'authenticated') {
-            callback({ accessToken: randomId() });
+            callback({ accessToken: randomStringId() });
           }
         }),
         resumeAuth: jest.fn()
@@ -364,7 +371,7 @@ describe('Auth0', () => {
       jest.doMock('auth0-lock', () => jest.fn(() => ({
         on: jest.fn((event :string, callback :Function) => {
           if (event === 'authenticated') {
-            callback({ accessToken: randomId(), idToken: -1 });
+            callback({ accessToken: randomStringId(), idToken: -1 });
           }
         }),
         resumeAuth: jest.fn()
@@ -410,7 +417,7 @@ describe('Auth0', () => {
       jest.doMock('auth0-lock', () => jest.fn(() => ({
         on: jest.fn((event :string, callback :Function) => {
           if (event === 'hash_parsed') {
-            callback({ idToken: randomId() });
+            callback({ idToken: randomStringId() });
           }
         }),
         resumeAuth: jest.fn()
@@ -433,7 +440,7 @@ describe('Auth0', () => {
       jest.doMock('auth0-lock', () => jest.fn(() => ({
         on: jest.fn((event :string, callback :Function) => {
           if (event === 'hash_parsed') {
-            callback({ accessToken: randomId() });
+            callback({ accessToken: randomStringId() });
           }
         }),
         resumeAuth: jest.fn()
@@ -456,7 +463,7 @@ describe('Auth0', () => {
       jest.doMock('auth0-lock', () => jest.fn(() => ({
         on: jest.fn((event :string, callback :Function) => {
           if (event === 'hash_parsed') {
-            callback({ accessToken: randomId(), idToken: -1 });
+            callback({ accessToken: randomStringId(), idToken: -1 });
           }
         }),
         resumeAuth: jest.fn()
@@ -477,8 +484,8 @@ describe('Auth0', () => {
     test('should authenticate successfully', (done) => {
 
       const mockAuthInfo = {
-        accessToken: randomId(),
-        idToken: randomId()
+        accessToken: randomStringId(),
+        idToken: randomStringId()
       };
 
       jest.doMock('./AuthUtils', () => ({

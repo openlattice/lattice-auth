@@ -7,7 +7,7 @@ import { LOCATION_CHANGE } from 'react-router-redux';
 
 import authReducer from './AuthReducer';
 import * as AuthUtils from './AuthUtils';
-import { randomId } from '../utils/Utils';
+import { randomStringId } from '../utils/Utils';
 
 import {
   AUTH_TOKEN_EXPIRATION_NOT_SET,
@@ -81,8 +81,8 @@ describe('authReducer', () => {
 
     test('should correctly set authTokenExpiration when authentication succeeds', () => {
 
-      const authToken :string = randomId();
-      const expectedExpiration :string = randomId();
+      const authToken :string = randomStringId();
+      const expectedExpiration :string = randomStringId();
 
       AuthUtils.getAuthTokenExpiration.mockImplementationOnce(() => expectedExpiration);
 
@@ -109,7 +109,7 @@ describe('authReducer', () => {
 
     test('should correctly set authTokenExpiration on logout', () => {
 
-      const initialState :Map<*, *> = INITIAL_STATE.set('authTokenExpiration', randomId());
+      const initialState :Map<*, *> = INITIAL_STATE.set('authTokenExpiration', randomStringId());
       const expectedState :Map<*, *> = INITIAL_STATE.set('authTokenExpiration', AUTH_TOKEN_EXPIRED);
       const newState :Map<*, *> = authReducer(initialState, { type: LOGOUT });
 
@@ -122,10 +122,10 @@ describe('authReducer', () => {
 
     test('should correctly set authTokenExpiration on route changes', () => {
 
-      const expectedExpiration :string = randomId();
+      const expectedExpiration :string = randomStringId();
       AuthUtils.getAuthTokenExpiration.mockImplementationOnce(() => expectedExpiration);
 
-      const initialState :Map<*, *> = INITIAL_STATE.set('authTokenExpiration', randomId());
+      const initialState :Map<*, *> = INITIAL_STATE.set('authTokenExpiration', randomStringId());
       const expectedState :Map<*, *> = INITIAL_STATE.set('authTokenExpiration', expectedExpiration);
       const newState :Map<*, *> = authReducer(initialState, { type: LOCATION_CHANGE });
 
