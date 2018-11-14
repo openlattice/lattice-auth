@@ -7,7 +7,7 @@ import { fromJS } from 'immutable';
 
 import * as Auth0 from '../auth/Auth0';
 import * as Config from './Configuration';
-import { randomId } from '../utils/Utils';
+import { randomStringId } from '../utils/Utils';
 import {
   INVALID_PARAMS,
   INVALID_PARAMS_NOT_DEFINED_ALLOWED
@@ -22,7 +22,7 @@ const MOCK_AUTH0_LOCK = fromJS({
   title: 'OpenLattice, Inc.',
   primaryColor: '#6124e2'
 });
-const MOCK_AUTH_TOKEN :string = `${randomId()}.${randomId()}.${randomId()}`;
+const MOCK_AUTH_TOKEN :string = `${randomStringId()}.${randomStringId()}.${randomStringId()}`;
 
 jest.mock('lattice', () => ({
   configure: jest.fn(),
@@ -127,7 +127,7 @@ describe('Configuration', () => {
       });
 
       test('should correctly set auth0ClientId', () => {
-        const mockValue = randomId();
+        const mockValue = randomStringId();
         Config.configure({
           auth0ClientId: mockValue,
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
@@ -174,7 +174,7 @@ describe('Configuration', () => {
       });
 
       test('should correctly set auth0Domain', () => {
-        const mockValue = randomId();
+        const mockValue = randomStringId();
         Config.configure({
           auth0Domain: mockValue,
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
@@ -242,7 +242,7 @@ describe('Configuration', () => {
         // });
 
         test('should correctly set auth0Lock.logo', () => {
-          const mockValue :string = randomId();
+          const mockValue :string = randomStringId();
           Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.set('logo', mockValue).toJS(),
             authToken: MOCK_AUTH_TOKEN,
@@ -286,7 +286,7 @@ describe('Configuration', () => {
         // });
 
         test('should correctly set auth0Lock.title', () => {
-          const mockValue :string = randomId();
+          const mockValue :string = randomStringId();
           Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.set('title', mockValue).toJS(),
             authToken: MOCK_AUTH_TOKEN,
