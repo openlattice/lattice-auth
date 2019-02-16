@@ -43,13 +43,13 @@ type Props = {
   authTokenExpiration :number;
   component :Function;
   isAuthenticating :boolean;
-  redirectToLogin :boolean;
+  redirectToLogin ?:boolean;
 };
 
 class AuthRoute extends React.Component<Props> {
 
   static defaultProps = {
-    redirectToLogin: false
+    redirectToLogin: false,
   }
 
   componentWillMount() {

@@ -82,15 +82,16 @@ module.exports = (env) => {
    */
 
   const externals = {
+    '@redux-saga/core': '@redux-saga/core',
+    '@redux-saga/core/effects': '@redux-saga/core/effects',
+    'connected-react-router': 'connected-react-router',
     lattice: 'lattice',
     immutable: 'immutable',
     react: 'react',
     'react-dom': 'react-dom',
     'react-redux': 'react-redux',
     'react-router': 'react-router',
-    'react-router-redux': 'react-router-redux',
     redux: 'redux',
-    'redux-saga/effects': 'redux-saga/effects'
   };
 
   return {

@@ -3,8 +3,8 @@
  */
 
 import Lattice from 'lattice';
-import { push } from 'react-router-redux';
-import { call, put, take } from 'redux-saga/effects';
+import { push } from 'connected-react-router';
+import { call, put, take } from '@redux-saga/core/effects';
 
 import * as Auth0 from './Auth0';
 import * as AuthUtils from './AuthUtils';
