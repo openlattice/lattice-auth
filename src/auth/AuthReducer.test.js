@@ -3,7 +3,7 @@
  */
 
 import { Map, fromJS } from 'immutable';
-import { LOCATION_CHANGE } from 'react-router-redux';
+import { LOCATION_CHANGE } from 'connected-react-router';
 
 import authReducer from './AuthReducer';
 import * as AuthUtils from './AuthUtils';
