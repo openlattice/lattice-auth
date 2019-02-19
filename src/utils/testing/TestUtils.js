@@ -4,4 +4,14 @@
 
 /* eslint-disable import/prefer-default-export */
 
-export const OBJECT_TAG :string = '[object Object]';
+const OBJECT_TAG :string = '[object Object]';
+
+function genRandomString() :string {
+
+  return Math.random().toString(36).slice(2);
+}
+
+export {
+  OBJECT_TAG,
+  genRandomString,
+};

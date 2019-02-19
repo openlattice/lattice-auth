@@ -6,7 +6,7 @@ import AuthReducer from './auth/AuthReducer';
 import AuthRoute from './auth/AuthRoute';
 import * as AccountUtils from './account/AccountUtils';
 import * as Auth0 from './auth/Auth0';
-import * as AuthActionFactory from './auth/AuthActionFactory';
+import * as AuthActions from './auth/AuthActions';
 import * as AuthConstants from './auth/AuthConstants';
 import * as AuthSagas from './auth/AuthSagas';
 import * as AuthUtils from './auth/AuthUtils';
@@ -19,7 +19,7 @@ const version :string = __VERSION__;
 export {
   AccountUtils,
   Auth0,
-  AuthActionFactory,
+  AuthActions,
   AuthConstants,
   AuthReducer,
   AuthRoute,
@@ -32,7 +32,7 @@ export {
 export default {
   AccountUtils,
   Auth0,
-  AuthActionFactory,
+  AuthActions,
   AuthConstants,
   AuthReducer,
   AuthRoute,

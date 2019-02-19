@@ -2,32 +2,28 @@
  * @flow
  */
 
-import React from 'react';
+import React, { Component } from 'react';
+import type { ComponentType } from 'react';
 
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import {
   Redirect,
   Route,
   Switch,
-  withRouter
+  withRouter,
 } from 'react-router';
+import { bindActionCreators } from 'redux';
 
 import * as Auth0 from './Auth0';
+import * as AuthActions from './AuthActions';
 import * as AuthUtils from './AuthUtils';
-
 import {
-  authAttempt,
-  authExpired,
-  authSuccess
-} from './AuthActionFactory';
-
-import {
+  AUTH_REDUCER_KEY,
   AUTH_TOKEN_EXPIRATION_NOT_SET,
   AUTH_TOKEN_EXPIRED,
   LOGIN_PATH,
-  ROOT_PATH
+  ROOT_PATH,
 } from './AuthConstants';
 
 /*
@@ -41,18 +37,18 @@ type Props = {
     authSuccess :(authToken :?string) => void;
   };
   authTokenExpiration :number;
-  component :Function;
+  component :ComponentType<*>;
   isAuthenticating :boolean;
   redirectToLogin ?:boolean;
 };
 
-class AuthRoute extends React.Component<Props> {
+class AuthRoute extends Component<Props> {
 
   static defaultProps = {
     redirectToLogin: false,
   }
 
-  componentWillMount() {
+  componentDidMount() {
 
     const { actions, authTokenExpiration, redirectToLogin } = this.props;
 
@@ -70,22 +66,17 @@ class AuthRoute extends React.Component<Props> {
     }
   }
 
-  componentWillUnmount() {
+  componentDidUpdate() {
 
-    // TODO: minor edge case: lock.hide() only needs to be invoked if the lock is already showing
-    // TODO: extreme edge case: lock.show() will not actually show the lock if invoked immediately after lock.hide()
-    // TODO: https://github.com/auth0/lock/issues/1089
-    Auth0.getAuth0LockInstance().hide();
-  }
+    // NOTE: the side effects of switching to componentDidUpdate() are not entirely clear
+    // TODO: AuthRoute needs unit tests
 
-  componentWillReceiveProps(nextProps :Props) {
-
-    const { actions, redirectToLogin } = this.props;
+    const { actions, authTokenExpiration, redirectToLogin } = this.props;
 
     // TODO: need to spend more time thinking about how to handle this case
-    if (AuthUtils.hasAuthTokenExpired(nextProps.authTokenExpiration)) {
-      // if nextProps.authTokenExpiration === -1, we've already dispatched AUTH_EXPIRED or LOGOUT
-      if (nextProps.authTokenExpiration !== AUTH_TOKEN_EXPIRED) {
+    if (AuthUtils.hasAuthTokenExpired(authTokenExpiration)) {
+      // if authTokenExpiration === -1, we've already dispatched AUTH_EXPIRED or LOGOUT
+      if (authTokenExpiration !== AUTH_TOKEN_EXPIRED) {
         actions.authExpired();
       }
       // do not show the lock if we're in redirect mode
@@ -97,6 +88,14 @@ class AuthRoute extends React.Component<Props> {
       // TODO: need to spend more time thinking about how to handle this case
       Auth0.getAuth0LockInstance().hide();
     }
+  }
+
+  componentWillUnmount() {
+
+    // TODO: minor edge case: lock.hide() only needs to be invoked if the lock is already showing
+    // TODO: extreme edge case: lock.show() will not actually show the lock if invoked immediately after lock.hide()
+    // TODO: https://github.com/auth0/lock/issues/1089
+    Auth0.getAuth0LockInstance().hide();
   }
 
   render() {
@@ -140,7 +139,7 @@ class AuthRoute extends React.Component<Props> {
 
 function mapStateToProps(state :Map<*, *>) :Object {
 
-  let authTokenExpiration :number = state.getIn(['auth', 'authTokenExpiration']);
+  let authTokenExpiration :number = state.getIn([AUTH_REDUCER_KEY, 'authTokenExpiration']);
 
   if (authTokenExpiration === AUTH_TOKEN_EXPIRATION_NOT_SET) {
     authTokenExpiration = AuthUtils.getAuthTokenExpiration();
@@ -152,24 +151,18 @@ function mapStateToProps(state :Map<*, *>) :Object {
 
   return {
     authTokenExpiration,
-    isAuthenticating: state.getIn(['auth', 'isAuthenticating'])
+    isAuthenticating: state.getIn([AUTH_REDUCER_KEY, 'isAuthenticating'])
   };
 }
 
-function mapDispatchToProps(dispatch :Function) :Object {
+const mapDispatchToProps = (dispatch :Function) :Object => ({
+  actions: bindActionCreators({
+    authAttempt: AuthActions.authAttempt,
+    authExpired: AuthActions.authExpired,
+    authSuccess: AuthActions.authSuccess,
+  }, dispatch)
+});
 
-  const actions = {
-    authAttempt,
-    authExpired,
-    authSuccess
-  };
-
-  return {
-    actions: bindActionCreators(actions, dispatch)
-  };
-}
-
-// Missing type annotation for `P`. `P` is a type parameter declared in function type [1] and was implicitly
-// instantiated at call of `withRouter` [2].
-// $FlowFixMe
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AuthRoute));
+export default withRouter<*>(
+  connect(mapStateToProps, mapDispatchToProps)(AuthRoute)
+);

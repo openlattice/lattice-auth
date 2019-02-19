@@ -7,10 +7,10 @@ import { fromJS } from 'immutable';
 
 import * as Auth0 from '../auth/Auth0';
 import * as Config from './Configuration';
-import { randomStringId } from '../utils/Utils';
+import { genRandomString } from '../utils/testing/TestUtils';
 import {
   INVALID_PARAMS,
-  INVALID_PARAMS_NOT_DEFINED_ALLOWED
+  INVALID_PARAMS_FOR_OPTIONAL_PARAM,
 } from '../utils/testing/Invalid';
 
 // injected by Jest
@@ -22,11 +22,12 @@ const MOCK_AUTH0_LOCK = fromJS({
   title: 'OpenLattice, Inc.',
   primaryColor: '#6124e2'
 });
-const MOCK_AUTH_TOKEN :string = `${randomStringId()}.${randomStringId()}.${randomStringId()}`;
+const MOCK_AUTH_TOKEN :string = `${genRandomString()}.${genRandomString()}.${genRandomString()}`;
 
 jest.mock('lattice', () => ({
   configure: jest.fn(),
 }));
+
 jest.mock('../auth/Auth0');
 
 describe('Configuration', () => {
@@ -105,7 +106,7 @@ describe('Configuration', () => {
       });
 
       test('should throw if auth0ClientId is invalid', () => {
-        INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
+        INVALID_PARAMS_FOR_OPTIONAL_PARAM.forEach((invalid :any) => {
           expect(() => {
             Config.configure({
               auth0ClientId: invalid,
@@ -127,7 +128,7 @@ describe('Configuration', () => {
       });
 
       test('should correctly set auth0ClientId', () => {
-        const mockValue = randomStringId();
+        const mockValue = genRandomString();
         Config.configure({
           auth0ClientId: mockValue,
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
@@ -152,7 +153,7 @@ describe('Configuration', () => {
       });
 
       test('should throw if auth0Domain is invalid', () => {
-        INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
+        INVALID_PARAMS_FOR_OPTIONAL_PARAM.forEach((invalid :any) => {
           expect(() => {
             Config.configure({
               auth0Domain: invalid,
@@ -174,7 +175,7 @@ describe('Configuration', () => {
       });
 
       test('should correctly set auth0Domain', () => {
-        const mockValue = randomStringId();
+        const mockValue = genRandomString();
         Config.configure({
           auth0Domain: mockValue,
           auth0Lock: MOCK_AUTH0_LOCK.toJS(),
@@ -198,7 +199,7 @@ describe('Configuration', () => {
       });
 
       test('should throw if auth0Lock is invalid', () => {
-        INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
+        INVALID_PARAMS_FOR_OPTIONAL_PARAM.forEach((invalid :any) => {
           expect(() => {
             Config.configure({
               auth0Lock: invalid,
@@ -222,7 +223,7 @@ describe('Configuration', () => {
         });
 
         test('should throw if auth0Lock.logo is invalid', () => {
-          INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
+          INVALID_PARAMS_FOR_OPTIONAL_PARAM.forEach((invalid :any) => {
             expect(() => {
               Config.configure({
                 auth0Lock: MOCK_AUTH0_LOCK.set('logo', invalid).toJS(),
@@ -242,7 +243,7 @@ describe('Configuration', () => {
         // });
 
         test('should correctly set auth0Lock.logo', () => {
-          const mockValue :string = randomStringId();
+          const mockValue :string = genRandomString();
           Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.set('logo', mockValue).toJS(),
             authToken: MOCK_AUTH_TOKEN,
@@ -266,7 +267,7 @@ describe('Configuration', () => {
         });
 
         test('should throw if auth0Lock.title is invalid', () => {
-          INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
+          INVALID_PARAMS_FOR_OPTIONAL_PARAM.forEach((invalid :any) => {
             expect(() => {
               Config.configure({
                 auth0Lock: MOCK_AUTH0_LOCK.set('title', invalid).toJS(),
@@ -286,7 +287,7 @@ describe('Configuration', () => {
         // });
 
         test('should correctly set auth0Lock.title', () => {
-          const mockValue :string = randomStringId();
+          const mockValue :string = genRandomString();
           Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.set('title', mockValue).toJS(),
             authToken: MOCK_AUTH_TOKEN,
@@ -311,7 +312,7 @@ describe('Configuration', () => {
       });
 
       test('should throw if authToken is invalid', () => {
-        INVALID_PARAMS_NOT_DEFINED_ALLOWED.forEach((invalid :any) => {
+        INVALID_PARAMS_FOR_OPTIONAL_PARAM.forEach((invalid :any) => {
           expect(() => {
             Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.toJS(),
