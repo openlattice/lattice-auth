@@ -21,7 +21,7 @@ import {
   ERR_A0L_ON_AUTH__AUTH_INFO_MISSING,
   ERR_A0L_ON_AUTH__AUTH_TOKEN_EXPIRED,
   ERR_A0L_ON_HASH__AUTH_INFO_MISSING,
-  ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED
+  ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED,
 } from '../utils/Errors';
 
 const LOG = new Logger('Auth0');
@@ -39,7 +39,7 @@ let parsedUrl :Object = {
  */
 let auth0Lock :?Auth0Lock;
 
-export function getAuth0LockInstance() :Auth0Lock {
+function getAuth0LockInstance() :Auth0Lock {
 
   if (auth0Lock === null || auth0Lock === undefined) {
     throw new Error(ERR_A0L_NOT_INITIALIZED);
@@ -48,7 +48,7 @@ export function getAuth0LockInstance() :Auth0Lock {
   return auth0Lock;
 }
 
-export function urlAuthInfoAvailable() :boolean {
+function urlAuthInfoAvailable() :boolean {
 
   // TODO: just checking for the existence of "access_token" and "id_token" isn't strong enough validation
   return parsedUrl.fragment.indexOf('access_token') !== -1 && parsedUrl.fragment.indexOf('id_token') !== -1;
@@ -65,7 +65,7 @@ export function urlAuthInfoAvailable() :boolean {
  * Here, we grab the Auth0 response from the URL and redirect to "#/login", which avoids the need for hash history
  * to invoke window.location.replace().
  */
-export function parseUrl(location :Object) :Object {
+function parseUrl(location :Object) :Object {
 
   if (isEmpty(location)) {
     return {
@@ -104,7 +104,7 @@ export function parseUrl(location :Object) :Object {
   return parsedUrl;
 }
 
-export function initialize(config :Map<string, *>) :void {
+function initialize(config :Map<string, *>) :void {
 
   // TODO: need better validation on the configuration object
   if (!config || config.isEmpty()) {
@@ -147,7 +147,7 @@ export function initialize(config :Map<string, *>) :void {
   }
 }
 
-export function authenticate() :Promise<*> {
+function authenticate() :Promise<*> {
 
   // TODO: just checking for the existence of "access_token" and "id_token" isn't strong enough validation
   if (!urlAuthInfoAvailable()) {
@@ -203,3 +203,11 @@ export function authenticate() :Promise<*> {
     auth0Lock.resumeAuth(parsedUrl.fragment, () => {});
   });
 }
+
+export {
+  authenticate,
+  getAuth0LockInstance,
+  initialize,
+  parseUrl,
+  urlAuthInfoAvailable,
+};

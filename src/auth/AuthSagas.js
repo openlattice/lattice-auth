@@ -20,7 +20,7 @@ import {
   LOGOUT,
   authFailure,
   authSuccess
-} from './AuthActionFactory';
+} from './AuthActions';
 
 /*
  * An interesting discussion around authentication flow with redux-saga:

@@ -20,16 +20,9 @@ const INVALID_PARAMS = [
 ];
 /* eslint-enable */
 
-const INVALID_PARAMS_NOT_DEFINED_ALLOWED = INVALID_PARAMS.slice(0);
-INVALID_PARAMS_NOT_DEFINED_ALLOWED.splice(1, 1); // remove "null"
-INVALID_PARAMS_NOT_DEFINED_ALLOWED.splice(0, 1); // remove "undefined"
-
-const INVALID_PARAMS_EMPTY_STRING_ALLOWED = INVALID_PARAMS.slice(0);
-INVALID_PARAMS_EMPTY_STRING_ALLOWED.splice(15, 1); // remove "new String()"
-INVALID_PARAMS_EMPTY_STRING_ALLOWED.splice(14, 1); // remove "' '"
-INVALID_PARAMS_EMPTY_STRING_ALLOWED.splice(13, 1); // remove "''"
-INVALID_PARAMS_EMPTY_STRING_ALLOWED.splice(1, 1); // remove "null"
-INVALID_PARAMS_EMPTY_STRING_ALLOWED.splice(0, 1); // remove "undefined"
+const INVALID_PARAMS_FOR_OPTIONAL_PARAM = INVALID_PARAMS.slice(0);
+INVALID_PARAMS_FOR_OPTIONAL_PARAM.splice(1, 1); // remove "null"
+INVALID_PARAMS_FOR_OPTIONAL_PARAM.splice(0, 1); // remove "undefined"
 
 // SS = special string, for cases where strings have to be of a specific format/value, such as UUIDs and Enums
 const INVALID_SS_PARAMS = INVALID_PARAMS.slice(0);
@@ -37,7 +30,6 @@ INVALID_SS_PARAMS.push('invalid_special_string_value');
 
 export {
   INVALID_PARAMS,
-  INVALID_PARAMS_EMPTY_STRING_ALLOWED,
-  INVALID_PARAMS_NOT_DEFINED_ALLOWED,
-  INVALID_SS_PARAMS
+  INVALID_PARAMS_FOR_OPTIONAL_PARAM,
+  INVALID_SS_PARAMS,
 };
