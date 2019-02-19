@@ -7,6 +7,7 @@ import {
   AUTH0_USER_INFO,
   AUTH_COOKIE,
   AUTH_HEADER,
+  AUTH_REDUCER_KEY,
   AUTH_TOKEN_EXPIRATION_NOT_SET,
   AUTH_TOKEN_EXPIRED,
   LOGIN_PATH,
@@ -30,6 +31,10 @@ describe('AuthActions', () => {
 
   test('AUTH_HEADER', () => {
     expect(AUTH_HEADER).toEqual('Authorization');
+  });
+
+  test('AUTH_REDUCER_KEY', () => {
+    expect(AUTH_REDUCER_KEY).toEqual('auth');
   });
 
   test('AUTH_TOKEN_EXPIRATION_NOT_SET', () => {

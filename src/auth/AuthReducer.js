@@ -8,19 +8,19 @@ import { LOCATION_CHANGE } from 'connected-react-router';
 import * as AuthUtils from './AuthUtils';
 import {
   AUTH_TOKEN_EXPIRATION_NOT_SET,
-  AUTH_TOKEN_EXPIRED
+  AUTH_TOKEN_EXPIRED,
 } from './AuthConstants';
 import {
   AUTH_ATTEMPT,
   AUTH_EXPIRED,
   AUTH_FAILURE,
   AUTH_SUCCESS,
-  LOGOUT
+  LOGOUT,
 } from './AuthActions';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   authTokenExpiration: AUTH_TOKEN_EXPIRATION_NOT_SET,
-  isAuthenticating: false
+  isAuthenticating: false,
 });
 
 export default function authReducer(state :Map<*, *> = INITIAL_STATE, action :Object) {

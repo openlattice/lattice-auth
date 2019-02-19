@@ -5,6 +5,7 @@
 const AUTH0_USER_INFO :'auth0_user_info' = 'auth0_user_info';
 
 const ADMIN_ROLE :'admin' = 'admin';
+const AUTH_REDUCER_KEY :'auth' = 'auth';
 
 const AUTH_TOKEN_EXPIRED :number = -1;
 const AUTH_TOKEN_EXPIRATION_NOT_SET :number = -2;
@@ -21,6 +22,7 @@ export {
   AUTH0_USER_INFO,
   AUTH_COOKIE,
   AUTH_HEADER,
+  AUTH_REDUCER_KEY,
   AUTH_TOKEN_EXPIRATION_NOT_SET,
   AUTH_TOKEN_EXPIRED,
   LOGIN_PATH,
