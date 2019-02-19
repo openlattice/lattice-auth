@@ -2,7 +2,7 @@
  * @flow
  */
 
-import { randomStringId } from '../utils/Utils';
+import { genRandomString } from '../utils/testing/TestUtils';
 
 import {
   AUTH_ATTEMPT,
@@ -17,7 +17,7 @@ import {
   authSuccess,
   login,
   logout
-} from './AuthActionFactory';
+} from './AuthActions';
 
 const AUTH_ATTEMPT_ACTION_TYPE :'AUTH_ATTEMPT' = 'AUTH_ATTEMPT';
 const AUTH_EXPIRED_ACTION_TYPE :'AUTH_EXPIRED' = 'AUTH_EXPIRED';
@@ -26,7 +26,7 @@ const AUTH_SUCCESS_ACTION_TYPE :'AUTH_SUCCESS' = 'AUTH_SUCCESS';
 const LOGIN_ACTION_TYPE :'LOGIN' = 'LOGIN';
 const LOGOUT_ACTION_TYPE :'LOGOUT' = 'LOGOUT';
 
-describe('AuthActionFactory', () => {
+describe('AuthActions', () => {
 
   describe('action types', () => {
 
@@ -68,7 +68,7 @@ describe('AuthActionFactory', () => {
 
     test('authFailure()', () => {
 
-      const error :string = randomStringId();
+      const error :string = genRandomString();
       expect(authFailure(error)).toEqual({
         error,
         type: AUTH_FAILURE_ACTION_TYPE
@@ -77,7 +77,7 @@ describe('AuthActionFactory', () => {
 
     test('authSuccess()', () => {
 
-      const authToken :string = randomStringId();
+      const authToken :string = genRandomString();
       expect(authSuccess(authToken)).toEqual({
         authToken,
         type: AUTH_SUCCESS_ACTION_TYPE

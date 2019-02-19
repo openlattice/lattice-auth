@@ -16,7 +16,7 @@ import {
   AUTH_FAILURE,
   AUTH_SUCCESS,
   LOGOUT
-} from './AuthActionFactory';
+} from './AuthActions';
 
 const INITIAL_STATE :Map<*, *> = fromJS({
   authTokenExpiration: AUTH_TOKEN_EXPIRATION_NOT_SET,

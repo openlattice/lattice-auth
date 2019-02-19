@@ -2,38 +2,43 @@
  * @flow
  */
 
+import cookies from 'js-cookie';
 import decode from 'jwt-decode';
 import qs from 'qs';
 import { isAfter } from 'date-fns';
 
+import Logger from '../utils/Logger';
 import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
 
 import {
   ADMIN_ROLE,
-  AUTH0_ID_TOKEN,
   AUTH0_USER_INFO,
+  AUTH_COOKIE,
   AUTH_TOKEN_EXPIRED,
-  LOGIN_URL
+  LOGIN_URL,
 } from './AuthConstants';
+
+const LOG = new Logger('Auth0');
 
 /*
  * https://auth0.com/docs/jwt
  * https://auth0.com/docs/tokens/id-token
  */
 
-export function getAuthToken() :?string {
+function getAuthToken() :?string {
 
-  const idToken :?string = localStorage.getItem(AUTH0_ID_TOKEN);
+  const authCookie :?string = cookies.get(AUTH_COOKIE);
 
-  if (typeof idToken === 'string' && idToken.trim().length) {
+  if (typeof authCookie === 'string' && authCookie.trim().length) {
     try {
+      const authToken :string = authCookie.replace('Bearer ', '');
       // this is not sufficient validation, only confirms the token is well formed
       // TODO:
       //   validate token, verify its signature
       //   https://auth0.com/docs/tokens/id-token#verify-the-signature
       //   https://auth0.com/docs/api-auth/tutorials/verify-access-token
-      decode(idToken);
-      return idToken;
+      decode(authToken);
+      return authToken;
     }
     catch (e) {
       return null;
@@ -43,7 +48,31 @@ export function getAuthToken() :?string {
   return null;
 }
 
-export function getUserInfo() :?UserInfo {
+function getAuthTokenExpiration(maybeAuthToken :?string) :number {
+
+  let authToken :?string = maybeAuthToken;
+
+  if (authToken === null || authToken === undefined) {
+    authToken = getAuthToken();
+  }
+
+  if (!authToken) {
+    return AUTH_TOKEN_EXPIRED;
+  }
+
+  try {
+    // Auth0 JWT tokens set the expiration date as seconds since the Unix Epoch, not milliseconds
+    // https://auth0.com/docs/tokens/id-token#id-token-payload
+    const authTokenDecoded :Object = decode(authToken);
+    const expirationInMillis :number = authTokenDecoded.exp * 1000;
+    return expirationInMillis;
+  }
+  catch (e) {
+    return AUTH_TOKEN_EXPIRED;
+  }
+}
+
+function getUserInfo() :?UserInfo {
 
   const userInfoStr :?string = localStorage.getItem(AUTH0_USER_INFO);
 
@@ -60,7 +89,27 @@ export function getUserInfo() :?UserInfo {
   }
 }
 
-export function storeAuthInfo(authInfo :?Object) :void {
+function getDomainForCookie() :string {
+
+  const { hostname } = window.location;
+  const domain :string = hostname.split('.').splice(-2).join('.');
+  const prefix :string = (hostname === 'localhost') ? '' : '.';
+  return `${prefix}${domain}`;
+}
+
+function clearAuthInfo() :void {
+
+  localStorage.removeItem(AUTH0_USER_INFO);
+
+  // when deleting a cookie, we must pass the same "domain" and "path" values that were used to set the cookie
+  // https://github.com/js-cookie/js-cookie
+  cookies.remove(AUTH_COOKIE, {
+    domain: getDomainForCookie(),
+    path: '/',
+  });
+}
+
+function storeAuthInfo(authInfo :?Object) :void {
 
   if (!authInfo || !authInfo.idToken) {
     return;
@@ -73,9 +122,25 @@ export function storeAuthInfo(authInfo :?Object) :void {
     //   https://auth0.com/docs/tokens/id-token#verify-the-signature
     //   https://auth0.com/docs/api-auth/tutorials/verify-access-token
     decode(authInfo.idToken);
-    localStorage.setItem(AUTH0_ID_TOKEN, authInfo.idToken);
+
+    const { hostname } = window.location;
+    const authCookie :string = `Bearer ${authInfo.idToken}`;
+    const authTokenExpiration :number = getAuthTokenExpiration(authInfo.idToken);
+    if (authTokenExpiration !== AUTH_TOKEN_EXPIRED) {
+      cookies.set(AUTH_COOKIE, authCookie, {
+        SameSite: 'strict',
+        domain: getDomainForCookie(),
+        expires: new Date(authTokenExpiration),
+        path: '/',
+        secure: (hostname !== 'localhost'),
+      });
+    }
+    else {
+      LOG.warn(`not setting "${AUTH_COOKIE}" cookie because auth token is expired`);
+    }
   }
   catch (e) {
+    LOG.error(`caught exception while setting "${AUTH_COOKIE}" cookie`, e);
     return;
   }
 
@@ -83,29 +148,12 @@ export function storeAuthInfo(authInfo :?Object) :void {
     return;
   }
 
-  // try to use "family_name", or else just "name", or else fall back to "email"
-  let familyName :string = authInfo.idTokenPayload.family_name;
-  if (!isNonEmptyString(familyName)) {
-    familyName = authInfo.idTokenPayload.name;
-  }
-  if (!isNonEmptyString(familyName)) {
-    familyName = authInfo.idTokenPayload.email;
-  }
-
-  // try to use "given_name", or else just "name", or else fall back to "email"
-  let givenName :string = authInfo.idTokenPayload.given_name;
-  if (!isNonEmptyString(givenName)) {
-    givenName = authInfo.idTokenPayload.name;
-  }
-  if (!isNonEmptyString(givenName)) {
-    givenName = authInfo.idTokenPayload.email;
-  }
-
   const userInfo :UserInfo = {
-    familyName,
-    givenName,
     email: authInfo.idTokenPayload.email,
+    familyName: authInfo.idTokenPayload.family_name,
+    givenName: authInfo.idTokenPayload.given_name,
     id: authInfo.idTokenPayload.user_id,
+    name: authInfo.idTokenPayload.name,
     picture: authInfo.idTokenPayload.picture,
     roles: authInfo.idTokenPayload.roles,
   };
@@ -113,51 +161,21 @@ export function storeAuthInfo(authInfo :?Object) :void {
   localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(userInfo));
 }
 
-export function clearAuthInfo() :void {
-
-  localStorage.removeItem(AUTH0_ID_TOKEN);
-  localStorage.removeItem(AUTH0_USER_INFO);
-}
-
-export function getAuthTokenExpiration(maybeIdToken :?string) :number {
-
-  let idToken :?string = maybeIdToken;
-
-  if (idToken === null || idToken === undefined) {
-    idToken = getAuthToken();
-  }
-
-  if (!idToken) {
-    return AUTH_TOKEN_EXPIRED;
-  }
+function hasAuthTokenExpired(authTokenOrExpiration :?string | number) :boolean {
 
   try {
-    // Auth0 JWT tokens set the expiration date as seconds since the Unix Epoch, not milliseconds
-    // https://auth0.com/docs/tokens/id-token#id-token-payload
-    const idTokenDecoded :Object = decode(idToken);
-    const expirationInMillis :number = idTokenDecoded.exp * 1000;
-    return expirationInMillis;
-  }
-  catch (e) {
-    return AUTH_TOKEN_EXPIRED;
-  }
-}
-
-export function hasAuthTokenExpired(idTokenOrExpiration :?string | number) :boolean {
-
-  try {
-    if (typeof idTokenOrExpiration === 'number' && Number.isFinite(idTokenOrExpiration)) {
-      // idTokenOrExpiration is the expiration
+    if (typeof authTokenOrExpiration === 'number' && Number.isFinite(authTokenOrExpiration)) {
+      // authTokenOrExpiration is the expiration
       // if the expiration is in milliseconds, isAfter() will return correctly. if the expiration is in seconds,
       // isAfter() will convert it to a Date in 1970 since Date expects milliseconds, and thus always return true.
-      return isAfter(Date.now(), idTokenOrExpiration);
+      return isAfter(Date.now(), authTokenOrExpiration);
     }
-    if (typeof idTokenOrExpiration === 'string' && idTokenOrExpiration.length) {
-      // idTokenOrExpiration is the id token
-      const idTokenDecoded = decode(idTokenOrExpiration);
+    if (typeof authTokenOrExpiration === 'string' && authTokenOrExpiration.length) {
+      // authTokenOrExpiration is the id token
+      const authTokenDecoded = decode(authTokenOrExpiration);
       // Auth0 JWT tokens set the expiration date as seconds since the Unix Epoch, not milliseconds
       // https://auth0.com/docs/tokens/id-token#id-token-payload
-      const expirationInMillis :number = idTokenDecoded.exp * 1000;
+      const expirationInMillis :number = authTokenDecoded.exp * 1000;
       return isAfter(Date.now(), expirationInMillis);
     }
     return true;
@@ -167,12 +185,12 @@ export function hasAuthTokenExpired(idTokenOrExpiration :?string | number) :bool
   }
 }
 
-export function isAuthenticated() :boolean {
+function isAuthenticated() :boolean {
 
   return !hasAuthTokenExpired(getAuthTokenExpiration());
 }
 
-export function isAdmin() :boolean {
+function isAdmin() :boolean {
 
   let hasAdminRole :boolean = false;
   const userInfo :?UserInfo = getUserInfo();
@@ -189,23 +207,35 @@ export function isAdmin() :boolean {
   return hasAdminRole;
 }
 
-export function redirectToLogin(redirectUrl :?string) :void {
+function redirectToLogin(redirectUrl :?string) :void {
 
   let queryString :string = '';
 
   if (isNonEmptyString(redirectUrl)) {
     queryString = qs.stringify(
       { redirectUrl },
-      { addQueryPrefix: true }
+      { addQueryPrefix: true },
     );
   }
   else {
     const { origin, pathname, hash } = window.location;
     queryString = qs.stringify(
       { redirectUrl: `${origin}${pathname}${hash}` },
-      { addQueryPrefix: true }
+      { addQueryPrefix: true },
     );
   }
 
   window.location.replace(`${LOGIN_URL}${queryString}`);
 }
+
+export {
+  clearAuthInfo,
+  getAuthToken,
+  getAuthTokenExpiration,
+  getUserInfo,
+  hasAuthTokenExpired,
+  isAdmin,
+  isAuthenticated,
+  redirectToLogin,
+  storeAuthInfo,
+};

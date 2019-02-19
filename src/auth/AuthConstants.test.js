@@ -4,18 +4,32 @@
 
 import {
   ADMIN_ROLE,
+  AUTH0_USER_INFO,
+  AUTH_COOKIE,
+  AUTH_HEADER,
   AUTH_TOKEN_EXPIRATION_NOT_SET,
   AUTH_TOKEN_EXPIRED,
-  AUTH0_ID_TOKEN,
-  AUTH0_USER_INFO,
   LOGIN_PATH,
-  ROOT_PATH
+  LOGIN_URL,
+  ROOT_PATH,
 } from './AuthConstants';
 
-describe('AuthActionFactory', () => {
+describe('AuthActions', () => {
 
   test('ADMIN_ROLE', () => {
     expect(ADMIN_ROLE).toEqual('admin');
+  });
+
+  test('AUTH0_USER_INFO', () => {
+    expect(AUTH0_USER_INFO).toEqual('auth0_user_info');
+  });
+
+  test('AUTH_COOKIE', () => {
+    expect(AUTH_COOKIE).toEqual('authorization');
+  });
+
+  test('AUTH_HEADER', () => {
+    expect(AUTH_HEADER).toEqual('Authorization');
   });
 
   test('AUTH_TOKEN_EXPIRATION_NOT_SET', () => {
@@ -26,16 +40,12 @@ describe('AuthActionFactory', () => {
     expect(AUTH_TOKEN_EXPIRED).toEqual(-1);
   });
 
-  test('AUTH0_ID_TOKEN', () => {
-    expect(AUTH0_ID_TOKEN).toEqual('auth0_id_token');
-  });
-
-  test('AUTH0_USER_INFO', () => {
-    expect(AUTH0_USER_INFO).toEqual('auth0_user_info');
-  });
-
   test('LOGIN_PATH', () => {
     expect(LOGIN_PATH).toEqual('/login');
+  });
+
+  test('LOGIN_URL', () => {
+    expect(LOGIN_URL).toEqual('http://localhost/login/');
   });
 
   test('ROOT_PATH', () => {

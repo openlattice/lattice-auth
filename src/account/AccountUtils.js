@@ -22,27 +22,27 @@ function getStoredValues() :Object {
       }
     }
     catch (error) {
-      LOG.warn(`Unable to parse JSON from value ${storedValuesStr}`);
+      LOG.warn('unable to parse JSON from value', storedValuesStr);
     }
   }
 
   return storedValues;
 }
 
-export function storeOrganizationId(organizationId :string) {
+function storeOrganizationId(organizationId :string) {
 
   if (!isNonEmptyString(organizationId)) {
-    throw new Error('Error: organizationId must be a non-empty string');
+    throw new Error('organizationId must be a non-empty string');
   }
 
   const user :?UserInfo = getUserInfo();
   if (!user) {
-    throw new Error('Error: cannot store organization id without a valid login.');
+    throw new Error('cannot store organization id without a valid login');
   }
 
   const { id } = user;
   if (!id) {
-    throw new Error('Error: cannot store organization id because the current user does not have a valid user id.');
+    throw new Error('cannot store organization id because the current user does not have a valid user id');
   }
 
   const storedValues = getStoredValues();
@@ -53,16 +53,16 @@ export function storeOrganizationId(organizationId :string) {
   localStorage.setItem(ORGANIZATION_ID, JSON.stringify(updatedStoredValues));
 }
 
-export function retrieveOrganizationId() :?UUID {
+function retrieveOrganizationId() :?UUID {
 
   const user :?UserInfo = getUserInfo();
   if (!user) {
-    throw new Error('Error: cannot retrieve organization id without a valid login.');
+    throw new Error('cannot retrieve organization id without a valid login');
   }
 
   const { id } = user;
   if (!id) {
-    throw new Error('Error: cannot retrieve organization id because the current user does not have a valid user id.');
+    throw new Error('cannot retrieve organization id because the current user does not have a valid user id');
   }
 
   const storedValues :Object = getStoredValues();
@@ -71,16 +71,16 @@ export function retrieveOrganizationId() :?UUID {
   return storedOrganizationForUser;
 }
 
-export function clearOrganization() {
+function clearOrganization() {
 
   const user :?UserInfo = getUserInfo();
   if (!user) {
-    throw new Error('Error: cannot clear organization id without a valid login.');
+    throw new Error('cannot clear organization id without a valid login');
   }
 
   const { id } = user;
   if (!id) {
-    throw new Error('Error: cannot clear organization id because the current user does not have a valid user id.');
+    throw new Error('cannot clear organization id because the current user does not have a valid user id');
   }
 
   const storedValues :Object = getStoredValues();
@@ -88,3 +88,9 @@ export function clearOrganization() {
 
   localStorage.setItem(ORGANIZATION_ID, JSON.stringify(storedValues));
 }
+
+export {
+  clearOrganization,
+  retrieveOrganizationId,
+  storeOrganizationId,
+};

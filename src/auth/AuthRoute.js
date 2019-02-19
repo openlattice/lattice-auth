@@ -2,32 +2,26 @@
  * @flow
  */
 
-import React from 'react';
+import React, { Component } from 'react';
 
 import { Map } from 'immutable';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import {
   Redirect,
   Route,
   Switch,
   withRouter
 } from 'react-router';
+import { bindActionCreators } from 'redux';
 
 import * as Auth0 from './Auth0';
+import * as AuthActions from './AuthActions';
 import * as AuthUtils from './AuthUtils';
-
-import {
-  authAttempt,
-  authExpired,
-  authSuccess
-} from './AuthActionFactory';
-
 import {
   AUTH_TOKEN_EXPIRATION_NOT_SET,
   AUTH_TOKEN_EXPIRED,
   LOGIN_PATH,
-  ROOT_PATH
+  ROOT_PATH,
 } from './AuthConstants';
 
 /*
@@ -46,7 +40,7 @@ type Props = {
   redirectToLogin ?:boolean;
 };
 
-class AuthRoute extends React.Component<Props> {
+class AuthRoute extends Component<Props> {
 
   static defaultProps = {
     redirectToLogin: false,
@@ -156,20 +150,15 @@ function mapStateToProps(state :Map<*, *>) :Object {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) :Object {
+const mapDispatchToProps = (dispatch :Function) :Object => ({
+  actions: bindActionCreators({
+    authAttempt: AuthActions.authAttempt,
+    authExpired: AuthActions.authExpired,
+    authSuccess: AuthActions.authSuccess,
+  }, dispatch)
+});
 
-  const actions = {
-    authAttempt,
-    authExpired,
-    authSuccess
-  };
-
-  return {
-    actions: bindActionCreators(actions, dispatch)
-  };
-}
-
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AuthRoute));
 // Missing type annotation for `P`. `P` is a type parameter declared in function type [1] and was implicitly
 // instantiated at call of `withRouter` [2].
 // $FlowFixMe
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AuthRoute));

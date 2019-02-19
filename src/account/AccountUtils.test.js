@@ -3,13 +3,13 @@
  */
 
 import * as AccountUtils from './AccountUtils';
-import { randomStringId } from '../utils/Utils';
+import { genRandomString } from '../utils/testing/TestUtils';
 
 import { ORGANIZATION_ID } from './AccountConstants';
 import { AUTH0_USER_INFO } from '../auth/AuthConstants';
 
-const MOCK_USER_ID = randomStringId();
-const MOCK_ORG_ID = randomStringId();
+const MOCK_USER_ID = genRandomString();
+const MOCK_ORG_ID = genRandomString();
 
 const MOCK_USER_INFO = JSON.stringify({
   id: MOCK_USER_ID
@@ -32,7 +32,7 @@ describe('AccountUtils', () => {
     });
 
     test('should return null if there is no organization id stored for the current user', () => {
-      localStorage.setItem(AUTH0_USER_INFO, JSON.stringify({ id: randomStringId() }));
+      localStorage.setItem(AUTH0_USER_INFO, JSON.stringify({ id: genRandomString() }));
       expect(AccountUtils.retrieveOrganizationId()).toBeNull();
     });
 
