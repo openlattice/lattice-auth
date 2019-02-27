@@ -50,7 +50,7 @@
     "babel-loader": "~8.0.0",
     "connected-react-router": "~6.3.0",
     "enzyme": "~3.9.0",
-    "enzyme-adapter-react-16": "~1.9.0",
+    "enzyme-adapter-react-16": "~1.10.0",
     "eslint": "~5.14.0",
     "eslint-config-airbnb": "~17.1.0",
     "eslint-import-resolver-webpack": "~0.11.0",
@@ -64,8 +64,8 @@
     "flow-bin": "~0.93.0",
     "immutable": "4.0.0-rc.9",
     "jest": "~24.1.0",
-    "jsonwebtoken": "~8.4.0",
-    "lattice": "0.53.1",
+    "jsonwebtoken": "~8.5.0",
+    "lattice": "0.54.2",
     "moment": "~2.22.0",
     "npm-run-all": "~4.1.0",
     "react": "~16.8.0",
@@ -83,7 +83,7 @@
     "url-loader": "~1.1.2",
     "webpack": "~4.29.0",
     "webpack-cli": "~3.2.0",
-    "webpack-dev-server": "~3.1.0"
+    "webpack-dev-server": "~3.2.0"
   },
   "peerDependencies": {
     "@babel/polyfill": "~7.2.0",

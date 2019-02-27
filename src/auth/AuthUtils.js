@@ -12,6 +12,7 @@ import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
 
 import {
   ADMIN_ROLE,
+  AUTH0_ID_TOKEN,
   AUTH0_USER_INFO,
   AUTH_COOKIE,
   AUTH_TOKEN_EXPIRED,
@@ -99,6 +100,7 @@ function getDomainForCookie() :string {
 
 function clearAuthInfo() :void {
 
+  localStorage.removeItem(AUTH0_ID_TOKEN);
   localStorage.removeItem(AUTH0_USER_INFO);
 
   // when deleting a cookie, we must pass the same "domain" and "path" values that were used to set the cookie
@@ -134,6 +136,7 @@ function storeAuthInfo(authInfo :?Object) :void {
         path: '/',
         secure: (hostname !== 'localhost'),
       });
+      localStorage.setItem(AUTH0_ID_TOKEN, authInfo.idToken);
     }
     else {
       LOG.warn(`not setting "${AUTH_COOKIE}" cookie because auth token is expired`);

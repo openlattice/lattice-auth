@@ -17,9 +17,9 @@ import {
 
 import {
   ADMIN_ROLE,
+  AUTH0_ID_TOKEN,
   AUTH0_USER_INFO,
   AUTH_COOKIE,
-  AUTH_HEADER,
   AUTH_TOKEN_EXPIRED,
 } from './AuthConstants';
 
@@ -68,12 +68,6 @@ describe('AuthUtils', () => {
   });
 
   describe('getAuthToken()', () => {
-
-    test('the auth token should not be stored in localStorage', () => {
-      expect(localStorage).toHaveLength(0);
-      expect(localStorage.getItem(AUTH_COOKIE)).toBeNull();
-      expect(localStorage.getItem(AUTH_HEADER)).toBeNull();
-    });
 
     test('should return null if the stored auth token is invalid', () => {
       INVALID_SS_PARAMS.forEach((invalid :any) => {
@@ -237,7 +231,8 @@ describe('AuthUtils', () => {
       AuthUtils.storeAuthInfo({ idToken: MOCK_AUTH_TOKEN, idTokenPayload: null });
       expect(cookies.set).toHaveBeenCalledTimes(1);
       expect(cookies.set).toHaveBeenCalledWith(AUTH_COOKIE, `Bearer ${MOCK_AUTH_TOKEN}`, expect.any(Object));
-      expect(localStorage).toHaveLength(0);
+      expect(localStorage).toHaveLength(1);
+      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
       expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
 
       localStorage.clear();
@@ -246,7 +241,8 @@ describe('AuthUtils', () => {
       AuthUtils.storeAuthInfo({ idToken: MOCK_AUTH_TOKEN, idTokenPayload: undefined });
       expect(cookies.set).toHaveBeenCalledTimes(1);
       expect(cookies.set).toHaveBeenCalledWith(AUTH_COOKIE, `Bearer ${MOCK_AUTH_TOKEN}`, expect.any(Object));
-      expect(localStorage).toHaveLength(0);
+      expect(localStorage).toHaveLength(1);
+      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
       expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
     });
 
@@ -265,7 +261,8 @@ describe('AuthUtils', () => {
       AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
       expect(cookies.set).toHaveBeenCalledTimes(1);
       expect(cookies.set).toHaveBeenCalledWith(AUTH_COOKIE, `Bearer ${MOCK_AUTH_TOKEN}`, expect.any(Object));
-      expect(localStorage).toHaveLength(1);
+      expect(localStorage).toHaveLength(2);
+      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
       expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(JSON.stringify(mockUserInfo));
     });
 
