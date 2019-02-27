@@ -4,6 +4,7 @@
 
 import {
   ADMIN_ROLE,
+  AUTH0_ID_TOKEN,
   AUTH0_USER_INFO,
   AUTH_COOKIE,
   AUTH_HEADER,
@@ -19,6 +20,10 @@ describe('AuthActions', () => {
 
   test('ADMIN_ROLE', () => {
     expect(ADMIN_ROLE).toEqual('admin');
+  });
+
+  test('AUTH0_ID_TOKEN', () => {
+    expect(AUTH0_ID_TOKEN).toEqual('auth0_id_token');
   });
 
   test('AUTH0_USER_INFO', () => {
