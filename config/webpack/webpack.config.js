@@ -81,18 +81,21 @@ module.exports = (env) => {
    * base webpack config
    */
 
+  /* eslint-disable quote-props */
   const externals = {
     '@redux-saga/core': '@redux-saga/core',
     '@redux-saga/core/effects': '@redux-saga/core/effects',
     'connected-react-router': 'connected-react-router',
-    lattice: 'lattice',
-    immutable: 'immutable',
-    react: 'react',
+    'immutable': 'immutable',
+    'lattice': 'lattice',
+    'react': 'react',
     'react-dom': 'react-dom',
     'react-redux': 'react-redux',
     'react-router': 'react-router',
-    redux: 'redux',
+    'react-router-dom': 'react-router-dom',
+    'redux': 'redux',
   };
+  /* eslint-enable */
 
   return {
     bail: true,
