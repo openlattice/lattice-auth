@@ -81,8 +81,9 @@ module.exports = (env) => {
    * base webpack config
    */
 
+  // https://webpack.js.org/configuration/externals/
   /* eslint-disable quote-props */
-  const externals = {
+  const EXTERNAL_DEPENDENCIES = {
     '@redux-saga/core': '@redux-saga/core',
     '@redux-saga/core/effects': '@redux-saga/core/effects',
     'connected-react-router': 'connected-react-router',
@@ -102,7 +103,7 @@ module.exports = (env) => {
     entry: [
       LIB_PATHS.ABS.ENTRY,
     ],
-    externals: env.production ? externals : {},
+    externals: EXTERNAL_DEPENDENCIES,
     mode: env.production ? ENV_PROD : ENV_DEV,
     module: {
       rules: [

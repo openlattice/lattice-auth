@@ -28,11 +28,13 @@ const LOG = new Logger('Auth0');
 
 function getAuthToken() :?string {
 
-  const authCookie :?string = cookies.get(AUTH_COOKIE);
+  // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
+  // const authCookie :?string = cookies.get(AUTH_COOKIE);
+  const authToken :?string = localStorage.getItem(AUTH0_ID_TOKEN);
 
-  if (typeof authCookie === 'string' && authCookie.trim().length) {
+  if (typeof authToken === 'string' && authToken.trim().length) {
     try {
-      const authToken :string = authCookie.replace('Bearer ', '');
+      // const authToken :string = authCookie.replace('Bearer ', '');
       // this is not sufficient validation, only confirms the token is well formed
       // TODO:
       //   validate token, verify its signature
