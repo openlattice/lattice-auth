@@ -19,6 +19,15 @@ import {
   LOGIN_URL,
 } from './AuthConstants';
 
+declare type UserInfo = {
+  firstName ? :string;
+  givenName ? :string;
+  email ? :string;
+  id ? :string;
+  picture ? :string;
+  roles ? :string[];
+};
+
 const LOG = new Logger('Auth0');
 
 /*
@@ -243,4 +252,8 @@ export {
   isAuthenticated,
   redirectToLogin,
   storeAuthInfo,
+};
+
+export type {
+  UserInfo,
 };

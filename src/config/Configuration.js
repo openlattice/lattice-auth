@@ -14,6 +14,20 @@ import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
 declare var __AUTH0_CLIENT_ID__ :string;
 declare var __AUTH0_DOMAIN__ :string;
 
+type LatticeAuthConfig = {
+  auth0ClientId ?:string;
+  auth0Domain ?:string;
+  auth0Lock ?:{
+    logo ?:string;
+    primaryColor ?:string;
+    redirectUrl ?:string;
+    title ?:string;
+  };
+  authToken ?:string;
+  baseUrl :string;
+  csrfToken ?:string;
+};
+
 const LOG = new Logger('Configuration');
 
 const ENV_URLS :Map<string, string> = fromJS({
@@ -188,7 +202,8 @@ function configure(config :LatticeAuthConfig) :void {
 
   Lattice.configure({
     authToken: config.authToken,
-    baseUrl: config.baseUrl
+    baseUrl: config.baseUrl,
+    csrfToken: config.csrfToken,
   });
 
   Auth0.initialize(getConfig());
