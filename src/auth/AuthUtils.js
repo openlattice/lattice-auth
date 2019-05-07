@@ -5,6 +5,7 @@
 import cookies from 'js-cookie';
 import decode from 'jwt-decode';
 import qs from 'qs';
+import uuid from 'uuid/v4';
 import { isAfter } from 'date-fns';
 
 import Logger from '../utils/Logger';
@@ -17,6 +18,7 @@ import {
   AUTH_COOKIE,
   AUTH_TOKEN_EXPIRED,
   LOGIN_URL,
+  CSRF_COOKIE,
 } from './AuthConstants';
 
 declare type UserInfo = {
@@ -28,22 +30,22 @@ declare type UserInfo = {
   roles ? :string[];
 };
 
-const LOG = new Logger('Auth0');
-
 /*
  * https://auth0.com/docs/jwt
  * https://auth0.com/docs/tokens/id-token
  */
 
+const LOG = new Logger('AuthUtils');
+
+// https://github.com/chriso/validator.js/blob/master/src/lib/isUUID.js
+const BASE_UUID_PATTERN :RegExp = /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i;
+
 function getAuthToken() :?string {
 
-  // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
-  // const authCookie :?string = cookies.get(AUTH_COOKIE);
   const authToken :?string = localStorage.getItem(AUTH0_ID_TOKEN);
 
   if (typeof authToken === 'string' && authToken.trim().length) {
     try {
-      // const authToken :string = authCookie.replace('Bearer ', '');
       // this is not sufficient validation, only confirms the token is well formed
       // TODO:
       //   validate token, verify its signature
@@ -84,6 +86,16 @@ function getAuthTokenExpiration(maybeAuthToken :?string) :number {
   }
 }
 
+function getCSRFToken() :?UUID {
+
+  const csrfToken :?UUID = cookies.get(CSRF_COOKIE);
+  if (typeof csrfToken === 'string' && BASE_UUID_PATTERN.test(csrfToken)) {
+    return csrfToken;
+  }
+
+  return null;
+}
+
 function getUserInfo() :?UserInfo {
 
   const userInfoStr :?string = localStorage.getItem(AUTH0_USER_INFO);
@@ -120,6 +132,11 @@ function clearAuthInfo() :void {
     domain: getDomainForCookie(),
     path: '/',
   });
+
+  cookies.remove(CSRF_COOKIE, {
+    domain: getDomainForCookie(),
+    path: '/',
+  });
 }
 
 function storeAuthInfo(authInfo :?Object) :void {
@@ -140,6 +157,7 @@ function storeAuthInfo(authInfo :?Object) :void {
     const authCookie :string = `Bearer ${authInfo.idToken}`;
     const authTokenExpiration :number = getAuthTokenExpiration(authInfo.idToken);
     if (authTokenExpiration !== AUTH_TOKEN_EXPIRED) {
+      localStorage.setItem(AUTH0_ID_TOKEN, authInfo.idToken);
       cookies.set(AUTH_COOKIE, authCookie, {
         SameSite: 'strict',
         domain: getDomainForCookie(),
@@ -147,7 +165,13 @@ function storeAuthInfo(authInfo :?Object) :void {
         path: '/',
         secure: (hostname !== 'localhost'),
       });
-      localStorage.setItem(AUTH0_ID_TOKEN, authInfo.idToken);
+      cookies.set(CSRF_COOKIE, uuid(), {
+        SameSite: 'strict',
+        domain: getDomainForCookie(),
+        expires: new Date(authTokenExpiration),
+        path: '/',
+        secure: (hostname !== 'localhost'),
+      });
     }
     else {
       LOG.warn(`not setting "${AUTH_COOKIE}" cookie because auth token is expired`);
@@ -158,7 +182,7 @@ function storeAuthInfo(authInfo :?Object) :void {
     return;
   }
 
-  if (!authInfo.idTokenPayload) {
+  if (!isNonEmptyObject(authInfo.idTokenPayload)) {
     return;
   }
 
@@ -246,6 +270,7 @@ export {
   clearAuthInfo,
   getAuthToken,
   getAuthTokenExpiration,
+  getCSRFToken,
   getUserInfo,
   hasAuthTokenExpired,
   isAdmin,

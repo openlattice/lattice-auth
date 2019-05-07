@@ -5,6 +5,7 @@
 import cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
+import uuid from 'uuid/v4';
 
 import * as AuthUtils from './AuthUtils';
 import { genRandomString } from '../utils/testing/TestUtils';
@@ -21,6 +22,7 @@ import {
   AUTH0_USER_INFO,
   AUTH_COOKIE,
   AUTH_TOKEN_EXPIRED,
+  CSRF_COOKIE,
 } from './AuthConstants';
 
 // https://momentjs.com/docs/#/manipulating/add/
@@ -29,6 +31,7 @@ const MOMENT_UNITS = ['s', 'm', 'h', 'd', 'w', 'M', 'y'];
 
 const MOCK_PROD_URL :string = 'https://openlattice.com';
 const MOCK_EXPIRATION_IN_SECONDS :number = moment().add(1, 'h').unix(); // 1 hour ahead
+const MOCK_CSRF_TOKEN :UUID = '40015ad9-fb3e-4741-9547-f7ac33cf4663';
 
 const MOCK_AUTH_TOKEN :string = jwt.sign(
   {
@@ -53,46 +56,32 @@ const MOCK_AUTH0_PAYLOAD = {
 };
 
 jest.mock('js-cookie');
+jest.mock('uuid/v4');
 
 describe('AuthUtils', () => {
-
-  beforeAll(() => {
-    cookies.get.mockImplementation(() => `Bearer ${MOCK_AUTH_TOKEN}`);
-  });
 
   beforeEach(() => {
     localStorage.clear();
     cookies.get.mockClear();
     cookies.remove.mockClear();
     cookies.set.mockClear();
+    uuid.mockClear();
   });
 
   describe('getAuthToken()', () => {
 
     test('should return null if the stored auth token is invalid', () => {
       INVALID_SS_PARAMS.forEach((invalid :any) => {
-        cookies.get.mockImplementationOnce(() => invalid);
         localStorage.setItem(AUTH0_ID_TOKEN, invalid);
         expect(AuthUtils.getAuthToken()).toBeNull();
-        // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
-        // expect(cookies.get).toHaveBeenCalledWith(AUTH_COOKIE);
         expect(cookies.get).not.toHaveBeenCalled();
       });
     });
 
     test('should return the stored auth token', () => {
-
-      cookies.get.mockImplementationOnce(() => MOCK_AUTH_TOKEN);
       localStorage.setItem(AUTH0_ID_TOKEN, MOCK_AUTH_TOKEN);
       expect(AuthUtils.getAuthToken()).toEqual(MOCK_AUTH_TOKEN);
-      // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
-      // expect(cookies.get).toHaveBeenCalledWith(AUTH_COOKIE);
       expect(cookies.get).not.toHaveBeenCalled();
-
-      // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
-      // cookies.get.mockImplementationOnce(() => `Bearer ${MOCK_AUTH_TOKEN}`);
-      // expect(AuthUtils.getAuthToken()).toEqual(MOCK_AUTH_TOKEN);
-      // expect(cookies.get).toHaveBeenCalledWith(AUTH_COOKIE);
     });
 
   });
@@ -101,49 +90,54 @@ describe('AuthUtils', () => {
 
     test('should return -1 if the stored auth token is invalid', () => {
       INVALID_SS_PARAMS.forEach((invalid :any) => {
-        cookies.get.mockImplementationOnce(() => invalid);
         localStorage.setItem(AUTH0_ID_TOKEN, invalid);
         expect(AuthUtils.getAuthTokenExpiration()).toEqual(AUTH_TOKEN_EXPIRED);
-        // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
-        // expect(cookies.get).toHaveBeenCalledWith(AUTH_COOKIE);
         expect(cookies.get).not.toHaveBeenCalled();
       });
     });
 
     test('should return -1 if given an invalid value', () => {
-
-      cookies.get.mockImplementation(() => undefined);
       INVALID_SS_PARAMS.forEach((invalid :any) => {
         expect(AuthUtils.getAuthTokenExpiration(invalid)).toEqual(AUTH_TOKEN_EXPIRED);
+        expect(cookies.get).not.toHaveBeenCalled();
       });
-
-      // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
-      // 2 because "null" and "undefined" will call getAuthToken()
-      // expect(cookies.get).toHaveBeenCalledTimes(2);
-      // expect(cookies.get).toHaveBeenCalledWith(AUTH_COOKIE);
-      expect(cookies.get).not.toHaveBeenCalled();
     });
 
     test('should return -1 if given an invalid value even if the stored auth token is valid', () => {
       INVALID_PARAMS_FOR_OPTIONAL_PARAM.forEach((invalid :any) => {
         expect(AuthUtils.getAuthTokenExpiration(invalid)).toEqual(AUTH_TOKEN_EXPIRED);
-        // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
-        // expect(cookies.get).toHaveBeenCalledTimes(0);
         expect(cookies.get).not.toHaveBeenCalled();
       });
     });
 
     test('should return the correct expiration', () => {
-
       const expInSecondsSinceEpoch :number = moment().add(1, 'h').unix(); // 1 hour ahead
       const expInMillisSinceEpoch :number = expInSecondsSinceEpoch * 1000;
-
       const mockAuthToken :string = jwt.sign({ data: genRandomString(), exp: expInSecondsSinceEpoch }, 'secret');
-      cookies.get.mockImplementationOnce(() => `Bearer ${mockAuthToken}`);
       localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
       expect(AuthUtils.getAuthTokenExpiration()).toEqual(expInMillisSinceEpoch);
-      // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
       expect(cookies.get).not.toHaveBeenCalled();
+    });
+
+  });
+
+  describe('getCSRFToken', () => {
+
+    test('should return null if the stored csrf token is invalid', () => {
+      INVALID_SS_PARAMS.forEach((invalid :any) => {
+        cookies.get.mockImplementationOnce(() => invalid);
+        expect(AuthUtils.getCSRFToken()).toBeNull();
+        expect(cookies.get).toHaveBeenCalledTimes(1);
+        expect(cookies.get).toHaveBeenCalledWith(CSRF_COOKIE);
+        cookies.get.mockClear();
+      });
+    });
+
+    test('should return the stored csrf token', () => {
+      cookies.get.mockImplementationOnce(() => MOCK_CSRF_TOKEN);
+      expect(AuthUtils.getCSRFToken()).toEqual(MOCK_CSRF_TOKEN);
+      expect(cookies.get).toHaveBeenCalledTimes(1);
+      expect(cookies.get).toHaveBeenCalledWith(CSRF_COOKIE);
     });
 
   });
@@ -182,18 +176,25 @@ describe('AuthUtils', () => {
 
   describe('clearAuthInfo()', () => {
 
-    test('should remove "authorization" cookie', () => {
-
+    test('should remove all cookies', () => {
       AuthUtils.clearAuthInfo();
-      expect(cookies.remove).toHaveBeenCalledTimes(1);
+      expect(cookies.remove).toHaveBeenCalledTimes(2);
       expect(cookies.remove).toHaveBeenCalledWith(AUTH_COOKIE, { domain: 'localhost', path: '/' });
+      expect(cookies.remove).toHaveBeenCalledWith(CSRF_COOKIE, { domain: 'localhost', path: '/' });
+    });
+
+    test(`should remove ${AUTH0_ID_TOKEN} from localStorage`, () => {
+      localStorage.setItem(AUTH0_ID_TOKEN, genRandomString()); // the value doesn't matter
+      AuthUtils.clearAuthInfo();
+      expect(localStorage).toHaveLength(0);
+      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toBeNull();
     });
 
     test(`should remove "${AUTH0_USER_INFO}" from localStorage`, () => {
-      localStorage.setItem(AUTH0_USER_INFO, genRandomString());
+      localStorage.setItem(AUTH0_USER_INFO, genRandomString()); // the value doesn't matter
       AuthUtils.clearAuthInfo();
       expect(localStorage).toHaveLength(0);
-      expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
+      expect(localStorage.getItem(AUTH0_USER_INFO)).toBeNull();
     });
 
   });
@@ -208,59 +209,96 @@ describe('AuthUtils', () => {
       });
     });
 
-    test('should set the "authorization" cookie with the correct auth token - dev', () => {
-      AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
-      expect(cookies.set).toHaveBeenCalledTimes(1);
-      expect(cookies.set).toHaveBeenCalledWith(
-        AUTH_COOKIE,
-        `Bearer ${MOCK_AUTH_TOKEN}`,
-        {
-          SameSite: 'strict',
-          domain: 'localhost',
-          expires: new Date(MOCK_EXPIRATION_IN_SECONDS * 1000),
-          path: '/',
-          secure: false,
-        }
-      );
+    describe('should set cookies - dev', () => {
+
+      test(`"${AUTH_COOKIE}" cookie`, () => {
+        AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
+        expect(cookies.set).toHaveBeenCalledTimes(2);
+        expect(cookies.set).toHaveBeenCalledWith(
+          AUTH_COOKIE,
+          `Bearer ${MOCK_AUTH_TOKEN}`,
+          {
+            SameSite: 'strict',
+            domain: 'localhost',
+            expires: new Date(MOCK_EXPIRATION_IN_SECONDS * 1000),
+            path: '/',
+            secure: false,
+          }
+        );
+      });
+
+      test(`"${CSRF_COOKIE}" cookie`, () => {
+        uuid.mockImplementationOnce(() => MOCK_CSRF_TOKEN);
+        AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
+        expect(cookies.set).toHaveBeenCalledTimes(2);
+        expect(cookies.set).toHaveBeenCalledWith(
+          CSRF_COOKIE,
+          MOCK_CSRF_TOKEN,
+          {
+            SameSite: 'strict',
+            domain: 'localhost',
+            expires: new Date(MOCK_EXPIRATION_IN_SECONDS * 1000),
+            path: '/',
+            secure: false,
+          }
+        );
+      });
+
     });
 
-    test('should set the "authorization" cookie with the correct auth token - prod', () => {
-      global.jsdom.reconfigure({ url: MOCK_PROD_URL });
-      AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
-      expect(cookies.set).toHaveBeenCalledTimes(1);
-      expect(cookies.set).toHaveBeenCalledWith(
-        AUTH_COOKIE,
-        `Bearer ${MOCK_AUTH_TOKEN}`,
-        {
-          SameSite: 'strict',
-          domain: '.openlattice.com',
-          expires: new Date(MOCK_EXPIRATION_IN_SECONDS * 1000),
-          path: '/',
-          secure: true,
-        }
-      );
+    describe('should set cookies - prod', () => {
+
+      test(`"${AUTH_COOKIE}" cookie`, () => {
+        global.jsdom.reconfigure({ url: MOCK_PROD_URL });
+        AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
+        expect(cookies.set).toHaveBeenCalledTimes(2);
+        expect(cookies.set).toHaveBeenCalledWith(
+          AUTH_COOKIE,
+          `Bearer ${MOCK_AUTH_TOKEN}`,
+          {
+            SameSite: 'strict',
+            domain: '.openlattice.com',
+            expires: new Date(MOCK_EXPIRATION_IN_SECONDS * 1000),
+            path: '/',
+            secure: true,
+          }
+        );
+      });
+
+      test(`"${CSRF_COOKIE}" cookie`, () => {
+        uuid.mockImplementationOnce(() => MOCK_CSRF_TOKEN);
+        global.jsdom.reconfigure({ url: MOCK_PROD_URL });
+        AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
+        expect(cookies.set).toHaveBeenCalledTimes(2);
+        expect(cookies.set).toHaveBeenCalledWith(
+          CSRF_COOKIE,
+          MOCK_CSRF_TOKEN,
+          {
+            SameSite: 'strict',
+            domain: '.openlattice.com',
+            expires: new Date(MOCK_EXPIRATION_IN_SECONDS * 1000),
+            path: '/',
+            secure: true,
+          }
+        );
+      });
+
     });
 
-    test('should set the "authorization" cookie with the correct auth token even if user info is missing', () => {
-
-      localStorage.clear();
-
-      AuthUtils.storeAuthInfo({ idToken: MOCK_AUTH_TOKEN, idTokenPayload: null });
-      expect(cookies.set).toHaveBeenCalledTimes(1);
-      expect(cookies.set).toHaveBeenCalledWith(AUTH_COOKIE, `Bearer ${MOCK_AUTH_TOKEN}`, expect.any(Object));
-      expect(localStorage).toHaveLength(1);
-      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
-      expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
-
-      localStorage.clear();
-      cookies.set.mockClear();
-
-      AuthUtils.storeAuthInfo({ idToken: MOCK_AUTH_TOKEN, idTokenPayload: undefined });
-      expect(cookies.set).toHaveBeenCalledTimes(1);
-      expect(cookies.set).toHaveBeenCalledWith(AUTH_COOKIE, `Bearer ${MOCK_AUTH_TOKEN}`, expect.any(Object));
-      expect(localStorage).toHaveLength(1);
-      expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
-      expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(null);
+    test('should set cookies even if user info is missing', () => {
+      INVALID_PARAMS.forEach((invalid :any) => {
+        localStorage.clear();
+        uuid.mockImplementationOnce(() => MOCK_CSRF_TOKEN);
+        AuthUtils.storeAuthInfo({ idToken: MOCK_AUTH_TOKEN, idTokenPayload: invalid });
+        expect(cookies.set).toHaveBeenCalledTimes(2);
+        expect(cookies.set).toHaveBeenCalledWith(AUTH_COOKIE, `Bearer ${MOCK_AUTH_TOKEN}`, expect.any(Object));
+        expect(cookies.set).toHaveBeenCalledWith(CSRF_COOKIE, MOCK_CSRF_TOKEN, expect.any(Object));
+        expect(localStorage).toHaveLength(1);
+        expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
+        expect(localStorage.getItem(AUTH0_USER_INFO)).toBeNull();
+        cookies.set.mockClear();
+        uuid.mockClear();
+      });
     });
 
     test('should update localStorage with the correct user info', () => {
@@ -275,9 +313,11 @@ describe('AuthUtils', () => {
         roles: MOCK_AUTH0_PAYLOAD.idTokenPayload.roles,
       };
 
+      uuid.mockImplementationOnce(() => MOCK_CSRF_TOKEN);
       AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
-      expect(cookies.set).toHaveBeenCalledTimes(1);
+      expect(cookies.set).toHaveBeenCalledTimes(2);
       expect(cookies.set).toHaveBeenCalledWith(AUTH_COOKIE, `Bearer ${MOCK_AUTH_TOKEN}`, expect.any(Object));
+      expect(cookies.set).toHaveBeenCalledWith(CSRF_COOKIE, MOCK_CSRF_TOKEN, expect.any(Object));
       expect(localStorage).toHaveLength(2);
       expect(localStorage.getItem(AUTH0_ID_TOKEN)).toEqual(MOCK_AUTH_TOKEN);
       expect(localStorage.getItem(AUTH0_USER_INFO)).toEqual(JSON.stringify(mockUserInfo));
@@ -324,11 +364,8 @@ describe('AuthUtils', () => {
 
     test('should return false if the stored auth token is invalid', () => {
       INVALID_SS_PARAMS.forEach((invalid :any) => {
-        cookies.get.mockImplementationOnce(() => invalid);
         localStorage.setItem(AUTH0_ID_TOKEN, invalid);
         expect(AuthUtils.isAuthenticated()).toEqual(false);
-        // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
-        // expect(cookies.get).toHaveBeenCalledWith(AUTH_COOKIE);
         expect(cookies.get).not.toHaveBeenCalled();
       });
     });
@@ -337,11 +374,8 @@ describe('AuthUtils', () => {
       MOMENT_UNITS.forEach((unit :string) => {
         const expInSecondsSinceEpoch :number = moment().subtract(1, unit).unix();
         const mockAuthToken :string = jwt.sign({ data: genRandomString(), exp: expInSecondsSinceEpoch }, 'secret');
-        cookies.get.mockImplementationOnce(() => mockAuthToken);
         localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
         expect(AuthUtils.isAuthenticated()).toEqual(false);
-        // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
-        // expect(cookies.get).toHaveBeenCalledWith(AUTH_COOKIE);
         expect(cookies.get).not.toHaveBeenCalled();
       });
     });
@@ -350,11 +384,8 @@ describe('AuthUtils', () => {
       MOMENT_UNITS.forEach((unit :string) => {
         const expInSecondsSinceEpoch :number = moment().add(1, unit).unix();
         const mockAuthToken :string = jwt.sign({ data: genRandomString(), exp: expInSecondsSinceEpoch }, 'secret');
-        cookies.get.mockImplementationOnce(() => mockAuthToken);
         localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
         expect(AuthUtils.isAuthenticated()).toEqual(true);
-        // 2019-04-25 - switching back to using localStorage as the primary for storing the auth token
-        // expect(cookies.get).toHaveBeenCalledWith(AUTH_COOKIE);
         expect(cookies.get).not.toHaveBeenCalled();
       });
     });

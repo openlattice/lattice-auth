@@ -19,7 +19,7 @@ import {
   LOGIN,
   LOGOUT,
   authFailure,
-  authSuccess
+  authSuccess,
 } from './AuthActions';
 
 /*
@@ -38,8 +38,12 @@ export function* watchAuthAttempt() :Generator<*, *, *> {
        * before dispatching AUTH_SUCCESS in order to guarantee that AuthRoute will receive the correct props in the
        * next pass through its lifecycle.
        */
-      yield call(AuthUtils.storeAuthInfo, authInfo);
-      yield call(Lattice.configure, { authToken: authInfo.idToken, baseUrl: getConfig().get('baseUrl') });
+      AuthUtils.storeAuthInfo(authInfo);
+      Lattice.configure({
+        authToken: authInfo.idToken,
+        baseUrl: getConfig().get('baseUrl'),
+        csrfToken: AuthUtils.getCSRFToken(),
+      });
       yield put(authSuccess());
     }
     catch (error) {
@@ -67,7 +71,11 @@ export function* watchAuthSuccess() :Generator<*, *, *> {
      *      to invoke Lattice.configure().
      */
     if (authToken) {
-      yield call(Lattice.configure, { authToken, baseUrl: getConfig().get('baseUrl') });
+      Lattice.configure({
+        authToken,
+        baseUrl: getConfig().get('baseUrl'),
+        csrfToken: AuthUtils.getCSRFToken(),
+      });
     }
   }
 }
