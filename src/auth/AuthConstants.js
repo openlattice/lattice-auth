@@ -13,6 +13,7 @@ const AUTH_TOKEN_EXPIRATION_NOT_SET :number = -2;
 
 const AUTH_COOKIE :'authorization' = 'authorization';
 const AUTH_HEADER :'Authorization' = 'Authorization';
+const CSRF_COOKIE :'ol_csrf_token' = 'ol_csrf_token';
 
 const ROOT_PATH :'/' = '/';
 const LOGIN_PATH :'/login' = '/login';
@@ -27,6 +28,7 @@ export {
   AUTH_REDUCER_KEY,
   AUTH_TOKEN_EXPIRATION_NOT_SET,
   AUTH_TOKEN_EXPIRED,
+  CSRF_COOKIE,
   LOGIN_PATH,
   LOGIN_URL,
   ROOT_PATH,

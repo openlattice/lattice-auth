@@ -11,6 +11,7 @@ import {
   AUTH_REDUCER_KEY,
   AUTH_TOKEN_EXPIRATION_NOT_SET,
   AUTH_TOKEN_EXPIRED,
+  CSRF_COOKIE,
   LOGIN_PATH,
   LOGIN_URL,
   ROOT_PATH,
@@ -48,6 +49,10 @@ describe('AuthActions', () => {
 
   test('AUTH_TOKEN_EXPIRED', () => {
     expect(AUTH_TOKEN_EXPIRED).toEqual(-1);
+  });
+
+  test('CSRF_COOKIE', () => {
+    expect(CSRF_COOKIE).toEqual('ol_csrf_token');
   });
 
   test('LOGIN_PATH', () => {
