@@ -89,7 +89,8 @@ describe('Configuration', () => {
       expect(Lattice.configure).toHaveBeenCalledTimes(1);
       expect(Lattice.configure).toHaveBeenCalledWith({
         authToken: MOCK_AUTH_TOKEN,
-        baseUrl: 'production'
+        baseUrl: 'https://api.openlattice.com',
+        csrfToken: null,
       });
     });
 
@@ -336,17 +337,17 @@ describe('Configuration', () => {
 
     describe('baseUrl', () => {
 
-      test('should throw if baseUrl is missing', () => {
+      test('should not throw if baseUrl is missing', () => {
         expect(() => {
           Config.configure({
             auth0Lock: MOCK_AUTH0_LOCK.toJS(),
             authToken: MOCK_AUTH_TOKEN
           });
-        }).toThrow();
+        }).not.toThrow();
       });
 
       test('should throw if baseUrl is invalid', () => {
-        INVALID_PARAMS.forEach((invalid :any) => {
+        INVALID_PARAMS_FOR_OPTIONAL_PARAM.forEach((invalid :any) => {
           expect(() => {
             Config.configure({
               auth0Lock: MOCK_AUTH0_LOCK.toJS(),

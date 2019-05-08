@@ -25,7 +25,7 @@ describe('lattice-auth default export', () => {
 
   test('should export AuthConstants', () => {
     expect(Object.prototype.toString.call(LatticeAuth.AuthConstants)).toEqual(OBJECT_TAG);
-    expect(Object.keys(LatticeAuth.AuthConstants)).toHaveLength(11);
+    expect(Object.keys(LatticeAuth.AuthConstants)).toHaveLength(12);
   });
 
   test('should export AuthReducer', () => {
@@ -43,7 +43,7 @@ describe('lattice-auth default export', () => {
 
   test('should export AuthUtils', () => {
     expect(Object.prototype.toString.call(LatticeAuth.AuthUtils)).toEqual(OBJECT_TAG);
-    expect(Object.keys(LatticeAuth.AuthUtils)).toHaveLength(9);
+    expect(Object.keys(LatticeAuth.AuthUtils)).toHaveLength(10);
   });
 
   test('should export configure()', () => {
