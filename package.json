@@ -66,7 +66,7 @@
     "immutable": "4.0.0-rc.9",
     "jest": "~24.1.0",
     "jsonwebtoken": "~8.5.0",
-    "lattice": "~0.58.1",
+    "lattice": "~0.59.0",
     "moment": "~2.22.0",
     "npm-run-all": "~4.1.0",
     "react": "~16.8.0",
