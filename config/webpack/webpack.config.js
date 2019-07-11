@@ -12,7 +12,7 @@ const {
   AUTH0_DOMAIN,
 } = require('../auth/auth0.config.js');
 
-module.exports = (env) => {
+module.exports = (env = {}) => {
 
   /*
    * constants
