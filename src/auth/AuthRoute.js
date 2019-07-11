@@ -2,7 +2,7 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React, { Component, createElement } from 'react';
 import type { ComponentType } from 'react';
 
 import { Map } from 'immutable';
@@ -101,19 +101,16 @@ class AuthRoute extends Component<Props> {
   render() {
 
     const {
-      component: WrappedComponent,
       authTokenExpiration,
+      component,
       isAuthenticating,
       redirectToLogin,
       ...wrappedComponentProps
     } = this.props;
 
     if (!AuthUtils.hasAuthTokenExpired(authTokenExpiration)) {
-      // TODO: is there a way to definitively check if a prop is a Component?
-      if (WrappedComponent !== null && WrappedComponent !== undefined && typeof WrappedComponent === 'function') {
-        return (
-          <WrappedComponent {...wrappedComponentProps} />
-        );
+      if (component) {
+        return createElement(component, wrappedComponentProps);
       }
       // TODO: is this the right action to take?
       return (
