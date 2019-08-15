@@ -135,6 +135,7 @@
         "forbidDefaultForRequired": false,
       }
     ],
-    "react/sort-comp": "off"
+    "react/sort-comp": "off",
+    "react/static-property-placement": ["error", "static public field"],
   }
 }

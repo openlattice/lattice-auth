@@ -47,9 +47,7 @@ function storeOrganizationId(organizationId :string) {
   }
 
   const storedValues = getStoredValues();
-  const updatedStoredValues = Object.assign({}, storedValues, {
-    [id]: organizationId
-  });
+  const updatedStoredValues = { ...storedValues, [id]: organizationId };
 
   localStorage.setItem(ORGANIZATION_ID, JSON.stringify(updatedStoredValues));
 }
