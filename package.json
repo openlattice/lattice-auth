@@ -62,7 +62,7 @@
     "eslint-plugin-jsx-a11y": "~6.2.0",
     "eslint-plugin-react": "~7.14.0",
     "file-loader": "~4.2.0",
-    "flow-bin": "~0.107.0",
+    "flow-bin": "~0.108.0",
     "immutable": "4.0.0-rc.9",
     "jest": "~24.8.0",
     "jsonwebtoken": "~8.5.0",
