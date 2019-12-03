@@ -60,7 +60,7 @@
     "eslint-plugin-import": "~2.18.0",
     "eslint-plugin-jest": "~23.1.0",
     "eslint-plugin-jsx-a11y": "~6.2.0",
-    "eslint-plugin-react": "~7.16.0",
+    "eslint-plugin-react": "~7.17.0",
     "file-loader": "~4.3.0",
     "flow-bin": "~0.113.0",
     "immutable": "4.0.0-rc.9",
