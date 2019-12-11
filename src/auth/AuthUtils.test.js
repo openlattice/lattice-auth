@@ -156,6 +156,12 @@ describe('AuthUtils', () => {
       });
     });
 
+    test('should return false when given an expiration in the future', () => {
+      MOMENT_UNITS.forEach((unit :string) => {
+        expect(AuthUtils.hasAuthTokenExpired(moment().add(1, unit).valueOf())).toEqual(false);
+      });
+    });
+
     test('should return true when given an expired auth token', () => {
       MOMENT_UNITS.forEach((unit :string) => {
         const expInSecondsSinceEpoch :number = moment().subtract(1, unit).unix();
