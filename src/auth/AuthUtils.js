@@ -6,7 +6,7 @@ import cookies from 'js-cookie';
 import decode from 'jwt-decode';
 import qs from 'qs';
 import uuid from 'uuid/v4';
-import { isAfter } from 'date-fns';
+import { DateTime } from 'luxon';
 
 import Logger from '../utils/Logger';
 import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
@@ -206,7 +206,7 @@ function hasAuthTokenExpired(authTokenOrExpiration :?string | number) :boolean {
       // authTokenOrExpiration is the expiration
       // if the expiration is in milliseconds, isAfter() will return correctly. if the expiration is in seconds,
       // isAfter() will convert it to a Date in 1970 since Date expects milliseconds, and thus always return true.
-      return isAfter(Date.now(), authTokenOrExpiration);
+      return DateTime.local().valueOf() > DateTime.fromMillis(authTokenOrExpiration).valueOf();
     }
     if (typeof authTokenOrExpiration === 'string' && authTokenOrExpiration.length) {
       // authTokenOrExpiration is the id token
@@ -214,7 +214,7 @@ function hasAuthTokenExpired(authTokenOrExpiration :?string | number) :boolean {
       // Auth0 JWT tokens set the expiration date as seconds since the Unix Epoch, not milliseconds
       // https://auth0.com/docs/tokens/id-token#id-token-payload
       const expirationInMillis :number = authTokenDecoded.exp * 1000;
-      return isAfter(Date.now(), expirationInMillis);
+      return DateTime.local().valueOf() > DateTime.fromMillis(expirationInMillis).valueOf();
     }
     return true;
   }
