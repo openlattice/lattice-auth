@@ -2,15 +2,12 @@
  * @flow
  */
 
-import Lattice from 'lattice';
-import { push } from 'connected-react-router';
+import Lattice, { PrincipalsApi } from 'lattice';
 import { call, put, take } from '@redux-saga/core/effects';
+import { push } from 'connected-react-router';
 
 import * as Auth0 from './Auth0';
 import * as AuthUtils from './AuthUtils';
-import { getConfig } from '../config/Configuration';
-import { LOGIN_PATH, ROOT_PATH } from './AuthConstants';
-
 import {
   AUTH_ATTEMPT,
   AUTH_EXPIRED,
@@ -21,6 +18,12 @@ import {
   authFailure,
   authSuccess,
 } from './AuthActions';
+import { LOGIN_PATH, ROOT_PATH } from './AuthConstants';
+
+import Logger from '../utils/Logger';
+import { getConfig } from '../config/Configuration';
+
+const LOG = new Logger('AuthSagas');
 
 /*
  * An interesting discussion around authentication flow with redux-saga:
@@ -44,9 +47,11 @@ export function* watchAuthAttempt() :Generator<*, *, *> {
         baseUrl: getConfig().get('baseUrl'),
         csrfToken: AuthUtils.getCSRFToken(),
       });
+      yield call(PrincipalsApi.syncUser);
       yield put(authSuccess());
     }
     catch (error) {
+      LOG.error(AUTH_ATTEMPT, error);
       // TODO: need better error handling depending on the error that comes through
       yield put(authFailure(error));
       Auth0.getAuth0LockInstance().show();
