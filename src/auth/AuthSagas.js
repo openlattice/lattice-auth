@@ -30,7 +30,7 @@ const LOG = new Logger('AuthSagas');
  * https://github.com/redux-saga/redux-saga/issues/14#issuecomment-167038759
  */
 
-export function* watchAuthAttempt() :Generator<*, *, *> {
+function* watchAuthAttempt() :Generator<*, *, *> {
 
   while (true) {
     yield take(AUTH_ATTEMPT);
@@ -59,7 +59,7 @@ export function* watchAuthAttempt() :Generator<*, *, *> {
   }
 }
 
-export function* watchAuthSuccess() :Generator<*, *, *> {
+function* watchAuthSuccess() :Generator<*, *, *> {
 
   while (true) {
     const { authToken } = yield take(AUTH_SUCCESS);
@@ -85,7 +85,7 @@ export function* watchAuthSuccess() :Generator<*, *, *> {
   }
 }
 
-export function* watchAuthExpired() :Generator<*, *, *> {
+function* watchAuthExpired() :Generator<*, *, *> {
 
   while (true) {
     yield take(AUTH_EXPIRED);
@@ -93,7 +93,7 @@ export function* watchAuthExpired() :Generator<*, *, *> {
   }
 }
 
-export function* watchAuthFailure() :Generator<*, *, *> {
+function* watchAuthFailure() :Generator<*, *, *> {
 
   while (true) {
     yield take(AUTH_FAILURE);
@@ -101,7 +101,7 @@ export function* watchAuthFailure() :Generator<*, *, *> {
   }
 }
 
-export function* watchLogin() :Generator<*, *, *> {
+function* watchLogin() :Generator<*, *, *> {
 
   while (true) {
     yield take(LOGIN);
@@ -109,7 +109,7 @@ export function* watchLogin() :Generator<*, *, *> {
   }
 }
 
-export function* watchLogout() :Generator<*, *, *> {
+function* watchLogout() :Generator<*, *, *> {
 
   while (true) {
     yield take(LOGOUT);
@@ -117,3 +117,12 @@ export function* watchLogout() :Generator<*, *, *> {
     yield put(push(ROOT_PATH));
   }
 }
+
+export {
+  watchAuthAttempt,
+  watchAuthExpired,
+  watchAuthFailure,
+  watchAuthSuccess,
+  watchLogin,
+  watchLogout,
+};
