@@ -1,8 +1,8 @@
 import PACKAGE from '../package.json';
 
-import { OBJECT_TAG } from './utils/testing/TestUtils';
-
 import * as LatticeAuth from './index';
+
+const OBJECT_TAG = '[object Object]';
 
 describe('lattice-auth named exports', () => {
 

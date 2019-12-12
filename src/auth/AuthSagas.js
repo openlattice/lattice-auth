@@ -2,15 +2,12 @@
  * @flow
  */
 
-import Lattice from 'lattice';
-import { push } from 'connected-react-router';
+import Lattice, { PrincipalsApi } from 'lattice';
 import { call, put, take } from '@redux-saga/core/effects';
+import { push } from 'connected-react-router';
 
 import * as Auth0 from './Auth0';
 import * as AuthUtils from './AuthUtils';
-import { getConfig } from '../config/Configuration';
-import { LOGIN_PATH, ROOT_PATH } from './AuthConstants';
-
 import {
   AUTH_ATTEMPT,
   AUTH_EXPIRED,
@@ -21,13 +18,19 @@ import {
   authFailure,
   authSuccess,
 } from './AuthActions';
+import { LOGIN_PATH, ROOT_PATH } from './AuthConstants';
+
+import Logger from '../utils/Logger';
+import { getConfig } from '../config/Configuration';
+
+const LOG = new Logger('AuthSagas');
 
 /*
  * An interesting discussion around authentication flow with redux-saga:
  * https://github.com/redux-saga/redux-saga/issues/14#issuecomment-167038759
  */
 
-export function* watchAuthAttempt() :Generator<*, *, *> {
+function* watchAuthAttempt() :Generator<*, *, *> {
 
   while (true) {
     yield take(AUTH_ATTEMPT);
@@ -44,9 +47,11 @@ export function* watchAuthAttempt() :Generator<*, *, *> {
         baseUrl: getConfig().get('baseUrl'),
         csrfToken: AuthUtils.getCSRFToken(),
       });
+      yield call(PrincipalsApi.syncUser);
       yield put(authSuccess());
     }
     catch (error) {
+      LOG.error(AUTH_ATTEMPT, error);
       // TODO: need better error handling depending on the error that comes through
       yield put(authFailure(error));
       Auth0.getAuth0LockInstance().show();
@@ -54,7 +59,7 @@ export function* watchAuthAttempt() :Generator<*, *, *> {
   }
 }
 
-export function* watchAuthSuccess() :Generator<*, *, *> {
+function* watchAuthSuccess() :Generator<*, *, *> {
 
   while (true) {
     const { authToken } = yield take(AUTH_SUCCESS);
@@ -80,7 +85,7 @@ export function* watchAuthSuccess() :Generator<*, *, *> {
   }
 }
 
-export function* watchAuthExpired() :Generator<*, *, *> {
+function* watchAuthExpired() :Generator<*, *, *> {
 
   while (true) {
     yield take(AUTH_EXPIRED);
@@ -88,7 +93,7 @@ export function* watchAuthExpired() :Generator<*, *, *> {
   }
 }
 
-export function* watchAuthFailure() :Generator<*, *, *> {
+function* watchAuthFailure() :Generator<*, *, *> {
 
   while (true) {
     yield take(AUTH_FAILURE);
@@ -96,7 +101,7 @@ export function* watchAuthFailure() :Generator<*, *, *> {
   }
 }
 
-export function* watchLogin() :Generator<*, *, *> {
+function* watchLogin() :Generator<*, *, *> {
 
   while (true) {
     yield take(LOGIN);
@@ -104,7 +109,7 @@ export function* watchLogin() :Generator<*, *, *> {
   }
 }
 
-export function* watchLogout() :Generator<*, *, *> {
+function* watchLogout() :Generator<*, *, *> {
 
   while (true) {
     yield take(LOGOUT);
@@ -112,3 +117,12 @@ export function* watchLogout() :Generator<*, *, *> {
     yield put(push(ROOT_PATH));
   }
 }
+
+export {
+  watchAuthAttempt,
+  watchAuthExpired,
+  watchAuthFailure,
+  watchAuthSuccess,
+  watchLogin,
+  watchLogout,
+};
