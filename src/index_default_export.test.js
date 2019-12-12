@@ -1,10 +1,10 @@
 /* eslint-disable import/no-named-as-default-member */
 
+import LatticeAuth from './index';
+
 import PACKAGE from '../package.json';
 
-import { OBJECT_TAG } from './utils/testing/TestUtils';
-
-import LatticeAuth from './index';
+const OBJECT_TAG = '[object Object]';
 
 describe('lattice-auth default export', () => {
 
