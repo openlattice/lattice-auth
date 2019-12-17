@@ -14,7 +14,9 @@ import {
   withRouter,
 } from 'react-router';
 import { bindActionCreators } from 'redux';
+import type { Dispatch } from 'redux';
 
+import Spinner from './Spinner';
 import * as Auth0 from './Auth0';
 import * as AuthActions from './AuthActions';
 import * as AuthUtils from './AuthUtils';
@@ -42,10 +44,18 @@ type Props = {
   redirectToLogin ?:boolean;
 };
 
-class AuthRoute extends Component<Props> {
+type State = {
+  isSpinnerDelayComplete :boolean;
+};
+
+class AuthRoute extends Component<Props, State> {
 
   static defaultProps = {
     redirectToLogin: false,
+  }
+
+  state = {
+    isSpinnerDelayComplete: false,
   }
 
   componentDidMount() {
@@ -64,6 +74,12 @@ class AuthRoute extends Component<Props> {
     else if (!redirectToLogin || Auth0.urlAuthInfoAvailable()) {
       actions.authAttempt();
     }
+
+    setTimeout(() => {
+      this.setState({
+        isSpinnerDelayComplete: true,
+      });
+    }, 250); // arbitrary timeout value
   }
 
   componentDidUpdate() {
@@ -71,7 +87,12 @@ class AuthRoute extends Component<Props> {
     // NOTE: the side effects of switching to componentDidUpdate() are not entirely clear
     // TODO: AuthRoute needs unit tests
 
-    const { actions, authTokenExpiration, redirectToLogin } = this.props;
+    const {
+      actions,
+      authTokenExpiration,
+      isAuthenticating,
+      redirectToLogin,
+    } = this.props;
 
     // TODO: need to spend more time thinking about how to handle this case
     if (AuthUtils.hasAuthTokenExpired(authTokenExpiration)) {
@@ -80,7 +101,8 @@ class AuthRoute extends Component<Props> {
         actions.authExpired();
       }
       // do not show the lock if we're in redirect mode
-      if (!redirectToLogin) {
+      // do not show the lock if we're still authenticating
+      if (!redirectToLogin && !isAuthenticating) {
         Auth0.getAuth0LockInstance().show();
       }
     }
@@ -107,6 +129,7 @@ class AuthRoute extends Component<Props> {
       redirectToLogin,
       ...wrappedComponentProps
     } = this.props;
+    const { isSpinnerDelayComplete } = this.state;
 
     if (!AuthUtils.hasAuthTokenExpired(authTokenExpiration)) {
       if (component) {
@@ -125,6 +148,21 @@ class AuthRoute extends Component<Props> {
       return null;
     }
 
+    /*
+     * NOTE: 2019-12-17 - now that we requre calling PrincipalsApi.syncUser() on every login, we have to handle the
+     * case where the auth attempt is successful but we're waiting on PrincipalsApi.syncUser() to respond. when this
+     * happens, we don't want to show the lock because the Auth0 part is done, but we also don't have anything else
+     * to render at the moment... so we'll show a simple spinner for now. in addition, to help avoid a quick flicker
+     * of the spinner when PrincipalsApi.syncUser() responds quickly, we'll delay rendering the spinner for a fraction
+     * of a second. yes, there is still the possibility of a quick flicker of the spinner, but this should only ever
+     * happen during login, which is infrequent.
+     *
+     * despite all of this, we can do better.
+     */
+    if (isAuthenticating && isSpinnerDelayComplete) {
+      return <Spinner />;
+    }
+
     return (
       <Switch>
         <Route exact strict path={LOGIN_PATH} />
@@ -134,7 +172,7 @@ class AuthRoute extends Component<Props> {
   }
 }
 
-function mapStateToProps(state :Map<*, *>) :Object {
+const mapStateToProps = (state :Map) :Object => {
 
   let authTokenExpiration :number = state.getIn([AUTH_REDUCER_KEY, 'authTokenExpiration']);
 
@@ -150,9 +188,9 @@ function mapStateToProps(state :Map<*, *>) :Object {
     authTokenExpiration,
     isAuthenticating: state.getIn([AUTH_REDUCER_KEY, 'isAuthenticating'])
   };
-}
+};
 
-const mapDispatchToProps = (dispatch :Function) :Object => ({
+const mapActionsToProps = (dispatch :Dispatch<*>) :Object => ({
   actions: bindActionCreators({
     authAttempt: AuthActions.authAttempt,
     authExpired: AuthActions.authExpired,
@@ -161,5 +199,5 @@ const mapDispatchToProps = (dispatch :Function) :Object => ({
 });
 
 export default withRouter<*>(
-  connect(mapStateToProps, mapDispatchToProps)(AuthRoute)
+  connect(mapStateToProps, mapActionsToProps)(AuthRoute)
 );

@@ -112,6 +112,12 @@
 
     "jsx-a11y/href-no-hash": "off",
 
+    "react/default-props-match-prop-types": [
+      "error",
+      {
+        "allowRequiredDefaults": true
+      }
+    ],
     "react/forbid-prop-types": "warn",
     "react/jsx-closing-bracket-location": [
       "error",
@@ -128,7 +134,9 @@
     ],
     "react/jsx-indent-props": ["error", 4],
     "react/jsx-one-expression-per-line": "warn",
+    "react/no-did-update-set-state": "warn",
     "react/prefer-stateless-function": "warn",
+    "react/prop-types": "warn",
     "react/require-default-props": [
       "error",
       {
@@ -136,6 +144,7 @@
       }
     ],
     "react/sort-comp": "off",
-    "react/static-property-placement": ["error", "static public field"],
+    "react/state-in-constructor": ["warn", "always"],
+    "react/static-property-placement": ["error", "static public field"]
   }
 }
