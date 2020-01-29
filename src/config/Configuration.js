@@ -5,7 +5,7 @@
 import Lattice from 'lattice';
 import { Map, fromJS } from 'immutable';
 
-import OpenLatticeLogo from '../assets/images/logo-vertical-primary.png';
+import OpenLatticeLogo from '../assets/images/ol-logo-auth0.png';
 import Logger from '../utils/Logger';
 import * as Auth0 from '../auth/Auth0';
 import * as AuthUtils from '../auth/AuthUtils';
@@ -59,7 +59,7 @@ let configuration :Map<string, *> = fromJS({
   auth0Domain: __AUTH0_DOMAIN__,
   auth0Lock: {
     logo: OpenLatticeLogo,
-    primaryColor: '#6124e2'
+    primaryColor: '#7860ff'
   },
   authToken: '',
   baseUrl: getDefaultBaseUrl(),
