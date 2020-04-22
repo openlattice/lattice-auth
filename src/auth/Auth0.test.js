@@ -38,12 +38,26 @@ const MOCK_CONFIG :Map<string, *> = fromJS({
 // TODO: mock Auth0Lock, and test for given options, test getConfig().getIn(['auth0Lock', 'logo'], '')
 describe('Auth0', () => {
 
+  const windowSpy = jest.spyOn(global, 'window', 'get');
+  let replaceSpy;
+
   beforeAll(() => {
     jest.doMock('auth0-lock', () => jest.fn());
     jest.doMock('./AuthUtils', () => ({
       clearAuthInfo: jest.fn(() => {}),
       getAuthToken: jest.fn(() => MOCK_AUTH_TOKEN),
       hasAuthTokenExpired: jest.fn(() => true)
+    }));
+
+    // https://www.grzegorowski.com/how-to-mock-global-window-with-jest
+    const testWindow = { ...window };
+    replaceSpy = jest.fn((...args) => testWindow.location.replace(...args));
+    windowSpy.mockImplementation(() => ({
+      ...testWindow,
+      location: {
+        ...testWindow.location,
+        replace: replaceSpy,
+      },
     }));
   });
 
@@ -157,9 +171,8 @@ describe('Auth0', () => {
 
     test('should not replace url if "access_token" is missing', () => {
       const Auth0 = require('./Auth0');
-      const replaceSpy = jest.spyOn(window.location, 'replace');
-      const fragment :string = `/id_token=${genRandomString()}`;
-      const url :string = `${MOCK_URL}/#${fragment}`;
+      const fragment = `/id_token=${genRandomString()}`;
+      const url = `${MOCK_URL}/#${fragment}`;
       global.jsdom.reconfigure({ url });
       expect(Auth0.parseUrl({ href: url })).toEqual({
         fragment,
@@ -171,9 +184,8 @@ describe('Auth0', () => {
 
     test('should not replace url if "id_token" is missing', () => {
       const Auth0 = require('./Auth0');
-      const replaceSpy = jest.spyOn(window.location, 'replace');
-      const fragment :string = `/access_token=${genRandomString()}`;
-      const url :string = `${MOCK_URL}/#${fragment}`;
+      const fragment = `/access_token=${genRandomString()}`;
+      const url = `${MOCK_URL}/#${fragment}`;
       global.jsdom.reconfigure({ url });
       expect(Auth0.parseUrl({ href: url })).toEqual({
         fragment,
@@ -184,13 +196,10 @@ describe('Auth0', () => {
     });
 
     test('should replace url when both "access_token" and "id_token" are present', () => {
-
       const Auth0 = require('./Auth0');
-      const replaceSpy = jest.spyOn(window.location, 'replace');
-
       const state = genRandomString();
       const fragment = `access_token=${genRandomString()}&id_token=${genRandomString()}&state=${state}`;
-      let url :string = `${MOCK_URL}#${fragment}`;
+      let url = `${MOCK_URL}#${fragment}`;
       global.jsdom.reconfigure({ url });
       expect(Auth0.parseUrl({ href: url })).toEqual({
         fragment,
