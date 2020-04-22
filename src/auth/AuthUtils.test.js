@@ -5,17 +5,9 @@
 import cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 
 import * as AuthUtils from './AuthUtils';
-import { genRandomString } from '../utils/testing/TestUtils';
-
-import {
-  INVALID_PARAMS,
-  INVALID_PARAMS_FOR_OPTIONAL_PARAM,
-  INVALID_SS_PARAMS,
-} from '../utils/testing/Invalid';
-
 import {
   ADMIN_ROLE,
   AUTH0_ID_TOKEN,
@@ -24,6 +16,13 @@ import {
   AUTH_TOKEN_EXPIRED,
   CSRF_COOKIE,
 } from './AuthConstants';
+
+import {
+  INVALID_PARAMS,
+  INVALID_PARAMS_FOR_OPTIONAL_PARAM,
+  INVALID_SS_PARAMS,
+} from '../utils/testing/Invalid';
+import { genRandomString } from '../utils/testing/TestUtils';
 
 // https://momentjs.com/docs/#/manipulating/add/
 // https://momentjs.com/docs/#/manipulating/subtract/
@@ -56,7 +55,7 @@ const MOCK_AUTH0_PAYLOAD = {
 };
 
 jest.mock('js-cookie');
-jest.mock('uuid/v4');
+jest.mock('uuid');
 
 describe('AuthUtils', () => {
 

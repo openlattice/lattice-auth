@@ -5,11 +5,8 @@
 import cookies from 'js-cookie';
 import decode from 'jwt-decode';
 import qs from 'qs';
-import uuid from 'uuid/v4';
 import { DateTime } from 'luxon';
-
-import Logger from '../utils/Logger';
-import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
+import { v4 as uuid } from 'uuid';
 
 import {
   ADMIN_ROLE,
@@ -17,9 +14,12 @@ import {
   AUTH0_USER_INFO,
   AUTH_COOKIE,
   AUTH_TOKEN_EXPIRED,
-  LOGIN_URL,
   CSRF_COOKIE,
+  LOGIN_URL,
 } from './AuthConstants';
+
+import Logger from '../utils/Logger';
+import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
 
 declare type UserInfo = {
   firstName ? :string;
