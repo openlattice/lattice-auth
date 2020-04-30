@@ -65,7 +65,7 @@
     "flow-bin": "~0.123.0",
     "immutable": "4.0.0-rc.9",
     "import-sort-style-openlattice": "~0.1.0",
-    "jest": "~25.4.0",
+    "jest": "~25.5.2",
     "jsonwebtoken": "~8.5.0",
     "lattice": "~0.74.0",
     "moment": "~2.24.0",
