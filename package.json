@@ -68,7 +68,7 @@
     "jest": "~25.4.0",
     "jsonwebtoken": "~8.5.0",
     "lattice": "~0.74.0",
-    "moment": "~2.25.3",
+    "moment": "~2.25.0",
     "npm-run-all": "~4.1.0",
     "react": "~16.13.0",
     "react-dom": "~16.13.0",
