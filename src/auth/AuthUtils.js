@@ -244,8 +244,6 @@ function hasAuthTokenExpired(authTokenOrExpiration :?string | number) :boolean {
   try {
     if (typeof authTokenOrExpiration === 'number' && Number.isFinite(authTokenOrExpiration)) {
       // authTokenOrExpiration is the expiration
-      // if the expiration is in milliseconds, isAfter() will return correctly. if the expiration is in seconds,
-      // isAfter() will convert it to a Date in 1970 since Date expects milliseconds, and thus always return true.
       return DateTime.local().valueOf() > DateTime.fromMillis(authTokenOrExpiration).valueOf();
     }
     if (typeof authTokenOrExpiration === 'string' && authTokenOrExpiration.length) {
