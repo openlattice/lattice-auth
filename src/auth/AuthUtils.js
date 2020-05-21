@@ -285,27 +285,15 @@ function isAdmin() :boolean {
   return hasAdminRole;
 }
 
-function redirectToLogin(redirectUrl :?string) :void {
+function redirectToLogin(location :Location) :void {
 
-  let queryString :string = '';
-  const { origin } = window.location;
+  const { href, origin } = location;
+  const queryString = qs.stringify(
+    { redirectUrl: href },
+    { addQueryPrefix: true },
+  );
 
-  if (isNonEmptyString(redirectUrl)) {
-    queryString = qs.stringify(
-      { redirectUrl },
-      { addQueryPrefix: true },
-    );
-  }
-  else {
-    const { pathname, hash } = window.location;
-    queryString = qs.stringify(
-      { redirectUrl: `${origin}${pathname}${hash}` },
-      { addQueryPrefix: true },
-    );
-  }
-
-  const loginUrl = `${origin}${LOGIN_PATH}/`;
-  window.location.replace(`${loginUrl}${queryString}`);
+  window.location.replace(`${origin}${LOGIN_PATH}/${queryString}`);
 }
 
 export {

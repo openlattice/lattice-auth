@@ -136,7 +136,7 @@ class AuthRoute extends Component<Props, State> {
     // TODO: is this the right action to take?
     // TODO: this is an ugly check... how can we improve on this?
     if (redirectToLogin && !isAuthenticating && !Auth0.urlAuthInfoAvailable()) {
-      AuthUtils.redirectToLogin(window.location.href);
+      AuthUtils.redirectToLogin(window.location);
       return null;
     }
 

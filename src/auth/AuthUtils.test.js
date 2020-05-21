@@ -507,30 +507,17 @@ describe('AuthUtils', () => {
 
     test('should replace url with the login url containing the correct redirectUrl as a query string param', () => {
 
-      const queryString1 = qs.stringify(
+      const queryString = qs.stringify(
         { redirectUrl: MOCK_URL.toString() },
         { addQueryPrefix: true },
       );
       global.jsdom.reconfigure({ url: MOCK_URL.toString() });
-      AuthUtils.redirectToLogin();
+      AuthUtils.redirectToLogin({ href: MOCK_URL.href, origin: MOCK_URL.origin });
       expect(replaceSpy).toHaveBeenCalledTimes(1);
-      expect(replaceSpy).toHaveBeenCalledWith(`${MOCK_URL.origin}${LOGIN_PATH}/${queryString1}`);
+      expect(replaceSpy).toHaveBeenCalledWith(`${MOCK_URL.origin}${LOGIN_PATH}/${queryString}`);
 
       // TODO: why is this failing?
-      // expect(window.location.href).toEqual(`${MOCK_URL.origin}${LOGIN_PATH}/${queryString1}`);
-
-      const mockRedirectUrl = 'https://justbeamit.com/abcde';
-      const queryString2 = qs.stringify(
-        { redirectUrl: mockRedirectUrl },
-        { addQueryPrefix: true },
-      );
-      global.jsdom.reconfigure({ url: MOCK_URL.toString() });
-      AuthUtils.redirectToLogin(mockRedirectUrl);
-      expect(replaceSpy).toHaveBeenCalledTimes(2);
-      expect(replaceSpy).toHaveBeenCalledWith(`${MOCK_URL.origin}${LOGIN_PATH}/${queryString2}`);
-
-      // TODO: why is this failing?
-      // expect(window.location.href).toEqual(`${MOCK_LOGIN_URL}${queryString2}`);
+      // expect(window.location.href).toEqual(`${MOCK_URL.origin}${LOGIN_PATH}/${queryString}`);
     });
 
   });
