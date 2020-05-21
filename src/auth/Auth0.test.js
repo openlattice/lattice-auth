@@ -4,6 +4,7 @@
 
 /* eslint-disable global-require */
 
+import qs from 'qs';
 import { fromJS } from 'immutable';
 
 import { LOGIN_PATH } from './AuthConstants';
@@ -172,6 +173,22 @@ describe('Auth0', () => {
         redirectUrl: '',
         state: '',
       });
+    });
+
+    test('should parse query string params', () => {
+      const Auth0 = require('./Auth0');
+      const mockQueryString = qs.stringify(
+        { redirectUrl: 'https://openlattice.com/app' },
+        { addQueryPrefix: true },
+      );
+      const url = `${MOCK_URL}${mockQueryString}`;
+      global.jsdom.reconfigure({ url });
+      expect(Auth0.parseUrl({ href: url, search: mockQueryString })).toEqual({
+        fragment: '',
+        redirectUrl: 'https://openlattice.com/app',
+        state: '',
+      });
+      expect(replaceSpy).not.toHaveBeenCalled();
     });
 
     test('should not replace url if "access_token" is missing', () => {
