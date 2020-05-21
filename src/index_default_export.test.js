@@ -43,7 +43,7 @@ describe('lattice-auth default export', () => {
 
   test('should export AuthUtils', () => {
     expect(Object.prototype.toString.call(LatticeAuth.AuthUtils)).toEqual(OBJECT_TAG);
-    expect(Object.keys(LatticeAuth.AuthUtils)).toHaveLength(10);
+    expect(Object.keys(LatticeAuth.AuthUtils)).toHaveLength(13);
   });
 
   test('should export configure()', () => {

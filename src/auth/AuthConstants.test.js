@@ -5,6 +5,7 @@
 import {
   ADMIN_ROLE,
   AUTH0_ID_TOKEN,
+  AUTH0_NONCE_STATE,
   AUTH0_USER_INFO,
   AUTH_COOKIE,
   AUTH_HEADER,
@@ -13,7 +14,6 @@ import {
   AUTH_TOKEN_EXPIRED,
   CSRF_COOKIE,
   LOGIN_PATH,
-  LOGIN_URL,
   ROOT_PATH,
 } from './AuthConstants';
 
@@ -25,6 +25,10 @@ describe('AuthActions', () => {
 
   test('AUTH0_ID_TOKEN', () => {
     expect(AUTH0_ID_TOKEN).toEqual('auth0_id_token');
+  });
+
+  test('AUTH0_NONCE_STATE', () => {
+    expect(AUTH0_NONCE_STATE).toEqual('auth0_nonce_state');
   });
 
   test('AUTH0_USER_INFO', () => {
@@ -57,10 +61,6 @@ describe('AuthActions', () => {
 
   test('LOGIN_PATH', () => {
     expect(LOGIN_PATH).toEqual('/login');
-  });
-
-  test('LOGIN_URL', () => {
-    expect(LOGIN_URL).toEqual('http://localhost/login/');
   });
 
   test('ROOT_PATH', () => {
