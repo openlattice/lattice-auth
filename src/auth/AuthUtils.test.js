@@ -11,6 +11,7 @@ import * as AuthUtils from './AuthUtils';
 import {
   ADMIN_ROLE,
   AUTH0_ID_TOKEN,
+  AUTH0_NONCE_STATE,
   AUTH0_USER_INFO,
   AUTH_COOKIE,
   AUTH_TOKEN_EXPIRED,
@@ -200,6 +201,26 @@ describe('AuthUtils', () => {
       AuthUtils.clearAuthInfo();
       expect(localStorage).toHaveLength(0);
       expect(localStorage.getItem(AUTH0_USER_INFO)).toBeNull();
+    });
+
+  });
+
+  describe('clearNonceState()', () => {
+
+    test(`should remove ${AUTH0_NONCE_STATE} from localStorage`, () => {
+      localStorage.setItem(AUTH0_NONCE_STATE, genRandomString()); // the value doesn't matter
+      AuthUtils.clearNonceState();
+      expect(localStorage).toHaveLength(0);
+      expect(localStorage.getItem(AUTH0_NONCE_STATE)).toBeNull();
+    });
+
+    test(`should only remove ${AUTH0_NONCE_STATE} from localStorage`, () => {
+      localStorage.setItem(AUTH0_NONCE_STATE, genRandomString()); // the value doesn't matter
+      localStorage.setItem(AUTH0_USER_INFO, genRandomString()); // the value doesn't matter
+      AuthUtils.clearNonceState();
+      expect(localStorage).toHaveLength(1);
+      expect(localStorage.getItem(AUTH0_NONCE_STATE)).toBeNull();
+      expect(localStorage.getItem(AUTH0_USER_INFO)).not.toBeNull();
     });
 
   });
