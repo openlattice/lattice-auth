@@ -18,7 +18,6 @@ const CSRF_COOKIE :'ol_csrf_token' = 'ol_csrf_token';
 
 const ROOT_PATH :'/' = '/';
 const LOGIN_PATH :'/login' = '/login';
-const LOGIN_URL :string = `${window.location.origin}${LOGIN_PATH}/`;
 
 export {
   ADMIN_ROLE,
@@ -32,6 +31,5 @@ export {
   AUTH_TOKEN_EXPIRED,
   CSRF_COOKIE,
   LOGIN_PATH,
-  LOGIN_URL,
   ROOT_PATH,
 };

@@ -5,6 +5,7 @@
 import cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
+import qs from 'qs';
 import { v4 as uuid } from 'uuid';
 
 import * as AuthUtils from './AuthUtils';
@@ -16,6 +17,7 @@ import {
   AUTH_COOKIE,
   AUTH_TOKEN_EXPIRED,
   CSRF_COOKIE,
+  LOGIN_PATH,
 } from './AuthConstants';
 
 import {
@@ -30,6 +32,8 @@ import { genRandomString } from '../utils/testing/TestUtils';
 const MOMENT_UNITS = ['s', 'm', 'h', 'd', 'w', 'M', 'y'];
 
 const MOCK_PROD_URL :string = 'https://openlattice.com';
+const MOCK_LOGIN_URL :string = `${MOCK_PROD_URL}${LOGIN_PATH}/`;
+const MOCK_APP_URL :string = `${MOCK_PROD_URL}/app/#/hello/world`;
 const MOCK_EXPIRATION_IN_SECONDS :number = moment().add(1, 'h').unix(); // 1 hour ahead
 const MOCK_CSRF_TOKEN :UUID = '40015ad9-fb3e-4741-9547-f7ac33cf4663';
 
@@ -59,6 +63,22 @@ jest.mock('js-cookie');
 jest.mock('uuid');
 
 describe('AuthUtils', () => {
+
+  const windowSpy = jest.spyOn(global, 'window', 'get');
+  let replaceSpy;
+
+  beforeAll(() => {
+    // https://www.grzegorowski.com/how-to-mock-global-window-with-jest
+    const testWindow = { ...window };
+    replaceSpy = jest.fn((...args) => testWindow.location.replace(...args));
+    windowSpy.mockImplementation(() => ({
+      ...testWindow,
+      location: {
+        ...testWindow.location,
+        replace: replaceSpy,
+      },
+    }));
+  });
 
   beforeEach(() => {
     localStorage.clear();
@@ -485,8 +505,32 @@ describe('AuthUtils', () => {
 
   });
 
-  // TODO: blocked by JSDOM, can't figure out how to mock window.location properly, specifically "origin"
-  // describe('redirectToLogin()', () => {});
+  describe('redirectToLogin()', () => {
+
+    test('should replace url with the login url containing the correct redirectUrl as a query string param', () => {
+
+      const queryString1 = qs.stringify(
+        { redirectUrl: MOCK_APP_URL },
+        { addQueryPrefix: true },
+      );
+
+      global.jsdom.reconfigure({ url: MOCK_APP_URL });
+      AuthUtils.redirectToLogin();
+      expect(replaceSpy).toHaveBeenCalledTimes(1);
+      expect(replaceSpy).toHaveBeenCalledWith(`${MOCK_LOGIN_URL}${queryString1}`);
+
+      const mockRedirectUrl = 'https://justbeamit.com/abcde';
+      const queryString2 = qs.stringify(
+        { redirectUrl: mockRedirectUrl },
+        { addQueryPrefix: true },
+      );
+      global.jsdom.reconfigure({ url: MOCK_APP_URL });
+      AuthUtils.redirectToLogin(mockRedirectUrl);
+      expect(replaceSpy).toHaveBeenCalledTimes(2);
+      expect(replaceSpy).toHaveBeenCalledWith(`${MOCK_LOGIN_URL}${queryString2}`);
+    });
+
+  });
 
   describe('storeNonceState()', () => {
 

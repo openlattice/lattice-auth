@@ -14,7 +14,6 @@ import {
   AUTH_TOKEN_EXPIRED,
   CSRF_COOKIE,
   LOGIN_PATH,
-  LOGIN_URL,
   ROOT_PATH,
 } from './AuthConstants';
 
@@ -62,10 +61,6 @@ describe('AuthActions', () => {
 
   test('LOGIN_PATH', () => {
     expect(LOGIN_PATH).toEqual('/login');
-  });
-
-  test('LOGIN_URL', () => {
-    expect(LOGIN_URL).toEqual('http://localhost/login/');
   });
 
   test('ROOT_PATH', () => {

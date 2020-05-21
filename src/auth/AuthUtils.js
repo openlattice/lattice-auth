@@ -17,7 +17,7 @@ import {
   AUTH_COOKIE,
   AUTH_TOKEN_EXPIRED,
   CSRF_COOKIE,
-  LOGIN_URL,
+  LOGIN_PATH,
 } from './AuthConstants';
 
 import Logger from '../utils/Logger';
@@ -303,7 +303,8 @@ function redirectToLogin(redirectUrl :?string) :void {
     );
   }
 
-  window.location.replace(`${LOGIN_URL}${queryString}`);
+  const loginUrl = `${window.location.origin}${LOGIN_PATH}/`;
+  window.location.replace(`${loginUrl}${queryString}`);
 }
 
 export {
