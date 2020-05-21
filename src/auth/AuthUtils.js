@@ -288,6 +288,7 @@ function isAdmin() :boolean {
 function redirectToLogin(redirectUrl :?string) :void {
 
   let queryString :string = '';
+  const { origin } = window.location;
 
   if (isNonEmptyString(redirectUrl)) {
     queryString = qs.stringify(
@@ -296,14 +297,14 @@ function redirectToLogin(redirectUrl :?string) :void {
     );
   }
   else {
-    const { origin, pathname, hash } = window.location;
+    const { pathname, hash } = window.location;
     queryString = qs.stringify(
       { redirectUrl: `${origin}${pathname}${hash}` },
       { addQueryPrefix: true },
     );
   }
 
-  const loginUrl = `${window.location.origin}${LOGIN_PATH}/`;
+  const loginUrl = `${origin}${LOGIN_PATH}/`;
   window.location.replace(`${loginUrl}${queryString}`);
 }
 

@@ -31,9 +31,7 @@ import { genRandomString } from '../utils/testing/TestUtils';
 // https://momentjs.com/docs/#/manipulating/subtract/
 const MOMENT_UNITS = ['s', 'm', 'h', 'd', 'w', 'M', 'y'];
 
-const MOCK_PROD_URL :string = 'https://openlattice.com';
-const MOCK_LOGIN_URL :string = `${MOCK_PROD_URL}${LOGIN_PATH}/`;
-const MOCK_APP_URL :string = `${MOCK_PROD_URL}/app/#/hello/world`;
+const MOCK_URL = new URL('https://openlattice.com/app/#/hello/world');
 const MOCK_EXPIRATION_IN_SECONDS :number = moment().add(1, 'h').unix(); // 1 hour ahead
 const MOCK_CSRF_TOKEN :UUID = '40015ad9-fb3e-4741-9547-f7ac33cf4663';
 
@@ -313,7 +311,7 @@ describe('AuthUtils', () => {
     describe('should set cookies - prod', () => {
 
       test(`"${AUTH_COOKIE}" cookie`, () => {
-        global.jsdom.reconfigure({ url: MOCK_PROD_URL });
+        global.jsdom.reconfigure({ url: MOCK_URL.toString() });
         AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
         expect(cookies.set).toHaveBeenCalledTimes(2);
         expect(cookies.set).toHaveBeenCalledWith(
@@ -331,7 +329,7 @@ describe('AuthUtils', () => {
 
       test(`"${CSRF_COOKIE}" cookie`, () => {
         uuid.mockImplementationOnce(() => MOCK_CSRF_TOKEN);
-        global.jsdom.reconfigure({ url: MOCK_PROD_URL });
+        global.jsdom.reconfigure({ url: MOCK_URL.toString() });
         AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
         expect(cookies.set).toHaveBeenCalledTimes(2);
         expect(cookies.set).toHaveBeenCalledWith(
@@ -510,24 +508,29 @@ describe('AuthUtils', () => {
     test('should replace url with the login url containing the correct redirectUrl as a query string param', () => {
 
       const queryString1 = qs.stringify(
-        { redirectUrl: MOCK_APP_URL },
+        { redirectUrl: MOCK_URL.toString() },
         { addQueryPrefix: true },
       );
-
-      global.jsdom.reconfigure({ url: MOCK_APP_URL });
+      global.jsdom.reconfigure({ url: MOCK_URL.toString() });
       AuthUtils.redirectToLogin();
       expect(replaceSpy).toHaveBeenCalledTimes(1);
-      expect(replaceSpy).toHaveBeenCalledWith(`${MOCK_LOGIN_URL}${queryString1}`);
+      expect(replaceSpy).toHaveBeenCalledWith(`${MOCK_URL.origin}${LOGIN_PATH}/${queryString1}`);
+
+      // TODO: why is this failing?
+      // expect(window.location.href).toEqual(`${MOCK_URL.origin}${LOGIN_PATH}/${queryString1}`);
 
       const mockRedirectUrl = 'https://justbeamit.com/abcde';
       const queryString2 = qs.stringify(
         { redirectUrl: mockRedirectUrl },
         { addQueryPrefix: true },
       );
-      global.jsdom.reconfigure({ url: MOCK_APP_URL });
+      global.jsdom.reconfigure({ url: MOCK_URL.toString() });
       AuthUtils.redirectToLogin(mockRedirectUrl);
       expect(replaceSpy).toHaveBeenCalledTimes(2);
-      expect(replaceSpy).toHaveBeenCalledWith(`${MOCK_LOGIN_URL}${queryString2}`);
+      expect(replaceSpy).toHaveBeenCalledWith(`${MOCK_URL.origin}${LOGIN_PATH}/${queryString2}`);
+
+      // TODO: why is this failing?
+      // expect(window.location.href).toEqual(`${MOCK_LOGIN_URL}${queryString2}`);
     });
 
   });
