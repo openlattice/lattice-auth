@@ -2,6 +2,7 @@
  * @flow
  */
 
+import _has from 'lodash/has';
 import cookies from 'js-cookie';
 import decode from 'jwt-decode';
 import qs from 'qs';
@@ -11,15 +12,20 @@ import { v4 as uuid } from 'uuid';
 import {
   ADMIN_ROLE,
   AUTH0_ID_TOKEN,
+  AUTH0_NONCE_STATE,
   AUTH0_USER_INFO,
   AUTH_COOKIE,
   AUTH_TOKEN_EXPIRED,
   CSRF_COOKIE,
-  LOGIN_URL,
+  LOGIN_PATH,
 } from './AuthConstants';
 
 import Logger from '../utils/Logger';
 import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
+
+declare type Auth0NonceState = {
+  redirectUrl :string;
+};
 
 declare type UserInfo = {
   firstName ? :string;
@@ -199,6 +205,40 @@ function storeAuthInfo(authInfo :?Object) :void {
   localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(userInfo));
 }
 
+function clearNonceState() :void {
+
+  localStorage.removeItem(AUTH0_NONCE_STATE);
+}
+
+function getNonceState(state :string) :?Auth0NonceState {
+
+  const nonce :?string = localStorage.getItem(AUTH0_NONCE_STATE);
+  if (typeof nonce !== 'string' || nonce.length <= 0) {
+    return null;
+  }
+
+  try {
+    const nonceObj = JSON.parse(nonce);
+    if (_has(nonceObj, state)) {
+      return nonceObj[state];
+    }
+  }
+  catch (e) {
+    return null;
+  }
+
+  return null;
+}
+
+function storeNonceState(state :string, value :Auth0NonceState) :void {
+
+  if (!isNonEmptyString(state)) {
+    return;
+  }
+
+  localStorage.setItem(AUTH0_NONCE_STATE, JSON.stringify({ [state]: value }));
+}
+
 function hasAuthTokenExpired(authTokenOrExpiration :?string | number) :boolean {
 
   try {
@@ -245,40 +285,34 @@ function isAdmin() :boolean {
   return hasAdminRole;
 }
 
-function redirectToLogin(redirectUrl :?string) :void {
+function redirectToLogin(location :Location) :void {
 
-  let queryString :string = '';
+  const { href, origin } = location;
+  const queryString = qs.stringify(
+    { redirectUrl: href },
+    { addQueryPrefix: true },
+  );
 
-  if (isNonEmptyString(redirectUrl)) {
-    queryString = qs.stringify(
-      { redirectUrl },
-      { addQueryPrefix: true },
-    );
-  }
-  else {
-    const { origin, pathname, hash } = window.location;
-    queryString = qs.stringify(
-      { redirectUrl: `${origin}${pathname}${hash}` },
-      { addQueryPrefix: true },
-    );
-  }
-
-  window.location.replace(`${LOGIN_URL}${queryString}`);
+  window.location.replace(`${origin}${LOGIN_PATH}/${queryString}`);
 }
 
 export {
   clearAuthInfo,
+  clearNonceState,
   getAuthToken,
   getAuthTokenExpiration,
   getCSRFToken,
+  getNonceState,
   getUserInfo,
   hasAuthTokenExpired,
   isAdmin,
   isAuthenticated,
   redirectToLogin,
   storeAuthInfo,
+  storeNonceState,
 };
 
 export type {
+  Auth0NonceState,
   UserInfo,
 };

@@ -4,6 +4,7 @@
 
 /* eslint-disable global-require */
 
+import qs from 'qs';
 import { fromJS } from 'immutable';
 
 import { LOGIN_PATH } from './AuthConstants';
@@ -25,8 +26,13 @@ declare var __AUTH0_CLIENT_ID__ :string;
 declare var __AUTH0_DOMAIN__ :string;
 
 const MOCK_AUTH_TOKEN :string = `${genRandomString()}.${genRandomString()}.${genRandomString()}`;
+const MOCK_STATE :string = 'openlattice-nonce-state';
 const MOCK_URL :string = 'https://openlattice.com';
-const MOCK_AUTH0_URL :string = `${MOCK_URL}/#access_token=${genRandomString()}&id_token=${genRandomString()}`;
+const MOCK_AUTH0_URL :string = `${MOCK_URL}/#`
+  + `access_token=${genRandomString()}`
+  + `&id_token=${genRandomString()}`
+  + `&state=${MOCK_STATE}`;
+
 const MOCK_LOGIN_URL :string = `${MOCK_URL}/#${LOGIN_PATH}`;
 
 const MOCK_CONFIG :Map<string, *> = fromJS({
@@ -167,6 +173,22 @@ describe('Auth0', () => {
         redirectUrl: '',
         state: '',
       });
+    });
+
+    test('should parse query string params', () => {
+      const Auth0 = require('./Auth0');
+      const mockQueryString = qs.stringify(
+        { redirectUrl: 'https://openlattice.com/app' },
+        { addQueryPrefix: true },
+      );
+      const url = `${MOCK_URL}${mockQueryString}`;
+      global.jsdom.reconfigure({ url });
+      expect(Auth0.parseUrl({ href: url, search: mockQueryString })).toEqual({
+        fragment: '',
+        redirectUrl: 'https://openlattice.com/app',
+        state: '',
+      });
+      expect(replaceSpy).not.toHaveBeenCalled();
     });
 
     test('should not replace url if "access_token" is missing', () => {
@@ -516,9 +538,12 @@ describe('Auth0', () => {
       const Auth0 = require('./Auth0');
       Auth0.initialize(MOCK_CONFIG);
       Auth0.authenticate()
-        .then((authInfo :Object) => {
-          expect(authInfo).toBeDefined();
-          expect(authInfo).toEqual(mockAuthInfo);
+        .then((value :Object) => {
+          expect(value).toBeDefined();
+          expect(value).toEqual({
+            authInfo: mockAuthInfo,
+            state: MOCK_STATE,
+          });
           done();
         })
         .catch(() => done.fail());

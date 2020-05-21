@@ -2,9 +2,11 @@
  * @flow
  */
 
+import qs from 'qs';
 import Lattice, { PrincipalsApi } from 'lattice';
 import { call, put, take } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
+import { v4 as uuid } from 'uuid';
 
 import * as Auth0 from './Auth0';
 import * as AuthUtils from './AuthUtils';
@@ -19,9 +21,11 @@ import {
   authSuccess,
 } from './AuthActions';
 import { LOGIN_PATH, ROOT_PATH } from './AuthConstants';
+import type { Auth0NonceState } from './AuthUtils';
 
 import Logger from '../utils/Logger';
 import { getConfig } from '../config/Configuration';
+import { isNonEmptyString } from '../utils/LangUtils';
 
 const LOG = new Logger('AuthSagas');
 
@@ -35,7 +39,7 @@ function* watchAuthAttempt() :Generator<*, *, *> {
   while (true) {
     yield take(AUTH_ATTEMPT);
     try {
-      const authInfo :Object = yield call(Auth0.authenticate);
+      const { authInfo, state } = yield call(Auth0.authenticate);
       /*
        * our attempt to authenticate has succeeded. now, we need to store the Auth0 id token and configure lattice
        * before dispatching AUTH_SUCCESS in order to guarantee that AuthRoute will receive the correct props in the
@@ -48,13 +52,33 @@ function* watchAuthAttempt() :Generator<*, *, *> {
         csrfToken: AuthUtils.getCSRFToken(),
       });
       yield call(PrincipalsApi.syncUser);
+
+      const nonce :?Auth0NonceState = AuthUtils.getNonceState(state);
+      if (nonce && nonce.redirectUrl) {
+        const redirectUrl = new URL(nonce.redirectUrl);
+        yield put(push(redirectUrl.hash.slice(1)));
+        AuthUtils.clearNonceState();
+      }
+
       yield put(authSuccess());
     }
     catch (error) {
       LOG.error(AUTH_ATTEMPT, error);
       // TODO: need better error handling depending on the error that comes through
       yield put(authFailure(error));
-      Auth0.getAuth0LockInstance().show();
+
+      let auth0NonceState :?string;
+      try {
+        auth0NonceState = uuid();
+        const { redirectUrl } = qs.parse(window.location.search, { ignoreQueryPrefix: true });
+        if (isNonEmptyString(redirectUrl)) {
+          yield AuthUtils.storeNonceState(auth0NonceState, { redirectUrl: (redirectUrl :any) });
+        }
+      }
+      catch (error2) {
+        LOG.error(AUTH_ATTEMPT, error2);
+      }
+      Auth0.getAuth0LockInstance().show({ auth: { params: { state: auth0NonceState } } });
     }
   }
 }

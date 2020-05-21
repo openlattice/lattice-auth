@@ -5,16 +5,19 @@
 import cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
+import qs from 'qs';
 import { v4 as uuid } from 'uuid';
 
 import * as AuthUtils from './AuthUtils';
 import {
   ADMIN_ROLE,
   AUTH0_ID_TOKEN,
+  AUTH0_NONCE_STATE,
   AUTH0_USER_INFO,
   AUTH_COOKIE,
   AUTH_TOKEN_EXPIRED,
   CSRF_COOKIE,
+  LOGIN_PATH,
 } from './AuthConstants';
 
 import {
@@ -28,7 +31,7 @@ import { genRandomString } from '../utils/testing/TestUtils';
 // https://momentjs.com/docs/#/manipulating/subtract/
 const MOMENT_UNITS = ['s', 'm', 'h', 'd', 'w', 'M', 'y'];
 
-const MOCK_PROD_URL :string = 'https://openlattice.com';
+const MOCK_URL = new URL('https://openlattice.com/app/#/hello/world');
 const MOCK_EXPIRATION_IN_SECONDS :number = moment().add(1, 'h').unix(); // 1 hour ahead
 const MOCK_CSRF_TOKEN :UUID = '40015ad9-fb3e-4741-9547-f7ac33cf4663';
 
@@ -58,6 +61,22 @@ jest.mock('js-cookie');
 jest.mock('uuid');
 
 describe('AuthUtils', () => {
+
+  const windowSpy = jest.spyOn(global, 'window', 'get');
+  let replaceSpy;
+
+  beforeAll(() => {
+    // https://www.grzegorowski.com/how-to-mock-global-window-with-jest
+    const testWindow = { ...window };
+    replaceSpy = jest.fn((...args) => testWindow.location.replace(...args));
+    windowSpy.mockImplementation(() => ({
+      ...testWindow,
+      location: {
+        ...testWindow.location,
+        replace: replaceSpy,
+      },
+    }));
+  });
 
   beforeEach(() => {
     localStorage.clear();
@@ -141,6 +160,24 @@ describe('AuthUtils', () => {
 
   });
 
+  describe('getNonceState()', () => {
+
+    test('should return null if the stored nonce state is invalid', () => {
+      INVALID_SS_PARAMS.forEach((invalid :any) => {
+        localStorage.setItem(AUTH0_NONCE_STATE, invalid);
+        expect(AuthUtils.getNonceState('test')).toBeNull();
+      });
+    });
+
+    test('should return the stored nonce state', () => {
+      const mockNonceState = genRandomString();
+      const mockValue = { id: genRandomString() };
+      localStorage.setItem(AUTH0_NONCE_STATE, JSON.stringify({ [mockNonceState]: mockValue }));
+      expect(AuthUtils.getNonceState(mockNonceState)).toEqual(mockValue);
+    });
+
+  });
+
   describe('hasAuthTokenExpired()', () => {
 
     test('should return true when given an invalid parameter', () => {
@@ -204,6 +241,26 @@ describe('AuthUtils', () => {
 
   });
 
+  describe('clearNonceState()', () => {
+
+    test(`should remove ${AUTH0_NONCE_STATE} from localStorage`, () => {
+      localStorage.setItem(AUTH0_NONCE_STATE, genRandomString()); // the value doesn't matter
+      AuthUtils.clearNonceState();
+      expect(localStorage).toHaveLength(0);
+      expect(localStorage.getItem(AUTH0_NONCE_STATE)).toBeNull();
+    });
+
+    test(`should only remove ${AUTH0_NONCE_STATE} from localStorage`, () => {
+      localStorage.setItem(AUTH0_NONCE_STATE, genRandomString()); // the value doesn't matter
+      localStorage.setItem(AUTH0_USER_INFO, genRandomString()); // the value doesn't matter
+      AuthUtils.clearNonceState();
+      expect(localStorage).toHaveLength(1);
+      expect(localStorage.getItem(AUTH0_NONCE_STATE)).toBeNull();
+      expect(localStorage.getItem(AUTH0_USER_INFO)).not.toBeNull();
+    });
+
+  });
+
   describe('storeAuthInfo()', () => {
 
     test('should not store anything when given invalid auth info', () => {
@@ -254,7 +311,7 @@ describe('AuthUtils', () => {
     describe('should set cookies - prod', () => {
 
       test(`"${AUTH_COOKIE}" cookie`, () => {
-        global.jsdom.reconfigure({ url: MOCK_PROD_URL });
+        global.jsdom.reconfigure({ url: MOCK_URL.toString() });
         AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
         expect(cookies.set).toHaveBeenCalledTimes(2);
         expect(cookies.set).toHaveBeenCalledWith(
@@ -272,7 +329,7 @@ describe('AuthUtils', () => {
 
       test(`"${CSRF_COOKIE}" cookie`, () => {
         uuid.mockImplementationOnce(() => MOCK_CSRF_TOKEN);
-        global.jsdom.reconfigure({ url: MOCK_PROD_URL });
+        global.jsdom.reconfigure({ url: MOCK_URL.toString() });
         AuthUtils.storeAuthInfo(MOCK_AUTH0_PAYLOAD);
         expect(cookies.set).toHaveBeenCalledTimes(2);
         expect(cookies.set).toHaveBeenCalledWith(
@@ -446,7 +503,42 @@ describe('AuthUtils', () => {
 
   });
 
-  // TODO: blocked by JSDOM, can't figure out how to mock window.location properly, specifically "origin"
-  // describe('redirectToLogin()', () => {});
+  describe('redirectToLogin()', () => {
+
+    test('should replace url with the login url containing the correct redirectUrl as a query string param', () => {
+
+      const queryString = qs.stringify(
+        { redirectUrl: MOCK_URL.toString() },
+        { addQueryPrefix: true },
+      );
+      global.jsdom.reconfigure({ url: MOCK_URL.toString() });
+      AuthUtils.redirectToLogin({ href: MOCK_URL.href, origin: MOCK_URL.origin });
+      expect(replaceSpy).toHaveBeenCalledTimes(1);
+      expect(replaceSpy).toHaveBeenCalledWith(`${MOCK_URL.origin}${LOGIN_PATH}/${queryString}`);
+
+      // TODO: why is this failing?
+      // expect(window.location.href).toEqual(`${MOCK_URL.origin}${LOGIN_PATH}/${queryString}`);
+    });
+
+  });
+
+  describe('storeNonceState()', () => {
+
+    test('should not store anything when given invalid params', () => {
+      INVALID_PARAMS.forEach((invalid :any) => {
+        AuthUtils.storeNonceState(invalid, { id: 'test' });
+        expect(localStorage).toHaveLength(0);
+      });
+    });
+
+    test('should update localStorage with the correct nonce state', () => {
+      const mockNonceState = genRandomString();
+      const mockValue = { id: genRandomString() };
+      AuthUtils.storeNonceState(mockNonceState, mockValue);
+      expect(localStorage).toHaveLength(1);
+      expect(localStorage.getItem(AUTH0_NONCE_STATE)).toEqual(JSON.stringify({ [mockNonceState]: mockValue }));
+    });
+
+  });
 
 });
