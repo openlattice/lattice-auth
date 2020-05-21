@@ -142,6 +142,24 @@ describe('AuthUtils', () => {
 
   });
 
+  describe('getNonceState()', () => {
+
+    test('should return null if the stored nonce state is invalid', () => {
+      INVALID_SS_PARAMS.forEach((invalid :any) => {
+        localStorage.setItem(AUTH0_NONCE_STATE, invalid);
+        expect(AuthUtils.getNonceState('test')).toBeNull();
+      });
+    });
+
+    test('should return the stored nonce state', () => {
+      const mockNonceState = genRandomString();
+      const mockValue = { id: genRandomString() };
+      localStorage.setItem(AUTH0_NONCE_STATE, JSON.stringify({ [mockNonceState]: mockValue }));
+      expect(AuthUtils.getNonceState(mockNonceState)).toEqual(mockValue);
+    });
+
+  });
+
   describe('hasAuthTokenExpired()', () => {
 
     test('should return true when given an invalid parameter', () => {
