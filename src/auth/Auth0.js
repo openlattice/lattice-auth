@@ -184,7 +184,7 @@ function authenticate() :Promise<*> {
       else {
         parsedUrl.fragment = '';
         parsedUrl.redirectUrl = '';
-        resolve(authInfo);
+        resolve({ authInfo, state: parsedUrl.state });
       }
     });
 
