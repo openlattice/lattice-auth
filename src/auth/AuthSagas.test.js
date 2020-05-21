@@ -41,7 +41,9 @@ jest.mock('lattice', () => ({
 
 jest.mock('./AuthUtils', () => ({
   clearAuthInfo: jest.fn(),
+  clearNonceState: jest.fn(),
   getCSRFToken: jest.fn(),
+  getNonceState: jest.fn(),
   storeAuthInfo: jest.fn(),
 }));
 
@@ -51,7 +53,9 @@ describe('AuthSagas', () => {
 
   beforeEach(() => {
     AuthUtils.clearAuthInfo.mockClear();
+    AuthUtils.clearNonceState.mockClear();
     AuthUtils.getCSRFToken.mockClear();
+    AuthUtils.getNonceState.mockClear();
     AuthUtils.storeAuthInfo.mockClear();
     Lattice.configure.mockClear();
   });
@@ -63,6 +67,9 @@ describe('AuthSagas', () => {
       const expInSecondsSinceEpoch :number = DateTime.local().plus({ days: 1 }).toMillis(); // 1 day ahead
       const mockAuthToken :string = jwt.sign({ data: genRandomString(), exp: expInSecondsSinceEpoch }, 'secret');
       const mockAuthInfo = { accessToken: genRandomString(), idToken: mockAuthToken };
+      const mockNonceState = genRandomString();
+
+      AuthUtils.getNonceState.mockImplementationOnce(() => {});
 
       const iterator = watchAuthAttempt();
       expect(Object.prototype.toString.call(iterator)).toEqual(GENERATOR_TAG);
@@ -73,13 +80,52 @@ describe('AuthSagas', () => {
       step = iterator.next();
       expect(step.value).toEqual(call(Auth0.authenticate));
 
-      step = iterator.next(mockAuthInfo);
+      step = iterator.next({ authInfo: mockAuthInfo, state: mockNonceState });
       expect(AuthUtils.storeAuthInfo).toHaveBeenCalledTimes(1);
       expect(AuthUtils.storeAuthInfo).toHaveBeenCalledWith(mockAuthInfo);
       expect(AuthUtils.getCSRFToken).toHaveBeenCalledTimes(1);
       expect(Lattice.configure).toHaveBeenCalledTimes(1);
       expect(Lattice.configure).toHaveBeenCalledWith(expect.objectContaining({ authToken: mockAuthToken }));
       expect(step.value).toEqual(call(PrincipalsApi.syncUser));
+
+      step = iterator.next();
+      expect(AuthUtils.getNonceState).toHaveBeenCalledTimes(1);
+      expect(AuthUtils.getNonceState).toHaveBeenCalledWith(mockNonceState);
+
+      expect(step.value).toEqual(put(authSuccess()));
+    });
+
+    test('attempt success - redirectUrl', () => {
+
+      const expInSecondsSinceEpoch :number = DateTime.local().plus({ days: 1 }).toMillis(); // 1 day ahead
+      const mockAuthToken :string = jwt.sign({ data: genRandomString(), exp: expInSecondsSinceEpoch }, 'secret');
+      const mockAuthInfo = { accessToken: genRandomString(), idToken: mockAuthToken };
+      const mockNonceState = genRandomString();
+      const mockRedirectUrl = 'https://openlattice.com/test/#/hello/world';
+
+      AuthUtils.getNonceState.mockImplementationOnce(() => ({ redirectUrl: mockRedirectUrl }));
+
+      const iterator = watchAuthAttempt();
+      expect(Object.prototype.toString.call(iterator)).toEqual(GENERATOR_TAG);
+
+      let step = iterator.next();
+      expect(step.value).toEqual(take(AUTH_ATTEMPT));
+
+      step = iterator.next();
+      expect(step.value).toEqual(call(Auth0.authenticate));
+
+      step = iterator.next({ authInfo: mockAuthInfo, state: mockNonceState });
+      expect(AuthUtils.storeAuthInfo).toHaveBeenCalledTimes(1);
+      expect(AuthUtils.storeAuthInfo).toHaveBeenCalledWith(mockAuthInfo);
+      expect(AuthUtils.getCSRFToken).toHaveBeenCalledTimes(1);
+      expect(Lattice.configure).toHaveBeenCalledTimes(1);
+      expect(Lattice.configure).toHaveBeenCalledWith(expect.objectContaining({ authToken: mockAuthToken }));
+      expect(step.value).toEqual(call(PrincipalsApi.syncUser));
+
+      step = iterator.next();
+      expect(AuthUtils.getNonceState).toHaveBeenCalledTimes(1);
+      expect(AuthUtils.getNonceState).toHaveBeenCalledWith(mockNonceState);
+      expect(step.value).toEqual(put(push('/hello/world')));
 
       step = iterator.next();
       expect(step.value).toEqual(put(authSuccess()));
