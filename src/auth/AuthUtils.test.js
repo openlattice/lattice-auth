@@ -48,7 +48,7 @@ const LUXON_UNITS :DurationUnit[] = [
 ];
 
 const MOCK_URL = new URL('https://openlattice.com/app/#/hello/world');
-const MOCK_EXPIRATION_IN_SECONDS :number = DateTime.local().plus({ hours: 1 }).toMillis(); // 1 hour ahead
+const MOCK_EXPIRATION_IN_SECONDS :number = DateTime.local().plus({ hours: 1 }).toSeconds(); // 1 hour ahead
 const MOCK_CSRF_TOKEN :UUID = '40015ad9-fb3e-4741-9547-f7ac33cf4663';
 
 const MOCK_AUTH_TOKEN :string = jwt.sign(
