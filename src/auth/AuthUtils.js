@@ -232,6 +232,10 @@ function getNonceState(state :string) :?Auth0NonceState {
 
 function storeNonceState(state :string, value :Auth0NonceState) :void {
 
+  if (!isNonEmptyString(state)) {
+    return;
+  }
+
   localStorage.setItem(AUTH0_NONCE_STATE, JSON.stringify({ [state]: value }));
 }
 

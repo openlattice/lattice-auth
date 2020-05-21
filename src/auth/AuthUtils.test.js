@@ -488,4 +488,23 @@ describe('AuthUtils', () => {
   // TODO: blocked by JSDOM, can't figure out how to mock window.location properly, specifically "origin"
   // describe('redirectToLogin()', () => {});
 
+  describe('storeNonceState()', () => {
+
+    test('should not store anything when given invalid params', () => {
+      INVALID_PARAMS.forEach((invalid :any) => {
+        AuthUtils.storeNonceState(invalid, { id: 'test' });
+        expect(localStorage).toHaveLength(0);
+      });
+    });
+
+    test('should update localStorage with the correct nonce state', () => {
+      const mockNonceState = genRandomString();
+      const mockValue = { id: genRandomString() };
+      AuthUtils.storeNonceState(mockNonceState, mockValue);
+      expect(localStorage).toHaveLength(1);
+      expect(localStorage.getItem(AUTH0_NONCE_STATE)).toEqual(JSON.stringify({ [mockNonceState]: mockValue }));
+    });
+
+  });
+
 });
