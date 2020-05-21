@@ -4,9 +4,10 @@
 
 import cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
-import moment from 'moment';
 import qs from 'qs';
+import { DateTime } from 'luxon';
 import { v4 as uuid } from 'uuid';
+import type { DurationUnit } from 'luxon';
 
 import * as AuthUtils from './AuthUtils';
 import {
@@ -27,12 +28,27 @@ import {
 } from '../utils/testing/Invalid';
 import { genRandomString } from '../utils/testing/TestUtils';
 
-// https://momentjs.com/docs/#/manipulating/add/
-// https://momentjs.com/docs/#/manipulating/subtract/
-const MOMENT_UNITS = ['s', 'm', 'h', 'd', 'w', 'M', 'y'];
+const LUXON_UNITS :DurationUnit[] = [
+  'year',
+  'years',
+  'month',
+  'months',
+  'week',
+  'weeks',
+  'day',
+  'days',
+  'hour',
+  'hours',
+  'minute',
+  'minutes',
+  'second',
+  'seconds',
+  'millisecond',
+  'milliseconds',
+];
 
 const MOCK_URL = new URL('https://openlattice.com/app/#/hello/world');
-const MOCK_EXPIRATION_IN_SECONDS :number = moment().add(1, 'h').unix(); // 1 hour ahead
+const MOCK_EXPIRATION_IN_SECONDS :number = DateTime.local().plus({ hours: 1 }).toSeconds(); // 1 hour ahead
 const MOCK_CSRF_TOKEN :UUID = '40015ad9-fb3e-4741-9547-f7ac33cf4663';
 
 const MOCK_AUTH_TOKEN :string = jwt.sign(
@@ -129,8 +145,9 @@ describe('AuthUtils', () => {
     });
 
     test('should return the correct expiration', () => {
-      const expInSecondsSinceEpoch :number = moment().add(1, 'h').unix(); // 1 hour ahead
-      const expInMillisSinceEpoch :number = expInSecondsSinceEpoch * 1000;
+      const futureDateTime = DateTime.local().plus({ hours: 1 });
+      const expInSecondsSinceEpoch :number = futureDateTime.toSeconds();
+      const expInMillisSinceEpoch :number = futureDateTime.toMillis();
       const mockAuthToken :string = jwt.sign({ data: genRandomString(), exp: expInSecondsSinceEpoch }, 'secret');
       localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
       expect(AuthUtils.getAuthTokenExpiration()).toEqual(expInMillisSinceEpoch);
@@ -187,28 +204,28 @@ describe('AuthUtils', () => {
     });
 
     test('should return true when given an expired expiration', () => {
-      MOMENT_UNITS.forEach((unit :string) => {
-        expect(AuthUtils.hasAuthTokenExpired(moment().subtract(1, unit).valueOf())).toEqual(true);
+      LUXON_UNITS.forEach((unit :string) => {
+        expect(AuthUtils.hasAuthTokenExpired(DateTime.local().minus({ [unit]: 1 }).toMillis())).toEqual(true);
       });
     });
 
     test('should return false when given an expiration in the future', () => {
-      MOMENT_UNITS.forEach((unit :string) => {
-        expect(AuthUtils.hasAuthTokenExpired(moment().add(1, unit).valueOf())).toEqual(false);
+      LUXON_UNITS.forEach((unit :string) => {
+        expect(AuthUtils.hasAuthTokenExpired(DateTime.local().plus({ [unit]: 1 }).toMillis())).toEqual(false);
       });
     });
 
     test('should return true when given an expired auth token', () => {
-      MOMENT_UNITS.forEach((unit :string) => {
-        const expInSecondsSinceEpoch :number = moment().subtract(1, unit).unix();
+      LUXON_UNITS.forEach((unit :string) => {
+        const expInSecondsSinceEpoch :number = DateTime.local().minus({ [unit]: 1 }).toSeconds();
         const mockAuthToken :string = jwt.sign({ data: genRandomString(), exp: expInSecondsSinceEpoch }, 'secret');
         expect(AuthUtils.hasAuthTokenExpired(mockAuthToken)).toEqual(true);
       });
     });
 
     test('should return false when given an auth token with an expiration in the future', () => {
-      MOMENT_UNITS.forEach((unit :string) => {
-        const expInSecondsSinceEpoch :number = moment().add(1, unit).unix();
+      LUXON_UNITS.forEach((unit :string) => {
+        const expInSecondsSinceEpoch :number = DateTime.local().plus({ [unit]: 1 }).toSeconds();
         const mockAuthToken :string = jwt.sign({ data: genRandomString(), exp: expInSecondsSinceEpoch }, 'secret');
         expect(AuthUtils.hasAuthTokenExpired(mockAuthToken)).toEqual(false);
       });
@@ -433,8 +450,8 @@ describe('AuthUtils', () => {
     });
 
     test('should return false if the stored auth token is expired', () => {
-      MOMENT_UNITS.forEach((unit :string) => {
-        const expInSecondsSinceEpoch :number = moment().subtract(1, unit).unix();
+      LUXON_UNITS.forEach((unit :string) => {
+        const expInSecondsSinceEpoch :number = DateTime.local().minus({ [unit]: 1 }).toSeconds();
         const mockAuthToken :string = jwt.sign({ data: genRandomString(), exp: expInSecondsSinceEpoch }, 'secret');
         localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
         expect(AuthUtils.isAuthenticated()).toEqual(false);
@@ -443,8 +460,8 @@ describe('AuthUtils', () => {
     });
 
     test('should return false if the stored auth token expires in the future', () => {
-      MOMENT_UNITS.forEach((unit :string) => {
-        const expInSecondsSinceEpoch :number = moment().add(1, unit).unix();
+      LUXON_UNITS.forEach((unit :string) => {
+        const expInSecondsSinceEpoch :number = DateTime.local().plus({ [unit]: 1 }).toSeconds();
         const mockAuthToken :string = jwt.sign({ data: genRandomString(), exp: expInSecondsSinceEpoch }, 'secret');
         localStorage.setItem(AUTH0_ID_TOKEN, mockAuthToken);
         expect(AuthUtils.isAuthenticated()).toEqual(true);

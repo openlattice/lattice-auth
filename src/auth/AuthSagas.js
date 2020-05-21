@@ -57,7 +57,7 @@ function* watchAuthAttempt() :Generator<*, *, *> {
       if (nonce && nonce.redirectUrl) {
         const redirectUrl = new URL(nonce.redirectUrl);
         yield put(push(redirectUrl.hash.slice(1)));
-        AuthUtils.clearNonceState();
+        yield AuthUtils.clearNonceState();
       }
 
       yield put(authSuccess());
