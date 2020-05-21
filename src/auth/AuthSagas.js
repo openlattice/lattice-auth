@@ -72,7 +72,7 @@ function* watchAuthAttempt() :Generator<*, *, *> {
         auth0NonceState = uuid();
         const { redirectUrl } = qs.parse(window.location.search, { ignoreQueryPrefix: true });
         if (isNonEmptyString(redirectUrl)) {
-          AuthUtils.storeNonceState(auth0NonceState, { redirectUrl: (redirectUrl :any) });
+          yield AuthUtils.storeNonceState(auth0NonceState, { redirectUrl: (redirectUrl :any) });
         }
       }
       catch (error2) {

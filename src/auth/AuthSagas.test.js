@@ -3,10 +3,12 @@
  */
 
 import jwt from 'jsonwebtoken';
+import qs from 'qs';
 import Lattice, { PrincipalsApi } from 'lattice';
 import { call, put, take } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
 import { DateTime } from 'luxon';
+import { v4 as uuid } from 'uuid';
 
 import * as Auth0 from './Auth0';
 import * as AuthUtils from './AuthUtils';
@@ -39,12 +41,21 @@ jest.mock('lattice', () => ({
   configure: jest.fn(),
 }));
 
+jest.mock('qs', () => ({
+  parse: jest.fn(),
+}));
+
+jest.mock('uuid', () => ({
+  v4: jest.fn(),
+}));
+
 jest.mock('./AuthUtils', () => ({
   clearAuthInfo: jest.fn(),
   clearNonceState: jest.fn(),
   getCSRFToken: jest.fn(),
   getNonceState: jest.fn(),
   storeAuthInfo: jest.fn(),
+  storeNonceState: jest.fn(),
 }));
 
 const GENERATOR_TAG = '[object Generator]';
@@ -57,7 +68,9 @@ describe('AuthSagas', () => {
     AuthUtils.getCSRFToken.mockClear();
     AuthUtils.getNonceState.mockClear();
     AuthUtils.storeAuthInfo.mockClear();
+    AuthUtils.storeNonceState.mockClear();
     Lattice.configure.mockClear();
+    qs.parse.mockClear();
   });
 
   describe('watchAuthAttempt()', () => {
@@ -144,6 +157,35 @@ describe('AuthSagas', () => {
 
       step = iterator.next();
       expect(step.value).toEqual(put(authFailure(expect.any(Error))));
+    });
+
+    test('attempt failure - redirectUrl', () => {
+
+      const mockUrl = 'https://openlattice.com/app/#/hello/world';
+      qs.parse.mockImplementationOnce(() => ({
+        redirectUrl: mockUrl
+      }));
+
+      const mockNonceState = 'openlattice-nonce-state';
+      uuid.mockImplementationOnce(() => mockNonceState);
+
+      const iterator = watchAuthAttempt();
+      expect(Object.prototype.toString.call(iterator)).toEqual(GENERATOR_TAG);
+
+      let step = iterator.next();
+      expect(step.value).toEqual(take(AUTH_ATTEMPT));
+
+      step = iterator.next();
+      expect(step.value).toEqual(call(Auth0.authenticate));
+
+      step = iterator.next();
+      expect(step.value).toEqual(put(authFailure(expect.any(Error))));
+
+      step = iterator.next();
+      expect(uuid).toHaveBeenCalledTimes(1);
+      expect(qs.parse).toHaveBeenCalledTimes(1);
+      expect(AuthUtils.storeNonceState).toHaveBeenCalledTimes(1);
+      expect(AuthUtils.storeNonceState).toHaveBeenCalledWith(mockNonceState, { redirectUrl: mockUrl });
     });
 
   });
