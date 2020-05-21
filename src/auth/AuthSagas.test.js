@@ -141,6 +141,9 @@ describe('AuthSagas', () => {
       expect(step.value).toEqual(put(push('/hello/world')));
 
       step = iterator.next();
+      expect(AuthUtils.clearNonceState).toHaveBeenCalledTimes(1);
+
+      step = iterator.next();
       expect(step.value).toEqual(put(authSuccess()));
     });
 
