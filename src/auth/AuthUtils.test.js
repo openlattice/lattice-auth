@@ -43,8 +43,9 @@ const LUXON_UNITS :DurationUnit[] = [
   'minutes',
   'second',
   'seconds',
-  'millisecond',
-  'milliseconds',
+  // I think these might cause intermittent / non-deterministic failures
+  // 'millisecond',
+  // 'milliseconds',
 ];
 
 const MOCK_URL = new URL('https://openlattice.com/app/#/hello/world');
