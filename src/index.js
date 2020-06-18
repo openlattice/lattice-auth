@@ -12,6 +12,9 @@ import * as AuthSagas from './auth/AuthSagas';
 import * as AuthUtils from './auth/AuthUtils';
 import { configure } from './config/Configuration';
 
+export type * from './auth/AuthUtils';
+export type { LatticeAuthConfig } from './config/Configuration';
+
 // injected by Webpack.DefinePlugin
 declare var __VERSION__ :string;
 const version :string = __VERSION__;

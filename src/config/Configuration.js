@@ -3,10 +3,11 @@
  */
 
 import Lattice from 'lattice';
+import _isBoolean from 'lodash/isBoolean';
 import { Map, fromJS } from 'immutable';
 
-import OpenLatticeLogo from '../assets/images/ol-logo-auth0.png';
 import Logger from '../utils/Logger';
+import OpenLatticeLogo from '../assets/images/ol-logo-auth0.png';
 import * as Auth0 from '../auth/Auth0';
 import * as AuthUtils from '../auth/AuthUtils';
 import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
@@ -146,7 +147,7 @@ function setAuth0Lock(config :LatticeAuthConfig) :void {
   }
 
   const { allowSignUp } = auth0Lock;
-  if (allowSignUp === true || allowSignUp === false) {
+  if (_isBoolean(allowSignUp)) {
     configuration = configuration.setIn(['auth0Lock', 'allowSignUp'], allowSignUp);
   }
   // auth0Lock.allowSignUp is optional, so null and undefined are allowed
@@ -233,4 +234,8 @@ function configure(config :LatticeAuthConfig) :void {
 export {
   configure,
   getConfig,
+};
+
+export type {
+  LatticeAuthConfig,
 };
