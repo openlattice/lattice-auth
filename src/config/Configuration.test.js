@@ -18,6 +18,7 @@ declare var __AUTH0_CLIENT_ID__ :string;
 declare var __AUTH0_DOMAIN__ :string;
 
 const MOCK_AUTH0_LOCK = fromJS({
+  allowSignUp: true,
   logo: '/static/assets/images/logo.abc123.png',
   title: 'OpenLattice, Inc.',
   primaryColor: '#6124e2'
