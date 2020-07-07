@@ -5,6 +5,7 @@
 import cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
 import qs from 'qs';
+import { List } from 'immutable';
 import { DateTime } from 'luxon';
 import { v4 as uuid } from 'uuid';
 import type { DurationUnit } from 'luxon';
@@ -21,11 +22,7 @@ import {
   LOGIN_PATH,
 } from './AuthConstants';
 
-import {
-  INVALID_PARAMS,
-  INVALID_PARAMS_FOR_OPTIONAL_PARAM,
-  INVALID_SS_PARAMS,
-} from '../utils/testing/Invalid';
+import { INVALID_PARAMS } from '../utils/testing/InvalidParams';
 import { genRandomString } from '../utils/testing/TestUtils';
 
 const LUXON_UNITS :DurationUnit[] = [
@@ -106,7 +103,7 @@ describe('AuthUtils', () => {
   describe('getAuthToken()', () => {
 
     test('should return null if the stored auth token is invalid', () => {
-      INVALID_SS_PARAMS.forEach((invalid :any) => {
+      INVALID_PARAMS.forEach((invalid :any) => {
         localStorage.setItem(AUTH0_ID_TOKEN, invalid);
         expect(AuthUtils.getAuthToken()).toBeNull();
         expect(cookies.get).not.toHaveBeenCalled();
@@ -124,7 +121,7 @@ describe('AuthUtils', () => {
   describe('getAuthTokenExpiration()', () => {
 
     test('should return -1 if the stored auth token is invalid', () => {
-      INVALID_SS_PARAMS.forEach((invalid :any) => {
+      INVALID_PARAMS.forEach((invalid :any) => {
         localStorage.setItem(AUTH0_ID_TOKEN, invalid);
         expect(AuthUtils.getAuthTokenExpiration()).toEqual(AUTH_TOKEN_EXPIRED);
         expect(cookies.get).not.toHaveBeenCalled();
@@ -132,17 +129,20 @@ describe('AuthUtils', () => {
     });
 
     test('should return -1 if given an invalid value', () => {
-      INVALID_SS_PARAMS.forEach((invalid :any) => {
+      INVALID_PARAMS.forEach((invalid :any) => {
         expect(AuthUtils.getAuthTokenExpiration(invalid)).toEqual(AUTH_TOKEN_EXPIRED);
         expect(cookies.get).not.toHaveBeenCalled();
       });
     });
 
     test('should return -1 if given an invalid value even if the stored auth token is valid', () => {
-      INVALID_PARAMS_FOR_OPTIONAL_PARAM.forEach((invalid :any) => {
-        expect(AuthUtils.getAuthTokenExpiration(invalid)).toEqual(AUTH_TOKEN_EXPIRED);
-        expect(cookies.get).not.toHaveBeenCalled();
-      });
+      List(INVALID_PARAMS)
+        .delete(0) // remove undefined
+        .delete(0) // remove null
+        .forEach((invalid :any) => {
+          expect(AuthUtils.getAuthTokenExpiration(invalid)).toEqual(AUTH_TOKEN_EXPIRED);
+          expect(cookies.get).not.toHaveBeenCalled();
+        });
     });
 
     test('should return the correct expiration', () => {
@@ -160,7 +160,7 @@ describe('AuthUtils', () => {
   describe('getCSRFToken', () => {
 
     test('should return null if the stored csrf token is invalid', () => {
-      INVALID_SS_PARAMS.forEach((invalid :any) => {
+      INVALID_PARAMS.forEach((invalid :any) => {
         cookies.get.mockImplementationOnce(() => invalid);
         expect(AuthUtils.getCSRFToken()).toBeNull();
         expect(cookies.get).toHaveBeenCalledTimes(1);
@@ -181,7 +181,7 @@ describe('AuthUtils', () => {
   describe('getNonceState()', () => {
 
     test('should return null if the stored nonce state is invalid', () => {
-      INVALID_SS_PARAMS.forEach((invalid :any) => {
+      INVALID_PARAMS.forEach((invalid :any) => {
         localStorage.setItem(AUTH0_NONCE_STATE, invalid);
         expect(AuthUtils.getNonceState('test')).toBeNull();
       });
@@ -412,7 +412,7 @@ describe('AuthUtils', () => {
     });
 
     test('should return null if the stored user info is invalid', () => {
-      INVALID_SS_PARAMS.forEach((invalid :any) => {
+      INVALID_PARAMS.forEach((invalid :any) => {
         localStorage.setItem(AUTH0_USER_INFO, invalid);
         expect(AuthUtils.getUserInfo()).toBeNull();
       });
@@ -443,7 +443,7 @@ describe('AuthUtils', () => {
     });
 
     test('should return false if the stored auth token is invalid', () => {
-      INVALID_SS_PARAMS.forEach((invalid :any) => {
+      INVALID_PARAMS.forEach((invalid :any) => {
         localStorage.setItem(AUTH0_ID_TOKEN, invalid);
         expect(AuthUtils.isAuthenticated()).toEqual(false);
         expect(cookies.get).not.toHaveBeenCalled();
@@ -479,7 +479,7 @@ describe('AuthUtils', () => {
     });
 
     test('should return false if the stored user info is invalid', () => {
-      INVALID_SS_PARAMS.forEach((invalid :any) => {
+      INVALID_PARAMS.forEach((invalid :any) => {
         localStorage.setItem(AUTH0_USER_INFO, invalid);
         expect(AuthUtils.isAdmin()).toEqual(false);
       });
@@ -491,7 +491,7 @@ describe('AuthUtils', () => {
       localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
       expect(AuthUtils.isAdmin()).toEqual(false);
 
-      INVALID_SS_PARAMS.forEach((invalid :any) => {
+      INVALID_PARAMS.forEach((invalid :any) => {
         mockUserInfo.roles = [invalid];
         localStorage.setItem(AUTH0_USER_INFO, JSON.stringify(mockUserInfo));
         expect(AuthUtils.isAdmin()).toEqual(false);
@@ -543,10 +543,12 @@ describe('AuthUtils', () => {
   describe('storeNonceState()', () => {
 
     test('should not store anything when given invalid params', () => {
-      INVALID_PARAMS.forEach((invalid :any) => {
-        AuthUtils.storeNonceState(invalid, { id: 'test' });
-        expect(localStorage).toHaveLength(0);
-      });
+      List(INVALID_PARAMS)
+        .delete(16) // remove "invalid_special_string_value"
+        .forEach((invalid :any) => {
+          AuthUtils.storeNonceState(invalid, { id: 'test' });
+          expect(localStorage).toHaveLength(0);
+        });
     });
 
     test('should update localStorage with the correct nonce state', () => {

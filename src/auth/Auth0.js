@@ -119,6 +119,7 @@ function initialize(config :Map<string, *>) :void {
     config.get('auth0Domain'),
     {
       _enableIdPInitiatedLogin: true,
+      allowSignUp: config.getIn(['auth0Lock', 'allowSignUp'], true),
       auth: {
         autoParseHash: false,
         params: {
