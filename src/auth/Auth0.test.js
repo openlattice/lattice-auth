@@ -8,18 +8,18 @@ import qs from 'qs';
 import { fromJS } from 'immutable';
 
 import { LOGIN_PATH } from './AuthConstants';
-import { INVALID_PARAMS } from '../utils/testing/Invalid';
-import { genRandomString } from '../utils/testing/TestUtils';
 
 import {
   ERR_A0L_FRAGMENT_NOT_PARSED,
   ERR_A0L_ON_AUTHORIZATION_ERROR,
-  ERR_A0L_ON_UNRECOVERABLE_ERROR,
   ERR_A0L_ON_AUTH__AUTH_INFO_MISSING,
   ERR_A0L_ON_AUTH__AUTH_TOKEN_EXPIRED,
   ERR_A0L_ON_HASH__AUTH_INFO_MISSING,
-  ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED
+  ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED,
+  ERR_A0L_ON_UNRECOVERABLE_ERROR
 } from '../utils/Errors';
+import { INVALID_PARAMS } from '../utils/testing/InvalidParams';
+import { genRandomString } from '../utils/testing/TestUtils';
 
 // injected by Jest
 declare var __AUTH0_CLIENT_ID__ :string;
@@ -37,7 +37,13 @@ const MOCK_LOGIN_URL :string = `${MOCK_URL}/#${LOGIN_PATH}`;
 
 const MOCK_CONFIG :Map<string, *> = fromJS({
   auth0ClientId: __AUTH0_CLIENT_ID__,
-  auth0Domain: __AUTH0_DOMAIN__
+  auth0Domain: __AUTH0_DOMAIN__,
+  auth0Lock: {
+    allowSignUp: true,
+    logo: 'OpenLatticeLogo',
+    primaryColor: '#7860ff',
+    title: 'OpenLattice'
+  },
 });
 
 // TODO: improve perf - not every test needs to do require('./Auth0'), I think
@@ -104,7 +110,32 @@ describe('Auth0', () => {
       expect(Auth0Lock).toHaveBeenCalledWith(
         __AUTH0_CLIENT_ID__,
         __AUTH0_DOMAIN__,
-        expect.any(Object)
+        {
+          _enableIdPInitiatedLogin: true,
+          allowSignUp: true,
+          auth: {
+            autoParseHash: false,
+            params: {
+              scope: 'openid email user_id user_metadata app_metadata nickname roles',
+            },
+            redirectUrl: '',
+            responseType: 'token',
+            sso: false,
+            state: '',
+          },
+          clientBaseUrl: 'https://cdn.auth0.com',
+          closable: false,
+          configurationBaseUrl: 'https://cdn.auth0.com',
+          hashCleanup: false,
+          languageDictionary: {
+            title: 'OpenLattice',
+          },
+          rememberLastLogin: false,
+          theme: {
+            logo: 'OpenLatticeLogo',
+            primaryColor: '#7860ff',
+          },
+        }
       );
     });
 
