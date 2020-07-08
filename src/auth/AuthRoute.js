@@ -89,6 +89,8 @@ class AuthRoute extends Component<Props, State> {
     const {
       actions,
       authTokenExpiration,
+      isAuthenticating,
+      redirectToLogin,
     } = this.props;
 
     // TODO: need to spend more time thinking about how to handle this case
@@ -96,6 +98,11 @@ class AuthRoute extends Component<Props, State> {
       // if authTokenExpiration === -1, we've already dispatched AUTH_EXPIRED or LOGOUT
       if (authTokenExpiration !== AUTH_TOKEN_EXPIRED) {
         actions.authExpired();
+      }
+      // do not show the lock if we're in redirect mode
+      // do not show the lock if we're still authenticating
+      if (!redirectToLogin && !isAuthenticating) {
+        Auth0.getAuth0LockInstance().show();
       }
     }
     else {
