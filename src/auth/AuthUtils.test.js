@@ -8,6 +8,7 @@ import qs from 'qs';
 import { List } from 'immutable';
 import { DateTime } from 'luxon';
 import { v4 as uuid } from 'uuid';
+import type { UUID } from 'lattice';
 import type { DurationUnit } from 'luxon';
 
 import * as AuthUtils from './AuthUtils';

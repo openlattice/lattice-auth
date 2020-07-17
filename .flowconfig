@@ -18,6 +18,3 @@
 <PROJECT_ROOT>/config/.*
 !<PROJECT_ROOT>/node_modules/lattice
 .*/node_modules/immutable/.*
-
-[libs]
-./src/types.js.flow

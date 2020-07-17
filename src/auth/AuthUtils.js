@@ -8,6 +8,7 @@ import decode from 'jwt-decode';
 import qs from 'qs';
 import { DateTime } from 'luxon';
 import { v4 as uuid } from 'uuid';
+import type { UUID } from 'lattice';
 
 import {
   ADMIN_ROLE,
@@ -28,12 +29,13 @@ declare type Auth0NonceState = {
 };
 
 declare type UserInfo = {
-  firstName ? :string;
-  givenName ? :string;
-  email ? :string;
-  id ? :string;
-  picture ? :string;
-  roles ? :string[];
+  email ?:string;
+  familyName ?:string;
+  givenName ?:string;
+  id ?:string;
+  name ?:string;
+  picture ?:string;
+  roles ?:string[];
 };
 
 /*
