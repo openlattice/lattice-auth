@@ -8,6 +8,7 @@ import decode from 'jwt-decode';
 import qs from 'qs';
 import { DateTime } from 'luxon';
 import { v4 as uuid } from 'uuid';
+import type { UUID } from 'lattice';
 
 import {
   ADMIN_ROLE,
