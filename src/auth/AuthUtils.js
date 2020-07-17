@@ -28,12 +28,13 @@ declare type Auth0NonceState = {
 };
 
 declare type UserInfo = {
-  firstName ? :string;
-  givenName ? :string;
-  email ? :string;
-  id ? :string;
-  picture ? :string;
-  roles ? :string[];
+  email ?:string;
+  familyName ?:string;
+  givenName ?:string;
+  id ?:string;
+  name ?:string;
+  picture ?:string;
+  roles ?:string[];
 };
 
 /*
