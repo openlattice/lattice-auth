@@ -6,6 +6,7 @@ import _has from 'lodash/has';
 import cookies from 'js-cookie';
 import decode from 'jwt-decode';
 import qs from 'qs';
+import { LangUtils, Logger } from 'lattice-utils';
 import { DateTime } from 'luxon';
 import { v4 as uuid } from 'uuid';
 import type { UUID } from 'lattice';
@@ -21,8 +22,7 @@ import {
   LOGIN_PATH,
 } from './AuthConstants';
 
-import Logger from '../utils/Logger';
-import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
+const { isNonEmptyObject, isNonEmptyString } = LangUtils;
 
 declare type Auth0NonceState = {
   redirectUrl :string;

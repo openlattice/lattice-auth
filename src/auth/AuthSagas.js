@@ -6,6 +6,7 @@ import qs from 'qs';
 import Lattice, { PrincipalsApi } from 'lattice';
 import { call, put, take } from '@redux-saga/core/effects';
 import { push } from 'connected-react-router';
+import { LangUtils, Logger } from 'lattice-utils';
 import { v4 as uuid } from 'uuid';
 
 import * as Auth0 from './Auth0';
@@ -23,9 +24,9 @@ import {
 import { LOGIN_PATH, ROOT_PATH } from './AuthConstants';
 import type { Auth0NonceState } from './AuthUtils';
 
-import Logger from '../utils/Logger';
 import { getConfig } from '../config/Configuration';
-import { isNonEmptyString } from '../utils/LangUtils';
+
+const { isNonEmptyString } = LangUtils;
 
 const LOG = new Logger('AuthSagas');
 

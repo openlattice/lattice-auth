@@ -5,16 +5,17 @@
 import Lattice from 'lattice';
 import _isBoolean from 'lodash/isBoolean';
 import { Map, fromJS } from 'immutable';
+import { LangUtils, Logger } from 'lattice-utils';
 
-import Logger from '../utils/Logger';
 import OpenLatticeLogo from '../assets/images/ol-logo-auth0.png';
 import * as Auth0 from '../auth/Auth0';
 import * as AuthUtils from '../auth/AuthUtils';
-import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
 
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__ :string;
 declare var __AUTH0_DOMAIN__ :string;
+
+const { isNonEmptyObject, isNonEmptyString } = LangUtils;
 
 type LatticeAuthConfig = {
   auth0ClientId ?:string;

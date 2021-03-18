@@ -2,14 +2,15 @@
  * @flow
  */
 
+import { LangUtils, Logger } from 'lattice-utils';
 import type { UUID } from 'lattice';
 
 import { ORGANIZATION_ID } from './AccountConstants';
 
-import Logger from '../utils/Logger';
 import { getUserInfo } from '../auth/AuthUtils';
-import { isNonEmptyObject, isNonEmptyString } from '../utils/LangUtils';
 import type { UserInfo } from '../auth/AuthUtils';
+
+const { isNonEmptyObject, isNonEmptyString } = LangUtils;
 
 const LOG = new Logger('AccountUtils');
 
