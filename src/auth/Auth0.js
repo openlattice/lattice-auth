@@ -7,22 +7,22 @@ import isEmpty from 'lodash/isEmpty';
 import qs from 'qs';
 import { Map } from 'immutable';
 
-import Logger from '../utils/Logger';
 import * as AuthUtils from './AuthUtils';
 import { LOGIN_PATH } from './AuthConstants';
-import { isNonEmptyString } from '../utils/LangUtils';
 
+import Logger from '../utils/Logger';
 import {
-  ERR_INVALID_CONFIG,
   ERR_A0L_FRAGMENT_NOT_PARSED,
   ERR_A0L_NOT_INITIALIZED,
   ERR_A0L_ON_AUTHORIZATION_ERROR,
-  ERR_A0L_ON_UNRECOVERABLE_ERROR,
   ERR_A0L_ON_AUTH__AUTH_INFO_MISSING,
   ERR_A0L_ON_AUTH__AUTH_TOKEN_EXPIRED,
   ERR_A0L_ON_HASH__AUTH_INFO_MISSING,
   ERR_A0L_ON_HASH__AUTH_TOKEN_EXPIRED,
+  ERR_A0L_ON_UNRECOVERABLE_ERROR,
+  ERR_INVALID_CONFIG,
 } from '../utils/Errors';
+import { isNonEmptyString } from '../utils/LangUtils';
 
 const LOG = new Logger('Auth0');
 
