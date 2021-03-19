@@ -88,6 +88,7 @@ module.exports = (env = {}) => {
           'auth0-lock',
           'js-cookie',
           'jwt-decode',
+          'loglevel',
           /babel/,
         ],
       }),

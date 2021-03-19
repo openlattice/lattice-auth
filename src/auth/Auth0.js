@@ -6,11 +6,11 @@ import Auth0Lock from 'auth0-lock';
 import isEmpty from 'lodash/isEmpty';
 import qs from 'qs';
 import { Map } from 'immutable';
-import { LangUtils, Logger } from 'lattice-utils';
 
 import * as AuthUtils from './AuthUtils';
 import { LOGIN_PATH } from './AuthConstants';
 
+import Logger from '../utils/Logger';
 import {
   ERR_A0L_FRAGMENT_NOT_PARSED,
   ERR_A0L_NOT_INITIALIZED,
@@ -22,10 +22,9 @@ import {
   ERR_A0L_ON_UNRECOVERABLE_ERROR,
   ERR_INVALID_CONFIG,
 } from '../utils/Errors';
+import { isNonEmptyString } from '../utils/LangUtils';
 
 const LOG = new Logger('Auth0');
-
-const { isNonEmptyString } = LangUtils;
 
 let parsedUrl :Object = {
   fragment: '',
