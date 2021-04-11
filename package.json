@@ -25,7 +25,7 @@
   "main": "build/index.js",
   "dependencies": {
     "@babel/runtime-corejs3": "~7.13.10",
-    "auth0-lock": "~11.28.0",
+    "auth0-lock": "~11.29.0",
     "js-cookie": "~2.2.0",
     "jwt-decode": "~3.1.0",
     "loglevel": "~1.7.0"
