@@ -89,6 +89,7 @@ module.exports = (env = {}) => {
           'js-cookie',
           'jwt-decode',
           'loglevel',
+          'util',
           /babel/,
         ],
       }),
