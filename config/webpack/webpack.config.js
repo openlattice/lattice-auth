@@ -89,6 +89,7 @@ module.exports = (env = {}) => {
           'js-cookie',
           'jwt-decode',
           'loglevel',
+          'util',
           /babel/,
         ],
       }),
@@ -113,8 +114,10 @@ module.exports = (env = {}) => {
     },
     output: {
       filename: 'index.js',
-      library: 'LatticeAuth',
-      libraryTarget: 'umd',
+      library: {
+        name: 'LatticeAuth',
+        type: 'umd',
+      },
       path: BUILD,
       publicPath: '/',
     },
