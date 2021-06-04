@@ -79,7 +79,6 @@
     "webpack-node-externals": "~3.0.0"
   },
   "peerDependencies": {
-    "@babel/runtime-corejs3": "^7.14.0",
     "@redux-saga/core": "^1.1.0",
     "connected-react-router": "^6.9.0",
     "immutable": "4.0.0-rc.10",
