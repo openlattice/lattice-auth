@@ -61,7 +61,7 @@
     "import-sort-style-openlattice": "~0.1.0",
     "jest": "~26.6.1",
     "jsonwebtoken": "~8.5.0",
-    "lattice": "~0.92.0",
+    "lattice": "~0.93.4",
     "lodash": "~4.17.21",
     "luxon": "~1.27.0",
     "npm-run-all": "~4.1.0",
