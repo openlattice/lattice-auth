@@ -71,6 +71,11 @@ module.exports = (env = {}) => {
     __VERSION__: JSON.stringify(`v${PACKAGE.version}`),
   });
 
+  // https://github.com/auth0/lock/issues/1999
+  const PROVIDE_PLUGIN = new webpack.ProvidePlugin({
+    process: 'process/browser',
+  });
+
   //
   // base webpack config
   //
@@ -84,14 +89,9 @@ module.exports = (env = {}) => {
     externals: [
       // https://github.com/liady/webpack-node-externals
       externals({
-        allowlist: [
-          'auth0-lock',
-          'js-cookie',
-          'jwt-decode',
-          'loglevel',
-          'util',
-          /babel/,
-        ],
+        modulesFromFile: {
+          excludeFromBundle: ['devDependencies', 'peerDependencies']
+        },
       }),
     ],
     mode: env.production ? ENV_PROD : ENV_DEV,
@@ -127,6 +127,7 @@ module.exports = (env = {}) => {
     plugins: [
       DEFINE_PLUGIN,
       BANNER_PLUGIN,
+      PROVIDE_PLUGIN,
     ],
     resolve: {
       extensions: ['.js'],
