@@ -36,7 +36,9 @@ const LOG :Logger = new Logger('Configuration');
 const ENV_URLS :Map<string, string> = fromJS({
   LOCAL: 'http://localhost:8080',
   STAGING: 'https://api.staging.openlattice.com',
-  PRODUCTION: 'https://api.openlattice.com'
+  STAGING_CA: 'https://api.staging.ca.openlattice.com',
+  PRODUCTION: 'https://api.openlattice.com',
+  PRODUCTION_CA: 'https://api.ca.openlattice.com',
 });
 
 function getDefaultBaseUrl() :string {
@@ -47,6 +49,9 @@ function getDefaultBaseUrl() :string {
     const hostname :string = window.location.hostname;
     if (hostname === 'localhost') {
       baseUrl = 'localhost';
+    }
+    else if (hostname.endsWith('ca.openlattice.com')) {
+      baseUrl = hostname.startsWith('staging') ? 'staging_ca' : 'production_ca';
     }
     else if (hostname.endsWith('openlattice.com')) {
       baseUrl = hostname.startsWith('staging') ? 'staging' : 'production';
@@ -187,8 +192,14 @@ function setBaseUrl(config :LatticeAuthConfig) :void {
     else if (baseUrl === 'staging' || baseUrl === ENV_URLS.get('STAGING')) {
       configuration = configuration.set('baseUrl', ENV_URLS.get('STAGING'));
     }
+    else if (baseUrl === 'staging_ca' || baseUrl === ENV_URLS.get('STAGING_CA')) {
+      configuration = configuration.set('baseUrl', ENV_URLS.get('STAGING_CA'));
+    }
     else if (baseUrl === 'production' || baseUrl === ENV_URLS.get('PRODUCTION')) {
       configuration = configuration.set('baseUrl', ENV_URLS.get('PRODUCTION'));
+    }
+    else if (baseUrl === 'production_ca' || baseUrl === ENV_URLS.get('PRODUCTION_CA')) {
+      configuration = configuration.set('baseUrl', ENV_URLS.get('PRODUCTION_CA'));
     }
     // mild url validation to at least check the protocol and domain
     else if (baseUrl.startsWith('https://') && baseUrl.endsWith('openlattice.com')) {
