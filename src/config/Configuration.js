@@ -37,9 +37,7 @@ const LOG :Logger = new Logger('Configuration');
 const ENV_URLS :Map<string, string> = fromJS({
   LOCAL: 'http://localhost:8080',
   STAGING: 'https://api.staging.openlattice.com',
-  STAGING_CA: 'https://api.staging.ca.openlattice.com',
   PRODUCTION: 'https://api.openlattice.com',
-  PRODUCTION_CA: 'https://api.ca.openlattice.com',
 });
 
 function getDefaultBaseUrl() :string {
