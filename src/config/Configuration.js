@@ -17,6 +17,7 @@ declare var __AUTH0_CLIENT_ID__ :string;
 declare var __AUTH0_DOMAIN__ :string;
 
 type LatticeAuthConfig = {
+  auth0CdnUrl ?:string;
   auth0ClientId ?:string;
   auth0Domain ?:string;
   auth0Lock ?:{
@@ -192,23 +193,11 @@ function setBaseUrl(config :LatticeAuthConfig) :void {
     else if (baseUrl === 'staging' || baseUrl === ENV_URLS.get('STAGING')) {
       configuration = configuration.set('baseUrl', ENV_URLS.get('STAGING'));
     }
-    else if (baseUrl === 'staging_ca' || baseUrl === ENV_URLS.get('STAGING_CA')) {
-      configuration = configuration.set('baseUrl', ENV_URLS.get('STAGING_CA'));
-    }
     else if (baseUrl === 'production' || baseUrl === ENV_URLS.get('PRODUCTION')) {
       configuration = configuration.set('baseUrl', ENV_URLS.get('PRODUCTION'));
     }
-    else if (baseUrl === 'production_ca' || baseUrl === ENV_URLS.get('PRODUCTION_CA')) {
-      configuration = configuration.set('baseUrl', ENV_URLS.get('PRODUCTION_CA'));
-    }
-    // mild url validation to at least check the protocol and domain
-    else if (baseUrl.startsWith('https://') && baseUrl.endsWith('openlattice.com')) {
-      configuration = configuration.set('baseUrl', baseUrl);
-    }
     else {
-      const errorMsg = 'invalid parameter - "baseUrl" must be a valid URL';
-      LOG.error(errorMsg, baseUrl);
-      throw new Error(errorMsg);
+      configuration = configuration.set('baseUrl', baseUrl);
     }
   }
   // baseUrl is optional, so null and undefined are allowed
@@ -232,6 +221,10 @@ function configure(config :LatticeAuthConfig) :void {
   setAuth0Lock(config);
   setAuthToken(config);
   setBaseUrl(config);
+
+  if (config.auth0CdnUrl) {
+    configuration.set('auth0CdnUrl', config.auth0CdnUrl);
+  }
 
   Lattice.configure({
     authToken: configuration.get('authToken'),

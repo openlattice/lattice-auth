@@ -130,8 +130,8 @@ function initialize(config :Map<string, *>) :void {
         sso: false,
         state: parsedUrl.state,
       },
-      clientBaseUrl: 'https://cdn.auth0.com',
-      configurationBaseUrl: 'https://cdn.auth0.com',
+      clientBaseUrl: config.get('auth0CdnUrl') || 'https://cdn.us.auth0.com',
+      configurationBaseUrl: config.get('auth0CdnUrl') || 'https://cdn.us.auth0.com',
       closable: false,
       hashCleanup: false,
       languageDictionary: {
