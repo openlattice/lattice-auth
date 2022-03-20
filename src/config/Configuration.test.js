@@ -467,6 +467,7 @@ describe('Configuration', () => {
         List(INVALID_PARAMS)
           .delete(0) // remove undefined
           .delete(0) // remove null
+          .delete(14) // remove 'invalid_special_string_value'
           .forEach((invalid :any) => {
             expect(() => {
               Config.configure({
@@ -476,35 +477,6 @@ describe('Configuration', () => {
               });
             }).toThrow();
           });
-      });
-
-      test('should throw if baseUrl is not https', () => {
-        expect(() => {
-          Config.configure({
-            auth0Lock: MOCK_AUTH0_LOCK.toJS(),
-            authToken: MOCK_AUTH_TOKEN,
-            baseUrl: 'http://api.openlattice.com'
-          });
-        }).toThrow();
-      });
-
-      test('should throw if baseUrl does not match known URLs', () => {
-
-        expect(() => {
-          Config.configure({
-            auth0Lock: MOCK_AUTH0_LOCK.toJS(),
-            authToken: MOCK_AUTH_TOKEN,
-            baseUrl: 'justbeamit.com'
-          });
-        }).toThrow();
-
-        expect(() => {
-          Config.configure({
-            auth0Lock: MOCK_AUTH0_LOCK.toJS(),
-            authToken: MOCK_AUTH_TOKEN,
-            baseUrl: 'https://justbeamit.com'
-          });
-        }).toThrow();
       });
 
       test('should correctly set baseUrl when a valid URL is passed in', () => {
@@ -551,23 +523,6 @@ describe('Configuration', () => {
         expect(Config.getConfig().get('baseUrl')).toEqual('https://api.staging.openlattice.com');
       });
 
-      test('should correctly set baseUrl to "https://api.staging.ca.openlattice.com"', () => {
-
-        Config.configure({
-          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
-          authToken: MOCK_AUTH_TOKEN,
-          baseUrl: 'staging_ca'
-        });
-        expect(Config.getConfig().get('baseUrl')).toEqual('https://api.staging.ca.openlattice.com');
-
-        Config.configure({
-          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
-          authToken: MOCK_AUTH_TOKEN,
-          baseUrl: 'https://api.staging.ca.openlattice.com'
-        });
-        expect(Config.getConfig().get('baseUrl')).toEqual('https://api.staging.ca.openlattice.com');
-      });
-
       test('should correctly set baseUrl to "https://api.openlattice.com"', () => {
 
         Config.configure({
@@ -583,23 +538,6 @@ describe('Configuration', () => {
           baseUrl: 'https://api.openlattice.com'
         });
         expect(Config.getConfig().get('baseUrl')).toEqual('https://api.openlattice.com');
-      });
-
-      test('should correctly set baseUrl to "https://api.ca.openlattice.com"', () => {
-
-        Config.configure({
-          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
-          authToken: MOCK_AUTH_TOKEN,
-          baseUrl: 'production_ca'
-        });
-        expect(Config.getConfig().get('baseUrl')).toEqual('https://api.ca.openlattice.com');
-
-        Config.configure({
-          auth0Lock: MOCK_AUTH0_LOCK.toJS(),
-          authToken: MOCK_AUTH_TOKEN,
-          baseUrl: 'https://api.ca.openlattice.com'
-        });
-        expect(Config.getConfig().get('baseUrl')).toEqual('https://api.ca.openlattice.com');
       });
 
     });
