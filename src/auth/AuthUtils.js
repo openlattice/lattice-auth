@@ -198,7 +198,7 @@ function storeAuthInfo(authInfo :?Object) :void {
     email: authInfo.idTokenPayload.email,
     familyName: authInfo.idTokenPayload.family_name,
     givenName: authInfo.idTokenPayload.given_name,
-    id: authInfo.idTokenPayload.user_id,
+    id: authInfo.idTokenPayload.user_id || authInfo.idTokenPayload.sub,
     name: authInfo.idTokenPayload.name,
     picture: authInfo.idTokenPayload.picture,
     roles: authInfo.idTokenPayload.roles,
