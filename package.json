@@ -28,7 +28,7 @@
     "auth0-lock": "~11.30.4",
     "js-cookie": "~2.2.0",
     "jwt-decode": "~3.1.0",
-    "loglevel": "~1.7.0",
+    "loglevel": "~1.8.1",
     "process": "~0.11.10",
     "util": "~0.12.4"
   },
