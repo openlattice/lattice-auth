@@ -24,7 +24,7 @@
   "license": "Apache-2.0",
   "main": "build/index.js",
   "dependencies": {
-    "@babel/runtime-corejs3": "~7.19.1",
+    "@babel/runtime-corejs3": "~7.22.15",
     "auth0-lock": "~11.30.4",
     "js-cookie": "~2.2.0",
     "jwt-decode": "~3.1.0",
